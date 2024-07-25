@@ -7,7 +7,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PlayerUI'
-  s.version          = '0.7.2'
+  s.version          = '0.7.5--canary.443.15749'
   s.summary          = 'A native renderer for Player content'
   s.swift_versions   = ['5.1']
   s.description      = <<-DESC
@@ -18,7 +18,7 @@ and display it as a SwiftUI view comprised of registered assets.
   s.homepage         = 'https://github.com/player-ui/player'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'hborawski' => 'harris_borawski@intuit.com' }
-  s.source         = { :http => "https://github.com/player-ui/player/releases/download/#{s.version.to_s}/PlayerUI_Pod.zip" }
+  s.source         = { :git => "https://github.com/player-ui/playerui-swift-package.git", :tag => s.version.to_s }
 
   s.ios.deployment_target = '14.0'
 
@@ -96,7 +96,7 @@ and display it as a SwiftUI view comprised of registered assets.
       subspec.source_files = "plugins/#{path}/ios/Sources/**/*"
       if resources == TRUE
         subspec.resource_bundles = {
-          name => ["plugins/#{path}/ios/Resources/**/*.js"]
+          "PlayerUI_#{name}" => ["plugins/#{path}/ios/Resources/**/*.js"]
         }
       end
     end
@@ -112,7 +112,7 @@ and display it as a SwiftUI view comprised of registered assets.
       subspec.source_files = "plugins/#{path}/swiftui/Sources/**/*"
       if resources == TRUE
         subspec.resource_bundles = {
-          name => ["plugins/#{path}/swiftui/Resources/**/*.js"]
+          "PlayerUI_#{name}" => ["plugins/#{path}/swiftui/Resources/**/*.js"]
         }
       end
     end
