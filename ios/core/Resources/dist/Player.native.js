@@ -5056,6 +5056,7 @@ var Player = function() {
                 onTemplatePluginCreated: new SyncHook(),
                 templatePlugin: new SyncHook()
             };
+            this.transitioning = true;
             this.initialView = initialView;
             this.resolverOptions = resolverOptions;
             this.hooks.onTemplatePluginCreated.tap("view", function(templatePlugin) {
@@ -5064,17 +5065,27 @@ var Player = function() {
         }
         _create_class(ViewInstance, [
             {
+                key: "setTransition",
+                value: function setTransition(isTransitioning) {
+                    this.transitioning = isTransitioning;
+                }
+            },
+            {
                 key: "updateAsync",
                 value: function updateAsync() {
+                    var fromTransitioning = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : false;
                     var _this_resolver;
                     var update = (_this_resolver = this.resolver) === null || _this_resolver === void 0 ? void 0 : _this_resolver.update();
                     this.lastUpdate = update;
-                    this.hooks.onUpdate.call(update);
+                    if (!this.transitioning || this.transitioning && fromTransitioning) {
+                        this.hooks.onUpdate.call(update);
+                    }
                 }
             },
             {
                 key: "update",
                 value: function update(changes) {
+                    var fromTransitioning = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : false;
                     var _this_resolver;
                     if (this.rootNode === void 0) {
                         this.validationProvider = new CrossfieldProvider(this.initialView, this.resolverOptions.parseBinding, this.resolverOptions.logger);
@@ -5097,7 +5108,10 @@ var Player = function() {
                         return this.lastUpdate;
                     }
                     this.lastUpdate = update;
-                    this.hooks.onUpdate.call(update);
+                    if (!this.transitioning || this.transitioning && fromTransitioning) {
+                        this.hooks.onUpdate.call(update);
+                    }
+                    this.transitioning = false;
                     return update;
                 }
             },
@@ -7133,6 +7147,14 @@ var Player = function() {
         }
         _create_class(ViewController, [
             {
+                key: "setViewsTransition",
+                value: function setViewsTransition(transition) {
+                    var _this_previousView, _this_currentView;
+                    (_this_previousView = this.previousView) === null || _this_previousView === void 0 ? void 0 : _this_previousView.setTransition(transition);
+                    (_this_currentView = this.currentView) === null || _this_currentView === void 0 ? void 0 : _this_currentView.setTransition(transition);
+                }
+            },
+            {
                 key: "queueUpdate",
                 value: function queueUpdate(bindings) {
                     var _this = this;
@@ -7183,10 +7205,12 @@ var Player = function() {
                     if (!source) {
                         throw new Error("No view with id ".concat(viewId));
                     }
+                    this.previousView = this.currentView;
                     var view = new ViewInstance(source, this.viewOptions);
                     this.currentView = view;
+                    this.setViewsTransition(true);
                     this.hooks.view.call(view);
-                    view.update();
+                    view.update(void 0, true);
                 }
             }
         ]);
