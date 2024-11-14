@@ -2771,6 +2771,8 @@ var MetricsPlugin = function() {
                 value += ch;
             }
             if (value) {
+                var maybeNumber = Number(value);
+                value = isNaN(maybeNumber) ? value : maybeNumber;
                 return toValue(value);
             }
         };
@@ -2879,6 +2881,10 @@ var MetricsPlugin = function() {
             if (firstSegment) {
                 parsed.push(firstSegment);
                 var bracketSegment = parseBracket();
+                if ((bracketSegment === null || bracketSegment === void 0 ? void 0 : bracketSegment.name) === "Value") {
+                    var maybeNumber = Number(bracketSegment.value);
+                    bracketSegment.value = isNaN(maybeNumber) || String(maybeNumber) !== bracketSegment.value ? bracketSegment.value : maybeNumber;
+                }
                 while(bracketSegment !== void 0){
                     parsed.push(bracketSegment);
                     bracketSegment = parseBracket();
