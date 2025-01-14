@@ -2952,7 +2952,7 @@ var CommonExpressionsPlugin = function() {
                     return segment;
                 }
                 var tryNum = Number(segment);
-                return isNaN(tryNum) ? segment : tryNum;
+                return isNaN(tryNum) || String(tryNum) !== segment ? segment : tryNum;
             });
             Object.freeze(this.split);
             this.joined = this.split.join(".");
@@ -7548,7 +7548,9 @@ var CommonExpressionsPlugin = function() {
         if (args.every(function(v) {
             return Array.isArray(v);
         })) {
-            var arrayArgs = args;
+            var arrayArgs = args.map(function(a) {
+                return structuredClone(a);
+            });
             return arrayArgs.reduce(function(merged, next) {
                 var _merged;
                 (_merged = merged).push.apply(_merged, _to_consumable_array(next));
