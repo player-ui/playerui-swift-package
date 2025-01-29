@@ -2860,7 +2860,7 @@ var CheckPathPlugin = function() {
                     return segment;
                 }
                 var tryNum = Number(segment);
-                return isNaN(tryNum) ? segment : tryNum;
+                return isNaN(tryNum) || String(tryNum) !== segment ? segment : tryNum;
             });
             Object.freeze(this.split);
             this.joined = this.split.join(".");
