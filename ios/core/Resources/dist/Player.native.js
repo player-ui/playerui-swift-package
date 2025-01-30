@@ -402,7 +402,7 @@ function _ts_generator(thisArg, body) {
     }
 }
 var Player = function() {
-    var equalToOrIn = // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/tapable-ts@0.2.4/node_modules/tapable-ts/dist/hooks.mjs
+    var equalToOrIn = // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/tapable-ts@0.2.4/node_modules/tapable-ts/dist/hooks.mjs
     function equalToOrIn(value, check) {
         if (Array.isArray(check)) {
             return check.includes(value);
@@ -419,7 +419,7 @@ var Player = function() {
         }
         return (_tap = tap).callback.apply(_tap, _to_consumable_array(args));
     };
-    var isBinding = // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/binding/utils.ts
+    var isBinding = // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/binding/utils.ts
     function isBinding(binding) {
         return !(typeof binding === "string" || Array.isArray(binding));
     };
@@ -534,7 +534,7 @@ var Player = function() {
             }
         };
     };
-    var dlv_es_default = // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/dlv@1.1.3/node_modules/dlv/dist/dlv.es.js
+    var dlv_es_default = // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/dlv@1.1.3/node_modules/dlv/dist/dlv.es.js
     function dlv_es_default(t2, e, l, n, r) {
         for(e = e.split ? e.split(".") : e, n = 0; n < e.length; n++)t2 = t2 ? t2[e[n]] : r;
         return t2 === r ? l : t2;
@@ -1125,7 +1125,7 @@ var Player = function() {
             };
         }
     };
-    var withoutContext = // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/expressions/utils.ts
+    var withoutContext = // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/expressions/utils.ts
     function withoutContext(fn) {
         return function(_context) {
             for(var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++){
@@ -1279,7 +1279,7 @@ var Player = function() {
     var resolveDataRefs = function resolveDataRefs(val, options) {
         return traverseObject(val, options);
     };
-    var removeBindingAndChildrenFromMap = // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/validator/binding-map-splice.ts
+    var removeBindingAndChildrenFromMap = // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/validator/binding-map-splice.ts
     function removeBindingAndChildrenFromMap(sourceMap, binding) {
         var targetMap = new Map(sourceMap);
         var parentBinding = binding.parent();
@@ -1333,7 +1333,7 @@ var Player = function() {
             }
         }
     };
-    var hasTemplateValues = // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/parser/utils.ts
+    var hasTemplateValues = // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/view/parser/utils.ts
     function hasTemplateValues(obj, localKey) {
         return Object.hasOwnProperty.call(obj, "template") && Array.isArray(obj === null || obj === void 0 ? void 0 : obj.template) && obj.template.length && obj.template.find(function(tmpl) {
             return tmpl.output === localKey;
@@ -1354,7 +1354,7 @@ var Player = function() {
             return node.value.id;
         }
     };
-    var caresAboutDataChanges = // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/resolver/utils.ts
+    var caresAboutDataChanges = // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/view/resolver/utils.ts
     function caresAboutDataChanges(dataChanges, dependencies) {
         if (!dataChanges || !dependencies) {
             return true;
@@ -1546,9 +1546,9 @@ var Player = function() {
             value: true
         }), mod);
     };
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/ts-nested-error@1.2.1/node_modules/ts-nested-error/build/nested-error.js
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/ts-nested-error@1.2.1/node_modules/ts-nested-error/build/nested-error.js
     var require_nested_error = __commonJS({
-        "../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/ts-nested-error@1.2.1/node_modules/ts-nested-error/build/nested-error.js": function(exports) {
+        "../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/ts-nested-error@1.2.1/node_modules/ts-nested-error/build/nested-error.js": function(exports) {
             "use strict";
             Object.defineProperty(exports, "__esModule", {
                 value: true
@@ -1649,9 +1649,9 @@ var Player = function() {
             exports.toError = toError;
         }
     });
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/timm@1.7.1/node_modules/timm/lib/timm.js
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/timm@1.7.1/node_modules/timm/lib/timm.js
     var require_timm = __commonJS({
-        "../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/timm@1.7.1/node_modules/timm/lib/timm.js": function(exports) {
+        "../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/timm@1.7.1/node_modules/timm/lib/timm.js": function(exports) {
             "use strict";
             Object.defineProperty(exports, "__esModule", {
                 value: true
@@ -1939,9 +1939,9 @@ var Player = function() {
             exports.default = _default;
         }
     });
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/p-defer@3.0.0/node_modules/p-defer/index.js
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/p-defer@3.0.0/node_modules/p-defer/index.js
     var require_p_defer = __commonJS({
-        "../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/p-defer@3.0.0/node_modules/p-defer/index.js": function(exports, module) {
+        "../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/p-defer@3.0.0/node_modules/p-defer/index.js": function(exports, module) {
             "use strict";
             var pDefer = function() {
                 var deferred2 = {};
@@ -1954,9 +1954,9 @@ var Player = function() {
             module.exports = pDefer;
         }
     });
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/queue-microtask@1.2.3/node_modules/queue-microtask/index.js
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/queue-microtask@1.2.3/node_modules/queue-microtask/index.js
     var require_queue_microtask = __commonJS({
-        "../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/queue-microtask@1.2.3/node_modules/queue-microtask/index.js": function(exports, module) {
+        "../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/queue-microtask@1.2.3/node_modules/queue-microtask/index.js": function(exports, module) {
             "use strict";
             var promise;
             module.exports = typeof queueMicrotask === "function" ? queueMicrotask.bind(typeof window !== "undefined" ? window : global) : function(cb) {
@@ -1968,9 +1968,9 @@ var Player = function() {
             };
         }
     });
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js
     var require_sorted_array = __commonJS({
-        "../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js": function(exports, module) {
+        "../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js": function(exports, module) {
             "use strict";
             var SortedArray2 = function() {
                 var SortedArray3 = defclass({
@@ -2049,7 +2049,7 @@ var Player = function() {
             });
         }
     });
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/index.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/index.ts
     var src_exports = {};
     __export(src_exports, {
         ApplicabilityPlugin: function() {
@@ -2566,9 +2566,9 @@ var Player = function() {
         ]);
         return SyncWaterfallHook;
     }(Hook);
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/binding/index.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/binding/index.ts
     var import_ts_nested_error2 = __toESM(require_nested_error());
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/binding-grammar/ast.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/binding-grammar/ast.ts
     var toValue = function(value) {
         return {
             name: "Value",
@@ -2603,7 +2603,7 @@ var Player = function() {
             value: values
         };
     };
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/binding-grammar/custom/index.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/binding-grammar/custom/index.ts
     var SEGMENT_SEPARATOR = ".";
     var OPEN_CURL = "{";
     var CLOSE_CURL = "}";
@@ -2806,7 +2806,7 @@ var Player = function() {
             };
         }
     };
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/binding/binding.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/binding/binding.ts
     var BindingInstance = /*#__PURE__*/ function() {
         function _BindingInstance(raw) {
             var factory = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : function(rawBinding) {
@@ -2887,7 +2887,7 @@ var Player = function() {
         ]);
         return _BindingInstance;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/binding/resolver.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/binding/resolver.ts
     var import_ts_nested_error = __toESM(require_nested_error());
     function resolveBindingAST(bindingPathNode, options, hooks) {
         var context = {
@@ -2972,7 +2972,7 @@ var Player = function() {
             updates: Object.keys((_context_updates = context.updates) !== null && _context_updates !== void 0 ? _context_updates : {}).length > 0 ? context.updates : void 0
         };
     }
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/binding/index.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/binding/index.ts
     var SIMPLE_BINDING_REGEX = /^[\w\-@]+(\.[\w\-@]+)*$/;
     var BINDING_BRACKETS_REGEX = /[\s()*=`{}'"[\]]/;
     var LAZY_BINDING_REGEX = /^[^.]+(\..+)*$/;
@@ -3095,7 +3095,7 @@ var Player = function() {
         ]);
         return BindingParser;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/data/dependency-tracker.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/data/dependency-tracker.ts
     var DependencyTracker = /*#__PURE__*/ function() {
         function DependencyTracker() {
             _class_call_check(this, DependencyTracker);
@@ -3296,7 +3296,7 @@ var Player = function() {
         ]);
         return DependencyModel;
     }(DependencyTracker);
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/data/noop-model.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/data/noop-model.ts
     var NOOPDataModel = /*#__PURE__*/ function() {
         function NOOPDataModel() {
             _class_call_check(this, NOOPDataModel);
@@ -3322,7 +3322,7 @@ var Player = function() {
         return NOOPDataModel;
     }();
     var NOOP_MODEL = new NOOPDataModel();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/data/model.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/data/model.ts
     var ROOT_BINDING = new BindingInstance([]);
     var PipelinedDataModel = /*#__PURE__*/ function() {
         function PipelinedDataModel() {
@@ -3392,7 +3392,7 @@ var Player = function() {
         ]);
         return PipelinedDataModel;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/data/local-model.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/data/local-model.ts
     var import_timm = __toESM(require_timm());
     var LocalModel = /*#__PURE__*/ function() {
         function LocalModel() {
@@ -3456,11 +3456,11 @@ var Player = function() {
         ]);
         return LocalModel;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/expressions/evaluator.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/expressions/evaluator.ts
     var import_ts_nested_error3 = __toESM(require_nested_error());
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/expressions/types.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/expressions/types.ts
     var ExpNodeOpaqueIdentifier = Symbol("Expression Node ID");
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/expressions/parser.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/expressions/parser.ts
     var PERIOD_CODE = 46;
     var COMMA_CODE = 44;
     var SQUOTE_CODE = 39;
@@ -3519,7 +3519,7 @@ var Player = function() {
         undefined: void 0
     };
     var thisStr = "this";
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/expressions/evaluator-functions.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/expressions/evaluator-functions.ts
     var evaluator_functions_exports = {};
     __export(evaluator_functions_exports, {
         conditional: function() {
@@ -3639,7 +3639,7 @@ var Player = function() {
             return node;
         }
     }
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/expressions/evaluator.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/expressions/evaluator.ts
     var andandOperator = function(ctx, a, b) {
         return ctx.evaluate(a) && ctx.evaluate(b);
     };
@@ -4004,7 +4004,7 @@ var Player = function() {
         ]);
         return ExpressionEvaluator;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/logger/types.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/logger/types.ts
     var severities = [
         "trace",
         "debug",
@@ -4012,7 +4012,7 @@ var Player = function() {
         "warn",
         "error"
     ];
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/logger/consoleLogger.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/logger/consoleLogger.ts
     var ConsoleLogger = /*#__PURE__*/ function() {
         function ConsoleLogger() {
             var severity = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : "warn", _console = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : console;
@@ -4068,7 +4068,7 @@ var Player = function() {
         ]);
         return ConsoleLogger;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/logger/noopLogger.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/logger/noopLogger.ts
     var noop = function() {};
     var NoopLogger = function NoopLogger() {
         _class_call_check(this, NoopLogger);
@@ -4078,7 +4078,7 @@ var Player = function() {
         this.warn = noop;
         this.error = noop;
     };
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/logger/tapableLogger.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/logger/tapableLogger.ts
     var TapableLogger = /*#__PURE__*/ function() {
         function TapableLogger() {
             _class_call_check(this, TapableLogger);
@@ -4130,7 +4130,7 @@ var Player = function() {
         ]);
         return TapableLogger;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/logger/proxyLogger.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/logger/proxyLogger.ts
     var ProxyLogger = /*#__PURE__*/ function() {
         function ProxyLogger(loggerProvider) {
             _class_call_check(this, ProxyLogger);
@@ -4159,7 +4159,7 @@ var Player = function() {
         ]);
         return ProxyLogger;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/schema/schema.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/schema/schema.ts
     var identify = function(val) {
         return val;
     };
@@ -4306,7 +4306,7 @@ var Player = function() {
         ]);
         return SchemaController;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/string-resolver/index.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/string-resolver/index.ts
     var import_timm2 = __toESM(require_timm());
     var DOUBLE_OPEN_CURLY = "{{";
     var DOUBLE_CLOSE_CURLY = "}}";
@@ -4334,9 +4334,9 @@ var Player = function() {
                 return val;
         }
     }
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/validator/validation-middleware.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/validator/validation-middleware.ts
     var import_timm3 = __toESM(require_timm());
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/validator/validation-middleware.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/validator/validation-middleware.ts
     var ValidationMiddleware = /*#__PURE__*/ function() {
         function ValidationMiddleware(validator, options) {
             _class_call_check(this, ValidationMiddleware);
@@ -4437,7 +4437,7 @@ var Player = function() {
         ]);
         return ValidationMiddleware;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/validator/registry.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/validator/registry.ts
     var ValidatorRegistry = /*#__PURE__*/ function() {
         function ValidatorRegistry() {
             _class_call_check(this, ValidatorRegistry);
@@ -4459,9 +4459,9 @@ var Player = function() {
         ]);
         return ValidatorRegistry;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/resolver/index.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/view/resolver/index.ts
     var import_timm5 = __toESM(require_timm());
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/dequal@2.0.3/node_modules/dequal/dist/index.mjs
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/dequal@2.0.3/node_modules/dequal/dist/index.mjs
     var has = Object.prototype.hasOwnProperty;
     function dequal(foo, bar) {
         var ctor, len, tmp;
@@ -4565,9 +4565,9 @@ var Player = function() {
         }
         return foo !== foo && bar !== bar;
     }
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/parser/index.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/view/parser/index.ts
     var import_timm4 = __toESM(require_timm());
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/parser/types.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/view/parser/types.ts
     var NodeType = /* @__PURE__ */ function(NodeType2) {
         NodeType2["Asset"] = "asset";
         NodeType2["View"] = "view";
@@ -4581,7 +4581,7 @@ var Player = function() {
         NodeType2["Empty"] = "empty";
         return NodeType2;
     }(NodeType || {});
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/parser/index.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/view/parser/index.ts
     var EMPTY_NODE = {
         type: "empty" /* Empty */ 
     };
@@ -4727,7 +4727,7 @@ var Player = function() {
             initial.push(item);
         }
     }
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/resolver/index.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/view/resolver/index.ts
     var withContext = function(model) {
         return {
             get: function(binding, options) {
@@ -4985,7 +4985,7 @@ var Player = function() {
         ]);
         return Resolver;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/view.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/view/view.ts
     var CrossfieldProvider = /*#__PURE__*/ function() {
         function CrossfieldProvider(initialView, parser, logger) {
             _class_call_check(this, CrossfieldProvider);
@@ -5104,7 +5104,7 @@ var Player = function() {
         ]);
         return ViewInstance;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/builder/index.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/view/builder/index.ts
     var Builder = /*#__PURE__*/ function() {
         function Builder() {
             _class_call_check(this, Builder);
@@ -5182,7 +5182,7 @@ var Player = function() {
         ]);
         return Builder;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/plugins/template.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/view/plugins/template.ts
     var TemplatePlugin = /*#__PURE__*/ function() {
         function TemplatePlugin(options) {
             _class_call_check(this, TemplatePlugin);
@@ -5316,7 +5316,7 @@ var Player = function() {
         ]);
         return TemplatePlugin;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/plugins/string-resolver.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/view/plugins/string-resolver.ts
     var import_timm6 = __toESM(require_timm());
     var createPatternMatcher = function(start, end) {
         return function(testStr) {
@@ -5430,7 +5430,7 @@ var Player = function() {
         ]);
         return StringResolverPlugin;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/plugins/applicability.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/view/plugins/applicability.ts
     var import_timm7 = __toESM(require_timm());
     var ApplicabilityPlugin = /*#__PURE__*/ function() {
         function ApplicabilityPlugin() {
@@ -5502,7 +5502,7 @@ var Player = function() {
         ]);
         return ApplicabilityPlugin;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/plugins/switch.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/view/plugins/switch.ts
     var SwitchPlugin = /*#__PURE__*/ function() {
         function SwitchPlugin(options) {
             _class_call_check(this, SwitchPlugin);
@@ -5630,7 +5630,7 @@ var Player = function() {
         ]);
         return SwitchPlugin;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/plugins/multi-node.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/view/plugins/multi-node.ts
     var MultiNodePlugin = /*#__PURE__*/ function() {
         function MultiNodePlugin() {
             _class_call_check(this, MultiNodePlugin);
@@ -5683,7 +5683,7 @@ var Player = function() {
         ]);
         return MultiNodePlugin;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/plugins/asset.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/view/plugins/asset.ts
     var AssetPlugin = /*#__PURE__*/ function() {
         function AssetPlugin() {
             _class_call_check(this, AssetPlugin);
@@ -5719,10 +5719,10 @@ var Player = function() {
         ]);
         return AssetPlugin;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/player.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/player.ts
     var import_timm9 = __toESM(require_timm());
     var import_p_defer2 = __toESM(require_p_defer());
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/flow/flow.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/controllers/flow/flow.ts
     var import_p_defer = __toESM(require_p_defer());
     var FlowInstance = /*#__PURE__*/ function() {
         function FlowInstance(id, flow, options) {
@@ -5872,7 +5872,7 @@ var Player = function() {
         ]);
         return FlowInstance;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/flow/controller.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/controllers/flow/controller.ts
     var FlowController = /*#__PURE__*/ function() {
         function FlowController(navigation, options) {
             _class_call_check(this, FlowController);
@@ -5988,11 +5988,11 @@ var Player = function() {
         ]);
         return FlowController;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/validation/controller.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/controllers/validation/controller.ts
     var import_timm8 = __toESM(require_timm());
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/utils/replaceParams.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/utils/replaceParams.ts
     var ANY_CHAR_REGEX = /%([a-zA-Z]+)/g;
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/validation/binding-tracker.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/controllers/validation/binding-tracker.ts
     var CONTEXT = "validation-binding-tracker";
     var ValidationBindingTrackerViewPlugin = /*#__PURE__*/ function() {
         function ValidationBindingTrackerViewPlugin(options) {
@@ -6188,7 +6188,7 @@ var Player = function() {
         ]);
         return ValidationBindingTrackerViewPlugin;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/validation/controller.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/controllers/validation/controller.ts
     var SCHEMA_VALIDATION_PROVIDER_NAME = "schema";
     var VIEW_VALIDATION_PROVIDER_NAME = "view";
     var VALIDATION_PROVIDER_NAME_SYMBOL = Symbol.for("validation-provider-name");
@@ -6759,7 +6759,7 @@ var Player = function() {
         ]);
         return ValidationController;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/view/store.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/controllers/view/store.ts
     var LocalStateStore = /*#__PURE__*/ function() {
         function LocalStateStore(onUpdate) {
             _class_call_check(this, LocalStateStore);
@@ -6836,7 +6836,7 @@ var Player = function() {
         ]);
         return LocalStateStore;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/view/asset-transform.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/controllers/view/asset-transform.ts
     function findUp(node, target) {
         if (node === target) {
             return true;
@@ -6935,9 +6935,9 @@ var Player = function() {
         ]);
         return AssetTransformCorePlugin;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/view/controller.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/controllers/view/controller.ts
     var import_queue_microtask = __toESM(require_queue_microtask());
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
     var import_sorted_array = __toESM(require_sorted_array(), 1);
     function traverseObj(object) {
         var path = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [], pairs = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : /* @__PURE__ */ new Map();
@@ -7066,7 +7066,7 @@ var Player = function() {
         ]);
         return Registry;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/view/controller.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/controllers/view/controller.ts
     var ViewController = /*#__PURE__*/ function() {
         function ViewController(initialViews, options) {
             var _this = this;
@@ -7185,7 +7185,7 @@ var Player = function() {
         ]);
         return ViewController;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/data/utils.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/controllers/data/utils.ts
     var ReadOnlyDataController = /*#__PURE__*/ function() {
         function ReadOnlyDataController(controller, logger) {
             _class_call_check(this, ReadOnlyDataController);
@@ -7217,7 +7217,7 @@ var Player = function() {
         ]);
         return ReadOnlyDataController;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/data/controller.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/controllers/data/controller.ts
     var DataController = /*#__PURE__*/ function() {
         function DataController(model, options) {
             _class_call_check(this, DataController);
@@ -7387,7 +7387,7 @@ var Player = function() {
         ]);
         return DataController;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/constants/utils.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/controllers/constants/utils.ts
     function flatten(obj) {
         var roots = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [], sep = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : ".";
         return Object.keys(obj).reduce(function(memo, prop) {
@@ -7399,7 +7399,7 @@ var Player = function() {
             ]).join(sep), obj[prop]));
         }, {});
     }
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/constants/index.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/controllers/constants/index.ts
     var ConstantsController = /*#__PURE__*/ function() {
         function ConstantsController() {
             _class_call_check(this, ConstantsController);
@@ -7454,7 +7454,7 @@ var Player = function() {
         ]);
         return ConstantsController;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/plugins/flow-exp-plugin.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/plugins/flow-exp-plugin.ts
     var FlowExpPlugin = /*#__PURE__*/ function() {
         function FlowExpPlugin() {
             _class_call_check(this, FlowExpPlugin);
@@ -7500,7 +7500,7 @@ var Player = function() {
         ]);
         return FlowExpPlugin;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/plugins/default-exp-plugin.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/plugins/default-exp-plugin.ts
     var createFormatFunction = function(schema) {
         var handler = function(ctx, value, formatName) {
             var _schema_getFormatterForType;
@@ -7555,12 +7555,12 @@ var Player = function() {
         ]);
         return DefaultExpPlugin;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/types.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/types.ts
     var NOT_STARTED_STATE = {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/plugins/default-view-plugin.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/plugins/default-view-plugin.ts
     var DefaultViewPlugin = /*#__PURE__*/ function() {
         function DefaultViewPlugin() {
             _class_call_check(this, DefaultViewPlugin);
@@ -7589,7 +7589,7 @@ var Player = function() {
         ]);
         return DefaultViewPlugin;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/player.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/player/src/player.ts
     var PLAYER_VERSION = "__VERSION__";
     var COMMIT = "__GIT_COMMIT__";
     var _Player = /*#__PURE__*/ function() {

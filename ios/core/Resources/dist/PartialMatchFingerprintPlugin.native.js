@@ -65,7 +65,7 @@ var PartialMatchFingerprintPlugin = function() {
             value: true
         }), mod);
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/partial-match-fingerprint/core/src/index.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/partial-match-fingerprint/core/src/index.ts
     var src_exports = {};
     __export(src_exports, {
         PartialMatchFingerprintPlugin: function() {

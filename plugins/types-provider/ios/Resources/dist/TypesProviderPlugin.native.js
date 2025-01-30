@@ -111,7 +111,7 @@ var TypesProviderPlugin = function() {
             value: true
         }), mod);
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/types-provider/core/src/index.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/types-provider/core/src/index.ts
     var src_exports = {};
     __export(src_exports, {
         TypesProviderPlugin: function() {

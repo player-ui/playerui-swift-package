@@ -44,7 +44,7 @@ function _unsupported_iterable_to_array(o, minLen) {
     if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _array_like_to_array(o, minLen);
 }
 var PubSubPlugin = function() {
-    var splitEvent = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/pubsub/core/src/pubsub.ts
+    var splitEvent = // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/pubsub/core/src/pubsub.ts
     function splitEvent(event) {
         return event.split(".").reduce(function(prev, curr, index) {
             if (index === 0) {
@@ -57,7 +57,7 @@ var PubSubPlugin = function() {
             ]);
         }, []);
     };
-    var getPubSubPlugin = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/pubsub/core/src/utils.ts
+    var getPubSubPlugin = // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/pubsub/core/src/utils.ts
     function getPubSubPlugin(player) {
         var existing = player.findPlugin(PubSubPluginSymbol);
         var plugin = existing || new PubSubPlugin();
@@ -112,7 +112,7 @@ var PubSubPlugin = function() {
             value: true
         }), mod);
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/pubsub/core/src/index.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/pubsub/core/src/index.ts
     var src_exports = {};
     __export(src_exports, {
         PubSubHandlerPlugin: function() {
@@ -344,9 +344,9 @@ var PubSubPlugin = function() {
         return TinyPubSub;
     }();
     var pubsub = new TinyPubSub();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/pubsub/core/src/symbols.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/pubsub/core/src/symbols.ts
     var PubSubPluginSymbol = Symbol.for("PubSubPlugin");
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/pubsub/core/src/plugin.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/pubsub/core/src/plugin.ts
     var _PubSubPlugin = /*#__PURE__*/ function() {
         function _PubSubPlugin(config) {
             _class_call_check(this, _PubSubPlugin);
@@ -440,7 +440,7 @@ var PubSubPlugin = function() {
     }();
     _PubSubPlugin.Symbol = PubSubPluginSymbol;
     var PubSubPlugin = _PubSubPlugin;
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/pubsub/core/src/handler.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/pubsub/core/src/handler.ts
     var PubSubHandlerPlugin = /*#__PURE__*/ function() {
         function PubSubHandlerPlugin(subscriptions) {
             _class_call_check(this, PubSubHandlerPlugin);

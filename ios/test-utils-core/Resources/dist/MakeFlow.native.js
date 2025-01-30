@@ -52,7 +52,7 @@ function _object_spread_props(target, source) {
     return target;
 }
 var MakeFlow = function() {
-    var unwrapJSend = // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/make-flow/src/index.ts
+    var unwrapJSend = // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/make-flow/src/index.ts
     function unwrapJSend(obj) {
         var isJSend = "status" in obj && "data" in obj;
         if (isJSend) {
@@ -106,7 +106,7 @@ var MakeFlow = function() {
             value: true
         }), mod);
     };
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/make-flow/src/index.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/make-flow/src/index.ts
     var src_exports = {};
     __export(src_exports, {
         ObjType: function() {
@@ -119,7 +119,7 @@ var MakeFlow = function() {
             return makeFlow;
         }
     });
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/make-flow/src/identify.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/make-flow/src/identify.ts
     var ObjType = /* @__PURE__ */ function(ObjType2) {
         ObjType2[ObjType2["FLOW"] = 0] = "FLOW";
         ObjType2[ObjType2["ASSET"] = 1] = "ASSET";

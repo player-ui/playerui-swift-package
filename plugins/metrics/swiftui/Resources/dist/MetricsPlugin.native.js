@@ -402,7 +402,7 @@ function _ts_generator(thisArg, body) {
     }
 }
 var MetricsPlugin = function() {
-    var equalToOrIn = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/tapable-ts@0.2.4/node_modules/tapable-ts/dist/hooks.mjs
+    var equalToOrIn = // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/tapable-ts@0.2.4/node_modules/tapable-ts/dist/hooks.mjs
     function equalToOrIn(value, check) {
         if (Array.isArray(check)) {
             return check.includes(value);
@@ -419,7 +419,7 @@ var MetricsPlugin = function() {
         }
         return (_tap = tap).callback.apply(_tap, _to_consumable_array(args));
     };
-    var dlv_es_default = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/dlv@1.1.3/node_modules/dlv/dist/dlv.es.js
+    var dlv_es_default = // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/dlv@1.1.3/node_modules/dlv/dist/dlv.es.js
     function dlv_es_default(t2, e, l, n, r) {
         for(e = e.split ? e.split(".") : e, n = 0; n < e.length; n++)t2 = t2 ? t2[e[n]] : r;
         return t2 === r ? l : t2;
@@ -1527,9 +1527,9 @@ var MetricsPlugin = function() {
             value: true
         }), mod);
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/ts-nested-error@1.2.1/node_modules/ts-nested-error/build/nested-error.js
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/ts-nested-error@1.2.1/node_modules/ts-nested-error/build/nested-error.js
     var require_nested_error = __commonJS({
-        "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/ts-nested-error@1.2.1/node_modules/ts-nested-error/build/nested-error.js": function(exports) {
+        "../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/ts-nested-error@1.2.1/node_modules/ts-nested-error/build/nested-error.js": function(exports) {
             "use strict";
             Object.defineProperty(exports, "__esModule", {
                 value: true
@@ -1630,9 +1630,9 @@ var MetricsPlugin = function() {
             exports.toError = toError;
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/timm@1.7.1/node_modules/timm/lib/timm.js
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/timm@1.7.1/node_modules/timm/lib/timm.js
     var require_timm = __commonJS({
-        "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/timm@1.7.1/node_modules/timm/lib/timm.js": function(exports) {
+        "../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/timm@1.7.1/node_modules/timm/lib/timm.js": function(exports) {
             "use strict";
             Object.defineProperty(exports, "__esModule", {
                 value: true
@@ -1920,9 +1920,9 @@ var MetricsPlugin = function() {
             exports.default = _default;
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/p-defer@3.0.0/node_modules/p-defer/index.js
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/p-defer@3.0.0/node_modules/p-defer/index.js
     var require_p_defer = __commonJS({
-        "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/p-defer@3.0.0/node_modules/p-defer/index.js": function(exports, module) {
+        "../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/p-defer@3.0.0/node_modules/p-defer/index.js": function(exports, module) {
             "use strict";
             var pDefer = function() {
                 var deferred2 = {};
@@ -1935,9 +1935,9 @@ var MetricsPlugin = function() {
             module.exports = pDefer;
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/queue-microtask@1.2.3/node_modules/queue-microtask/index.js
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/queue-microtask@1.2.3/node_modules/queue-microtask/index.js
     var require_queue_microtask = __commonJS({
-        "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/queue-microtask@1.2.3/node_modules/queue-microtask/index.js": function(exports, module) {
+        "../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/queue-microtask@1.2.3/node_modules/queue-microtask/index.js": function(exports, module) {
             "use strict";
             var promise;
             module.exports = typeof queueMicrotask === "function" ? queueMicrotask.bind(typeof window !== "undefined" ? window : global) : function(cb) {
@@ -1949,9 +1949,9 @@ var MetricsPlugin = function() {
             };
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js
     var require_sorted_array = __commonJS({
-        "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js": function(exports, module) {
+        "../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js": function(exports, module) {
             "use strict";
             var SortedArray2 = function() {
                 var SortedArray3 = defclass({
@@ -2030,7 +2030,7 @@ var MetricsPlugin = function() {
             });
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/metrics/core/src/index.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/metrics/core/src/index.ts
     var src_exports = {};
     __export(src_exports, {
         MetricsCorePlugin: function() {
@@ -2421,16 +2421,16 @@ var MetricsPlugin = function() {
         ]);
         return AsyncSeriesWaterfallHook;
     }(Hook);
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_ts_nested_error = __toESM(require_nested_error(), 1);
     var import_ts_nested_error2 = __toESM(require_nested_error(), 1);
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_timm = __toESM(require_timm(), 1);
     var import_ts_nested_error3 = __toESM(require_nested_error(), 1);
     var import_timm2 = __toESM(require_timm(), 1);
     var import_timm3 = __toESM(require_timm(), 1);
     var import_timm4 = __toESM(require_timm(), 1);
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/dequal@2.0.3/node_modules/dequal/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/dequal@2.0.3/node_modules/dequal/dist/index.mjs
     var has = Object.prototype.hasOwnProperty;
     function dequal(foo, bar) {
         var ctor, len, tmp;
@@ -2534,7 +2534,7 @@ var MetricsPlugin = function() {
         }
         return foo !== foo && bar !== bar;
     }
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_timm5 = __toESM(require_timm(), 1);
     var import_timm6 = __toESM(require_timm(), 1);
     var import_timm7 = __toESM(require_timm(), 1);
@@ -2543,7 +2543,7 @@ var MetricsPlugin = function() {
     var import_p_defer2 = __toESM(require_p_defer(), 1);
     var import_timm9 = __toESM(require_timm(), 1);
     var import_queue_microtask = __toESM(require_queue_microtask(), 1);
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
     var import_sorted_array = __toESM(require_sorted_array(), 1);
     function traverseObj(object) {
         var path = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [], pairs = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : /* @__PURE__ */ new Map();
@@ -2672,7 +2672,7 @@ var MetricsPlugin = function() {
         ]);
         return Registry;
     }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var __defProp2 = Object.defineProperty;
     var __export2 = function(target, all) {
         for(var name in all)__defProp2(target, name, {
@@ -7495,7 +7495,7 @@ var MetricsPlugin = function() {
         version: PLAYER_VERSION,
         commit: COMMIT
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+beacon-plugin@0.0.0/node_modules/@player-ui/beacon-plugin/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+beacon-plugin@0.0.0/node_modules/@player-ui/beacon-plugin/dist/index.mjs
     var import_timm10 = __toESM(require_timm(), 1);
     var BeaconPluginSymbol = Symbol.for("BeaconPlugin");
     var _BeaconPlugin = /*#__PURE__*/ function() {
@@ -7650,10 +7650,10 @@ var MetricsPlugin = function() {
     }();
     _BeaconPlugin.Symbol = BeaconPluginSymbol;
     var BeaconPlugin = _BeaconPlugin;
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/metrics/core/src/symbols.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/metrics/core/src/symbols.ts
     var MetricsCorePluginSymbol = Symbol.for("MetricsCorePlugin");
     var MetricsViewBeaconPluginContextSymbol = Symbol.for("MetricsViewBeaconPluginContext");
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/metrics/core/src/metrics.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/metrics/core/src/metrics.ts
     var defaultGetTime = typeof performance === "undefined" ? function() {
         return Date.now();
     } : function() {

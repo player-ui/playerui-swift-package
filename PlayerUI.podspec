@@ -7,7 +7,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PlayerUI'
-  s.version          = '0.9.1'
+  s.version          = '0.9.2'
   s.summary          = 'A native renderer for Player content'
   s.swift_versions   = ['5.1']
   s.description      = <<-DESC

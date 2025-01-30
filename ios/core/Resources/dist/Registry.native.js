@@ -77,7 +77,7 @@ function _unsupported_iterable_to_array(o, minLen) {
     if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _array_like_to_array(o, minLen);
 }
 var Registry = function() {
-    var dlv_es_default = // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/dlv@1.1.3/node_modules/dlv/dist/dlv.es.js
+    var dlv_es_default = // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/dlv@1.1.3/node_modules/dlv/dist/dlv.es.js
     function dlv_es_default(t, e, l, n, r) {
         for(e = e.split ? e.split(".") : e, n = 0; n < e.length; n++)t = t ? t[e[n]] : r;
         return t === r ? l : t;
@@ -113,7 +113,7 @@ var Registry = function() {
         matchFunction.count = pairs.size;
         return matchFunction;
     };
-    var createBasicMatcher = // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/partial-match-registry/src/index.ts
+    var createBasicMatcher = // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/partial-match-registry/src/index.ts
     function createBasicMatcher(seed) {
         var matcher = function(match) {
             return seed === match;
@@ -186,9 +186,9 @@ var Registry = function() {
             value: true
         }), mod);
     };
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js
     var require_sorted_array = __commonJS({
-        "../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js": function(exports, module) {
+        "../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js": function(exports, module) {
             "use strict";
             var SortedArray2 = function() {
                 var SortedArray3 = defclass({
@@ -267,7 +267,7 @@ var Registry = function() {
             });
         }
     });
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/partial-match-registry/src/index.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/partial-match-registry/src/index.ts
     var src_exports = {};
     __export(src_exports, {
         Registry: function() {
@@ -278,7 +278,7 @@ var Registry = function() {
         }
     });
     var import_sorted_array = __toESM(require_sorted_array());
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/partial-match-registry/src/deep-partial-matcher.ts
+    // ../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/core/partial-match-registry/src/deep-partial-matcher.ts
     function traverseObj(object) {
         var path = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [], pairs = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : /* @__PURE__ */ new Map();
         var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;

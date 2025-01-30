@@ -159,7 +159,7 @@ function _unsupported_iterable_to_array(o, minLen) {
     if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _array_like_to_array(o, minLen);
 }
 var ReferenceAssetsPlugin = function() {
-    var dlv_es_default = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/dlv@1.1.3/node_modules/dlv/dist/dlv.es.js
+    var dlv_es_default = // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/dlv@1.1.3/node_modules/dlv/dist/dlv.es.js
     function dlv_es_default(t, e, l, n, r) {
         for(e = e.split ? e.split(".") : e, n = 0; n < e.length; n++)t = t ? t[e[n]] : r;
         return t === r ? l : t;
@@ -202,7 +202,7 @@ var ReferenceAssetsPlugin = function() {
         matcher.count = 1;
         return matcher;
     };
-    var composeTransforms = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+asset-transform-plugin@0.0.0/node_modules/@player-ui/asset-transform-plugin/dist/index.mjs
+    var composeTransforms = // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+asset-transform-plugin@0.0.0/node_modules/@player-ui/asset-transform-plugin/dist/index.mjs
     function composeTransforms() {
         for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
             args[_key] = arguments[_key];
@@ -290,7 +290,7 @@ var ReferenceAssetsPlugin = function() {
         });
         return registry;
     };
-    var isBackAction = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/action/transform.ts
+    var isBackAction = // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/reference-assets/core/src/assets/action/transform.ts
     function isBackAction(action) {
         return action.value === "Prev";
     };
@@ -359,9 +359,9 @@ var ReferenceAssetsPlugin = function() {
             value: true
         }), mod);
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js
     var require_sorted_array = __commonJS({
-        "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js": function(exports, module) {
+        "../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js": function(exports, module) {
             "use strict";
             var SortedArray2 = function() {
                 var SortedArray3 = defclass({
@@ -440,7 +440,7 @@ var ReferenceAssetsPlugin = function() {
             });
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/index.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/reference-assets/core/src/index.ts
     var src_exports = {};
     __export(src_exports, {
         ReferenceAssetsPlugin: function() {
@@ -468,7 +468,7 @@ var ReferenceAssetsPlugin = function() {
             return isBackAction;
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/input/transform.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/reference-assets/core/src/assets/input/transform.ts
     var inputTransform = function(asset, options) {
         var _options_validation, _options_validation1;
         return _object_spread_props(_object_spread({}, asset), {
@@ -501,9 +501,9 @@ var ReferenceAssetsPlugin = function() {
             dataType: asset.binding === void 0 ? void 0 : (_options_validation1 = options.validation) === null || _options_validation1 === void 0 ? void 0 : _options_validation1.type(asset.binding)
         });
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
     var import_sorted_array = __toESM(require_sorted_array(), 1);
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
     function traverseObj(object) {
         var path = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [], pairs = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : /* @__PURE__ */ new Map();
         var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
@@ -698,7 +698,7 @@ var ReferenceAssetsPlugin = function() {
         });
     };
     var actionTransform = compose(transform, backIconTransform, composeBefore(expPropTransform));
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/info/transform.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/reference-assets/core/src/assets/info/transform.ts
     var infoTransform = function(infoAsset) {
         var actions = infoAsset === null || infoAsset === void 0 ? void 0 : infoAsset.actions;
         var segmentedActions = actions === null || actions === void 0 ? void 0 : actions.reduce(function(segmentedActionsArray, action) {
@@ -712,7 +712,7 @@ var ReferenceAssetsPlugin = function() {
             segmentedActions: segmentedActions
         });
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/image/transform.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/reference-assets/core/src/assets/image/transform.ts
     var getImageAlt = function(props) {
         var metaData = props.metaData, placeholder = props.placeholder;
         if (metaData.accessibility) return metaData.accessibility;
@@ -726,7 +726,7 @@ var ReferenceAssetsPlugin = function() {
         });
         return newImage;
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/choice/transform.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/reference-assets/core/src/assets/choice/transform.ts
     var choiceTransform = function(asset, options) {
         var _options_validation, _options_validation1;
         var items = asset.items, binding = asset.binding, rest = _object_without_properties(asset, [
@@ -775,7 +775,7 @@ var ReferenceAssetsPlugin = function() {
             dataType: assetHasBinding ? (_options_validation1 = options.validation) === null || _options_validation1 === void 0 ? void 0 : _options_validation1.type(binding) : void 0
         });
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugin.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/reference-assets/core/src/plugin.ts
     var ReferenceAssetsPlugin = /*#__PURE__*/ function() {
         function ReferenceAssetsPlugin() {
             _class_call_check(this, ReferenceAssetsPlugin);
