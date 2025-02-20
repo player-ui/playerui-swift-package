@@ -7548,12 +7548,12 @@ var CommonExpressionsPlugin = function() {
         if (args.every(function(v) {
             return Array.isArray(v);
         })) {
-            var arrayArgs = args;
-            return arrayArgs.reduce(function(merged, next) {
+            var merged = [];
+            args.forEach(function(next) {
                 var _merged;
                 (_merged = merged).push.apply(_merged, _to_consumable_array(next));
-                return merged;
             });
+            return merged;
         }
         return args.reduce(function(merged, next) {
             return merged + (next !== null && next !== void 0 ? next : "");
