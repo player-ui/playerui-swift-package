@@ -4510,6 +4510,15 @@ var CommonTypesPlugin = function() {
         ]);
         return Parser;
     }();
+    function unpackAndPush(item, initial) {
+        if (Array.isArray(item)) {
+            item.forEach(function(i) {
+                unpackAndPush(i, initial);
+            });
+        } else {
+            initial.push(item);
+        }
+    }
     var withContext = function(model) {
         return {
             get: function(binding, options) {
@@ -4730,7 +4739,13 @@ var CommonTypesPlugin = function() {
                         var newValues = resolvedAST.values.map(function(mValue) {
                             var mTree = _this.computeTree(mValue, rawParentToPassIn, dataChanges, cacheUpdate, resolveOptions, resolvedAST, prevASTMap);
                             if (mTree.value !== void 0 && mTree.value !== null) {
-                                childValue.push(mTree.value);
+                                if (mValue.type === "async" && mValue.flatten && mTree.value.asset && Array.isArray(mTree.value.asset.values)) {
+                                    mTree.value.asset.values.forEach(function(v) {
+                                        unpackAndPush(v, childValue);
+                                    });
+                                } else {
+                                    childValue.push(mTree.value);
+                                }
                             }
                             mTree.dependencies.forEach(function(bindingDep) {
                                 return childDependencies.add(bindingDep);
