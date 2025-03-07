@@ -1658,7 +1658,7 @@ var Player = function() {
             });
             exports.clone = clone2;
             exports.addLast = addLast2;
-            exports.addFirst = addFirst;
+            exports.addFirst = addFirst2;
             exports.removeLast = removeLast;
             exports.removeFirst = removeFirst;
             exports.insert = insert;
@@ -1708,7 +1708,7 @@ var Player = function() {
                     val
                 ]);
             }
-            function addFirst(array, val) {
+            function addFirst2(array, val) {
                 if (Array.isArray(val)) return val.concat(array);
                 return [
                     val
@@ -1918,7 +1918,7 @@ var Player = function() {
             var timm = {
                 clone: clone2,
                 addLast: addLast2,
-                addFirst: addFirst,
+                addFirst: addFirst2,
                 removeLast: removeLast,
                 removeFirst: removeFirst,
                 insert: insert,
@@ -4935,9 +4935,18 @@ var Player = function() {
                                 return childDependencies.add(binding);
                             });
                             if (childValue) {
+                                if (childNode.type === "template" /* Template */ ) {
+                                    if (childNode.placement === "append") {
+                                        var arr = (0, import_timm5.addLast)(dlv_es_default(resolved, child.path, []), childValue);
+                                        resolved = (0, import_timm5.setIn)(resolved, child.path, arr);
+                                    } else if (childNode.placement === "prepend") {
+                                        var arr1 = (0, import_timm5.addFirst)(dlv_es_default(resolved, child.path, []), childValue);
+                                        resolved = (0, import_timm5.setIn)(resolved, child.path, arr1);
+                                    }
+                                }
                                 if (childNode.type === "multi-node" /* MultiNode */  && !childNode.override) {
-                                    var arr = (0, import_timm5.addLast)(dlv_es_default(resolved, child.path, []), childValue);
-                                    resolved = (0, import_timm5.setIn)(resolved, child.path, arr);
+                                    var arr2 = (0, import_timm5.addLast)(dlv_es_default(resolved, child.path, []), childValue);
+                                    resolved = (0, import_timm5.setIn)(resolved, child.path, arr2);
                                 } else {
                                     resolved = (0, import_timm5.setIn)(resolved, child.path, childValue);
                                 }
@@ -5224,6 +5233,7 @@ var Player = function() {
         return _Builder;
     }();
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/plugins/template.ts
+    var templateSymbol = Symbol("template");
     var TemplatePlugin = /*#__PURE__*/ function() {
         function TemplatePlugin(options) {
             _class_call_check(this, TemplatePlugin);
@@ -5289,11 +5299,11 @@ var Player = function() {
                             values.push(parsed);
                         }
                     });
-                    var result = {
+                    var result = _define_property({
                         type: "multi-node" /* MultiNode */ ,
                         override: false,
                         values: values
-                    };
+                    }, templateSymbol, node.placement);
                     return result;
                 }
             },
@@ -5307,6 +5317,38 @@ var Player = function() {
                         }
                         return node;
                     });
+                    function getTemplateSymbolValue(node) {
+                        if (node.type === "multi-node" /* MultiNode */ ) {
+                            return node[templateSymbol];
+                        } else if (node.type === "template" /* Template */ ) {
+                            return node.placement;
+                        }
+                        return void 0;
+                    }
+                    parser.hooks.onCreateASTNode.tap("template", function(node) {
+                        if (node && (node.type === "view" /* View */  || node.type === "asset" /* Asset */ ) && Array.isArray(node.children)) {
+                            node.children = node.children.sort(function(a, b) {
+                                var pathsEqual = a.path.join() === b.path.join();
+                                if (pathsEqual) {
+                                    var aPlacement = getTemplateSymbolValue(a.value);
+                                    var bPlacement = getTemplateSymbolValue(b.value);
+                                    if (aPlacement !== void 0 && bPlacement === void 0) {
+                                        return aPlacement === "prepend" ? -1 : 1;
+                                    } else if (bPlacement !== void 0 && aPlacement === void 0) {
+                                        return bPlacement === "prepend" ? 1 : -1;
+                                    } else if (aPlacement !== void 0 && bPlacement !== void 0) {
+                                        if (aPlacement === bPlacement) {
+                                            return 0;
+                                        }
+                                        return aPlacement === "prepend" ? -1 : 1;
+                                    }
+                                    return 0;
+                                }
+                                return 0;
+                            });
+                        }
+                        return node;
+                    });
                     parser.hooks.parseNode.tap("template", function(obj, _nodeType, options, childOptions) {
                         if (childOptions && hasTemplateKey(childOptions.key)) {
                             return obj.map(function(template) {
@@ -5316,7 +5358,8 @@ var Player = function() {
                                     depth: (_options_templateDepth = options.templateDepth) !== null && _options_templateDepth !== void 0 ? _options_templateDepth : 0,
                                     data: template.data,
                                     template: template.value,
-                                    dynamic: (_template_dynamic = template.dynamic) !== null && _template_dynamic !== void 0 ? _template_dynamic : false
+                                    dynamic: (_template_dynamic = template.dynamic) !== null && _template_dynamic !== void 0 ? _template_dynamic : false,
+                                    placement: template.placement
                                 }, template);
                                 if (!templateAST) return;
                                 if (templateAST.type === "multi-node" /* MultiNode */ ) {
