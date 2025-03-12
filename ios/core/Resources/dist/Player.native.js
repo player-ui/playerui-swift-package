@@ -4954,13 +4954,7 @@ var Player = function() {
                         var newValues = resolvedAST.values.map(function(mValue) {
                             var mTree = _this.computeTree(mValue, rawParentToPassIn, dataChanges, cacheUpdate, resolveOptions, resolvedAST, prevASTMap);
                             if (mTree.value !== void 0 && mTree.value !== null) {
-                                if (mValue.type === "async" /* Async */  && mValue.flatten && mTree.value.asset && Array.isArray(mTree.value.asset.values)) {
-                                    mTree.value.asset.values.forEach(function(v) {
-                                        unpackAndPush(v, childValue);
-                                    });
-                                } else {
-                                    childValue.push(mTree.value);
-                                }
+                                childValue.push(mTree.value);
                             }
                             mTree.dependencies.forEach(function(bindingDep) {
                                 return childDependencies.add(bindingDep);
@@ -5118,10 +5112,10 @@ var Player = function() {
     }();
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/builder/index.ts
     var Builder = /*#__PURE__*/ function() {
-        function _Builder() {
-            _class_call_check(this, _Builder);
+        function Builder() {
+            _class_call_check(this, Builder);
         }
-        _create_class(_Builder, null, [
+        _create_class(Builder, null, [
             {
                 key: "asset",
                 value: /**
@@ -5133,14 +5127,6 @@ var Player = function() {
                         type: "asset" /* Asset */ ,
                         value: value
                     };
-                }
-            },
-            {
-                key: "assetWrapper",
-                value: function assetWrapper(value) {
-                    var valueNode = _Builder.value();
-                    _Builder.addChild(valueNode, "asset", value);
-                    return valueNode;
                 }
             },
             {
@@ -5162,7 +5148,7 @@ var Player = function() {
      * Creates a multiNode and associates the multiNode as the parent
      * of all the value nodes
      *
-     * @param values - the value, applicability or async nodes to put in the multinode
+     * @param values - the value or applicability nodes to put in the multinode
      */ function multiNode() {
                     for(var _len = arguments.length, values = new Array(_len), _key = 0; _key < _len; _key++){
                         values[_key] = arguments[_key];
@@ -5176,27 +5162,6 @@ var Player = function() {
                         v.parent = m;
                     });
                     return m;
-                }
-            },
-            {
-                key: "asyncNode",
-                value: /**
-     * Creates an async node
-     *
-     * @param id - the id of async node. It should be identical for each async node
-     */ function asyncNode(id) {
-                    var flatten2 = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
-                    return {
-                        id: id,
-                        type: "async" /* Async */ ,
-                        flatten: flatten2,
-                        value: {
-                            type: "value" /* Value */ ,
-                            value: {
-                                id: id
-                            }
-                        }
-                    };
                 }
             },
             {
@@ -5221,7 +5186,7 @@ var Player = function() {
                 }
             }
         ]);
-        return _Builder;
+        return Builder;
     }();
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/plugins/template.ts
     var TemplatePlugin = /*#__PURE__*/ function() {
