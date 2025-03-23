@@ -4692,9 +4692,27 @@ var ReferenceAssetsPlugin = function() {
         return Parser;
     }();
     function unpackAndPush(item, initial) {
-        if (Array.isArray(item)) {
-            item.forEach(function(i) {
+        if (item.asset.values && Array.isArray(item.asset.values)) {
+            item.asset.values.forEach(function(i) {
                 unpackAndPush(i, initial);
+            });
+        } else {
+            initial.push(item);
+        }
+    }
+    function unpackAndPushNode(item, initial) {
+        if (Array.isArray(item)) {
+            item.forEach(function(node) {
+                var _node_children_, _node_children, _node_children_1, _node_children1;
+                if ("children" in node && ((_node_children = node.children) === null || _node_children === void 0 ? void 0 : (_node_children_ = _node_children[0]) === null || _node_children_ === void 0 ? void 0 : _node_children_.value.type) === "asset" && ((_node_children1 = node.children) === null || _node_children1 === void 0 ? void 0 : (_node_children_1 = _node_children1[0]) === null || _node_children_1 === void 0 ? void 0 : _node_children_1.value).children) {
+                    var _node_children__value_children_, _node_children__value_children, _node_children_2, _node_children2;
+                    if (((_node_children__value_children = ((_node_children2 = node.children) === null || _node_children2 === void 0 ? void 0 : (_node_children_2 = _node_children2[0]) === null || _node_children_2 === void 0 ? void 0 : _node_children_2.value).children) === null || _node_children__value_children === void 0 ? void 0 : (_node_children__value_children_ = _node_children__value_children[0]) === null || _node_children__value_children_ === void 0 ? void 0 : _node_children__value_children_.value.type) === "multi-node") {
+                        var _node_children__value_children_1, _node_children__value_children1, _node_children_3, _node_children3;
+                        unpackAndPushNode(((_node_children__value_children1 = ((_node_children3 = node.children) === null || _node_children3 === void 0 ? void 0 : (_node_children_3 = _node_children3[0]) === null || _node_children_3 === void 0 ? void 0 : _node_children_3.value).children) === null || _node_children__value_children1 === void 0 ? void 0 : (_node_children__value_children_1 = _node_children__value_children1[0]) === null || _node_children__value_children_1 === void 0 ? void 0 : _node_children__value_children_1.value).values, initial);
+                    }
+                } else {
+                    initial.push(node);
+                }
             });
         } else {
             initial.push(item);
@@ -4822,7 +4840,7 @@ var ReferenceAssetsPlugin = function() {
                 key: "computeTree",
                 value: function computeTree(node, rawParent, dataChanges, cacheUpdate, options, partiallyResolvedParent, prevASTMap) {
                     var _this = this;
-                    var _partiallyResolvedParent_parent;
+                    var _partiallyResolvedParent_parent_parent, _partiallyResolvedParent_parent, _resolvedAST_parent, _partiallyResolvedParent_parent1;
                     var dependencyModel = new DependencyModel(options.data.model);
                     dependencyModel.trackSubset("core");
                     var depModelWithParser = withContext(withParser(dependencyModel, this.options.parseBinding));
@@ -4848,7 +4866,8 @@ var ReferenceAssetsPlugin = function() {
                     var resolvedAST = (_this_hooks_beforeResolve_call = this.hooks.beforeResolve.call(clonedNode, resolveOptions)) !== null && _this_hooks_beforeResolve_call !== void 0 ? _this_hooks_beforeResolve_call : {
                         type: "empty"
                     };
-                    var isNestedMultiNode = resolvedAST.type === "multi-node" && (partiallyResolvedParent === null || partiallyResolvedParent === void 0 ? void 0 : (_partiallyResolvedParent_parent = partiallyResolvedParent.parent) === null || _partiallyResolvedParent_parent === void 0 ? void 0 : _partiallyResolvedParent_parent.type) === "multi-node" && partiallyResolvedParent.type === "value";
+                    var isNestedMultiNodeWithAsync = resolvedAST.type === "multi-node" && (partiallyResolvedParent === null || partiallyResolvedParent === void 0 ? void 0 : (_partiallyResolvedParent_parent = partiallyResolvedParent.parent) === null || _partiallyResolvedParent_parent === void 0 ? void 0 : (_partiallyResolvedParent_parent_parent = _partiallyResolvedParent_parent.parent) === null || _partiallyResolvedParent_parent_parent === void 0 ? void 0 : _partiallyResolvedParent_parent_parent.type) === "multi-node" && partiallyResolvedParent.parent.type === "value" && ((_resolvedAST_parent = resolvedAST.parent) === null || _resolvedAST_parent === void 0 ? void 0 : _resolvedAST_parent.type) === "asset" && resolvedAST.parent.value.id.includes("async");
+                    var isNestedMultiNode = resolvedAST.type === "multi-node" && (partiallyResolvedParent === null || partiallyResolvedParent === void 0 ? void 0 : (_partiallyResolvedParent_parent1 = partiallyResolvedParent.parent) === null || _partiallyResolvedParent_parent1 === void 0 ? void 0 : _partiallyResolvedParent_parent1.type) === "multi-node" && partiallyResolvedParent.type === "value";
                     if (previousResult && shouldUseLastValue) {
                         var update2 = _object_spread_props(_object_spread({}, previousResult), {
                             updated: false
@@ -4882,7 +4901,11 @@ var ReferenceAssetsPlugin = function() {
                         repopulateASTMapFromCache(previousResult, node, rawParent);
                         return update2;
                     }
-                    resolvedAST.parent = partiallyResolvedParent;
+                    if (isNestedMultiNodeWithAsync) {
+                        resolvedAST.parent = partiallyResolvedParent.parent;
+                    } else {
+                        resolvedAST.parent = partiallyResolvedParent;
+                    }
                     resolveOptions.node = resolvedAST;
                     this.ASTMap.set(resolvedAST, node);
                     var resolved = this.hooks.resolve.call(void 0, resolvedAST, resolveOptions);
@@ -4917,13 +4940,14 @@ var ReferenceAssetsPlugin = function() {
                     } else if (resolvedAST.type === "multi-node") {
                         var childValue = [];
                         var rawParentToPassIn = isNestedMultiNode ? partiallyResolvedParent === null || partiallyResolvedParent === void 0 ? void 0 : partiallyResolvedParent.parent : node;
+                        var hasAsync = resolvedAST.values.find(function(node2) {
+                            return node2.type === "async";
+                        });
                         var newValues = resolvedAST.values.map(function(mValue) {
                             var mTree = _this.computeTree(mValue, rawParentToPassIn, dataChanges, cacheUpdate, resolveOptions, resolvedAST, prevASTMap);
                             if (mTree.value !== void 0 && mTree.value !== null) {
                                 if (mValue.type === "async" && mValue.flatten && mTree.value.asset && Array.isArray(mTree.value.asset.values)) {
-                                    mTree.value.asset.values.forEach(function(v) {
-                                        unpackAndPush(v, childValue);
-                                    });
+                                    unpackAndPush(mTree.value, childValue);
                                 } else {
                                     childValue.push(mTree.value);
                                 }
@@ -4934,7 +4958,13 @@ var ReferenceAssetsPlugin = function() {
                             updated = updated || mTree.updated;
                             return mTree.node;
                         });
-                        resolvedAST.values = newValues;
+                        if (hasAsync) {
+                            var childNodes = [];
+                            unpackAndPushNode(newValues, childNodes);
+                            resolvedAST.values = childNodes;
+                        } else {
+                            resolvedAST.values = newValues;
+                        }
                         resolved = childValue;
                     }
                     childDependencies.forEach(function(bindingDep) {
