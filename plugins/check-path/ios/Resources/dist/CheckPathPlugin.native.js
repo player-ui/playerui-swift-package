@@ -4432,8 +4432,8 @@ var CheckPathPlugin = function() {
         return Parser;
     }();
     function unpackAndPush(item, initial) {
-        if (Array.isArray(item)) {
-            item.forEach(function(i) {
+        if (item.asset.values && Array.isArray(item.asset.values)) {
+            item.asset.values.forEach(function(i) {
                 unpackAndPush(i, initial);
             });
         } else {
@@ -4562,7 +4562,7 @@ var CheckPathPlugin = function() {
                 key: "computeTree",
                 value: function computeTree(node, rawParent, dataChanges, cacheUpdate, options, partiallyResolvedParent, prevASTMap) {
                     var _this = this;
-                    var _partiallyResolvedParent_parent;
+                    var _partiallyResolvedParent_parent_parent, _partiallyResolvedParent_parent, _resolvedAST_parent, _partiallyResolvedParent_parent1;
                     var dependencyModel = new DependencyModel(options.data.model);
                     dependencyModel.trackSubset("core");
                     var depModelWithParser = withContext(withParser(dependencyModel, this.options.parseBinding));
@@ -4588,7 +4588,8 @@ var CheckPathPlugin = function() {
                     var resolvedAST = (_this_hooks_beforeResolve_call = this.hooks.beforeResolve.call(clonedNode, resolveOptions)) !== null && _this_hooks_beforeResolve_call !== void 0 ? _this_hooks_beforeResolve_call : {
                         type: "empty"
                     };
-                    var isNestedMultiNode = resolvedAST.type === "multi-node" && (partiallyResolvedParent === null || partiallyResolvedParent === void 0 ? void 0 : (_partiallyResolvedParent_parent = partiallyResolvedParent.parent) === null || _partiallyResolvedParent_parent === void 0 ? void 0 : _partiallyResolvedParent_parent.type) === "multi-node" && partiallyResolvedParent.type === "value";
+                    var isNestedMultiNodeWithAsync = resolvedAST.type === "multi-node" && (partiallyResolvedParent === null || partiallyResolvedParent === void 0 ? void 0 : (_partiallyResolvedParent_parent = partiallyResolvedParent.parent) === null || _partiallyResolvedParent_parent === void 0 ? void 0 : (_partiallyResolvedParent_parent_parent = _partiallyResolvedParent_parent.parent) === null || _partiallyResolvedParent_parent_parent === void 0 ? void 0 : _partiallyResolvedParent_parent_parent.type) === "multi-node" && partiallyResolvedParent.parent.type === "value" && ((_resolvedAST_parent = resolvedAST.parent) === null || _resolvedAST_parent === void 0 ? void 0 : _resolvedAST_parent.type) === "asset" && resolvedAST.parent.value.id.includes("async");
+                    var isNestedMultiNode = resolvedAST.type === "multi-node" && (partiallyResolvedParent === null || partiallyResolvedParent === void 0 ? void 0 : (_partiallyResolvedParent_parent1 = partiallyResolvedParent.parent) === null || _partiallyResolvedParent_parent1 === void 0 ? void 0 : _partiallyResolvedParent_parent1.type) === "multi-node" && partiallyResolvedParent.type === "value";
                     if (previousResult && shouldUseLastValue) {
                         var update2 = _object_spread_props(_object_spread({}, previousResult), {
                             updated: false
@@ -4622,7 +4623,11 @@ var CheckPathPlugin = function() {
                         repopulateASTMapFromCache(previousResult, node, rawParent);
                         return update2;
                     }
-                    resolvedAST.parent = partiallyResolvedParent;
+                    if (isNestedMultiNodeWithAsync) {
+                        resolvedAST.parent = partiallyResolvedParent.parent;
+                    } else {
+                        resolvedAST.parent = partiallyResolvedParent;
+                    }
                     resolveOptions.node = resolvedAST;
                     this.ASTMap.set(resolvedAST, node);
                     var resolved = this.hooks.resolve.call(void 0, resolvedAST, resolveOptions);
@@ -4661,9 +4666,7 @@ var CheckPathPlugin = function() {
                             var mTree = _this.computeTree(mValue, rawParentToPassIn, dataChanges, cacheUpdate, resolveOptions, resolvedAST, prevASTMap);
                             if (mTree.value !== void 0 && mTree.value !== null) {
                                 if (mValue.type === "async" && mValue.flatten && mTree.value.asset && Array.isArray(mTree.value.asset.values)) {
-                                    mTree.value.asset.values.forEach(function(v) {
-                                        unpackAndPush(v, childValue);
-                                    });
+                                    unpackAndPush(mTree.value, childValue);
                                 } else {
                                     childValue.push(mTree.value);
                                 }
