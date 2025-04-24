@@ -285,7 +285,6 @@ var Registry = function() {
         try {
             for(var _iterator = Object.keys(object)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
                 var key = _step.value;
-                "";
                 var val = object[key];
                 var nestedPath = _to_consumable_array(path).concat([
                     key
