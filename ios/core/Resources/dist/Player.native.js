@@ -4725,8 +4725,8 @@ var Player = function() {
         return Parser;
     }();
     function unpackAndPush(item, initial) {
-        if (Array.isArray(item)) {
-            item.forEach(function(i) {
+        if (item.asset.values && Array.isArray(item.asset.values)) {
+            item.asset.values.forEach(function(i) {
                 unpackAndPush(i, initial);
             });
         } else {
@@ -4955,9 +4955,7 @@ var Player = function() {
                             var mTree = _this.computeTree(mValue, rawParentToPassIn, dataChanges, cacheUpdate, resolveOptions, resolvedAST, prevASTMap);
                             if (mTree.value !== void 0 && mTree.value !== null) {
                                 if (mValue.type === "async" /* Async */  && mValue.flatten && mTree.value.asset && Array.isArray(mTree.value.asset.values)) {
-                                    mTree.value.asset.values.forEach(function(v) {
-                                        unpackAndPush(v, childValue);
-                                    });
+                                    unpackAndPush(mTree.value, childValue);
                                 } else {
                                     childValue.push(mTree.value);
                                 }
@@ -6986,7 +6984,6 @@ var Player = function() {
         try {
             for(var _iterator = Object.keys(object)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
                 var key = _step.value;
-                "";
                 var val = object[key];
                 var nestedPath = _to_consumable_array(path).concat([
                     key
