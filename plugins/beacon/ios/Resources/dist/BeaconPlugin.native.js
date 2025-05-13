@@ -7152,8 +7152,8 @@ var BeaconPlugin = function() {
         ]);
         return DefaultViewPlugin;
     }();
-    var PLAYER_VERSION = typeof __VERSION__ !== "undefined" ? __VERSION__ : "__VERSION__";
-    var COMMIT = typeof __GIT_COMMIT__ !== "undefined" ? __GIT_COMMIT__ : "__GIT_COMMIT__";
+    var PLAYER_VERSION = true ? "0.12.0--canary.642.22872" : "__VERSION__";
+    var COMMIT = true ? "bcaf7bef6960bca2b21ead352496dacc9aff8c9b" : "__GIT_COMMIT__";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
