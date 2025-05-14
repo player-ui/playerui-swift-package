@@ -7103,8 +7103,8 @@ var CheckPathPlugin = function() {
         ]);
         return DefaultViewPlugin;
     }();
-    var PLAYER_VERSION = typeof __VERSION__ !== "undefined" ? __VERSION__ : "__VERSION__";
-    var COMMIT = typeof __GIT_COMMIT__ !== "undefined" ? __GIT_COMMIT__ : "__GIT_COMMIT__";
+    var PLAYER_VERSION = true ? "0.11.1--canary.650.22896" : "__VERSION__";
+    var COMMIT = true ? "204c5b2f8addfd7aa22b508e36a302c3d23a230e" : "__GIT_COMMIT__";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
