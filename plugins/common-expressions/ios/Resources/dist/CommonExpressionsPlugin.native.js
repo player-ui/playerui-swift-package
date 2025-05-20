@@ -1413,6 +1413,22 @@ var CommonExpressionsPlugin = function() {
             }
         });
     };
+    var unpackNode = function unpackNode(item) {
+        var _item_children_, _item_children, _item_children_1, _item_children1;
+        var unpacked = [];
+        if ("children" in item && ((_item_children = item.children) === null || _item_children === void 0 ? void 0 : (_item_children_ = _item_children[0]) === null || _item_children_ === void 0 ? void 0 : _item_children_.value.type) === "asset" && ((_item_children1 = item.children) === null || _item_children1 === void 0 ? void 0 : (_item_children_1 = _item_children1[0]) === null || _item_children_1 === void 0 ? void 0 : _item_children_1.value).children) {
+            var _item_children__value_children_, _item_children__value_children, _item_children_2, _item_children2;
+            if (((_item_children__value_children = ((_item_children2 = item.children) === null || _item_children2 === void 0 ? void 0 : (_item_children_2 = _item_children2[0]) === null || _item_children_2 === void 0 ? void 0 : _item_children_2.value).children) === null || _item_children__value_children === void 0 ? void 0 : (_item_children__value_children_ = _item_children__value_children[0]) === null || _item_children__value_children_ === void 0 ? void 0 : _item_children__value_children_.value.type) === "multi-node") {
+                var _item_children__value_children_1, _item_children__value_children1, _item_children_3, _item_children3;
+                ((_item_children__value_children1 = ((_item_children3 = item.children) === null || _item_children3 === void 0 ? void 0 : (_item_children_3 = _item_children3[0]) === null || _item_children_3 === void 0 ? void 0 : _item_children_3.value).children) === null || _item_children__value_children1 === void 0 ? void 0 : (_item_children__value_children_1 = _item_children__value_children1[0]) === null || _item_children__value_children_1 === void 0 ? void 0 : _item_children__value_children_1.value).values.forEach(function(value) {
+                    unpacked.push(value);
+                });
+            }
+        } else {
+            unpacked.push(item);
+        }
+        return unpacked;
+    };
     var hasSomethingToResolve = function hasSomethingToResolve(str) {
         return bindingResolveLookup(str) || expressionResolveLookup(str);
     };
@@ -3610,6 +3626,9 @@ var CommonExpressionsPlugin = function() {
         },
         setDataVal: function() {
             return setDataVal;
+        },
+        waitFor: function() {
+            return waitFor;
         }
     });
     var setDataVal = function(_context, binding, value) {
@@ -3637,6 +3656,27 @@ var CommonExpressionsPlugin = function() {
         return null;
     };
     conditional.resolveParams = false;
+    var waitFor = function() {
+        var _ref = _async_to_generator(function(ctx, promise) {
+            return _ts_generator(this, function(_state) {
+                switch(_state.label){
+                    case 0:
+                        return [
+                            4,
+                            promise
+                        ];
+                    case 1:
+                        return [
+                            2,
+                            _state.sent()
+                        ];
+                }
+            });
+        });
+        return function waitFor(ctx, promise) {
+            return _ref.apply(this, arguments);
+        };
+    }();
     var andandOperator = function(ctx, a, b) {
         return ctx.evaluate(a) && ctx.evaluate(b);
     };
@@ -3742,7 +3782,12 @@ var CommonExpressionsPlugin = function() {
             this.operators = {
                 binary: new Map(Object.entries(DEFAULT_BINARY_OPERATORS)),
                 unary: new Map(Object.entries(DEFAULT_UNARY_OPERATORS)),
-                expressions: new Map(Object.entries(evaluator_functions_exports))
+                expressions: new Map(_to_consumable_array(Object.entries(evaluator_functions_exports)).concat([
+                    [
+                        "await",
+                        waitFor
+                    ]
+                ]))
             };
             this.defaultHookOptions = _object_spread_props(_object_spread({}, defaultOptions), {
                 evaluate: function(expr) {
@@ -3752,7 +3797,12 @@ var CommonExpressionsPlugin = function() {
                     return _this._execAST(node, _this.defaultHookOptions);
                 }
             });
-            this.hooks.resolve.tap("ExpressionEvaluator", this._resolveNode.bind(this));
+            this.hooks.resolve.tap("ExpressionEvaluator", function(result, node, options) {
+                if (options.async) {
+                    return _this._resolveNodeAsync(result, node, options);
+                }
+                return _this._resolveNode(result, node, options);
+            });
             this.evaluate = this.evaluate.bind(this);
         }
         _create_class(ExpressionEvaluator, [
@@ -3788,6 +3838,14 @@ var CommonExpressionsPlugin = function() {
                         }, null);
                     }
                     return this._execString(String(expression), resolvedOpts);
+                }
+            },
+            {
+                key: "evaluateAsync",
+                value: function evaluateAsync(expr, options) {
+                    return this.evaluate(expr, _object_spread_props(_object_spread({}, options), {
+                        async: true
+                    }));
                 }
             },
             {
@@ -3835,8 +3893,10 @@ var CommonExpressionsPlugin = function() {
                     var matches = exp.match(/^@\[(.*)\]@$/);
                     var matchedExp = exp;
                     if (matches) {
-                        var ref;
-                        ref = _sliced_to_array(Array.from(matches), 2), matchedExp = ref[1], ref;
+                        var _Array_from = _sliced_to_array(Array.from(matches), 2), matched = _Array_from[1];
+                        if (matched) {
+                            matchedExp = matched;
+                        }
                     }
                     var storedAST;
                     try {
@@ -3996,6 +4056,452 @@ var CommonExpressionsPlugin = function() {
                         }
                         return resolveNode(node.left);
                     }
+                }
+            },
+            {
+                key: "_resolveNodeAsync",
+                value: function _resolveNodeAsync(_currentValue, node, options) {
+                    var _this = this;
+                    return _async_to_generator(function() {
+                        var resolveNode, model, expressionContext, operator, _tmp, _tmp1, operator1, _tmp2, _tmp3, attributes, resolvedAttributes, expressionName, operator2, args, obj, prop, value, value1, result, operation, newValue, _tmp4, _tmp5;
+                        return _ts_generator(this, function(_state) {
+                            switch(_state.label){
+                                case 0:
+                                    resolveNode = options.resolveNode, model = options.model;
+                                    expressionContext = _object_spread_props(_object_spread({}, options), {
+                                        evaluate: function(expr) {
+                                            return _this.evaluate(expr, options);
+                                        }
+                                    });
+                                    if (!(node.type === "BinaryExpression" || node.type === "LogicalExpression")) return [
+                                        3,
+                                        7
+                                    ];
+                                    operator = _this.operators.binary.get(node.operator);
+                                    if (!operator) return [
+                                        3,
+                                        6
+                                    ];
+                                    if (!("resolveParams" in operator)) return [
+                                        3,
+                                        3
+                                    ];
+                                    if (operator.resolveParams === false) {
+                                        return [
+                                            2,
+                                            operator(expressionContext, node.left, node.right)
+                                        ];
+                                    }
+                                    _tmp = [
+                                        expressionContext
+                                    ];
+                                    return [
+                                        4,
+                                        resolveNode(node.left)
+                                    ];
+                                case 1:
+                                    _tmp = _tmp.concat([
+                                        _state.sent()
+                                    ]);
+                                    return [
+                                        4,
+                                        resolveNode(node.right)
+                                    ];
+                                case 2:
+                                    return [
+                                        2,
+                                        operator.apply(void 0, _tmp.concat([
+                                            _state.sent()
+                                        ]))
+                                    ];
+                                case 3:
+                                    return [
+                                        4,
+                                        resolveNode(node.left)
+                                    ];
+                                case 4:
+                                    _tmp1 = [
+                                        _state.sent()
+                                    ];
+                                    return [
+                                        4,
+                                        resolveNode(node.right)
+                                    ];
+                                case 5:
+                                    return [
+                                        2,
+                                        operator.apply(void 0, _tmp1.concat([
+                                            _state.sent()
+                                        ]))
+                                    ];
+                                case 6:
+                                    return [
+                                        2
+                                    ];
+                                case 7:
+                                    if (!(node.type === "UnaryExpression")) return [
+                                        3,
+                                        14
+                                    ];
+                                    operator1 = _this.operators.unary.get(node.operator);
+                                    if (!operator1) return [
+                                        3,
+                                        13
+                                    ];
+                                    if (!("resolveParams" in operator1)) return [
+                                        3,
+                                        11
+                                    ];
+                                    _tmp2 = [
+                                        expressionContext
+                                    ];
+                                    if (!(operator1.resolveParams === false)) return [
+                                        3,
+                                        8
+                                    ];
+                                    _tmp3 = node.argument;
+                                    return [
+                                        3,
+                                        10
+                                    ];
+                                case 8:
+                                    return [
+                                        4,
+                                        resolveNode(node.argument)
+                                    ];
+                                case 9:
+                                    _tmp3 = _state.sent();
+                                    _state.label = 10;
+                                case 10:
+                                    return [
+                                        2,
+                                        operator1.apply(void 0, _tmp2.concat([
+                                            _tmp3
+                                        ]))
+                                    ];
+                                case 11:
+                                    return [
+                                        4,
+                                        resolveNode(node.argument)
+                                    ];
+                                case 12:
+                                    return [
+                                        2,
+                                        operator1.apply(void 0, [
+                                            _state.sent()
+                                        ])
+                                    ];
+                                case 13:
+                                    return [
+                                        2
+                                    ];
+                                case 14:
+                                    if (!(node.type === "Object")) return [
+                                        3,
+                                        16
+                                    ];
+                                    attributes = node.attributes;
+                                    resolvedAttributes = {};
+                                    return [
+                                        4,
+                                        Promise.all(attributes.map(function() {
+                                            var _ref = _async_to_generator(function(attr) {
+                                                var key, value;
+                                                return _ts_generator(this, function(_state) {
+                                                    switch(_state.label){
+                                                        case 0:
+                                                            return [
+                                                                4,
+                                                                resolveNode(attr.key)
+                                                            ];
+                                                        case 1:
+                                                            key = _state.sent();
+                                                            return [
+                                                                4,
+                                                                resolveNode(attr.value)
+                                                            ];
+                                                        case 2:
+                                                            value = _state.sent();
+                                                            resolvedAttributes[key] = value;
+                                                            return [
+                                                                2
+                                                            ];
+                                                    }
+                                                });
+                                            });
+                                            return function(attr) {
+                                                return _ref.apply(this, arguments);
+                                            };
+                                        }()))
+                                    ];
+                                case 15:
+                                    _state.sent();
+                                    return [
+                                        2,
+                                        resolvedAttributes
+                                    ];
+                                case 16:
+                                    if (!(node.type === "CallExpression")) return [
+                                        3,
+                                        18
+                                    ];
+                                    expressionName = node.callTarget.name;
+                                    operator2 = _this.operators.expressions.get(expressionName);
+                                    if (!operator2) {
+                                        throw new Error("Unknown expression function: ".concat(expressionName));
+                                    }
+                                    if ("resolveParams" in operator2 && operator2.resolveParams === false) {
+                                        return [
+                                            2,
+                                            operator2.apply(void 0, [
+                                                expressionContext
+                                            ].concat(_to_consumable_array(node.args)))
+                                        ];
+                                    }
+                                    return [
+                                        4,
+                                        Promise.all(node.args.map(function() {
+                                            var _ref = _async_to_generator(function(n) {
+                                                return _ts_generator(this, function(_state) {
+                                                    switch(_state.label){
+                                                        case 0:
+                                                            return [
+                                                                4,
+                                                                resolveNode(n)
+                                                            ];
+                                                        case 1:
+                                                            return [
+                                                                2,
+                                                                _state.sent()
+                                                            ];
+                                                    }
+                                                });
+                                            });
+                                            return function(n) {
+                                                return _ref.apply(this, arguments);
+                                            };
+                                        }()))
+                                    ];
+                                case 17:
+                                    args = _state.sent();
+                                    return [
+                                        2,
+                                        operator2.apply(void 0, [
+                                            expressionContext
+                                        ].concat(_to_consumable_array(args)))
+                                    ];
+                                case 18:
+                                    if (node.type === "ModelRef") {
+                                        return [
+                                            2,
+                                            model.get(node.ref, {
+                                                context: {
+                                                    model: options.model
+                                                }
+                                            })
+                                        ];
+                                    }
+                                    if (!(node.type === "MemberExpression")) return [
+                                        3,
+                                        21
+                                    ];
+                                    return [
+                                        4,
+                                        resolveNode(node.object)
+                                    ];
+                                case 19:
+                                    obj = _state.sent();
+                                    return [
+                                        4,
+                                        resolveNode(node.property)
+                                    ];
+                                case 20:
+                                    prop = _state.sent();
+                                    return [
+                                        2,
+                                        obj[prop]
+                                    ];
+                                case 21:
+                                    if (!(node.type === "Assignment")) return [
+                                        3,
+                                        26
+                                    ];
+                                    if (!(node.left.type === "ModelRef")) return [
+                                        3,
+                                        23
+                                    ];
+                                    return [
+                                        4,
+                                        resolveNode(node.right)
+                                    ];
+                                case 22:
+                                    value = _state.sent();
+                                    model.set([
+                                        [
+                                            node.left.ref,
+                                            value
+                                        ]
+                                    ]);
+                                    return [
+                                        2,
+                                        value
+                                    ];
+                                case 23:
+                                    if (!(node.left.type === "Identifier")) return [
+                                        3,
+                                        25
+                                    ];
+                                    return [
+                                        4,
+                                        resolveNode(node.right)
+                                    ];
+                                case 24:
+                                    value1 = _state.sent();
+                                    _this.vars[node.left.name] = value1;
+                                    return [
+                                        2,
+                                        value1
+                                    ];
+                                case 25:
+                                    return [
+                                        2
+                                    ];
+                                case 26:
+                                    if (!(node.type === "ConditionalExpression")) return [
+                                        3,
+                                        28
+                                    ];
+                                    return [
+                                        4,
+                                        resolveNode(node.test)
+                                    ];
+                                case 27:
+                                    result = _state.sent() ? node.consequent : node.alternate;
+                                    return [
+                                        2,
+                                        resolveNode(result)
+                                    ];
+                                case 28:
+                                    if (node.type === "ArrayExpression") {
+                                        return [
+                                            2,
+                                            Promise.all(node.elements.map(function() {
+                                                var _ref = _async_to_generator(function(ele) {
+                                                    return _ts_generator(this, function(_state) {
+                                                        switch(_state.label){
+                                                            case 0:
+                                                                return [
+                                                                    4,
+                                                                    resolveNode(ele)
+                                                                ];
+                                                            case 1:
+                                                                return [
+                                                                    2,
+                                                                    _state.sent()
+                                                                ];
+                                                        }
+                                                    });
+                                                });
+                                                return function(ele) {
+                                                    return _ref.apply(this, arguments);
+                                                };
+                                            }()))
+                                        ];
+                                    }
+                                    if (!(node.type === "Modification")) return [
+                                        3,
+                                        38
+                                    ];
+                                    operation = _this.operators.binary.get(node.operator);
+                                    if (!operation) return [
+                                        3,
+                                        37
+                                    ];
+                                    if (!("resolveParams" in operation)) return [
+                                        3,
+                                        33
+                                    ];
+                                    if (!(operation.resolveParams === false)) return [
+                                        3,
+                                        29
+                                    ];
+                                    newValue = operation(expressionContext, node.left, node.right);
+                                    return [
+                                        3,
+                                        32
+                                    ];
+                                case 29:
+                                    _tmp4 = [
+                                        expressionContext
+                                    ];
+                                    return [
+                                        4,
+                                        resolveNode(node.left)
+                                    ];
+                                case 30:
+                                    _tmp4 = _tmp4.concat([
+                                        _state.sent()
+                                    ]);
+                                    return [
+                                        4,
+                                        resolveNode(node.right)
+                                    ];
+                                case 31:
+                                    newValue = operation.apply(void 0, _tmp4.concat([
+                                        _state.sent()
+                                    ]));
+                                    _state.label = 32;
+                                case 32:
+                                    return [
+                                        3,
+                                        36
+                                    ];
+                                case 33:
+                                    return [
+                                        4,
+                                        resolveNode(node.left)
+                                    ];
+                                case 34:
+                                    _tmp5 = [
+                                        _state.sent()
+                                    ];
+                                    return [
+                                        4,
+                                        resolveNode(node.right)
+                                    ];
+                                case 35:
+                                    newValue = operation.apply(void 0, _tmp5.concat([
+                                        _state.sent()
+                                    ]));
+                                    _state.label = 36;
+                                case 36:
+                                    if (node.left.type === "ModelRef") {
+                                        model.set([
+                                            [
+                                                node.left.ref,
+                                                newValue
+                                            ]
+                                        ]);
+                                    } else if (node.left.type === "Identifier") {
+                                        _this.vars[node.left.name] = newValue;
+                                    }
+                                    return [
+                                        2,
+                                        newValue
+                                    ];
+                                case 37:
+                                    return [
+                                        2,
+                                        resolveNode(node.left)
+                                    ];
+                                case 38:
+                                    return [
+                                        2,
+                                        _this._resolveNode(_currentValue, node, options)
+                                    ];
+                            }
+                        });
+                    })();
                 }
             }
         ]);
@@ -4509,15 +5015,6 @@ var CommonExpressionsPlugin = function() {
         ]);
         return Parser;
     }();
-    function unpackAndPush(item, initial) {
-        if (item.asset.values && Array.isArray(item.asset.values)) {
-            item.asset.values.forEach(function(i) {
-                unpackAndPush(i, initial);
-            });
-        } else {
-            initial.push(item);
-        }
-    }
     var withContext = function(model) {
         return {
             get: function(binding, options) {
@@ -4640,7 +5137,7 @@ var CommonExpressionsPlugin = function() {
                 key: "computeTree",
                 value: function computeTree(node, rawParent, dataChanges, cacheUpdate, options, partiallyResolvedParent, prevASTMap) {
                     var _this = this;
-                    var _partiallyResolvedParent_parent;
+                    var _partiallyResolvedParent_parent_parent, _partiallyResolvedParent_parent, _resolvedAST_parent, _partiallyResolvedParent_parent1;
                     var dependencyModel = new DependencyModel(options.data.model);
                     dependencyModel.trackSubset("core");
                     var depModelWithParser = withContext(withParser(dependencyModel, this.options.parseBinding));
@@ -4666,7 +5163,8 @@ var CommonExpressionsPlugin = function() {
                     var resolvedAST = (_this_hooks_beforeResolve_call = this.hooks.beforeResolve.call(clonedNode, resolveOptions)) !== null && _this_hooks_beforeResolve_call !== void 0 ? _this_hooks_beforeResolve_call : {
                         type: "empty"
                     };
-                    var isNestedMultiNode = resolvedAST.type === "multi-node" && (partiallyResolvedParent === null || partiallyResolvedParent === void 0 ? void 0 : (_partiallyResolvedParent_parent = partiallyResolvedParent.parent) === null || _partiallyResolvedParent_parent === void 0 ? void 0 : _partiallyResolvedParent_parent.type) === "multi-node" && partiallyResolvedParent.type === "value";
+                    var isNestedMultiNodeWithAsync = resolvedAST.type === "multi-node" && (partiallyResolvedParent === null || partiallyResolvedParent === void 0 ? void 0 : (_partiallyResolvedParent_parent = partiallyResolvedParent.parent) === null || _partiallyResolvedParent_parent === void 0 ? void 0 : (_partiallyResolvedParent_parent_parent = _partiallyResolvedParent_parent.parent) === null || _partiallyResolvedParent_parent_parent === void 0 ? void 0 : _partiallyResolvedParent_parent_parent.type) === "multi-node" && partiallyResolvedParent.parent.type === "value" && ((_resolvedAST_parent = resolvedAST.parent) === null || _resolvedAST_parent === void 0 ? void 0 : _resolvedAST_parent.type) === "asset" && resolvedAST.parent.value.id.includes("async");
+                    var isNestedMultiNode = resolvedAST.type === "multi-node" && (partiallyResolvedParent === null || partiallyResolvedParent === void 0 ? void 0 : (_partiallyResolvedParent_parent1 = partiallyResolvedParent.parent) === null || _partiallyResolvedParent_parent1 === void 0 ? void 0 : _partiallyResolvedParent_parent1.type) === "multi-node" && partiallyResolvedParent.type === "value";
                     if (previousResult && shouldUseLastValue) {
                         var update2 = _object_spread_props(_object_spread({}, previousResult), {
                             updated: false
@@ -4700,7 +5198,11 @@ var CommonExpressionsPlugin = function() {
                         repopulateASTMapFromCache(previousResult, node, rawParent);
                         return update2;
                     }
-                    resolvedAST.parent = partiallyResolvedParent;
+                    if (isNestedMultiNodeWithAsync) {
+                        resolvedAST.parent = partiallyResolvedParent.parent;
+                    } else {
+                        resolvedAST.parent = partiallyResolvedParent;
+                    }
                     resolveOptions.node = resolvedAST;
                     this.ASTMap.set(resolvedAST, node);
                     var resolved = this.hooks.resolve.call(void 0, resolvedAST, resolveOptions);
@@ -4735,6 +5237,11 @@ var CommonExpressionsPlugin = function() {
                     } else if (resolvedAST.type === "multi-node") {
                         var childValue = [];
                         var rawParentToPassIn = isNestedMultiNode ? partiallyResolvedParent === null || partiallyResolvedParent === void 0 ? void 0 : partiallyResolvedParent.parent : node;
+                        var hasAsync = resolvedAST.values.map(function(value, index) {
+                            return value.type === "async" ? index : -1;
+                        }).filter(function(index) {
+                            return index !== -1;
+                        });
                         var newValues = resolvedAST.values.map(function(mValue) {
                             var mTree = _this.computeTree(mValue, rawParentToPassIn, dataChanges, cacheUpdate, resolveOptions, resolvedAST, prevASTMap);
                             if (mTree.value !== void 0 && mTree.value !== null) {
@@ -4750,7 +5257,19 @@ var CommonExpressionsPlugin = function() {
                             updated = updated || mTree.updated;
                             return mTree.node;
                         });
-                        resolvedAST.values = newValues;
+                        if (hasAsync.length > 0) {
+                            var copy = newValues;
+                            hasAsync.forEach(function(index) {
+                                var _copy;
+                                if (copy[index]) (_copy = copy).splice.apply(_copy, [
+                                    index,
+                                    1
+                                ].concat(_to_consumable_array(unpackNode(copy[index]))));
+                            });
+                            resolvedAST.values = copy;
+                        } else {
+                            resolvedAST.values = newValues;
+                        }
                         resolved = childValue;
                     }
                     childDependencies.forEach(function(bindingDep) {
@@ -4779,6 +5298,15 @@ var CommonExpressionsPlugin = function() {
         ]);
         return Resolver;
     }();
+    function unpackAndPush(item, initial) {
+        if (item.asset.values && Array.isArray(item.asset.values)) {
+            item.asset.values.forEach(function(i) {
+                unpackAndPush(i, initial);
+            });
+        } else {
+            initial.push(item);
+        }
+    }
     var CrossfieldProvider = /*#__PURE__*/ function() {
         function CrossfieldProvider(initialView, parser, logger) {
             _class_call_check(this, CrossfieldProvider);
@@ -7399,15 +7927,56 @@ var CommonExpressionsPlugin = function() {
                                 validationController.reset();
                             }
                         });
-                        flow.hooks.afterTransition.tap("player", function(flowInstance) {
-                            var _flowInstance_currentState;
-                            var value = (_flowInstance_currentState = flowInstance.currentState) === null || _flowInstance_currentState === void 0 ? void 0 : _flowInstance_currentState.value;
-                            if (value && value.state_type === "ACTION") {
-                                var exp = value.exp;
-                                flowController === null || flowController === void 0 ? void 0 : flowController.transition(String(expressionEvaluator === null || expressionEvaluator === void 0 ? void 0 : expressionEvaluator.evaluate(exp)));
-                            }
-                            expressionEvaluator.reset();
-                        });
+                        flow.hooks.afterTransition.tap("player", function() {
+                            var _ref = _async_to_generator(function(flowInstance) {
+                                var _flowInstance_currentState, value, exp, result, e;
+                                return _ts_generator(this, function(_state) {
+                                    switch(_state.label){
+                                        case 0:
+                                            value = (_flowInstance_currentState = flowInstance.currentState) === null || _flowInstance_currentState === void 0 ? void 0 : _flowInstance_currentState.value;
+                                            if (!(value && value.state_type === "ACTION")) return [
+                                                3,
+                                                4
+                                            ];
+                                            exp = value.exp;
+                                            _state.label = 1;
+                                        case 1:
+                                            _state.trys.push([
+                                                1,
+                                                3,
+                                                ,
+                                                4
+                                            ]);
+                                            return [
+                                                4,
+                                                expressionEvaluator.evaluateAsync(exp)
+                                            ];
+                                        case 2:
+                                            result = _state.sent();
+                                            flowController === null || flowController === void 0 ? void 0 : flowController.transition(String(result));
+                                            return [
+                                                3,
+                                                4
+                                            ];
+                                        case 3:
+                                            e = _state.sent();
+                                            flowResultDeferred.reject(e);
+                                            return [
+                                                3,
+                                                4
+                                            ];
+                                        case 4:
+                                            expressionEvaluator.reset();
+                                            return [
+                                                2
+                                            ];
+                                    }
+                                });
+                            });
+                            return function(flowInstance) {
+                                return _ref.apply(this, arguments);
+                            };
+                        }());
                     });
                     this.hooks.dataController.call(dataController);
                     validationController.setOptions({
