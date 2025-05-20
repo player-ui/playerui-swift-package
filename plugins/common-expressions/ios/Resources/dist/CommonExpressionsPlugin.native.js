@@ -1413,6 +1413,22 @@ var CommonExpressionsPlugin = function() {
             }
         });
     };
+    var unpackNode = function unpackNode(item) {
+        var _item_children_, _item_children, _item_children_1, _item_children1;
+        var unpacked = [];
+        if ("children" in item && ((_item_children = item.children) === null || _item_children === void 0 ? void 0 : (_item_children_ = _item_children[0]) === null || _item_children_ === void 0 ? void 0 : _item_children_.value.type) === "asset" && ((_item_children1 = item.children) === null || _item_children1 === void 0 ? void 0 : (_item_children_1 = _item_children1[0]) === null || _item_children_1 === void 0 ? void 0 : _item_children_1.value).children) {
+            var _item_children__value_children_, _item_children__value_children, _item_children_2, _item_children2;
+            if (((_item_children__value_children = ((_item_children2 = item.children) === null || _item_children2 === void 0 ? void 0 : (_item_children_2 = _item_children2[0]) === null || _item_children_2 === void 0 ? void 0 : _item_children_2.value).children) === null || _item_children__value_children === void 0 ? void 0 : (_item_children__value_children_ = _item_children__value_children[0]) === null || _item_children__value_children_ === void 0 ? void 0 : _item_children__value_children_.value.type) === "multi-node") {
+                var _item_children__value_children_1, _item_children__value_children1, _item_children_3, _item_children3;
+                ((_item_children__value_children1 = ((_item_children3 = item.children) === null || _item_children3 === void 0 ? void 0 : (_item_children_3 = _item_children3[0]) === null || _item_children_3 === void 0 ? void 0 : _item_children_3.value).children) === null || _item_children__value_children1 === void 0 ? void 0 : (_item_children__value_children_1 = _item_children__value_children1[0]) === null || _item_children__value_children_1 === void 0 ? void 0 : _item_children__value_children_1.value).values.forEach(function(value) {
+                    unpacked.push(value);
+                });
+            }
+        } else {
+            unpacked.push(item);
+        }
+        return unpacked;
+    };
     var hasSomethingToResolve = function hasSomethingToResolve(str) {
         return bindingResolveLookup(str) || expressionResolveLookup(str);
     };
@@ -4509,15 +4525,6 @@ var CommonExpressionsPlugin = function() {
         ]);
         return Parser;
     }();
-    function unpackAndPush(item, initial) {
-        if (item.asset.values && Array.isArray(item.asset.values)) {
-            item.asset.values.forEach(function(i) {
-                unpackAndPush(i, initial);
-            });
-        } else {
-            initial.push(item);
-        }
-    }
     var withContext = function(model) {
         return {
             get: function(binding, options) {
@@ -4640,7 +4647,7 @@ var CommonExpressionsPlugin = function() {
                 key: "computeTree",
                 value: function computeTree(node, rawParent, dataChanges, cacheUpdate, options, partiallyResolvedParent, prevASTMap) {
                     var _this = this;
-                    var _partiallyResolvedParent_parent;
+                    var _partiallyResolvedParent_parent_parent, _partiallyResolvedParent_parent, _resolvedAST_parent, _partiallyResolvedParent_parent1;
                     var dependencyModel = new DependencyModel(options.data.model);
                     dependencyModel.trackSubset("core");
                     var depModelWithParser = withContext(withParser(dependencyModel, this.options.parseBinding));
@@ -4666,7 +4673,8 @@ var CommonExpressionsPlugin = function() {
                     var resolvedAST = (_this_hooks_beforeResolve_call = this.hooks.beforeResolve.call(clonedNode, resolveOptions)) !== null && _this_hooks_beforeResolve_call !== void 0 ? _this_hooks_beforeResolve_call : {
                         type: "empty"
                     };
-                    var isNestedMultiNode = resolvedAST.type === "multi-node" && (partiallyResolvedParent === null || partiallyResolvedParent === void 0 ? void 0 : (_partiallyResolvedParent_parent = partiallyResolvedParent.parent) === null || _partiallyResolvedParent_parent === void 0 ? void 0 : _partiallyResolvedParent_parent.type) === "multi-node" && partiallyResolvedParent.type === "value";
+                    var isNestedMultiNodeWithAsync = resolvedAST.type === "multi-node" && (partiallyResolvedParent === null || partiallyResolvedParent === void 0 ? void 0 : (_partiallyResolvedParent_parent = partiallyResolvedParent.parent) === null || _partiallyResolvedParent_parent === void 0 ? void 0 : (_partiallyResolvedParent_parent_parent = _partiallyResolvedParent_parent.parent) === null || _partiallyResolvedParent_parent_parent === void 0 ? void 0 : _partiallyResolvedParent_parent_parent.type) === "multi-node" && partiallyResolvedParent.parent.type === "value" && ((_resolvedAST_parent = resolvedAST.parent) === null || _resolvedAST_parent === void 0 ? void 0 : _resolvedAST_parent.type) === "asset" && resolvedAST.parent.value.id.includes("async");
+                    var isNestedMultiNode = resolvedAST.type === "multi-node" && (partiallyResolvedParent === null || partiallyResolvedParent === void 0 ? void 0 : (_partiallyResolvedParent_parent1 = partiallyResolvedParent.parent) === null || _partiallyResolvedParent_parent1 === void 0 ? void 0 : _partiallyResolvedParent_parent1.type) === "multi-node" && partiallyResolvedParent.type === "value";
                     if (previousResult && shouldUseLastValue) {
                         var update2 = _object_spread_props(_object_spread({}, previousResult), {
                             updated: false
@@ -4700,7 +4708,11 @@ var CommonExpressionsPlugin = function() {
                         repopulateASTMapFromCache(previousResult, node, rawParent);
                         return update2;
                     }
-                    resolvedAST.parent = partiallyResolvedParent;
+                    if (isNestedMultiNodeWithAsync) {
+                        resolvedAST.parent = partiallyResolvedParent.parent;
+                    } else {
+                        resolvedAST.parent = partiallyResolvedParent;
+                    }
                     resolveOptions.node = resolvedAST;
                     this.ASTMap.set(resolvedAST, node);
                     var resolved = this.hooks.resolve.call(void 0, resolvedAST, resolveOptions);
@@ -4735,6 +4747,11 @@ var CommonExpressionsPlugin = function() {
                     } else if (resolvedAST.type === "multi-node") {
                         var childValue = [];
                         var rawParentToPassIn = isNestedMultiNode ? partiallyResolvedParent === null || partiallyResolvedParent === void 0 ? void 0 : partiallyResolvedParent.parent : node;
+                        var hasAsync = resolvedAST.values.map(function(value, index) {
+                            return value.type === "async" ? index : -1;
+                        }).filter(function(index) {
+                            return index !== -1;
+                        });
                         var newValues = resolvedAST.values.map(function(mValue) {
                             var mTree = _this.computeTree(mValue, rawParentToPassIn, dataChanges, cacheUpdate, resolveOptions, resolvedAST, prevASTMap);
                             if (mTree.value !== void 0 && mTree.value !== null) {
@@ -4750,7 +4767,19 @@ var CommonExpressionsPlugin = function() {
                             updated = updated || mTree.updated;
                             return mTree.node;
                         });
-                        resolvedAST.values = newValues;
+                        if (hasAsync.length > 0) {
+                            var copy = newValues;
+                            hasAsync.forEach(function(index) {
+                                var _copy;
+                                if (copy[index]) (_copy = copy).splice.apply(_copy, [
+                                    index,
+                                    1
+                                ].concat(_to_consumable_array(unpackNode(copy[index]))));
+                            });
+                            resolvedAST.values = copy;
+                        } else {
+                            resolvedAST.values = newValues;
+                        }
                         resolved = childValue;
                     }
                     childDependencies.forEach(function(bindingDep) {
@@ -4779,6 +4808,15 @@ var CommonExpressionsPlugin = function() {
         ]);
         return Resolver;
     }();
+    function unpackAndPush(item, initial) {
+        if (item.asset.values && Array.isArray(item.asset.values)) {
+            item.asset.values.forEach(function(i) {
+                unpackAndPush(i, initial);
+            });
+        } else {
+            initial.push(item);
+        }
+    }
     var CrossfieldProvider = /*#__PURE__*/ function() {
         function CrossfieldProvider(initialView, parser, logger) {
             _class_call_check(this, CrossfieldProvider);
