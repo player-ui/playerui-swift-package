@@ -1190,6 +1190,48 @@ var StageRevertDataPlugin = function() {
         }
         return typeof expr === "object" && expr !== null && !Array.isArray(expr) && "value" in expr;
     };
+    var isPromiselike = function isPromiselike(value) {
+        var // Check for standard Promise constructor name
+        _value_constructor;
+        return value != null && typeof value === "object" && typeof value.then === "function" && // Additional safeguards against false positives
+        (_instanceof(value, Promise) || ((_value_constructor = value.constructor) === null || _value_constructor === void 0 ? void 0 : _value_constructor.name) === "Promise" || // Verify it has other Promise-like methods to reduce false positives
+        typeof value.catch === "function" && typeof value.finally === "function");
+    };
+    var makePromiseAwareBinaryOp = function makePromiseAwareBinaryOp(operation) {
+        return function(a, b) {
+            if (isPromiselike(a) || isPromiselike(b)) {
+                return Promise.all([
+                    Promise.resolve(a),
+                    Promise.resolve(b)
+                ]).then(function(param) {
+                    var _param = _sliced_to_array(param, 2), resolvedA = _param[0], resolvedB = _param[1];
+                    return operation(resolvedA, resolvedB);
+                });
+            }
+            return operation(a, b);
+        };
+    };
+    var makePromiseAwareUnaryOp = function makePromiseAwareUnaryOp(operation) {
+        return function(a) {
+            if (isPromiselike(a)) {
+                return a.then(function(resolved) {
+                    return operation(resolved);
+                });
+            }
+            return operation(a);
+        };
+    };
+    var handleConditionalBranching = function handleConditionalBranching(testValue, getTrueBranch, getFalseBranch, resolveNode) {
+        if (isPromiselike(testValue)) {
+            return testValue.then(function(resolved) {
+                var branch2 = resolved ? getTrueBranch() : getFalseBranch();
+                var branchResult = resolveNode(branch2);
+                return isPromiselike(branchResult) ? branchResult : Promise.resolve(branchResult);
+            });
+        }
+        var branch = testValue ? getTrueBranch() : getFalseBranch();
+        return resolveNode(branch);
+    };
     var parse2 = function parse2(schema) {
         var _loop = function() {
             var next = parseQueue.shift();
@@ -3512,6 +3554,9 @@ var StageRevertDataPlugin = function() {
         },
         setDataVal: function() {
             return setDataVal;
+        },
+        waitFor: function() {
+            return waitFor;
         }
     });
     var setDataVal = function(_context, binding, value) {
@@ -3539,12 +3584,33 @@ var StageRevertDataPlugin = function() {
         return null;
     };
     conditional.resolveParams = false;
+    var waitFor = function() {
+        var _ref = _async_to_generator(function(ctx, promise) {
+            return _ts_generator(this, function(_state) {
+                switch(_state.label){
+                    case 0:
+                        return [
+                            4,
+                            promise
+                        ];
+                    case 1:
+                        return [
+                            2,
+                            _state.sent()
+                        ];
+                }
+            });
+        });
+        return function waitFor(ctx, promise) {
+            return _ref.apply(this, arguments);
+        };
+    }();
     var andandOperator = function(ctx, a, b) {
-        return ctx.evaluate(a) && ctx.evaluate(b);
+        return LogicalOperators.and(ctx, a, b);
     };
     andandOperator.resolveParams = false;
     var ororOperator = function(ctx, a, b) {
-        return ctx.evaluate(a) || ctx.evaluate(b);
+        return LogicalOperators.or(ctx, a, b);
     };
     ororOperator.resolveParams = false;
     var DEFAULT_BINARY_OPERATORS = {
@@ -3564,34 +3630,35 @@ var StageRevertDataPlugin = function() {
         "%": function(a, b) {
             return a % b;
         },
+        // Promise-aware comparison operators
         // eslint-disable-next-line
-        "==": function(a, b) {
+        "==": makePromiseAwareBinaryOp(function(a, b) {
             return a == b;
-        },
+        }),
         // eslint-disable-next-line
-        "!=": function(a, b) {
+        "!=": makePromiseAwareBinaryOp(function(a, b) {
             return a != b;
-        },
-        ">": function(a, b) {
+        }),
+        ">": makePromiseAwareBinaryOp(function(a, b) {
             return a > b;
-        },
-        ">=": function(a, b) {
+        }),
+        ">=": makePromiseAwareBinaryOp(function(a, b) {
             return a >= b;
-        },
-        "<": function(a, b) {
+        }),
+        "<": makePromiseAwareBinaryOp(function(a, b) {
             return a < b;
-        },
-        "<=": function(a, b) {
+        }),
+        "<=": makePromiseAwareBinaryOp(function(a, b) {
             return a <= b;
-        },
+        }),
+        "!==": makePromiseAwareBinaryOp(function(a, b) {
+            return a !== b;
+        }),
+        "===": makePromiseAwareBinaryOp(function(a, b) {
+            return a === b;
+        }),
         "&&": andandOperator,
         "||": ororOperator,
-        "!==": function(a, b) {
-            return a !== b;
-        },
-        "===": function(a, b) {
-            return a === b;
-        },
         // eslint-disable-next-line
         "|": function(a, b) {
             return a | b;
@@ -3622,8 +3689,70 @@ var StageRevertDataPlugin = function() {
         "+": function(a) {
             return Number(a);
         },
-        "!": function(a) {
+        "!": makePromiseAwareUnaryOp(function(a) {
             return !a;
+        })
+    };
+    var PromiseCollectionHandler = {
+        /**
+     * Handle array with potential Promise elements
+     */ handleArray: function handleArray(items) {
+            var hasPromises = items.some(function(item) {
+                return isPromiselike(item);
+            });
+            return hasPromises ? Promise.all(items) : items;
+        },
+        /**
+     * Handle object with potential Promise keys/values
+     */ handleObject: function handleObject(attributes, resolveNode) {
+            var resolvedAttributes = {};
+            var promises = [];
+            var hasPromises = false;
+            attributes.forEach(function(attr) {
+                var key = resolveNode(attr.key);
+                var value = resolveNode(attr.value);
+                if (isPromiselike(key) || isPromiselike(value)) {
+                    hasPromises = true;
+                    var keyPromise = Promise.resolve(key);
+                    var valuePromise = Promise.resolve(value);
+                    promises.push(Promise.all([
+                        keyPromise,
+                        valuePromise
+                    ]).then(function(param) {
+                        var _param = _sliced_to_array(param, 2), resolvedKey = _param[0], resolvedValue = _param[1];
+                        resolvedAttributes[resolvedKey] = resolvedValue;
+                    }));
+                } else {
+                    resolvedAttributes[key] = value;
+                }
+            });
+            return hasPromises ? Promise.all(promises).then(function() {
+                return resolvedAttributes;
+            }) : resolvedAttributes;
+        }
+    };
+    var LogicalOperators = {
+        and: function(ctx, leftNode, rightNode) {
+            var leftResult = ctx.evaluate(leftNode);
+            if (isPromiselike(leftResult)) {
+                return leftResult.then(function(awaitedLeft) {
+                    if (!awaitedLeft) return awaitedLeft;
+                    var rightResult = ctx.evaluate(rightNode);
+                    return isPromiselike(rightResult) ? rightResult : Promise.resolve(rightResult);
+                });
+            }
+            return leftResult && ctx.evaluate(rightNode);
+        },
+        or: function(ctx, leftNode, rightNode) {
+            var leftResult = ctx.evaluate(leftNode);
+            if (isPromiselike(leftResult)) {
+                return leftResult.then(function(awaitedLeft) {
+                    if (awaitedLeft) return awaitedLeft;
+                    var rightResult = ctx.evaluate(rightNode);
+                    return isPromiselike(rightResult) ? rightResult : Promise.resolve(rightResult);
+                });
+            }
+            return leftResult || ctx.evaluate(rightNode);
         }
     };
     var ExpressionEvaluator = /*#__PURE__*/ function() {
@@ -3644,7 +3773,12 @@ var StageRevertDataPlugin = function() {
             this.operators = {
                 binary: new Map(Object.entries(DEFAULT_BINARY_OPERATORS)),
                 unary: new Map(Object.entries(DEFAULT_UNARY_OPERATORS)),
-                expressions: new Map(Object.entries(evaluator_functions_exports))
+                expressions: new Map(_to_consumable_array(Object.entries(evaluator_functions_exports)).concat([
+                    [
+                        "await",
+                        waitFor
+                    ]
+                ]))
             };
             this.defaultHookOptions = _object_spread_props(_object_spread({}, defaultOptions), {
                 evaluate: function(expr) {
@@ -3654,7 +3788,12 @@ var StageRevertDataPlugin = function() {
                     return _this._execAST(node, _this.defaultHookOptions);
                 }
             });
-            this.hooks.resolve.tap("ExpressionEvaluator", this._resolveNode.bind(this));
+            this.hooks.resolve.tap("ExpressionEvaluator", function(result, node, options) {
+                if (options.async) {
+                    return _this._resolveNodeAsync(result, node, options);
+                }
+                return _this._resolveNode(result, node, options);
+            });
             this.evaluate = this.evaluate.bind(this);
         }
         _create_class(ExpressionEvaluator, [
@@ -3690,6 +3829,14 @@ var StageRevertDataPlugin = function() {
                         }, null);
                     }
                     return this._execString(String(expression), resolvedOpts);
+                }
+            },
+            {
+                key: "evaluateAsync",
+                value: function evaluateAsync(expr, options) {
+                    return this.evaluate(expr, _object_spread_props(_object_spread({}, options), {
+                        async: true
+                    }));
                 }
             },
             {
@@ -3737,8 +3884,10 @@ var StageRevertDataPlugin = function() {
                     var matches = exp.match(/^@\[(.*)\]@$/);
                     var matchedExp = exp;
                     if (matches) {
-                        var ref;
-                        ref = _sliced_to_array(Array.from(matches), 2), matchedExp = ref[1], ref;
+                        var _Array_from = _sliced_to_array(Array.from(matches), 2), matched = _Array_from[1];
+                        if (matched) {
+                            matchedExp = matched;
+                        }
                     }
                     var storedAST;
                     try {
@@ -3805,14 +3954,7 @@ var StageRevertDataPlugin = function() {
                         return;
                     }
                     if (node.type === "Object") {
-                        var attributes = node.attributes;
-                        var resolvedAttributes = {};
-                        attributes.forEach(function(attr) {
-                            var key = resolveNode(attr.key);
-                            var value = resolveNode(attr.value);
-                            resolvedAttributes[key] = value;
-                        });
-                        return resolvedAttributes;
+                        return PromiseCollectionHandler.handleObject(node.attributes, resolveNode);
                     }
                     if (node.type === "CallExpression") {
                         var expressionName = node.callTarget.name;
@@ -3863,13 +4005,18 @@ var StageRevertDataPlugin = function() {
                         return;
                     }
                     if (node.type === "ConditionalExpression") {
-                        var result = resolveNode(node.test) ? node.consequent : node.alternate;
-                        return resolveNode(result);
+                        var testResult = resolveNode(node.test);
+                        return handleConditionalBranching(testResult, function() {
+                            return node.consequent;
+                        }, function() {
+                            return node.alternate;
+                        }, resolveNode);
                     }
                     if (node.type === "ArrayExpression") {
-                        return node.elements.map(function(ele) {
+                        var results = node.elements.map(function(ele) {
                             return resolveNode(ele);
                         });
+                        return PromiseCollectionHandler.handleArray(results);
                     }
                     if (node.type === "Modification") {
                         var operation = this.operators.binary.get(node.operator);
@@ -3898,6 +4045,459 @@ var StageRevertDataPlugin = function() {
                         }
                         return resolveNode(node.left);
                     }
+                }
+            },
+            {
+                key: "_resolveNodeAsync",
+                value: function _resolveNodeAsync(_currentValue, node, options) {
+                    var _this = this;
+                    return _async_to_generator(function() {
+                        var resolveNode, model, expressionContext, operator, _tmp, _tmp1, operator1, _tmp2, _tmp3, attributes, resolvedAttributes, expressionName, operator2, args, obj, prop, value, value1, testResult, result, branchResult, operation, newValue, _tmp4, _tmp5;
+                        return _ts_generator(this, function(_state) {
+                            switch(_state.label){
+                                case 0:
+                                    resolveNode = options.resolveNode, model = options.model;
+                                    expressionContext = _object_spread_props(_object_spread({}, options), {
+                                        evaluate: function(expr) {
+                                            return _this.evaluate(expr, options);
+                                        }
+                                    });
+                                    if (!(node.type === "BinaryExpression" || node.type === "LogicalExpression")) return [
+                                        3,
+                                        7
+                                    ];
+                                    operator = _this.operators.binary.get(node.operator);
+                                    if (!operator) return [
+                                        3,
+                                        6
+                                    ];
+                                    if (!("resolveParams" in operator)) return [
+                                        3,
+                                        3
+                                    ];
+                                    if (operator.resolveParams === false) {
+                                        return [
+                                            2,
+                                            operator(expressionContext, node.left, node.right)
+                                        ];
+                                    }
+                                    _tmp = [
+                                        expressionContext
+                                    ];
+                                    return [
+                                        4,
+                                        resolveNode(node.left)
+                                    ];
+                                case 1:
+                                    _tmp = _tmp.concat([
+                                        _state.sent()
+                                    ]);
+                                    return [
+                                        4,
+                                        resolveNode(node.right)
+                                    ];
+                                case 2:
+                                    return [
+                                        2,
+                                        operator.apply(void 0, _tmp.concat([
+                                            _state.sent()
+                                        ]))
+                                    ];
+                                case 3:
+                                    return [
+                                        4,
+                                        resolveNode(node.left)
+                                    ];
+                                case 4:
+                                    _tmp1 = [
+                                        _state.sent()
+                                    ];
+                                    return [
+                                        4,
+                                        resolveNode(node.right)
+                                    ];
+                                case 5:
+                                    return [
+                                        2,
+                                        operator.apply(void 0, _tmp1.concat([
+                                            _state.sent()
+                                        ]))
+                                    ];
+                                case 6:
+                                    return [
+                                        2
+                                    ];
+                                case 7:
+                                    if (!(node.type === "UnaryExpression")) return [
+                                        3,
+                                        14
+                                    ];
+                                    operator1 = _this.operators.unary.get(node.operator);
+                                    if (!operator1) return [
+                                        3,
+                                        13
+                                    ];
+                                    if (!("resolveParams" in operator1)) return [
+                                        3,
+                                        11
+                                    ];
+                                    _tmp2 = [
+                                        expressionContext
+                                    ];
+                                    if (!(operator1.resolveParams === false)) return [
+                                        3,
+                                        8
+                                    ];
+                                    _tmp3 = node.argument;
+                                    return [
+                                        3,
+                                        10
+                                    ];
+                                case 8:
+                                    return [
+                                        4,
+                                        resolveNode(node.argument)
+                                    ];
+                                case 9:
+                                    _tmp3 = _state.sent();
+                                    _state.label = 10;
+                                case 10:
+                                    return [
+                                        2,
+                                        operator1.apply(void 0, _tmp2.concat([
+                                            _tmp3
+                                        ]))
+                                    ];
+                                case 11:
+                                    return [
+                                        4,
+                                        resolveNode(node.argument)
+                                    ];
+                                case 12:
+                                    return [
+                                        2,
+                                        operator1.apply(void 0, [
+                                            _state.sent()
+                                        ])
+                                    ];
+                                case 13:
+                                    return [
+                                        2
+                                    ];
+                                case 14:
+                                    if (!(node.type === "Object")) return [
+                                        3,
+                                        16
+                                    ];
+                                    attributes = node.attributes;
+                                    resolvedAttributes = {};
+                                    return [
+                                        4,
+                                        Promise.all(attributes.map(function() {
+                                            var _ref = _async_to_generator(function(attr) {
+                                                var key, value;
+                                                return _ts_generator(this, function(_state) {
+                                                    switch(_state.label){
+                                                        case 0:
+                                                            return [
+                                                                4,
+                                                                resolveNode(attr.key)
+                                                            ];
+                                                        case 1:
+                                                            key = _state.sent();
+                                                            return [
+                                                                4,
+                                                                resolveNode(attr.value)
+                                                            ];
+                                                        case 2:
+                                                            value = _state.sent();
+                                                            resolvedAttributes[key] = value;
+                                                            return [
+                                                                2
+                                                            ];
+                                                    }
+                                                });
+                                            });
+                                            return function(attr) {
+                                                return _ref.apply(this, arguments);
+                                            };
+                                        }()))
+                                    ];
+                                case 15:
+                                    _state.sent();
+                                    return [
+                                        2,
+                                        resolvedAttributes
+                                    ];
+                                case 16:
+                                    if (!(node.type === "CallExpression")) return [
+                                        3,
+                                        18
+                                    ];
+                                    expressionName = node.callTarget.name;
+                                    operator2 = _this.operators.expressions.get(expressionName);
+                                    if (!operator2) {
+                                        throw new Error("Unknown expression function: ".concat(expressionName));
+                                    }
+                                    if ("resolveParams" in operator2 && operator2.resolveParams === false) {
+                                        return [
+                                            2,
+                                            operator2.apply(void 0, [
+                                                expressionContext
+                                            ].concat(_to_consumable_array(node.args)))
+                                        ];
+                                    }
+                                    return [
+                                        4,
+                                        Promise.all(node.args.map(function() {
+                                            var _ref = _async_to_generator(function(n) {
+                                                return _ts_generator(this, function(_state) {
+                                                    switch(_state.label){
+                                                        case 0:
+                                                            return [
+                                                                4,
+                                                                resolveNode(n)
+                                                            ];
+                                                        case 1:
+                                                            return [
+                                                                2,
+                                                                _state.sent()
+                                                            ];
+                                                    }
+                                                });
+                                            });
+                                            return function(n) {
+                                                return _ref.apply(this, arguments);
+                                            };
+                                        }()))
+                                    ];
+                                case 17:
+                                    args = _state.sent();
+                                    return [
+                                        2,
+                                        operator2.apply(void 0, [
+                                            expressionContext
+                                        ].concat(_to_consumable_array(args)))
+                                    ];
+                                case 18:
+                                    if (node.type === "ModelRef") {
+                                        return [
+                                            2,
+                                            model.get(node.ref, {
+                                                context: {
+                                                    model: options.model
+                                                }
+                                            })
+                                        ];
+                                    }
+                                    if (!(node.type === "MemberExpression")) return [
+                                        3,
+                                        21
+                                    ];
+                                    return [
+                                        4,
+                                        resolveNode(node.object)
+                                    ];
+                                case 19:
+                                    obj = _state.sent();
+                                    return [
+                                        4,
+                                        resolveNode(node.property)
+                                    ];
+                                case 20:
+                                    prop = _state.sent();
+                                    return [
+                                        2,
+                                        obj[prop]
+                                    ];
+                                case 21:
+                                    if (!(node.type === "Assignment")) return [
+                                        3,
+                                        26
+                                    ];
+                                    if (!(node.left.type === "ModelRef")) return [
+                                        3,
+                                        23
+                                    ];
+                                    return [
+                                        4,
+                                        resolveNode(node.right)
+                                    ];
+                                case 22:
+                                    value = _state.sent();
+                                    model.set([
+                                        [
+                                            node.left.ref,
+                                            value
+                                        ]
+                                    ]);
+                                    return [
+                                        2,
+                                        value
+                                    ];
+                                case 23:
+                                    if (!(node.left.type === "Identifier")) return [
+                                        3,
+                                        25
+                                    ];
+                                    return [
+                                        4,
+                                        resolveNode(node.right)
+                                    ];
+                                case 24:
+                                    value1 = _state.sent();
+                                    _this.vars[node.left.name] = value1;
+                                    return [
+                                        2,
+                                        value1
+                                    ];
+                                case 25:
+                                    return [
+                                        2
+                                    ];
+                                case 26:
+                                    if (!(node.type === "ConditionalExpression")) return [
+                                        3,
+                                        29
+                                    ];
+                                    return [
+                                        4,
+                                        resolveNode(node.test)
+                                    ];
+                                case 27:
+                                    testResult = _state.sent();
+                                    result = testResult ? node.consequent : node.alternate;
+                                    return [
+                                        4,
+                                        resolveNode(result)
+                                    ];
+                                case 28:
+                                    branchResult = _state.sent();
+                                    return [
+                                        2,
+                                        branchResult
+                                    ];
+                                case 29:
+                                    if (node.type === "ArrayExpression") {
+                                        return [
+                                            2,
+                                            Promise.all(node.elements.map(function() {
+                                                var _ref = _async_to_generator(function(ele) {
+                                                    return _ts_generator(this, function(_state) {
+                                                        switch(_state.label){
+                                                            case 0:
+                                                                return [
+                                                                    4,
+                                                                    resolveNode(ele)
+                                                                ];
+                                                            case 1:
+                                                                return [
+                                                                    2,
+                                                                    _state.sent()
+                                                                ];
+                                                        }
+                                                    });
+                                                });
+                                                return function(ele) {
+                                                    return _ref.apply(this, arguments);
+                                                };
+                                            }()))
+                                        ];
+                                    }
+                                    if (!(node.type === "Modification")) return [
+                                        3,
+                                        39
+                                    ];
+                                    operation = _this.operators.binary.get(node.operator);
+                                    if (!operation) return [
+                                        3,
+                                        38
+                                    ];
+                                    if (!("resolveParams" in operation)) return [
+                                        3,
+                                        34
+                                    ];
+                                    if (!(operation.resolveParams === false)) return [
+                                        3,
+                                        30
+                                    ];
+                                    newValue = operation(expressionContext, node.left, node.right);
+                                    return [
+                                        3,
+                                        33
+                                    ];
+                                case 30:
+                                    _tmp4 = [
+                                        expressionContext
+                                    ];
+                                    return [
+                                        4,
+                                        resolveNode(node.left)
+                                    ];
+                                case 31:
+                                    _tmp4 = _tmp4.concat([
+                                        _state.sent()
+                                    ]);
+                                    return [
+                                        4,
+                                        resolveNode(node.right)
+                                    ];
+                                case 32:
+                                    newValue = operation.apply(void 0, _tmp4.concat([
+                                        _state.sent()
+                                    ]));
+                                    _state.label = 33;
+                                case 33:
+                                    return [
+                                        3,
+                                        37
+                                    ];
+                                case 34:
+                                    return [
+                                        4,
+                                        resolveNode(node.left)
+                                    ];
+                                case 35:
+                                    _tmp5 = [
+                                        _state.sent()
+                                    ];
+                                    return [
+                                        4,
+                                        resolveNode(node.right)
+                                    ];
+                                case 36:
+                                    newValue = operation.apply(void 0, _tmp5.concat([
+                                        _state.sent()
+                                    ]));
+                                    _state.label = 37;
+                                case 37:
+                                    if (node.left.type === "ModelRef") {
+                                        model.set([
+                                            [
+                                                node.left.ref,
+                                                newValue
+                                            ]
+                                        ]);
+                                    } else if (node.left.type === "Identifier") {
+                                        _this.vars[node.left.name] = newValue;
+                                    }
+                                    return [
+                                        2,
+                                        newValue
+                                    ];
+                                case 38:
+                                    return [
+                                        2,
+                                        resolveNode(node.left)
+                                    ];
+                                case 39:
+                                    return [
+                                        2,
+                                        _this._resolveNode(_currentValue, node, options)
+                                    ];
+                            }
+                        });
+                    })();
                 }
             }
         ]);
@@ -7323,15 +7923,56 @@ var StageRevertDataPlugin = function() {
                                 validationController.reset();
                             }
                         });
-                        flow.hooks.afterTransition.tap("player", function(flowInstance) {
-                            var _flowInstance_currentState;
-                            var value = (_flowInstance_currentState = flowInstance.currentState) === null || _flowInstance_currentState === void 0 ? void 0 : _flowInstance_currentState.value;
-                            if (value && value.state_type === "ACTION") {
-                                var exp = value.exp;
-                                flowController === null || flowController === void 0 ? void 0 : flowController.transition(String(expressionEvaluator === null || expressionEvaluator === void 0 ? void 0 : expressionEvaluator.evaluate(exp)));
-                            }
-                            expressionEvaluator.reset();
-                        });
+                        flow.hooks.afterTransition.tap("player", function() {
+                            var _ref = _async_to_generator(function(flowInstance) {
+                                var _flowInstance_currentState, value, exp, result, e;
+                                return _ts_generator(this, function(_state) {
+                                    switch(_state.label){
+                                        case 0:
+                                            value = (_flowInstance_currentState = flowInstance.currentState) === null || _flowInstance_currentState === void 0 ? void 0 : _flowInstance_currentState.value;
+                                            if (!(value && value.state_type === "ACTION")) return [
+                                                3,
+                                                4
+                                            ];
+                                            exp = value.exp;
+                                            _state.label = 1;
+                                        case 1:
+                                            _state.trys.push([
+                                                1,
+                                                3,
+                                                ,
+                                                4
+                                            ]);
+                                            return [
+                                                4,
+                                                expressionEvaluator.evaluateAsync(exp)
+                                            ];
+                                        case 2:
+                                            result = _state.sent();
+                                            flowController === null || flowController === void 0 ? void 0 : flowController.transition(String(result));
+                                            return [
+                                                3,
+                                                4
+                                            ];
+                                        case 3:
+                                            e = _state.sent();
+                                            flowResultDeferred.reject(e);
+                                            return [
+                                                3,
+                                                4
+                                            ];
+                                        case 4:
+                                            expressionEvaluator.reset();
+                                            return [
+                                                2
+                                            ];
+                                    }
+                                });
+                            });
+                            return function(flowInstance) {
+                                return _ref.apply(this, arguments);
+                            };
+                        }());
                     });
                     this.hooks.dataController.call(dataController);
                     validationController.setOptions({
