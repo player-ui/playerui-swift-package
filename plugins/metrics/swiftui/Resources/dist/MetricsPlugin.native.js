@@ -1190,6 +1190,48 @@ var MetricsPlugin = function() {
         }
         return typeof expr === "object" && expr !== null && !Array.isArray(expr) && "value" in expr;
     };
+    var isPromiselike = function isPromiselike(value) {
+        var // Check for standard Promise constructor name
+        _value_constructor;
+        return value != null && typeof value === "object" && typeof value.then === "function" && // Additional safeguards against false positives
+        (_instanceof(value, Promise) || ((_value_constructor = value.constructor) === null || _value_constructor === void 0 ? void 0 : _value_constructor.name) === "Promise" || // Verify it has other Promise-like methods to reduce false positives
+        typeof value.catch === "function" && typeof value.finally === "function");
+    };
+    var makePromiseAwareBinaryOp = function makePromiseAwareBinaryOp(operation) {
+        return function(a, b) {
+            if (isPromiselike(a) || isPromiselike(b)) {
+                return Promise.all([
+                    Promise.resolve(a),
+                    Promise.resolve(b)
+                ]).then(function(param) {
+                    var _param = _sliced_to_array(param, 2), resolvedA = _param[0], resolvedB = _param[1];
+                    return operation(resolvedA, resolvedB);
+                });
+            }
+            return operation(a, b);
+        };
+    };
+    var makePromiseAwareUnaryOp = function makePromiseAwareUnaryOp(operation) {
+        return function(a) {
+            if (isPromiselike(a)) {
+                return a.then(function(resolved) {
+                    return operation(resolved);
+                });
+            }
+            return operation(a);
+        };
+    };
+    var handleConditionalBranching = function handleConditionalBranching(testValue, getTrueBranch, getFalseBranch, resolveNode) {
+        if (isPromiselike(testValue)) {
+            return testValue.then(function(resolved) {
+                var branch2 = resolved ? getTrueBranch() : getFalseBranch();
+                var branchResult = resolveNode(branch2);
+                return isPromiselike(branchResult) ? branchResult : Promise.resolve(branchResult);
+            });
+        }
+        var branch = testValue ? getTrueBranch() : getFalseBranch();
+        return resolveNode(branch);
+    };
     var parse2 = function parse2(schema) {
         var _loop = function() {
             var next = parseQueue.shift();
@@ -3608,6 +3650,9 @@ var MetricsPlugin = function() {
         },
         setDataVal: function() {
             return setDataVal;
+        },
+        waitFor: function() {
+            return waitFor;
         }
     });
     var setDataVal = function(_context, binding, value) {
@@ -3625,8 +3670,19 @@ var MetricsPlugin = function() {
         return _context.model.delete(binding);
     };
     var conditional = function(ctx, condition, ifTrue, ifFalse) {
-        var resolution = ctx.evaluate(condition);
-        if (resolution) {
+        var testResult = ctx.evaluate(condition);
+        if (_instanceof(testResult, Promise)) {
+            return testResult.then(function(resolvedTest) {
+                if (resolvedTest) {
+                    return ctx.evaluate(ifTrue);
+                }
+                if (ifFalse) {
+                    return ctx.evaluate(ifFalse);
+                }
+                return null;
+            });
+        }
+        if (testResult) {
             return ctx.evaluate(ifTrue);
         }
         if (ifFalse) {
@@ -3635,12 +3691,33 @@ var MetricsPlugin = function() {
         return null;
     };
     conditional.resolveParams = false;
+    var waitFor = function() {
+        var _ref = _async_to_generator(function(ctx, promise) {
+            return _ts_generator(this, function(_state) {
+                switch(_state.label){
+                    case 0:
+                        return [
+                            4,
+                            promise
+                        ];
+                    case 1:
+                        return [
+                            2,
+                            _state.sent()
+                        ];
+                }
+            });
+        });
+        return function waitFor(ctx, promise) {
+            return _ref.apply(this, arguments);
+        };
+    }();
     var andandOperator = function(ctx, a, b) {
-        return ctx.evaluate(a) && ctx.evaluate(b);
+        return LogicalOperators.and(ctx, a, b);
     };
     andandOperator.resolveParams = false;
     var ororOperator = function(ctx, a, b) {
-        return ctx.evaluate(a) || ctx.evaluate(b);
+        return LogicalOperators.or(ctx, a, b);
     };
     ororOperator.resolveParams = false;
     var DEFAULT_BINARY_OPERATORS = {
@@ -3660,34 +3737,35 @@ var MetricsPlugin = function() {
         "%": function(a, b) {
             return a % b;
         },
+        // Promise-aware comparison operators
         // eslint-disable-next-line
-        "==": function(a, b) {
+        "==": makePromiseAwareBinaryOp(function(a, b) {
             return a == b;
-        },
+        }),
         // eslint-disable-next-line
-        "!=": function(a, b) {
+        "!=": makePromiseAwareBinaryOp(function(a, b) {
             return a != b;
-        },
-        ">": function(a, b) {
+        }),
+        ">": makePromiseAwareBinaryOp(function(a, b) {
             return a > b;
-        },
-        ">=": function(a, b) {
+        }),
+        ">=": makePromiseAwareBinaryOp(function(a, b) {
             return a >= b;
-        },
-        "<": function(a, b) {
+        }),
+        "<": makePromiseAwareBinaryOp(function(a, b) {
             return a < b;
-        },
-        "<=": function(a, b) {
+        }),
+        "<=": makePromiseAwareBinaryOp(function(a, b) {
             return a <= b;
-        },
+        }),
+        "!==": makePromiseAwareBinaryOp(function(a, b) {
+            return a !== b;
+        }),
+        "===": makePromiseAwareBinaryOp(function(a, b) {
+            return a === b;
+        }),
         "&&": andandOperator,
         "||": ororOperator,
-        "!==": function(a, b) {
-            return a !== b;
-        },
-        "===": function(a, b) {
-            return a === b;
-        },
         // eslint-disable-next-line
         "|": function(a, b) {
             return a | b;
@@ -3718,8 +3796,70 @@ var MetricsPlugin = function() {
         "+": function(a) {
             return Number(a);
         },
-        "!": function(a) {
+        "!": makePromiseAwareUnaryOp(function(a) {
             return !a;
+        })
+    };
+    var PromiseCollectionHandler = {
+        /**
+     * Handle array with potential Promise elements
+     */ handleArray: function handleArray(items) {
+            var hasPromises = items.some(function(item) {
+                return isPromiselike(item);
+            });
+            return hasPromises ? Promise.all(items) : items;
+        },
+        /**
+     * Handle object with potential Promise keys/values
+     */ handleObject: function handleObject(attributes, resolveNode) {
+            var resolvedAttributes = {};
+            var promises = [];
+            var hasPromises = false;
+            attributes.forEach(function(attr) {
+                var key = resolveNode(attr.key);
+                var value = resolveNode(attr.value);
+                if (isPromiselike(key) || isPromiselike(value)) {
+                    hasPromises = true;
+                    var keyPromise = Promise.resolve(key);
+                    var valuePromise = Promise.resolve(value);
+                    promises.push(Promise.all([
+                        keyPromise,
+                        valuePromise
+                    ]).then(function(param) {
+                        var _param = _sliced_to_array(param, 2), resolvedKey = _param[0], resolvedValue = _param[1];
+                        resolvedAttributes[resolvedKey] = resolvedValue;
+                    }));
+                } else {
+                    resolvedAttributes[key] = value;
+                }
+            });
+            return hasPromises ? Promise.all(promises).then(function() {
+                return resolvedAttributes;
+            }) : resolvedAttributes;
+        }
+    };
+    var LogicalOperators = {
+        and: function(ctx, leftNode, rightNode) {
+            var leftResult = ctx.evaluate(leftNode);
+            if (isPromiselike(leftResult)) {
+                return leftResult.then(function(awaitedLeft) {
+                    if (!awaitedLeft) return awaitedLeft;
+                    var rightResult = ctx.evaluate(rightNode);
+                    return isPromiselike(rightResult) ? rightResult : Promise.resolve(rightResult);
+                });
+            }
+            return leftResult && ctx.evaluate(rightNode);
+        },
+        or: function(ctx, leftNode, rightNode) {
+            var leftResult = ctx.evaluate(leftNode);
+            if (isPromiselike(leftResult)) {
+                return leftResult.then(function(awaitedLeft) {
+                    if (awaitedLeft) return awaitedLeft;
+                    var rightResult = ctx.evaluate(rightNode);
+                    return isPromiselike(rightResult) ? rightResult : Promise.resolve(rightResult);
+                });
+            }
+            return leftResult || ctx.evaluate(rightNode);
         }
     };
     var ExpressionEvaluator = /*#__PURE__*/ function() {
@@ -3740,7 +3880,12 @@ var MetricsPlugin = function() {
             this.operators = {
                 binary: new Map(Object.entries(DEFAULT_BINARY_OPERATORS)),
                 unary: new Map(Object.entries(DEFAULT_UNARY_OPERATORS)),
-                expressions: new Map(Object.entries(evaluator_functions_exports))
+                expressions: new Map(_to_consumable_array(Object.entries(evaluator_functions_exports)).concat([
+                    [
+                        "await",
+                        waitFor
+                    ]
+                ]))
             };
             this.defaultHookOptions = _object_spread_props(_object_spread({}, defaultOptions), {
                 evaluate: function(expr) {
@@ -3750,7 +3895,9 @@ var MetricsPlugin = function() {
                     return _this._execAST(node, _this.defaultHookOptions);
                 }
             });
-            this.hooks.resolve.tap("ExpressionEvaluator", this._resolveNode.bind(this));
+            this.hooks.resolve.tap("ExpressionEvaluator", function(result, node, options) {
+                return _this._resolveNode(result, node, options);
+            });
             this.evaluate = this.evaluate.bind(this);
         }
         _create_class(ExpressionEvaluator, [
@@ -3786,6 +3933,14 @@ var MetricsPlugin = function() {
                         }, null);
                     }
                     return this._execString(String(expression), resolvedOpts);
+                }
+            },
+            {
+                key: "evaluateAsync",
+                value: function evaluateAsync(expr, options) {
+                    return this.evaluate(expr, _object_spread_props(_object_spread({}, options), {
+                        async: true
+                    }));
                 }
             },
             {
@@ -3833,8 +3988,10 @@ var MetricsPlugin = function() {
                     var matches = exp.match(/^@\[(.*)\]@$/);
                     var matchedExp = exp;
                     if (matches) {
-                        var ref;
-                        ref = _sliced_to_array(Array.from(matches), 2), matchedExp = ref[1], ref;
+                        var _Array_from = _sliced_to_array(Array.from(matches), 2), matched = _Array_from[1];
+                        if (matched) {
+                            matchedExp = matched;
+                        }
                     }
                     var storedAST;
                     try {
@@ -3884,9 +4041,31 @@ var MetricsPlugin = function() {
                                 if (operator.resolveParams === false) {
                                     return operator(expressionContext, node.left, node.right);
                                 }
-                                return operator(expressionContext, resolveNode(node.left), resolveNode(node.right));
+                                var left2 = resolveNode(node.left);
+                                var right2 = resolveNode(node.right);
+                                if (isPromiselike(left2) || isPromiselike(right2)) {
+                                    return Promise.all([
+                                        left2,
+                                        right2
+                                    ]).then(function(param) {
+                                        var _param = _sliced_to_array(param, 2), leftVal = _param[0], rightVal = _param[1];
+                                        return operator(expressionContext, leftVal, rightVal);
+                                    });
+                                }
+                                return operator(expressionContext, left2, right2);
                             }
-                            return operator(resolveNode(node.left), resolveNode(node.right));
+                            var left = resolveNode(node.left);
+                            var right = resolveNode(node.right);
+                            if (isPromiselike(left) || isPromiselike(right)) {
+                                return Promise.all([
+                                    left,
+                                    right
+                                ]).then(function(param) {
+                                    var _param = _sliced_to_array(param, 2), leftVal = _param[0], rightVal = _param[1];
+                                    return operator(leftVal, rightVal);
+                                });
+                            }
+                            return operator(left, right);
                         }
                         return;
                     }
@@ -3894,21 +4073,29 @@ var MetricsPlugin = function() {
                         var operator1 = this.operators.unary.get(node.operator);
                         if (operator1) {
                             if ("resolveParams" in operator1) {
-                                return operator1(expressionContext, operator1.resolveParams === false ? node.argument : resolveNode(node.argument));
+                                if (operator1.resolveParams === false) {
+                                    return operator1(expressionContext, node.argument);
+                                }
+                                var arg2 = resolveNode(node.argument);
+                                if (isPromiselike(arg2)) {
+                                    return arg2.then(function(argVal) {
+                                        return operator1(expressionContext, argVal);
+                                    });
+                                }
+                                return operator1(expressionContext, arg2);
                             }
-                            return operator1(resolveNode(node.argument));
+                            var arg = resolveNode(node.argument);
+                            if (isPromiselike(arg)) {
+                                return arg.then(function(argVal) {
+                                    return operator1(argVal);
+                                });
+                            }
+                            return operator1(arg);
                         }
                         return;
                     }
                     if (node.type === "Object") {
-                        var attributes = node.attributes;
-                        var resolvedAttributes = {};
-                        attributes.forEach(function(attr) {
-                            var key = resolveNode(attr.key);
-                            var value = resolveNode(attr.value);
-                            resolvedAttributes[key] = value;
-                        });
-                        return resolvedAttributes;
+                        return PromiseCollectionHandler.handleObject(node.attributes, resolveNode);
                     }
                     if (node.type === "CallExpression") {
                         var expressionName = node.callTarget.name;
@@ -3924,6 +4111,14 @@ var MetricsPlugin = function() {
                         var args = node.args.map(function(n) {
                             return resolveNode(n);
                         });
+                        var hasPromises = args.some(isPromiselike);
+                        if (hasPromises) {
+                            return Promise.all(args).then(function(resolvedArgs) {
+                                return operator2.apply(void 0, [
+                                    expressionContext
+                                ].concat(_to_consumable_array(resolvedArgs)));
+                            });
+                        }
                         return operator2.apply(void 0, [
                             expressionContext
                         ].concat(_to_consumable_array(args)));
@@ -3938,11 +4133,31 @@ var MetricsPlugin = function() {
                     if (node.type === "MemberExpression") {
                         var obj = resolveNode(node.object);
                         var prop = resolveNode(node.property);
+                        if (isPromiselike(obj) || isPromiselike(prop)) {
+                            return Promise.all([
+                                obj,
+                                prop
+                            ]).then(function(param) {
+                                var _param = _sliced_to_array(param, 2), objVal = _param[0], propVal = _param[1];
+                                return objVal[propVal];
+                            });
+                        }
                         return obj[prop];
                     }
                     if (node.type === "Assignment") {
                         if (node.left.type === "ModelRef") {
                             var value = resolveNode(node.right);
+                            if (isPromiselike(value)) {
+                                return value.then(function(resolvedValue) {
+                                    model.set([
+                                        [
+                                            node.left.ref,
+                                            resolvedValue
+                                        ]
+                                    ]);
+                                    return resolvedValue;
+                                });
+                            }
                             model.set([
                                 [
                                     node.left.ref,
@@ -3953,19 +4168,30 @@ var MetricsPlugin = function() {
                         }
                         if (node.left.type === "Identifier") {
                             var value1 = resolveNode(node.right);
+                            if (isPromiselike(value1)) {
+                                return value1.then(function(resolvedValue) {
+                                    _this.vars[node.left.name] = resolvedValue;
+                                    return resolvedValue;
+                                });
+                            }
                             this.vars[node.left.name] = value1;
                             return value1;
                         }
                         return;
                     }
                     if (node.type === "ConditionalExpression") {
-                        var result = resolveNode(node.test) ? node.consequent : node.alternate;
-                        return resolveNode(result);
+                        var testResult = resolveNode(node.test);
+                        return handleConditionalBranching(testResult, function() {
+                            return node.consequent;
+                        }, function() {
+                            return node.alternate;
+                        }, resolveNode);
                     }
                     if (node.type === "ArrayExpression") {
-                        return node.elements.map(function(ele) {
+                        var results = node.elements.map(function(ele) {
                             return resolveNode(ele);
                         });
+                        return PromiseCollectionHandler.handleArray(results);
                     }
                     if (node.type === "Modification") {
                         var operation = this.operators.binary.get(node.operator);
@@ -3975,12 +4201,47 @@ var MetricsPlugin = function() {
                                 if (operation.resolveParams === false) {
                                     newValue = operation(expressionContext, node.left, node.right);
                                 } else {
-                                    newValue = operation(expressionContext, resolveNode(node.left), resolveNode(node.right));
+                                    var left1 = resolveNode(node.left);
+                                    var right1 = resolveNode(node.right);
+                                    if (isPromiselike(left1) || isPromiselike(right1)) {
+                                        newValue = Promise.all([
+                                            left1,
+                                            right1
+                                        ]).then(function(param) {
+                                            var _param = _sliced_to_array(param, 2), leftVal = _param[0], rightVal = _param[1];
+                                            return operation(expressionContext, leftVal, rightVal);
+                                        });
+                                    } else {
+                                        newValue = operation(expressionContext, left1, right1);
+                                    }
                                 }
                             } else {
-                                newValue = operation(resolveNode(node.left), resolveNode(node.right));
+                                var left3 = resolveNode(node.left);
+                                var right3 = resolveNode(node.right);
+                                if (isPromiselike(left3) || isPromiselike(right3)) {
+                                    newValue = Promise.all([
+                                        left3,
+                                        right3
+                                    ]).then(function(param) {
+                                        var _param = _sliced_to_array(param, 2), leftVal = _param[0], rightVal = _param[1];
+                                        return operation(leftVal, rightVal);
+                                    });
+                                } else {
+                                    newValue = operation(left3, right3);
+                                }
                             }
                             if (node.left.type === "ModelRef") {
+                                if (isPromiselike(newValue)) {
+                                    return newValue.then(function(resolvedValue) {
+                                        model.set([
+                                            [
+                                                node.left.ref,
+                                                resolvedValue
+                                            ]
+                                        ]);
+                                        return resolvedValue;
+                                    });
+                                }
                                 model.set([
                                     [
                                         node.left.ref,
@@ -3988,6 +4249,12 @@ var MetricsPlugin = function() {
                                     ]
                                 ]);
                             } else if (node.left.type === "Identifier") {
+                                if (isPromiselike(newValue)) {
+                                    return newValue.then(function(resolvedValue) {
+                                        _this.vars[node.left.name] = resolvedValue;
+                                        return resolvedValue;
+                                    });
+                                }
                                 this.vars[node.left.name] = newValue;
                             }
                             return newValue;
@@ -7419,15 +7686,56 @@ var MetricsPlugin = function() {
                                 validationController.reset();
                             }
                         });
-                        flow.hooks.afterTransition.tap("player", function(flowInstance) {
-                            var _flowInstance_currentState;
-                            var value = (_flowInstance_currentState = flowInstance.currentState) === null || _flowInstance_currentState === void 0 ? void 0 : _flowInstance_currentState.value;
-                            if (value && value.state_type === "ACTION") {
-                                var exp = value.exp;
-                                flowController === null || flowController === void 0 ? void 0 : flowController.transition(String(expressionEvaluator === null || expressionEvaluator === void 0 ? void 0 : expressionEvaluator.evaluate(exp)));
-                            }
-                            expressionEvaluator.reset();
-                        });
+                        flow.hooks.afterTransition.tap("player", function() {
+                            var _ref = _async_to_generator(function(flowInstance) {
+                                var _flowInstance_currentState, value, exp, result, e;
+                                return _ts_generator(this, function(_state) {
+                                    switch(_state.label){
+                                        case 0:
+                                            value = (_flowInstance_currentState = flowInstance.currentState) === null || _flowInstance_currentState === void 0 ? void 0 : _flowInstance_currentState.value;
+                                            if (!(value && value.state_type === "ACTION")) return [
+                                                3,
+                                                4
+                                            ];
+                                            exp = value.exp;
+                                            _state.label = 1;
+                                        case 1:
+                                            _state.trys.push([
+                                                1,
+                                                3,
+                                                ,
+                                                4
+                                            ]);
+                                            return [
+                                                4,
+                                                expressionEvaluator.evaluateAsync(exp)
+                                            ];
+                                        case 2:
+                                            result = _state.sent();
+                                            flowController === null || flowController === void 0 ? void 0 : flowController.transition(String(result));
+                                            return [
+                                                3,
+                                                4
+                                            ];
+                                        case 3:
+                                            e = _state.sent();
+                                            flowResultDeferred.reject(e);
+                                            return [
+                                                3,
+                                                4
+                                            ];
+                                        case 4:
+                                            expressionEvaluator.reset();
+                                            return [
+                                                2
+                                            ];
+                                    }
+                                });
+                            });
+                            return function(flowInstance) {
+                                return _ref.apply(this, arguments);
+                            };
+                        }());
                     });
                     this.hooks.dataController.call(dataController);
                     validationController.setOptions({
