@@ -2082,6 +2082,9 @@ var CommonExpressionsPlugin = function() {
     __export(src_exports, {
         CommonExpressionsPlugin: function() {
             return CommonExpressionsPlugin;
+        },
+        Expressions: function() {
+            return expressions_exports;
         }
     });
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+expression-plugin@0.0.0/node_modules/@player-ui/expression-plugin/dist/index.mjs
