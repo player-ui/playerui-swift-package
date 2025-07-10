@@ -5485,6 +5485,178 @@ var MetricsPlugin = function() {
         ]);
         return AssetPlugin;
     }();
+    var LocalStateStore = /*#__PURE__*/ function() {
+        function LocalStateStore(onUpdate) {
+            _class_call_check(this, LocalStateStore);
+            this.updateCallback = onUpdate;
+            this.state = /* @__PURE__ */ new Map();
+        }
+        _create_class(LocalStateStore, [
+            {
+                key: "removeKey",
+                value: function removeKey(key) {
+                    this.state.delete(key);
+                }
+            },
+            {
+                key: "reset",
+                value: function reset() {
+                    this.state.clear();
+                }
+            },
+            {
+                key: "useSharedState",
+                value: function useSharedState(key) {
+                    var _this = this;
+                    return function(initialState) {
+                        if (!_this.state.has(key)) {
+                            _this.state.set(key, initialState);
+                        }
+                        return [
+                            _this.state.get(key),
+                            function(newState) {
+                                var current = _this.state.get(key);
+                                _this.state.set(key, newState);
+                                if (current !== newState) {
+                                    var _this_updateCallback, _this1;
+                                    (_this_updateCallback = (_this1 = _this).updateCallback) === null || _this_updateCallback === void 0 ? void 0 : _this_updateCallback.call(_this1);
+                                }
+                            }
+                        ];
+                    };
+                }
+            },
+            {
+                key: "getLocalStateFunction",
+                value: function getLocalStateFunction(key, countKey) {
+                    var _this = this;
+                    return function(initialState) {
+                        if (!_this.state.has(key)) {
+                            _this.state.set(key, []);
+                        }
+                        if (!_this.state.has(countKey)) {
+                            _this.state.set(countKey, 0);
+                        }
+                        var localState = _this.state.get(key);
+                        var oldCount = _this.state.get(countKey);
+                        _this.state.set(countKey, oldCount + 1);
+                        if (localState.length <= oldCount) {
+                            localState.push(initialState);
+                        }
+                        var value = localState[oldCount];
+                        return [
+                            value,
+                            function(newState) {
+                                var oldValue = localState[oldCount];
+                                localState[oldCount] = newState;
+                                if (oldValue !== newState) {
+                                    var _this_updateCallback, _this1;
+                                    (_this_updateCallback = (_this1 = _this).updateCallback) === null || _this_updateCallback === void 0 ? void 0 : _this_updateCallback.call(_this1);
+                                }
+                            }
+                        ];
+                    };
+                }
+            }
+        ]);
+        return LocalStateStore;
+    }();
+    function findUp(node, target) {
+        if (node === target) {
+            return true;
+        }
+        if (node.parent) {
+            return findUp(node.parent, target);
+        }
+        return false;
+    }
+    var AssetTransformCorePlugin = /*#__PURE__*/ function() {
+        function AssetTransformCorePlugin(registry) {
+            _class_call_check(this, AssetTransformCorePlugin);
+            this.registry = registry;
+            this.stateStore = /* @__PURE__ */ new Map();
+            this.beforeResolveSymbol = Symbol("before resolve");
+            this.resolveSymbol = Symbol("resolve");
+            this.beforeResolveCountSymbol = Symbol("before resolve count");
+            this.resolveCountSymbol = Symbol("resolve count");
+        }
+        _create_class(AssetTransformCorePlugin, [
+            {
+                key: "apply",
+                value: function apply(view) {
+                    var _this = this;
+                    this.stateStore.clear();
+                    view.hooks.resolver.tap("asset-transform", function(resolver) {
+                        var lastUpdatedNode;
+                        var updateState = function(node) {
+                            lastUpdatedNode = node;
+                            view.update(/* @__PURE__ */ new Set());
+                        };
+                        var getStore = function(node, stepKey) {
+                            var store;
+                            var countKey = stepKey === _this.resolveSymbol ? _this.resolveCountSymbol : _this.beforeResolveCountSymbol;
+                            var storedState = _this.stateStore.get(node);
+                            if (storedState) {
+                                store = storedState;
+                                store.removeKey(countKey);
+                            } else {
+                                store = new LocalStateStore(function() {
+                                    updateState(node);
+                                });
+                                _this.stateStore.set(node, store);
+                            }
+                            return {
+                                useSharedState: function(key) {
+                                    return store.useSharedState(key);
+                                },
+                                useLocalState: function(initialState) {
+                                    return store.getLocalStateFunction(stepKey, countKey)(initialState);
+                                }
+                            };
+                        };
+                        resolver.hooks.beforeResolve.tap("asset-transform", function(node, options) {
+                            if (node && (node.type === "asset" || node.type === "view")) {
+                                var transform = _this.registry.get(node.value);
+                                if (transform === null || transform === void 0 ? void 0 : transform.beforeResolve) {
+                                    var _options_node;
+                                    var store = getStore((_options_node = options.node) !== null && _options_node !== void 0 ? _options_node : node, _this.beforeResolveSymbol);
+                                    return transform.beforeResolve(node, options, store);
+                                }
+                            }
+                            return node;
+                        });
+                        resolver.hooks.afterUpdate.tap("asset-transform", function() {
+                            lastUpdatedNode = void 0;
+                        });
+                        resolver.hooks.skipResolve.tap("asset-transform", function(skip, node) {
+                            if (!skip || !lastUpdatedNode) {
+                                return skip;
+                            }
+                            var isParentOfUpdated = findUp(lastUpdatedNode, node);
+                            var isChildOfUpdated = findUp(node, lastUpdatedNode);
+                            return !isParentOfUpdated && !isChildOfUpdated;
+                        });
+                        resolver.hooks.afterResolve.tap("asset-transform", function(value, node, options) {
+                            if (node.type !== "asset" && node.type !== "view") {
+                                return value;
+                            }
+                            var originalNode = resolver.getSourceNode(node);
+                            if (!originalNode) {
+                                return value;
+                            }
+                            var transform = _this.registry.get(value);
+                            if (transform === null || transform === void 0 ? void 0 : transform.resolve) {
+                                var store = getStore(originalNode, _this.resolveSymbol);
+                                return transform === null || transform === void 0 ? void 0 : transform.resolve(value, options, store);
+                            }
+                            return value;
+                        });
+                    });
+                }
+            }
+        ]);
+        return AssetTransformCorePlugin;
+    }();
     var FlowInstance = /*#__PURE__*/ function() {
         function FlowInstance(id, flow, options) {
             _class_call_check(this, FlowInstance);
@@ -6514,180 +6686,6 @@ var MetricsPlugin = function() {
         ]);
         return ValidationController;
     }();
-    var LocalStateStore = /*#__PURE__*/ function() {
-        function LocalStateStore(onUpdate) {
-            _class_call_check(this, LocalStateStore);
-            this.updateCallback = onUpdate;
-            this.state = /* @__PURE__ */ new Map();
-        }
-        _create_class(LocalStateStore, [
-            {
-                key: "removeKey",
-                value: function removeKey(key) {
-                    this.state.delete(key);
-                }
-            },
-            {
-                key: "reset",
-                value: function reset() {
-                    this.state.clear();
-                }
-            },
-            {
-                key: "useSharedState",
-                value: function useSharedState(key) {
-                    var _this = this;
-                    return function(initialState) {
-                        if (!_this.state.has(key)) {
-                            _this.state.set(key, initialState);
-                        }
-                        return [
-                            _this.state.get(key),
-                            function(newState) {
-                                var current = _this.state.get(key);
-                                _this.state.set(key, newState);
-                                if (current !== newState) {
-                                    var _this_updateCallback, _this1;
-                                    (_this_updateCallback = (_this1 = _this).updateCallback) === null || _this_updateCallback === void 0 ? void 0 : _this_updateCallback.call(_this1);
-                                }
-                            }
-                        ];
-                    };
-                }
-            },
-            {
-                key: "getLocalStateFunction",
-                value: function getLocalStateFunction(key, countKey) {
-                    var _this = this;
-                    return function(initialState) {
-                        if (!_this.state.has(key)) {
-                            _this.state.set(key, []);
-                        }
-                        if (!_this.state.has(countKey)) {
-                            _this.state.set(countKey, 0);
-                        }
-                        var localState = _this.state.get(key);
-                        var oldCount = _this.state.get(countKey);
-                        _this.state.set(countKey, oldCount + 1);
-                        if (localState.length <= oldCount) {
-                            localState.push(initialState);
-                        }
-                        var value = localState[oldCount];
-                        return [
-                            value,
-                            function(newState) {
-                                var oldValue = localState[oldCount];
-                                localState[oldCount] = newState;
-                                if (oldValue !== newState) {
-                                    var _this_updateCallback, _this1;
-                                    (_this_updateCallback = (_this1 = _this).updateCallback) === null || _this_updateCallback === void 0 ? void 0 : _this_updateCallback.call(_this1);
-                                }
-                            }
-                        ];
-                    };
-                }
-            }
-        ]);
-        return LocalStateStore;
-    }();
-    function findUp(node, target) {
-        if (node === target) {
-            return true;
-        }
-        if (node.parent) {
-            return findUp(node.parent, target);
-        }
-        return false;
-    }
-    var AssetTransformCorePlugin = /*#__PURE__*/ function() {
-        function AssetTransformCorePlugin(registry) {
-            _class_call_check(this, AssetTransformCorePlugin);
-            this.registry = registry;
-            this.stateStore = /* @__PURE__ */ new Map();
-            this.beforeResolveSymbol = Symbol("before resolve");
-            this.resolveSymbol = Symbol("resolve");
-            this.beforeResolveCountSymbol = Symbol("before resolve count");
-            this.resolveCountSymbol = Symbol("resolve count");
-        }
-        _create_class(AssetTransformCorePlugin, [
-            {
-                key: "apply",
-                value: function apply(viewController) {
-                    var _this = this;
-                    viewController.hooks.view.tap("asset-transform", function(view) {
-                        _this.stateStore.clear();
-                        view.hooks.resolver.tap("asset-transform", function(resolver) {
-                            var lastUpdatedNode;
-                            var updateState = function(node) {
-                                lastUpdatedNode = node;
-                                view.update(/* @__PURE__ */ new Set());
-                            };
-                            var getStore = function(node, stepKey) {
-                                var store;
-                                var countKey = stepKey === _this.resolveSymbol ? _this.resolveCountSymbol : _this.beforeResolveCountSymbol;
-                                var storedState = _this.stateStore.get(node);
-                                if (storedState) {
-                                    store = storedState;
-                                    store.removeKey(countKey);
-                                } else {
-                                    store = new LocalStateStore(function() {
-                                        updateState(node);
-                                    });
-                                    _this.stateStore.set(node, store);
-                                }
-                                return {
-                                    useSharedState: function(key) {
-                                        return store.useSharedState(key);
-                                    },
-                                    useLocalState: function(initialState) {
-                                        return store.getLocalStateFunction(stepKey, countKey)(initialState);
-                                    }
-                                };
-                            };
-                            resolver.hooks.beforeResolve.tap("asset-transform", function(node, options) {
-                                if (node && (node.type === "asset" || node.type === "view")) {
-                                    var transform = _this.registry.get(node.value);
-                                    if (transform === null || transform === void 0 ? void 0 : transform.beforeResolve) {
-                                        var _options_node;
-                                        var store = getStore((_options_node = options.node) !== null && _options_node !== void 0 ? _options_node : node, _this.beforeResolveSymbol);
-                                        return transform.beforeResolve(node, options, store);
-                                    }
-                                }
-                                return node;
-                            });
-                            resolver.hooks.afterUpdate.tap("asset-transform", function() {
-                                lastUpdatedNode = void 0;
-                            });
-                            resolver.hooks.skipResolve.tap("asset-transform", function(skip, node) {
-                                if (!skip || !lastUpdatedNode) {
-                                    return skip;
-                                }
-                                var isParentOfUpdated = findUp(lastUpdatedNode, node);
-                                var isChildOfUpdated = findUp(node, lastUpdatedNode);
-                                return !isParentOfUpdated && !isChildOfUpdated;
-                            });
-                            resolver.hooks.afterResolve.tap("asset-transform", function(value, node, options) {
-                                if (node.type !== "asset" && node.type !== "view") {
-                                    return value;
-                                }
-                                var originalNode = resolver.getSourceNode(node);
-                                if (!originalNode) {
-                                    return value;
-                                }
-                                var transform = _this.registry.get(value);
-                                if (transform === null || transform === void 0 ? void 0 : transform.resolve) {
-                                    var store = getStore(originalNode, _this.resolveSymbol);
-                                    return transform === null || transform === void 0 ? void 0 : transform.resolve(value, options, store);
-                                }
-                                return value;
-                            });
-                        });
-                    });
-                }
-            }
-        ]);
-        return AssetTransformCorePlugin;
-    }();
     var ViewController = /*#__PURE__*/ function() {
         function ViewController(initialViews, options) {
             var _this = this;
@@ -6705,7 +6703,6 @@ var MetricsPlugin = function() {
                 viewMap[view.id] = view;
                 return viewMap;
             }, {});
-            new AssetTransformCorePlugin(this.transformRegistry).apply(this);
             options.flowController.hooks.flow.tap("viewController", function(flow) {
                 flow.hooks.transition.tap("viewController", function(_oldState, newState) {
                     if (newState.value.state_type === "VIEW") {
@@ -7190,6 +7187,7 @@ var MetricsPlugin = function() {
                             new AssetPlugin().apply(view);
                             new SwitchPlugin(pluginOptions).apply(view);
                             new ApplicabilityPlugin().apply(view);
+                            new AssetTransformCorePlugin(viewController.transformRegistry).apply(view);
                             new StringResolverPlugin().apply(view);
                             var templatePlugin = new TemplatePlugin(pluginOptions);
                             templatePlugin.apply(view);
@@ -7465,9 +7463,11 @@ var MetricsPlugin = function() {
                         }),
                         constants: this.constantsController
                     });
-                    viewController.hooks.view.tap("player", function(view) {
-                        validationController.onView(view);
-                        _this.hooks.view.call(view);
+                    this.hooks.viewController.tap("player", function(vc) {
+                        vc.hooks.view.tap("player", function(view) {
+                            validationController.onView(view);
+                            _this.hooks.view.call(view);
+                        });
                     });
                     this.hooks.viewController.call(viewController);
                     return {
