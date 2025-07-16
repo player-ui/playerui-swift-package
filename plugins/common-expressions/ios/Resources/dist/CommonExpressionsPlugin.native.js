@@ -1184,6 +1184,20 @@ var CommonExpressionsPlugin = function() {
             };
         }
     };
+    var isPromiseLike = function isPromiseLike(value) {
+        var // Check for standard Promise constructor name
+        _value_constructor;
+        return value != null && typeof value === "object" && typeof value.then === "function" && // Additional safeguards against false positives
+        (_instanceof(value, Promise) || ((_value_constructor = value.constructor) === null || _value_constructor === void 0 ? void 0 : _value_constructor.name) === "Promise" || // Verify it has other Promise-like methods to reduce false positives
+        typeof value.catch === "function" && typeof value.finally === "function");
+    };
+    var isAwaitable = function isAwaitable(val) {
+        return isPromiseLike(val) && val[AwaitableSymbol] !== void 0;
+    };
+    var collateAwaitable = function collateAwaitable(promises) {
+        var result = Promise.all(promises);
+        return makeAwaitable(result);
+    };
     var withoutContext = function withoutContext(fn) {
         return function(_context) {
             for(var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++){
@@ -1197,6 +1211,41 @@ var CommonExpressionsPlugin = function() {
             return false;
         }
         return typeof expr === "object" && expr !== null && !Array.isArray(expr) && "value" in expr;
+    };
+    var makePromiseAwareBinaryOp = function makePromiseAwareBinaryOp(operation) {
+        return function(a, b, async) {
+            if (async && (isAwaitable(a) || isAwaitable(b))) {
+                return collateAwaitable([
+                    Promise.resolve(a),
+                    Promise.resolve(b)
+                ]).awaitableThen(function(param) {
+                    var _param = _sliced_to_array(param, 2), resolvedA = _param[0], resolvedB = _param[1];
+                    return operation(resolvedA, resolvedB);
+                });
+            }
+            return operation(a, b);
+        };
+    };
+    var makePromiseAwareUnaryOp = function makePromiseAwareUnaryOp(operation) {
+        return function(a, async) {
+            if (async && isAwaitable(a)) {
+                return a.awaitableThen(function(resolved) {
+                    return operation(resolved);
+                });
+            }
+            return operation(a);
+        };
+    };
+    var handleConditionalBranching = function handleConditionalBranching(testValue, getTrueBranch, getFalseBranch, resolveNode, async) {
+        if (async && isAwaitable(testValue)) {
+            return testValue.awaitableThen(function(resolved) {
+                var branch2 = resolved ? getTrueBranch() : getFalseBranch();
+                var branchResult = resolveNode(branch2);
+                return isAwaitable(branchResult) ? Promise.resolve(branchResult) : branchResult;
+            });
+        }
+        var branch = testValue ? getTrueBranch() : getFalseBranch();
+        return resolveNode(branch);
     };
     var parse2 = function parse2(schema) {
         var _loop = function() {
@@ -3635,8 +3684,19 @@ var CommonExpressionsPlugin = function() {
         },
         setDataVal: function() {
             return setDataVal;
+        },
+        waitFor: function() {
+            return waitFor;
         }
     });
+    var AwaitableSymbol = Symbol("Awaitable");
+    function makeAwaitable(promise) {
+        promise[AwaitableSymbol] = AwaitableSymbol;
+        promise.awaitableThen = function(arg) {
+            return makeAwaitable(promise.then(arg));
+        };
+        return promise;
+    }
     var setDataVal = function(_context, binding, value) {
         _context.model.set([
             [
@@ -3652,8 +3712,19 @@ var CommonExpressionsPlugin = function() {
         return _context.model.delete(binding);
     };
     var conditional = function(ctx, condition, ifTrue, ifFalse) {
-        var resolution = ctx.evaluate(condition);
-        if (resolution) {
+        var testResult = ctx.evaluate(condition);
+        if (isAwaitable(testResult)) {
+            return testResult.awaitableThen(function(resolvedTest) {
+                if (resolvedTest) {
+                    return ctx.evaluate(ifTrue);
+                }
+                if (ifFalse) {
+                    return ctx.evaluate(ifFalse);
+                }
+                return null;
+            });
+        }
+        if (testResult) {
             return ctx.evaluate(ifTrue);
         }
         if (ifFalse) {
@@ -3662,12 +3733,15 @@ var CommonExpressionsPlugin = function() {
         return null;
     };
     conditional.resolveParams = false;
-    var andandOperator = function(ctx, a, b) {
-        return ctx.evaluate(a) && ctx.evaluate(b);
+    var waitFor = function(ctx, promise) {
+        return makeAwaitable(promise);
+    };
+    var andandOperator = function(ctx, a, b, async) {
+        return LogicalOperators.and(ctx, a, b, async);
     };
     andandOperator.resolveParams = false;
-    var ororOperator = function(ctx, a, b) {
-        return ctx.evaluate(a) || ctx.evaluate(b);
+    var ororOperator = function(ctx, a, b, async) {
+        return LogicalOperators.or(ctx, a, b, async);
     };
     ororOperator.resolveParams = false;
     var DEFAULT_BINARY_OPERATORS = {
@@ -3687,34 +3761,35 @@ var CommonExpressionsPlugin = function() {
         "%": function(a, b) {
             return a % b;
         },
+        // Promise-aware comparison operators
         // eslint-disable-next-line
-        "==": function(a, b) {
+        "==": makePromiseAwareBinaryOp(function(a, b) {
             return a == b;
-        },
+        }),
         // eslint-disable-next-line
-        "!=": function(a, b) {
+        "!=": makePromiseAwareBinaryOp(function(a, b) {
             return a != b;
-        },
-        ">": function(a, b) {
+        }),
+        ">": makePromiseAwareBinaryOp(function(a, b) {
             return a > b;
-        },
-        ">=": function(a, b) {
+        }),
+        ">=": makePromiseAwareBinaryOp(function(a, b) {
             return a >= b;
-        },
-        "<": function(a, b) {
+        }),
+        "<": makePromiseAwareBinaryOp(function(a, b) {
             return a < b;
-        },
-        "<=": function(a, b) {
+        }),
+        "<=": makePromiseAwareBinaryOp(function(a, b) {
             return a <= b;
-        },
+        }),
+        "!==": makePromiseAwareBinaryOp(function(a, b) {
+            return a !== b;
+        }),
+        "===": makePromiseAwareBinaryOp(function(a, b) {
+            return a === b;
+        }),
         "&&": andandOperator,
         "||": ororOperator,
-        "!==": function(a, b) {
-            return a !== b;
-        },
-        "===": function(a, b) {
-            return a === b;
-        },
         // eslint-disable-next-line
         "|": function(a, b) {
             return a | b;
@@ -3745,8 +3820,73 @@ var CommonExpressionsPlugin = function() {
         "+": function(a) {
             return Number(a);
         },
-        "!": function(a) {
+        "!": makePromiseAwareUnaryOp(function(a) {
             return !a;
+        })
+    };
+    var PromiseCollectionHandler = {
+        /**
+     * Handle array with potential Promise elements
+     */ handleArray: function handleArray(items, async) {
+            if (!async) {
+                return items;
+            }
+            var hasPromises = items.some(function(item) {
+                return isAwaitable(item);
+            });
+            return hasPromises ? collateAwaitable(items) : items;
+        },
+        /**
+     * Handle object with potential Promise keys/values
+     */ handleObject: function handleObject(attributes, resolveNode, async) {
+            var resolvedAttributes = {};
+            var promises = [];
+            var hasPromises = false;
+            attributes.forEach(function(attr) {
+                var key = resolveNode(attr.key);
+                var value = resolveNode(attr.value);
+                if (async && (isAwaitable(key) || isAwaitable(value))) {
+                    hasPromises = true;
+                    var keyPromise = Promise.resolve(key);
+                    var valuePromise = Promise.resolve(value);
+                    promises.push(collateAwaitable([
+                        keyPromise,
+                        valuePromise
+                    ]).awaitableThen(function(param) {
+                        var _param = _sliced_to_array(param, 2), resolvedKey = _param[0], resolvedValue = _param[1];
+                        resolvedAttributes[resolvedKey] = resolvedValue;
+                    }));
+                } else {
+                    resolvedAttributes[key] = value;
+                }
+            });
+            return hasPromises ? collateAwaitable(promises).awaitableThen(function() {
+                return resolvedAttributes;
+            }) : resolvedAttributes;
+        }
+    };
+    var LogicalOperators = {
+        and: function(ctx, leftNode, rightNode, async) {
+            var leftResult = ctx.evaluate(leftNode);
+            if (async && isAwaitable(leftResult)) {
+                return leftResult.awaitableThen(function(awaitedLeft) {
+                    if (!awaitedLeft) return awaitedLeft;
+                    var rightResult = ctx.evaluate(rightNode);
+                    return isAwaitable(rightResult) ? rightResult : Promise.resolve(rightResult);
+                });
+            }
+            return leftResult && ctx.evaluate(rightNode);
+        },
+        or: function(ctx, leftNode, rightNode, async) {
+            var leftResult = ctx.evaluate(leftNode);
+            if (async && isAwaitable(leftResult)) {
+                return leftResult.awaitableThen(function(awaitedLeft) {
+                    if (awaitedLeft) return awaitedLeft;
+                    var rightResult = ctx.evaluate(rightNode);
+                    return isAwaitable(rightResult) ? rightResult : Promise.resolve(rightResult);
+                });
+            }
+            return leftResult || ctx.evaluate(rightNode);
         }
     };
     var ExpressionEvaluator = /*#__PURE__*/ function() {
@@ -3767,7 +3907,12 @@ var CommonExpressionsPlugin = function() {
             this.operators = {
                 binary: new Map(Object.entries(DEFAULT_BINARY_OPERATORS)),
                 unary: new Map(Object.entries(DEFAULT_UNARY_OPERATORS)),
-                expressions: new Map(Object.entries(evaluator_functions_exports))
+                expressions: new Map(_to_consumable_array(Object.entries(evaluator_functions_exports)).concat([
+                    [
+                        "await",
+                        waitFor
+                    ]
+                ]))
             };
             this.defaultHookOptions = _object_spread_props(_object_spread({}, defaultOptions), {
                 evaluate: function(expr) {
@@ -3777,7 +3922,9 @@ var CommonExpressionsPlugin = function() {
                     return _this._execAST(node, _this.defaultHookOptions);
                 }
             });
-            this.hooks.resolve.tap("ExpressionEvaluator", this._resolveNode.bind(this));
+            this.hooks.resolve.tap("ExpressionEvaluator", function(result, node, options) {
+                return _this._resolveNode(result, node, options);
+            });
             this.evaluate = this.evaluate.bind(this);
         }
         _create_class(ExpressionEvaluator, [
@@ -3813,6 +3960,38 @@ var CommonExpressionsPlugin = function() {
                         }, null);
                     }
                     return this._execString(String(expression), resolvedOpts);
+                }
+            },
+            {
+                /**
+     * Evaluate functions in an async context
+     * @experimental These Player APIs are in active development and may change. Use with caution
+     */ key: "evaluateAsync",
+                value: function evaluateAsync(expr, options) {
+                    if (Array.isArray(expr)) {
+                        var _this = this;
+                        return collateAwaitable(expr.map(function() {
+                            var _ref = _async_to_generator(function(exp) {
+                                return _ts_generator(this, function(_state) {
+                                    return [
+                                        2,
+                                        _this.evaluate(exp, _object_spread_props(_object_spread({}, options), {
+                                            async: true
+                                        }))
+                                    ];
+                                });
+                            });
+                            return function(exp) {
+                                return _ref.apply(this, arguments);
+                            };
+                        }())).awaitableThen(function(values) {
+                            return values.pop();
+                        });
+                    } else {
+                        return this.evaluate(expr, _object_spread_props(_object_spread({}, options), {
+                            async: true
+                        }));
+                    }
                 }
             },
             {
@@ -3860,8 +4039,10 @@ var CommonExpressionsPlugin = function() {
                     var matches = exp.match(/^@\[(.*)\]@$/);
                     var matchedExp = exp;
                     if (matches) {
-                        var ref;
-                        ref = _sliced_to_array(Array.from(matches), 2), matchedExp = ref[1], ref;
+                        var _Array_from = _sliced_to_array(Array.from(matches), 2), matched = _Array_from[1];
+                        if (matched) {
+                            matchedExp = matched;
+                        }
                     }
                     var storedAST;
                     try {
@@ -3890,6 +4071,8 @@ var CommonExpressionsPlugin = function() {
                 value: function _resolveNode(_currentValue, node, options) {
                     var _this = this;
                     var resolveNode = options.resolveNode, model = options.model;
+                    var _options_async;
+                    var isAsync = (_options_async = options.async) !== null && _options_async !== void 0 ? _options_async : false;
                     var expressionContext = _object_spread_props(_object_spread({}, options), {
                         evaluate: function(expr) {
                             return _this.evaluate(expr, options);
@@ -3909,11 +4092,33 @@ var CommonExpressionsPlugin = function() {
                         if (operator) {
                             if ("resolveParams" in operator) {
                                 if (operator.resolveParams === false) {
-                                    return operator(expressionContext, node.left, node.right);
+                                    return operator(expressionContext, node.left, node.right, isAsync);
                                 }
-                                return operator(expressionContext, resolveNode(node.left), resolveNode(node.right));
+                                var left2 = resolveNode(node.left);
+                                var right2 = resolveNode(node.right);
+                                if (options.async && (isAwaitable(left2) || isAwaitable(right2))) {
+                                    return collateAwaitable([
+                                        left2,
+                                        right2
+                                    ]).awaitableThen(function(param) {
+                                        var _param = _sliced_to_array(param, 2), leftVal = _param[0], rightVal = _param[1];
+                                        return operator(expressionContext, leftVal, rightVal, isAsync);
+                                    });
+                                }
+                                return operator(expressionContext, left2, right2, isAsync);
                             }
-                            return operator(resolveNode(node.left), resolveNode(node.right));
+                            var left = resolveNode(node.left);
+                            var right = resolveNode(node.right);
+                            if (options.async && (isAwaitable(left) || isAwaitable(right))) {
+                                return collateAwaitable([
+                                    left,
+                                    right
+                                ]).awaitableThen(function(param) {
+                                    var _param = _sliced_to_array(param, 2), leftVal = _param[0], rightVal = _param[1];
+                                    return operator(leftVal, rightVal, isAsync);
+                                });
+                            }
+                            return operator(left, right, isAsync);
                         }
                         return;
                     }
@@ -3921,27 +4126,38 @@ var CommonExpressionsPlugin = function() {
                         var operator1 = this.operators.unary.get(node.operator);
                         if (operator1) {
                             if ("resolveParams" in operator1) {
-                                return operator1(expressionContext, operator1.resolveParams === false ? node.argument : resolveNode(node.argument));
+                                if (operator1.resolveParams === false) {
+                                    return operator1(expressionContext, node.argument, isAsync);
+                                }
+                                var arg2 = resolveNode(node.argument);
+                                if (options.async && isAwaitable(arg2)) {
+                                    return arg2.awaitableThen(function(argVal) {
+                                        return operator1(expressionContext, argVal, isAsync);
+                                    });
+                                }
+                                return operator1(expressionContext, arg2, isAsync);
                             }
-                            return operator1(resolveNode(node.argument));
+                            var arg = resolveNode(node.argument);
+                            if (options.async && isAwaitable(arg)) {
+                                return arg.awaitableThen(function(argVal) {
+                                    return operator1(argVal, isAsync);
+                                });
+                            }
+                            return operator1(arg, isAsync);
                         }
                         return;
                     }
                     if (node.type === "Object") {
-                        var attributes = node.attributes;
-                        var resolvedAttributes = {};
-                        attributes.forEach(function(attr) {
-                            var key = resolveNode(attr.key);
-                            var value = resolveNode(attr.value);
-                            resolvedAttributes[key] = value;
-                        });
-                        return resolvedAttributes;
+                        return PromiseCollectionHandler.handleObject(node.attributes, resolveNode, options.async || false);
                     }
                     if (node.type === "CallExpression") {
                         var expressionName = node.callTarget.name;
                         var operator2 = this.operators.expressions.get(expressionName);
                         if (!operator2) {
                             throw new Error("Unknown expression function: ".concat(expressionName));
+                        }
+                        if (operator2.name === waitFor.name && !options.async) {
+                            throw new Error("Usage of await outside of async context");
                         }
                         if ("resolveParams" in operator2 && operator2.resolveParams === false) {
                             return operator2.apply(void 0, [
@@ -3951,6 +4167,16 @@ var CommonExpressionsPlugin = function() {
                         var args = node.args.map(function(n) {
                             return resolveNode(n);
                         });
+                        if (options.async) {
+                            var hasPromises = args.some(isAwaitable);
+                            if (hasPromises) {
+                                return collateAwaitable(args).awaitableThen(function(resolvedArgs) {
+                                    return operator2.apply(void 0, [
+                                        expressionContext
+                                    ].concat(_to_consumable_array(resolvedArgs)));
+                                });
+                            }
+                        }
                         return operator2.apply(void 0, [
                             expressionContext
                         ].concat(_to_consumable_array(args)));
@@ -3965,11 +4191,36 @@ var CommonExpressionsPlugin = function() {
                     if (node.type === "MemberExpression") {
                         var obj = resolveNode(node.object);
                         var prop = resolveNode(node.property);
+                        if (options.async && (isAwaitable(obj) || isAwaitable(prop))) {
+                            return collateAwaitable([
+                                obj,
+                                prop
+                            ]).awaitableThen(function(param) {
+                                var _param = _sliced_to_array(param, 2), objVal = _param[0], propVal = _param[1];
+                                return objVal[propVal];
+                            });
+                        }
                         return obj[prop];
                     }
                     if (node.type === "Assignment") {
                         if (node.left.type === "ModelRef") {
                             var value = resolveNode(node.right);
+                            if (isPromiseLike(value)) {
+                                if (options.async && isAwaitable(value)) {
+                                    return value.awaitableThen(function(resolvedValue) {
+                                        model.set([
+                                            [
+                                                node.left.ref,
+                                                resolvedValue
+                                            ]
+                                        ]);
+                                        return resolvedValue;
+                                    });
+                                } else {
+                                    var _options_logger;
+                                    (_options_logger = options.logger) === null || _options_logger === void 0 ? void 0 : _options_logger.warn("Unawaited promise written to mode, this behavior is undefined and may change in future releases");
+                                }
+                            }
                             model.set([
                                 [
                                     node.left.ref,
@@ -3980,19 +4231,30 @@ var CommonExpressionsPlugin = function() {
                         }
                         if (node.left.type === "Identifier") {
                             var value1 = resolveNode(node.right);
+                            if (options.async && isAwaitable(value1)) {
+                                return value1.awaitableThen(function(resolvedValue) {
+                                    _this.vars[node.left.name] = resolvedValue;
+                                    return resolvedValue;
+                                });
+                            }
                             this.vars[node.left.name] = value1;
                             return value1;
                         }
                         return;
                     }
                     if (node.type === "ConditionalExpression") {
-                        var result = resolveNode(node.test) ? node.consequent : node.alternate;
-                        return resolveNode(result);
+                        var testResult = resolveNode(node.test);
+                        return handleConditionalBranching(testResult, function() {
+                            return node.consequent;
+                        }, function() {
+                            return node.alternate;
+                        }, resolveNode, isAsync);
                     }
                     if (node.type === "ArrayExpression") {
-                        return node.elements.map(function(ele) {
+                        var results = node.elements.map(function(ele) {
                             return resolveNode(ele);
                         });
+                        return PromiseCollectionHandler.handleArray(results, isAsync);
                     }
                     if (node.type === "Modification") {
                         var operation = this.operators.binary.get(node.operator);
@@ -4000,14 +4262,49 @@ var CommonExpressionsPlugin = function() {
                             var newValue;
                             if ("resolveParams" in operation) {
                                 if (operation.resolveParams === false) {
-                                    newValue = operation(expressionContext, node.left, node.right);
+                                    newValue = operation(expressionContext, node.left, node.right, isAsync);
                                 } else {
-                                    newValue = operation(expressionContext, resolveNode(node.left), resolveNode(node.right));
+                                    var left1 = resolveNode(node.left);
+                                    var right1 = resolveNode(node.right);
+                                    if (options.async && (isAwaitable(left1) || isAwaitable(right1))) {
+                                        newValue = collateAwaitable([
+                                            left1,
+                                            right1
+                                        ]).awaitableThen(function(param) {
+                                            var _param = _sliced_to_array(param, 2), leftVal = _param[0], rightVal = _param[1];
+                                            return operation(expressionContext, leftVal, rightVal, isAsync);
+                                        });
+                                    } else {
+                                        newValue = operation(expressionContext, left1, right1, isAsync);
+                                    }
                                 }
                             } else {
-                                newValue = operation(resolveNode(node.left), resolveNode(node.right));
+                                var left3 = resolveNode(node.left);
+                                var right3 = resolveNode(node.right);
+                                if (options.async && (isAwaitable(left3) || isAwaitable(right3))) {
+                                    newValue = collateAwaitable([
+                                        left3,
+                                        right3
+                                    ]).awaitableThen(function(param) {
+                                        var _param = _sliced_to_array(param, 2), leftVal = _param[0], rightVal = _param[1];
+                                        return operation(leftVal, rightVal, isAsync);
+                                    });
+                                } else {
+                                    newValue = operation(left3, right3, isAsync);
+                                }
                             }
                             if (node.left.type === "ModelRef") {
+                                if (options.async && isAwaitable(newValue)) {
+                                    return newValue.awaitableThen(function(resolvedValue) {
+                                        model.set([
+                                            [
+                                                node.left.ref,
+                                                resolvedValue
+                                            ]
+                                        ]);
+                                        return resolvedValue;
+                                    });
+                                }
                                 model.set([
                                     [
                                         node.left.ref,
@@ -4015,6 +4312,12 @@ var CommonExpressionsPlugin = function() {
                                     ]
                                 ]);
                             } else if (node.left.type === "Identifier") {
+                                if (options.async && isAwaitable(newValue)) {
+                                    return newValue.awaitableThen(function(resolvedValue) {
+                                        _this.vars[node.left.name] = resolvedValue;
+                                        return resolvedValue;
+                                    });
+                                }
                                 this.vars[node.left.name] = newValue;
                             }
                             return newValue;
@@ -7238,18 +7541,18 @@ var CommonExpressionsPlugin = function() {
             this.constantsController = new ConstantsController();
             this.state = NOT_STARTED_STATE;
             this.hooks = {
-                /** The hook that fires every time we create a new flowController (a new Content blob is passed in) */ flowController: new SyncHook(),
-                /** The hook that updates/handles views */ viewController: new SyncHook(),
-                /** A hook called every-time there's a new view. This is equivalent to the view hook on the view-controller */ view: new SyncHook(),
-                /** Called when an expression evaluator was created */ expressionEvaluator: new SyncHook(),
-                /** The hook that creates and manages data */ dataController: new SyncHook(),
-                /** Called after the schema is created for a flow */ schema: new SyncHook(),
-                /** Manages validations (schema and x-field ) */ validationController: new SyncHook(),
-                /** Manages parsing binding */ bindingParser: new SyncHook(),
-                /** A that's called for state changes in the flow execution */ state: new SyncHook(),
-                /** A hook to access the current flow */ onStart: new SyncHook(),
-                /** A hook for when the flow ends either in success or failure */ onEnd: new SyncHook(),
-                /** Mutate the Content flow before starting */ resolveFlowContent: new SyncWaterfallHook()
+                flowController: new SyncHook(),
+                viewController: new SyncHook(),
+                view: new SyncHook(),
+                expressionEvaluator: new SyncHook(),
+                dataController: new SyncHook(),
+                schema: new SyncHook(),
+                validationController: new SyncHook(),
+                bindingParser: new SyncHook(),
+                state: new SyncHook(),
+                onStart: new SyncHook(),
+                onEnd: new SyncHook(),
+                resolveFlowContent: new SyncWaterfallHook()
             };
             if (config === null || config === void 0 ? void 0 : config.logger) {
                 this.logger.addHandler(config.logger);
@@ -7449,10 +7752,90 @@ var CommonExpressionsPlugin = function() {
                             var value = (_flowInstance_currentState = flowInstance.currentState) === null || _flowInstance_currentState === void 0 ? void 0 : _flowInstance_currentState.value;
                             if (value && value.state_type === "ACTION") {
                                 var exp = value.exp;
-                                flowController === null || flowController === void 0 ? void 0 : flowController.transition(String(expressionEvaluator === null || expressionEvaluator === void 0 ? void 0 : expressionEvaluator.evaluate(exp)));
+                                var result = expressionEvaluator.evaluate(exp);
+                                if (isPromiseLike(result)) {
+                                    _this.logger.warn("Async expression used as return value in in non-async context, transitioning with '*' value");
+                                }
+                                flowController === null || flowController === void 0 ? void 0 : flowController.transition(String(result));
                             }
                             expressionEvaluator.reset();
                         });
+                        var _this1 = _this;
+                        flow.hooks.afterTransition.tap("player", function() {
+                            var _ref = _async_to_generator(function(flowInstance) {
+                                var _flowInstance_currentState, value, exp, result, e;
+                                return _ts_generator(this, function(_state) {
+                                    switch(_state.label){
+                                        case 0:
+                                            value = (_flowInstance_currentState = flowInstance.currentState) === null || _flowInstance_currentState === void 0 ? void 0 : _flowInstance_currentState.value;
+                                            if (!(value && value.state_type === "ASYNC_ACTION")) return [
+                                                3,
+                                                8
+                                            ];
+                                            exp = value.exp;
+                                            _state.label = 1;
+                                        case 1:
+                                            _state.trys.push([
+                                                1,
+                                                7,
+                                                ,
+                                                8
+                                            ]);
+                                            result = expressionEvaluator.evaluateAsync(exp);
+                                            if (!isPromiseLike(result)) return [
+                                                3,
+                                                5
+                                            ];
+                                            if (!value.await) return [
+                                                3,
+                                                3
+                                            ];
+                                            return [
+                                                4,
+                                                result
+                                            ];
+                                        case 2:
+                                            result = _state.sent();
+                                            return [
+                                                3,
+                                                4
+                                            ];
+                                        case 3:
+                                            _this1.logger.warn("Unawaited promise used as return value in in non-async context, transitioning with '*' value");
+                                            _state.label = 4;
+                                        case 4:
+                                            return [
+                                                3,
+                                                6
+                                            ];
+                                        case 5:
+                                            _this1.logger.warn("Non async expression used in async action node");
+                                            _state.label = 6;
+                                        case 6:
+                                            flowController === null || flowController === void 0 ? void 0 : flowController.transition(String(result));
+                                            return [
+                                                3,
+                                                8
+                                            ];
+                                        case 7:
+                                            e = _state.sent();
+                                            flowResultDeferred.reject(e);
+                                            return [
+                                                3,
+                                                8
+                                            ];
+                                        case 8:
+                                            expressionEvaluator.reset();
+                                            return [
+                                                2
+                                            ];
+                                    }
+                                });
+                            });
+                            return function(flowInstance) {
+                                return _ref.apply(this, arguments);
+                            };
+                        }());
                     });
                     this.hooks.dataController.call(dataController);
                     validationController.setOptions({
