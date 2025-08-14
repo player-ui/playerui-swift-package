@@ -1276,11 +1276,60 @@ var ReferenceAssetsPlugin = function() {
             };
         }
     };
+    var isPromiseLike = function isPromiseLike(value) {
+        var // Check for standard Promise constructor name
+        _value_constructor;
+        return value != null && typeof value === "object" && typeof value.then === "function" && // Additional safeguards against false positives
+        (_instanceof(value, Promise) || ((_value_constructor = value.constructor) === null || _value_constructor === void 0 ? void 0 : _value_constructor.name) === "Promise" || // Verify it has other Promise-like methods to reduce false positives
+        typeof value.catch === "function" && typeof value.finally === "function");
+    };
+    var isAwaitable = function isAwaitable(val) {
+        return isPromiseLike(val) && val[AwaitableSymbol] !== void 0;
+    };
+    var collateAwaitable = function collateAwaitable(promises) {
+        var result = Promise.all(promises);
+        return makeAwaitable(result);
+    };
     var isObjectExpression = function isObjectExpression(expr) {
         if (isExpressionNode(expr)) {
             return false;
         }
         return typeof expr === "object" && expr !== null && !Array.isArray(expr) && "value" in expr;
+    };
+    var makePromiseAwareBinaryOp = function makePromiseAwareBinaryOp(operation) {
+        return function(a, b, async) {
+            if (async && (isAwaitable(a) || isAwaitable(b))) {
+                return collateAwaitable([
+                    Promise.resolve(a),
+                    Promise.resolve(b)
+                ]).awaitableThen(function(param) {
+                    var _param = _sliced_to_array(param, 2), resolvedA = _param[0], resolvedB = _param[1];
+                    return operation(resolvedA, resolvedB);
+                });
+            }
+            return operation(a, b);
+        };
+    };
+    var makePromiseAwareUnaryOp = function makePromiseAwareUnaryOp(operation) {
+        return function(a, async) {
+            if (async && isAwaitable(a)) {
+                return a.awaitableThen(function(resolved) {
+                    return operation(resolved);
+                });
+            }
+            return operation(a);
+        };
+    };
+    var handleConditionalBranching = function handleConditionalBranching(testValue, getTrueBranch, getFalseBranch, resolveNode, async) {
+        if (async && isAwaitable(testValue)) {
+            return testValue.awaitableThen(function(resolved) {
+                var branch2 = resolved ? getTrueBranch() : getFalseBranch();
+                var branchResult = resolveNode(branch2);
+                return isAwaitable(branchResult) ? Promise.resolve(branchResult) : branchResult;
+            });
+        }
+        var branch = testValue ? getTrueBranch() : getFalseBranch();
+        return resolveNode(branch);
     };
     var parse2 = function parse2(schema) {
         var _loop = function() {
@@ -2766,6 +2815,67 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return SyncWaterfallHook;
     }(Hook);
+    var AsyncParallelBailHook = /*#__PURE__*/ function(Hook) {
+        _inherits(AsyncParallelBailHook, Hook);
+        var _super = _create_super(AsyncParallelBailHook);
+        function AsyncParallelBailHook() {
+            _class_call_check(this, AsyncParallelBailHook);
+            return _super.apply(this, arguments);
+        }
+        _create_class(AsyncParallelBailHook, [
+            {
+                key: "call",
+                value: function call() {
+                    for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
+                        args[_key] = arguments[_key];
+                    }
+                    var _this = this;
+                    return _async_to_generator(function() {
+                        var _this_interceptions, ctx, rtn, e;
+                        return _ts_generator(this, function(_state) {
+                            switch(_state.label){
+                                case 0:
+                                    ctx = {};
+                                    (_this_interceptions = _this.interceptions).call.apply(_this_interceptions, [
+                                        ctx
+                                    ].concat(_to_consumable_array(args)));
+                                    _state.label = 1;
+                                case 1:
+                                    _state.trys.push([
+                                        1,
+                                        3,
+                                        ,
+                                        4
+                                    ]);
+                                    return [
+                                        4,
+                                        Promise.race(_this.taps.map(function(tap) {
+                                            return callTap(tap, args, ctx);
+                                        }))
+                                    ];
+                                case 2:
+                                    rtn = _state.sent();
+                                    _this.interceptions.result(rtn);
+                                    return [
+                                        2,
+                                        rtn
+                                    ];
+                                case 3:
+                                    e = _state.sent();
+                                    _this.interceptions.error(e);
+                                    throw e;
+                                case 4:
+                                    return [
+                                        2
+                                    ];
+                            }
+                        });
+                    })();
+                }
+            }
+        ]);
+        return AsyncParallelBailHook;
+    }(Hook);
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_ts_nested_error = __toESM(require_nested_error(), 1);
     var import_ts_nested_error2 = __toESM(require_nested_error(), 1);
@@ -2884,9 +2994,10 @@ var ReferenceAssetsPlugin = function() {
     var import_timm7 = __toESM(require_timm(), 1);
     var import_timm8 = __toESM(require_timm(), 1);
     var import_p_defer = __toESM(require_p_defer(), 1);
+    var import_queue_microtask = __toESM(require_queue_microtask(), 1);
     var import_p_defer2 = __toESM(require_p_defer(), 1);
     var import_timm9 = __toESM(require_timm(), 1);
-    var import_queue_microtask = __toESM(require_queue_microtask(), 1);
+    var import_queue_microtask2 = __toESM(require_queue_microtask(), 1);
     var __defProp2 = Object.defineProperty;
     var __export2 = function(target, all) {
         for(var name in all)__defProp2(target, name, {
@@ -3807,8 +3918,19 @@ var ReferenceAssetsPlugin = function() {
         },
         setDataVal: function() {
             return setDataVal;
+        },
+        waitFor: function() {
+            return waitFor;
         }
     });
+    var AwaitableSymbol = Symbol("Awaitable");
+    function makeAwaitable(promise) {
+        promise[AwaitableSymbol] = AwaitableSymbol;
+        promise.awaitableThen = function(arg) {
+            return makeAwaitable(promise.then(arg));
+        };
+        return promise;
+    }
     var setDataVal = function(_context, binding, value) {
         _context.model.set([
             [
@@ -3824,8 +3946,19 @@ var ReferenceAssetsPlugin = function() {
         return _context.model.delete(binding);
     };
     var conditional = function(ctx, condition, ifTrue, ifFalse) {
-        var resolution = ctx.evaluate(condition);
-        if (resolution) {
+        var testResult = ctx.evaluate(condition);
+        if (isAwaitable(testResult)) {
+            return testResult.awaitableThen(function(resolvedTest) {
+                if (resolvedTest) {
+                    return ctx.evaluate(ifTrue);
+                }
+                if (ifFalse) {
+                    return ctx.evaluate(ifFalse);
+                }
+                return null;
+            });
+        }
+        if (testResult) {
             return ctx.evaluate(ifTrue);
         }
         if (ifFalse) {
@@ -3834,12 +3967,15 @@ var ReferenceAssetsPlugin = function() {
         return null;
     };
     conditional.resolveParams = false;
-    var andandOperator = function(ctx, a, b) {
-        return ctx.evaluate(a) && ctx.evaluate(b);
+    var waitFor = function(ctx, promise) {
+        return makeAwaitable(promise);
+    };
+    var andandOperator = function(ctx, a, b, async) {
+        return LogicalOperators.and(ctx, a, b, async);
     };
     andandOperator.resolveParams = false;
-    var ororOperator = function(ctx, a, b) {
-        return ctx.evaluate(a) || ctx.evaluate(b);
+    var ororOperator = function(ctx, a, b, async) {
+        return LogicalOperators.or(ctx, a, b, async);
     };
     ororOperator.resolveParams = false;
     var DEFAULT_BINARY_OPERATORS = {
@@ -3859,34 +3995,35 @@ var ReferenceAssetsPlugin = function() {
         "%": function(a, b) {
             return a % b;
         },
+        // Promise-aware comparison operators
         // eslint-disable-next-line
-        "==": function(a, b) {
+        "==": makePromiseAwareBinaryOp(function(a, b) {
             return a == b;
-        },
+        }),
         // eslint-disable-next-line
-        "!=": function(a, b) {
+        "!=": makePromiseAwareBinaryOp(function(a, b) {
             return a != b;
-        },
-        ">": function(a, b) {
+        }),
+        ">": makePromiseAwareBinaryOp(function(a, b) {
             return a > b;
-        },
-        ">=": function(a, b) {
+        }),
+        ">=": makePromiseAwareBinaryOp(function(a, b) {
             return a >= b;
-        },
-        "<": function(a, b) {
+        }),
+        "<": makePromiseAwareBinaryOp(function(a, b) {
             return a < b;
-        },
-        "<=": function(a, b) {
+        }),
+        "<=": makePromiseAwareBinaryOp(function(a, b) {
             return a <= b;
-        },
+        }),
+        "!==": makePromiseAwareBinaryOp(function(a, b) {
+            return a !== b;
+        }),
+        "===": makePromiseAwareBinaryOp(function(a, b) {
+            return a === b;
+        }),
         "&&": andandOperator,
         "||": ororOperator,
-        "!==": function(a, b) {
-            return a !== b;
-        },
-        "===": function(a, b) {
-            return a === b;
-        },
         // eslint-disable-next-line
         "|": function(a, b) {
             return a | b;
@@ -3917,8 +4054,73 @@ var ReferenceAssetsPlugin = function() {
         "+": function(a) {
             return Number(a);
         },
-        "!": function(a) {
+        "!": makePromiseAwareUnaryOp(function(a) {
             return !a;
+        })
+    };
+    var PromiseCollectionHandler = {
+        /**
+     * Handle array with potential Promise elements
+     */ handleArray: function handleArray(items, async) {
+            if (!async) {
+                return items;
+            }
+            var hasPromises = items.some(function(item) {
+                return isAwaitable(item);
+            });
+            return hasPromises ? collateAwaitable(items) : items;
+        },
+        /**
+     * Handle object with potential Promise keys/values
+     */ handleObject: function handleObject(attributes, resolveNode, async) {
+            var resolvedAttributes = {};
+            var promises = [];
+            var hasPromises = false;
+            attributes.forEach(function(attr) {
+                var key = resolveNode(attr.key);
+                var value = resolveNode(attr.value);
+                if (async && (isAwaitable(key) || isAwaitable(value))) {
+                    hasPromises = true;
+                    var keyPromise = Promise.resolve(key);
+                    var valuePromise = Promise.resolve(value);
+                    promises.push(collateAwaitable([
+                        keyPromise,
+                        valuePromise
+                    ]).awaitableThen(function(param) {
+                        var _param = _sliced_to_array(param, 2), resolvedKey = _param[0], resolvedValue = _param[1];
+                        resolvedAttributes[resolvedKey] = resolvedValue;
+                    }));
+                } else {
+                    resolvedAttributes[key] = value;
+                }
+            });
+            return hasPromises ? collateAwaitable(promises).awaitableThen(function() {
+                return resolvedAttributes;
+            }) : resolvedAttributes;
+        }
+    };
+    var LogicalOperators = {
+        and: function(ctx, leftNode, rightNode, async) {
+            var leftResult = ctx.evaluate(leftNode);
+            if (async && isAwaitable(leftResult)) {
+                return leftResult.awaitableThen(function(awaitedLeft) {
+                    if (!awaitedLeft) return awaitedLeft;
+                    var rightResult = ctx.evaluate(rightNode);
+                    return isAwaitable(rightResult) ? rightResult : Promise.resolve(rightResult);
+                });
+            }
+            return leftResult && ctx.evaluate(rightNode);
+        },
+        or: function(ctx, leftNode, rightNode, async) {
+            var leftResult = ctx.evaluate(leftNode);
+            if (async && isAwaitable(leftResult)) {
+                return leftResult.awaitableThen(function(awaitedLeft) {
+                    if (awaitedLeft) return awaitedLeft;
+                    var rightResult = ctx.evaluate(rightNode);
+                    return isAwaitable(rightResult) ? rightResult : Promise.resolve(rightResult);
+                });
+            }
+            return leftResult || ctx.evaluate(rightNode);
         }
     };
     var ExpressionEvaluator = /*#__PURE__*/ function() {
@@ -3939,7 +4141,12 @@ var ReferenceAssetsPlugin = function() {
             this.operators = {
                 binary: new Map(Object.entries(DEFAULT_BINARY_OPERATORS)),
                 unary: new Map(Object.entries(DEFAULT_UNARY_OPERATORS)),
-                expressions: new Map(Object.entries(evaluator_functions_exports))
+                expressions: new Map(_to_consumable_array(Object.entries(evaluator_functions_exports)).concat([
+                    [
+                        "await",
+                        waitFor
+                    ]
+                ]))
             };
             this.defaultHookOptions = _object_spread_props(_object_spread({}, defaultOptions), {
                 evaluate: function(expr) {
@@ -3949,7 +4156,9 @@ var ReferenceAssetsPlugin = function() {
                     return _this._execAST(node, _this.defaultHookOptions);
                 }
             });
-            this.hooks.resolve.tap("ExpressionEvaluator", this._resolveNode.bind(this));
+            this.hooks.resolve.tap("ExpressionEvaluator", function(result, node, options) {
+                return _this._resolveNode(result, node, options);
+            });
             this.evaluate = this.evaluate.bind(this);
         }
         _create_class(ExpressionEvaluator, [
@@ -3985,6 +4194,38 @@ var ReferenceAssetsPlugin = function() {
                         }, null);
                     }
                     return this._execString(String(expression), resolvedOpts);
+                }
+            },
+            {
+                /**
+     * Evaluate functions in an async context
+     * @experimental These Player APIs are in active development and may change. Use with caution
+     */ key: "evaluateAsync",
+                value: function evaluateAsync(expr, options) {
+                    if (Array.isArray(expr)) {
+                        var _this = this;
+                        return collateAwaitable(expr.map(function() {
+                            var _ref = _async_to_generator(function(exp) {
+                                return _ts_generator(this, function(_state) {
+                                    return [
+                                        2,
+                                        _this.evaluate(exp, _object_spread_props(_object_spread({}, options), {
+                                            async: true
+                                        }))
+                                    ];
+                                });
+                            });
+                            return function(exp) {
+                                return _ref.apply(this, arguments);
+                            };
+                        }())).awaitableThen(function(values) {
+                            return values.pop();
+                        });
+                    } else {
+                        return this.evaluate(expr, _object_spread_props(_object_spread({}, options), {
+                            async: true
+                        }));
+                    }
                 }
             },
             {
@@ -4032,8 +4273,10 @@ var ReferenceAssetsPlugin = function() {
                     var matches = exp.match(/^@\[(.*)\]@$/);
                     var matchedExp = exp;
                     if (matches) {
-                        var ref;
-                        ref = _sliced_to_array(Array.from(matches), 2), matchedExp = ref[1], ref;
+                        var _Array_from = _sliced_to_array(Array.from(matches), 2), matched = _Array_from[1];
+                        if (matched) {
+                            matchedExp = matched;
+                        }
                     }
                     var storedAST;
                     try {
@@ -4062,6 +4305,8 @@ var ReferenceAssetsPlugin = function() {
                 value: function _resolveNode(_currentValue, node, options) {
                     var _this = this;
                     var resolveNode = options.resolveNode, model = options.model;
+                    var _options_async;
+                    var isAsync = (_options_async = options.async) !== null && _options_async !== void 0 ? _options_async : false;
                     var expressionContext = _object_spread_props(_object_spread({}, options), {
                         evaluate: function(expr) {
                             return _this.evaluate(expr, options);
@@ -4081,11 +4326,33 @@ var ReferenceAssetsPlugin = function() {
                         if (operator) {
                             if ("resolveParams" in operator) {
                                 if (operator.resolveParams === false) {
-                                    return operator(expressionContext, node.left, node.right);
+                                    return operator(expressionContext, node.left, node.right, isAsync);
                                 }
-                                return operator(expressionContext, resolveNode(node.left), resolveNode(node.right));
+                                var left2 = resolveNode(node.left);
+                                var right2 = resolveNode(node.right);
+                                if (options.async && (isAwaitable(left2) || isAwaitable(right2))) {
+                                    return collateAwaitable([
+                                        left2,
+                                        right2
+                                    ]).awaitableThen(function(param) {
+                                        var _param = _sliced_to_array(param, 2), leftVal = _param[0], rightVal = _param[1];
+                                        return operator(expressionContext, leftVal, rightVal, isAsync);
+                                    });
+                                }
+                                return operator(expressionContext, left2, right2, isAsync);
                             }
-                            return operator(resolveNode(node.left), resolveNode(node.right));
+                            var left = resolveNode(node.left);
+                            var right = resolveNode(node.right);
+                            if (options.async && (isAwaitable(left) || isAwaitable(right))) {
+                                return collateAwaitable([
+                                    left,
+                                    right
+                                ]).awaitableThen(function(param) {
+                                    var _param = _sliced_to_array(param, 2), leftVal = _param[0], rightVal = _param[1];
+                                    return operator(leftVal, rightVal, isAsync);
+                                });
+                            }
+                            return operator(left, right, isAsync);
                         }
                         return;
                     }
@@ -4093,27 +4360,38 @@ var ReferenceAssetsPlugin = function() {
                         var operator1 = this.operators.unary.get(node.operator);
                         if (operator1) {
                             if ("resolveParams" in operator1) {
-                                return operator1(expressionContext, operator1.resolveParams === false ? node.argument : resolveNode(node.argument));
+                                if (operator1.resolveParams === false) {
+                                    return operator1(expressionContext, node.argument, isAsync);
+                                }
+                                var arg2 = resolveNode(node.argument);
+                                if (options.async && isAwaitable(arg2)) {
+                                    return arg2.awaitableThen(function(argVal) {
+                                        return operator1(expressionContext, argVal, isAsync);
+                                    });
+                                }
+                                return operator1(expressionContext, arg2, isAsync);
                             }
-                            return operator1(resolveNode(node.argument));
+                            var arg = resolveNode(node.argument);
+                            if (options.async && isAwaitable(arg)) {
+                                return arg.awaitableThen(function(argVal) {
+                                    return operator1(argVal, isAsync);
+                                });
+                            }
+                            return operator1(arg, isAsync);
                         }
                         return;
                     }
                     if (node.type === "Object") {
-                        var attributes = node.attributes;
-                        var resolvedAttributes = {};
-                        attributes.forEach(function(attr) {
-                            var key = resolveNode(attr.key);
-                            var value = resolveNode(attr.value);
-                            resolvedAttributes[key] = value;
-                        });
-                        return resolvedAttributes;
+                        return PromiseCollectionHandler.handleObject(node.attributes, resolveNode, options.async || false);
                     }
                     if (node.type === "CallExpression") {
                         var expressionName = node.callTarget.name;
                         var operator2 = this.operators.expressions.get(expressionName);
                         if (!operator2) {
                             throw new Error("Unknown expression function: ".concat(expressionName));
+                        }
+                        if (operator2.name === waitFor.name && !options.async) {
+                            throw new Error("Usage of await outside of async context");
                         }
                         if ("resolveParams" in operator2 && operator2.resolveParams === false) {
                             return operator2.apply(void 0, [
@@ -4123,6 +4401,16 @@ var ReferenceAssetsPlugin = function() {
                         var args = node.args.map(function(n) {
                             return resolveNode(n);
                         });
+                        if (options.async) {
+                            var hasPromises = args.some(isAwaitable);
+                            if (hasPromises) {
+                                return collateAwaitable(args).awaitableThen(function(resolvedArgs) {
+                                    return operator2.apply(void 0, [
+                                        expressionContext
+                                    ].concat(_to_consumable_array(resolvedArgs)));
+                                });
+                            }
+                        }
                         return operator2.apply(void 0, [
                             expressionContext
                         ].concat(_to_consumable_array(args)));
@@ -4137,11 +4425,36 @@ var ReferenceAssetsPlugin = function() {
                     if (node.type === "MemberExpression") {
                         var obj = resolveNode(node.object);
                         var prop = resolveNode(node.property);
+                        if (options.async && (isAwaitable(obj) || isAwaitable(prop))) {
+                            return collateAwaitable([
+                                obj,
+                                prop
+                            ]).awaitableThen(function(param) {
+                                var _param = _sliced_to_array(param, 2), objVal = _param[0], propVal = _param[1];
+                                return objVal[propVal];
+                            });
+                        }
                         return obj[prop];
                     }
                     if (node.type === "Assignment") {
                         if (node.left.type === "ModelRef") {
                             var value = resolveNode(node.right);
+                            if (isPromiseLike(value)) {
+                                if (options.async && isAwaitable(value)) {
+                                    return value.awaitableThen(function(resolvedValue) {
+                                        model.set([
+                                            [
+                                                node.left.ref,
+                                                resolvedValue
+                                            ]
+                                        ]);
+                                        return resolvedValue;
+                                    });
+                                } else {
+                                    var _options_logger;
+                                    (_options_logger = options.logger) === null || _options_logger === void 0 ? void 0 : _options_logger.warn("Unawaited promise written to mode, this behavior is undefined and may change in future releases");
+                                }
+                            }
                             model.set([
                                 [
                                     node.left.ref,
@@ -4152,19 +4465,30 @@ var ReferenceAssetsPlugin = function() {
                         }
                         if (node.left.type === "Identifier") {
                             var value1 = resolveNode(node.right);
+                            if (options.async && isAwaitable(value1)) {
+                                return value1.awaitableThen(function(resolvedValue) {
+                                    _this.vars[node.left.name] = resolvedValue;
+                                    return resolvedValue;
+                                });
+                            }
                             this.vars[node.left.name] = value1;
                             return value1;
                         }
                         return;
                     }
                     if (node.type === "ConditionalExpression") {
-                        var result = resolveNode(node.test) ? node.consequent : node.alternate;
-                        return resolveNode(result);
+                        var testResult = resolveNode(node.test);
+                        return handleConditionalBranching(testResult, function() {
+                            return node.consequent;
+                        }, function() {
+                            return node.alternate;
+                        }, resolveNode, isAsync);
                     }
                     if (node.type === "ArrayExpression") {
-                        return node.elements.map(function(ele) {
+                        var results = node.elements.map(function(ele) {
                             return resolveNode(ele);
                         });
+                        return PromiseCollectionHandler.handleArray(results, isAsync);
                     }
                     if (node.type === "Modification") {
                         var operation = this.operators.binary.get(node.operator);
@@ -4172,14 +4496,49 @@ var ReferenceAssetsPlugin = function() {
                             var newValue;
                             if ("resolveParams" in operation) {
                                 if (operation.resolveParams === false) {
-                                    newValue = operation(expressionContext, node.left, node.right);
+                                    newValue = operation(expressionContext, node.left, node.right, isAsync);
                                 } else {
-                                    newValue = operation(expressionContext, resolveNode(node.left), resolveNode(node.right));
+                                    var left1 = resolveNode(node.left);
+                                    var right1 = resolveNode(node.right);
+                                    if (options.async && (isAwaitable(left1) || isAwaitable(right1))) {
+                                        newValue = collateAwaitable([
+                                            left1,
+                                            right1
+                                        ]).awaitableThen(function(param) {
+                                            var _param = _sliced_to_array(param, 2), leftVal = _param[0], rightVal = _param[1];
+                                            return operation(expressionContext, leftVal, rightVal, isAsync);
+                                        });
+                                    } else {
+                                        newValue = operation(expressionContext, left1, right1, isAsync);
+                                    }
                                 }
                             } else {
-                                newValue = operation(resolveNode(node.left), resolveNode(node.right));
+                                var left3 = resolveNode(node.left);
+                                var right3 = resolveNode(node.right);
+                                if (options.async && (isAwaitable(left3) || isAwaitable(right3))) {
+                                    newValue = collateAwaitable([
+                                        left3,
+                                        right3
+                                    ]).awaitableThen(function(param) {
+                                        var _param = _sliced_to_array(param, 2), leftVal = _param[0], rightVal = _param[1];
+                                        return operation(leftVal, rightVal, isAsync);
+                                    });
+                                } else {
+                                    newValue = operation(left3, right3, isAsync);
+                                }
                             }
                             if (node.left.type === "ModelRef") {
+                                if (options.async && isAwaitable(newValue)) {
+                                    return newValue.awaitableThen(function(resolvedValue) {
+                                        model.set([
+                                            [
+                                                node.left.ref,
+                                                resolvedValue
+                                            ]
+                                        ]);
+                                        return resolvedValue;
+                                    });
+                                }
                                 model.set([
                                     [
                                         node.left.ref,
@@ -4187,6 +4546,12 @@ var ReferenceAssetsPlugin = function() {
                                     ]
                                 ]);
                             } else if (node.left.type === "Identifier") {
+                                if (options.async && isAwaitable(newValue)) {
+                                    return newValue.awaitableThen(function(resolvedValue) {
+                                        _this.vars[node.left.name] = resolvedValue;
+                                        return resolvedValue;
+                                    });
+                                }
                                 this.vars[node.left.name] = newValue;
                             }
                             return newValue;
@@ -4570,6 +4935,19 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return ValidatorRegistry;
     }();
+    var NodeType = /* @__PURE__ */ function(NodeType2) {
+        NodeType2["Asset"] = "asset";
+        NodeType2["View"] = "view";
+        NodeType2["Applicability"] = "applicability";
+        NodeType2["Template"] = "template";
+        NodeType2["Value"] = "value";
+        NodeType2["MultiNode"] = "multi-node";
+        NodeType2["Switch"] = "switch";
+        NodeType2["Async"] = "async";
+        NodeType2["Unknown"] = "unknown";
+        NodeType2["Empty"] = "empty";
+        return NodeType2;
+    }(NodeType || {});
     var EMPTY_NODE = {
         type: "empty"
     };
@@ -5052,20 +5430,15 @@ var ReferenceAssetsPlugin = function() {
     }();
     var ViewInstance = /*#__PURE__*/ function() {
         function ViewInstance(initialView, resolverOptions) {
-            var _this = this;
             _class_call_check(this, ViewInstance);
             this.hooks = {
                 onUpdate: new SyncHook(),
                 parser: new SyncHook(),
                 resolver: new SyncHook(),
-                onTemplatePluginCreated: new SyncHook(),
                 templatePlugin: new SyncHook()
             };
             this.initialView = initialView;
             this.resolverOptions = resolverOptions;
-            this.hooks.onTemplatePluginCreated.tap("view", function(templatePlugin) {
-                _this.templatePlugin = templatePlugin;
-            });
         }
         _create_class(ViewInstance, [
             {
@@ -5111,6 +5484,12 @@ var ReferenceAssetsPlugin = function() {
                 value: function getValidationsForBinding(binding) {
                     var _this_validationProvider;
                     return (_this_validationProvider = this.validationProvider) === null || _this_validationProvider === void 0 ? void 0 : _this_validationProvider.getValidationsForBinding(binding);
+                }
+            },
+            {
+                key: "setTemplatePlugin",
+                value: function setTemplatePlugin(plugin) {
+                    this.templatePlugin = plugin;
                 }
             }
         ]);
@@ -5410,6 +5789,7 @@ var ReferenceAssetsPlugin = function() {
                 value: function apply(view) {
                     view.hooks.parser.tap("template", this.applyParser.bind(this));
                     view.hooks.resolver.tap("template", this.applyResolverHooks.bind(this));
+                    view.setTemplatePlugin(this);
                 }
             }
         ]);
@@ -5989,13 +6369,13 @@ var ReferenceAssetsPlugin = function() {
             this.isTransitioning = false;
             this.hooks = {
                 beforeStart: new SyncBailHook(),
-                /** A callback when the onStart node was present */ onStart: new SyncHook(),
-                /** A callback when the onEnd node was present */ onEnd: new SyncHook(),
-                /** A hook to intercept and block a transition */ skipTransition: new SyncBailHook(),
-                /** A chance to manipulate the flow-node used to calculate the given transition used  */ beforeTransition: new SyncWaterfallHook(),
-                /** A chance to manipulate the flow-node calculated after a transition */ resolveTransitionNode: new SyncWaterfallHook(),
-                /** A callback when a transition from 1 state to another was made */ transition: new SyncHook(),
-                /** A callback to run actions after a transition occurs */ afterTransition: new SyncHook()
+                onStart: new SyncHook(),
+                onEnd: new SyncHook(),
+                skipTransition: new SyncBailHook(),
+                beforeTransition: new SyncWaterfallHook(),
+                resolveTransitionNode: new SyncWaterfallHook(),
+                transition: new SyncHook(),
+                afterTransition: new SyncHook()
             };
             this.id = id;
             this.flow = flow;
@@ -7018,8 +7398,7 @@ var ReferenceAssetsPlugin = function() {
             var _this1 = this;
             _class_call_check(this, ViewController);
             this.hooks = {
-                /** Do any processing before the `View` instance is created */ resolveView: new SyncWaterfallHook(),
-                // The hook right before the View starts resolving. Attach anything custom here
+                resolveView: new SyncWaterfallHook(),
                 view: new SyncHook()
             };
             this.transformRegistry = new Registry();
@@ -7067,6 +7446,7 @@ var ReferenceAssetsPlugin = function() {
                     ]));
                 }
             });
+            this.viewPlugins = this.createViewPlugins();
         }
         _create_class(ViewController, [
             {
@@ -7085,7 +7465,7 @@ var ReferenceAssetsPlugin = function() {
                     }
                     if (!this.pendingUpdate.scheduled && !silent) {
                         this.pendingUpdate.scheduled = true;
-                        (0, import_queue_microtask.default)(function() {
+                        (0, import_queue_microtask2.default)(function() {
                             var _this_pendingUpdate, _this_currentView;
                             var updates = (_this_pendingUpdate = _this.pendingUpdate) === null || _this_pendingUpdate === void 0 ? void 0 : _this_pendingUpdate.changedBindings;
                             _this.pendingUpdate = void 0;
@@ -7122,8 +7502,49 @@ var ReferenceAssetsPlugin = function() {
                     }
                     var view = new ViewInstance(source, this.viewOptions);
                     this.currentView = view;
+                    this.applyViewPlugins(view);
                     this.hooks.view.call(view);
                     view.update();
+                }
+            },
+            {
+                key: "applyViewPlugins",
+                value: function applyViewPlugins(view) {
+                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                    try {
+                        for(var _iterator = this.viewPlugins[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                            var plugin = _step.value;
+                            plugin.apply(view);
+                        }
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally{
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                _iterator.return();
+                            }
+                        } finally{
+                            if (_didIteratorError) {
+                                throw _iteratorError;
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                key: "createViewPlugins",
+                value: function createViewPlugins() {
+                    var pluginOptions = toNodeResolveOptions(this.viewOptions);
+                    return [
+                        new AssetPlugin(),
+                        new SwitchPlugin(pluginOptions),
+                        new ApplicabilityPlugin(),
+                        new AssetTransformCorePlugin(this.transformRegistry),
+                        new StringResolverPlugin(),
+                        new TemplatePlugin(pluginOptions),
+                        new MultiNodePlugin()
+                    ];
                 }
             }
         ]);
@@ -7497,35 +7918,6 @@ var ReferenceAssetsPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var DefaultViewPlugin = /*#__PURE__*/ function() {
-        function DefaultViewPlugin() {
-            _class_call_check(this, DefaultViewPlugin);
-            this.name = "default-view-plugin";
-        }
-        _create_class(DefaultViewPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    var _this = this;
-                    player.hooks.viewController.tap(this.name, function(viewController) {
-                        viewController.hooks.view.tap(_this.name, function(view) {
-                            var pluginOptions = toNodeResolveOptions(view.resolverOptions);
-                            new AssetPlugin().apply(view);
-                            new SwitchPlugin(pluginOptions).apply(view);
-                            new ApplicabilityPlugin().apply(view);
-                            new AssetTransformCorePlugin(viewController.transformRegistry).apply(view);
-                            new StringResolverPlugin().apply(view);
-                            var templatePlugin = new TemplatePlugin(pluginOptions);
-                            templatePlugin.apply(view);
-                            view.hooks.onTemplatePluginCreated.call(templatePlugin);
-                            new MultiNodePlugin().apply(view);
-                        });
-                    });
-                }
-            }
-        ]);
-        return DefaultViewPlugin;
-    }();
     var PLAYER_VERSION = "__VERSION__";
     var COMMIT = "__GIT_COMMIT__";
     var _Player = /*#__PURE__*/ function() {
@@ -7537,26 +7929,25 @@ var ReferenceAssetsPlugin = function() {
             this.constantsController = new ConstantsController();
             this.state = NOT_STARTED_STATE;
             this.hooks = {
-                /** The hook that fires every time we create a new flowController (a new Content blob is passed in) */ flowController: new SyncHook(),
-                /** The hook that updates/handles views */ viewController: new SyncHook(),
-                /** A hook called every-time there's a new view. This is equivalent to the view hook on the view-controller */ view: new SyncHook(),
-                /** Called when an expression evaluator was created */ expressionEvaluator: new SyncHook(),
-                /** The hook that creates and manages data */ dataController: new SyncHook(),
-                /** Called after the schema is created for a flow */ schema: new SyncHook(),
-                /** Manages validations (schema and x-field ) */ validationController: new SyncHook(),
-                /** Manages parsing binding */ bindingParser: new SyncHook(),
-                /** A that's called for state changes in the flow execution */ state: new SyncHook(),
-                /** A hook to access the current flow */ onStart: new SyncHook(),
-                /** A hook for when the flow ends either in success or failure */ onEnd: new SyncHook(),
-                /** Mutate the Content flow before starting */ resolveFlowContent: new SyncWaterfallHook()
+                flowController: new SyncHook(),
+                viewController: new SyncHook(),
+                view: new SyncHook(),
+                expressionEvaluator: new SyncHook(),
+                dataController: new SyncHook(),
+                schema: new SyncHook(),
+                validationController: new SyncHook(),
+                bindingParser: new SyncHook(),
+                state: new SyncHook(),
+                onStart: new SyncHook(),
+                onEnd: new SyncHook(),
+                resolveFlowContent: new SyncWaterfallHook()
             };
             if (config === null || config === void 0 ? void 0 : config.logger) {
                 this.logger.addHandler(config.logger);
             }
             this.config = config || {};
             this.config.plugins = [
-                new DefaultExpPlugin(),
-                new DefaultViewPlugin()
+                new DefaultExpPlugin()
             ].concat(_to_consumable_array(this.config.plugins || []), [
                 new FlowExpPlugin()
             ]);
@@ -7743,12 +8134,38 @@ var ReferenceAssetsPlugin = function() {
                                 validationController.reset();
                             }
                         });
-                        flow.hooks.afterTransition.tap("player", function(flowInstance) {
+                        flow.hooks.afterTransition.tap("player-action-states", function(flowInstance) {
                             var _flowInstance_currentState;
                             var value = (_flowInstance_currentState = flowInstance.currentState) === null || _flowInstance_currentState === void 0 ? void 0 : _flowInstance_currentState.value;
-                            if (value && value.state_type === "ACTION") {
+                            if (value && value.state_type === "ASYNC_ACTION") {
                                 var exp = value.exp;
-                                flowController === null || flowController === void 0 ? void 0 : flowController.transition(String(expressionEvaluator === null || expressionEvaluator === void 0 ? void 0 : expressionEvaluator.evaluate(exp)));
+                                try {
+                                    var result = expressionEvaluator.evaluateAsync(exp);
+                                    if (isPromiseLike(result)) {
+                                        if (value.await) {
+                                            (0, import_queue_microtask.default)(function() {
+                                                result.then(function(r) {
+                                                    return flowController === null || flowController === void 0 ? void 0 : flowController.transition(String(r));
+                                                }).catch(flowResultDeferred.reject);
+                                            });
+                                        } else {
+                                            _this.logger.warn("Unawaited promise used as return value in in non-async context, transitioning with '*' value");
+                                            flowController === null || flowController === void 0 ? void 0 : flowController.transition(String(result));
+                                        }
+                                    } else {
+                                        _this.logger.warn("Non async expression used in async action node");
+                                        flowController === null || flowController === void 0 ? void 0 : flowController.transition(String(result));
+                                    }
+                                } catch (e) {
+                                    flowResultDeferred.reject(e);
+                                }
+                            } else if (value && value.state_type === "ACTION") {
+                                var exp1 = value.exp;
+                                var result1 = expressionEvaluator.evaluate(exp1);
+                                if (isPromiseLike(result1)) {
+                                    _this.logger.warn("Async expression used as return value in in non-async context, transitioning with '*' value");
+                                }
+                                flowController === null || flowController === void 0 ? void 0 : flowController.transition(String(result1));
                             }
                             expressionEvaluator.reset();
                         });
@@ -7789,11 +8206,9 @@ var ReferenceAssetsPlugin = function() {
                         }),
                         constants: this.constantsController
                     });
-                    this.hooks.viewController.tap("player", function(vc) {
-                        vc.hooks.view.tap("player", function(view) {
-                            validationController.onView(view);
-                            _this.hooks.view.call(view);
-                        });
+                    viewController.hooks.view.tap("player", function(view) {
+                        validationController.onView(view);
+                        _this.hooks.view.call(view);
                     });
                     this.hooks.viewController.call(viewController);
                     return {
@@ -7917,7 +8332,7 @@ var ReferenceAssetsPlugin = function() {
         commit: COMMIT
     };
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+async-node-plugin@0.0.0/node_modules/@player-ui/async-node-plugin/dist/index.mjs
-    var import_queue_microtask2 = __toESM(require_queue_microtask(), 1);
+    var import_queue_microtask3 = __toESM(require_queue_microtask(), 1);
     var import_timm10 = __toESM(require_timm(), 1);
     var asyncTransform = function(assetId, wrapperAssetType, asset, flatten2) {
         var id = "async-" + assetId;
@@ -7939,6 +8354,266 @@ var ReferenceAssetsPlugin = function() {
         ], multiNode);
         return wrapperAsset;
     };
+    var AsyncNodePluginSymbol = Symbol.for("AsyncNodePlugin");
+    var _AsyncNodePlugin = /*#__PURE__*/ function() {
+        function _AsyncNodePlugin2(options, asyncHandler) {
+            var _this = this;
+            _class_call_check(this, _AsyncNodePlugin2);
+            this.symbol = _AsyncNodePlugin2.Symbol;
+            this.hooks = {
+                onAsyncNode: new AsyncParallelBailHook(),
+                onAsyncNodeError: new SyncBailHook()
+            };
+            this.name = "AsyncNode";
+            if (options === null || options === void 0 ? void 0 : options.plugins) {
+                this.plugins = options.plugins;
+                options.plugins.forEach(function(plugin) {
+                    plugin.applyPlugin(_this);
+                });
+            }
+            if (asyncHandler) {
+                this.hooks.onAsyncNode.tap("async", function() {
+                    var _ref = _async_to_generator(function(node, callback) {
+                        return _ts_generator(this, function(_state) {
+                            switch(_state.label){
+                                case 0:
+                                    return [
+                                        4,
+                                        asyncHandler(node, callback)
+                                    ];
+                                case 1:
+                                    return [
+                                        2,
+                                        _state.sent()
+                                    ];
+                            }
+                        });
+                    });
+                    return function(node, callback) {
+                        return _ref.apply(this, arguments);
+                    };
+                }());
+            }
+        }
+        _create_class(_AsyncNodePlugin2, [
+            {
+                key: "getPlayerInstance",
+                value: function getPlayerInstance() {
+                    return this.playerInstance;
+                }
+            },
+            {
+                key: "apply",
+                value: function apply(player) {
+                    var _this = this;
+                    this.playerInstance = player;
+                    player.hooks.viewController.tap(this.name, function(viewController) {
+                        viewController.hooks.view.tap(_this.name, function(view) {
+                            var _this_plugins;
+                            (_this_plugins = _this.plugins) === null || _this_plugins === void 0 ? void 0 : _this_plugins.forEach(function(plugin) {
+                                plugin.apply(view);
+                            });
+                        });
+                    });
+                }
+            }
+        ]);
+        return _AsyncNodePlugin2;
+    }();
+    _AsyncNodePlugin.Symbol = AsyncNodePluginSymbol;
+    var AsyncNodePlugin = _AsyncNodePlugin;
+    var AsyncNodePluginPlugin = /*#__PURE__*/ function() {
+        function AsyncNodePluginPlugin() {
+            _class_call_check(this, AsyncNodePluginPlugin);
+            this.asyncNode = new AsyncParallelBailHook();
+            this.name = "AsyncNode";
+        }
+        _create_class(AsyncNodePluginPlugin, [
+            {
+                /**
+     * Parses the node from the result and triggers an asynchronous view update if necessary.
+     * @param node The asynchronous node that might be updated.
+     * @param result The result obtained from resolving the async node. This could be any data structure or value.
+     * @param options Options provided for node resolution, including a potential parseNode function to process the result.
+     * @param view The view instance where the node resides. This can be undefined if the view is not currently active.
+     */ key: "parseNodeAndUpdate",
+                value: function parseNodeAndUpdate(node, context, result, options) {
+                    var parsedNode = options.parseNode && result ? options.parseNode(result) : void 0;
+                    this.handleAsyncUpdate(node, context, parsedNode);
+                }
+            },
+            {
+                /**
+     * Updates the node asynchronously based on the result provided.
+     * This method is responsible for handling the update logic of asynchronous nodes.
+     * It checks if the node needs to be updated based on the new result and updates the mapping accordingly.
+     * If an update is necessary, it triggers an asynchronous update on the view.
+     * @param node The asynchronous node that might be updated.
+     * @param newNode The new node to replace the async node.
+     * @param view The view instance where the node resides. This can be undefined if the view is not currently active.
+     */ key: "handleAsyncUpdate",
+                value: function handleAsyncUpdate(node, context, newNode) {
+                    var nodeResolveCache = context.nodeResolveCache, view = context.view;
+                    if (nodeResolveCache.get(node.id) !== newNode) {
+                        nodeResolveCache.set(node.id, newNode ? newNode : node);
+                        view.updateAsync();
+                    }
+                }
+            },
+            {
+                /**
+     * Handles the asynchronous API integration for resolving nodes.
+     * This method sets up a hook on the resolver's `beforeResolve` event to process async nodes.
+     * @param resolver The resolver instance to attach the hook to.
+     * @param view
+     */ key: "applyResolver",
+                value: function applyResolver(resolver, context) {
+                    var _this = this;
+                    resolver.hooks.beforeResolve.tap(this.name, function(node, options) {
+                        if (!_this.isAsync(node)) {
+                            return node;
+                        }
+                        var resolvedNode = context.nodeResolveCache.get(node.id);
+                        if (resolvedNode !== void 0) {
+                            return resolvedNode;
+                        }
+                        if (context.inProgressNodes.has(node.id)) {
+                            return node;
+                        }
+                        context.inProgressNodes.add(node.id);
+                        (0, import_queue_microtask3.default)(function() {
+                            _this.runAsyncNode(node, context, options).finally();
+                        });
+                        return node;
+                    });
+                }
+            },
+            {
+                key: "runAsyncNode",
+                value: function runAsyncNode(node, context, options) {
+                    var _this = this;
+                    return _async_to_generator(function() {
+                        var _this_basePlugin, result, e, _this_basePlugin1, _options_logger, error, result1, _this_basePlugin_getPlayerInstance, _this_basePlugin2, playerState;
+                        return _ts_generator(this, function(_state) {
+                            switch(_state.label){
+                                case 0:
+                                    _state.trys.push([
+                                        0,
+                                        2,
+                                        ,
+                                        3
+                                    ]);
+                                    return [
+                                        4,
+                                        (_this_basePlugin = _this.basePlugin) === null || _this_basePlugin === void 0 ? void 0 : _this_basePlugin.hooks.onAsyncNode.call(node, function(result2) {
+                                            _this.parseNodeAndUpdate(node, context, result2, options);
+                                        })
+                                    ];
+                                case 1:
+                                    result = _state.sent();
+                                    context.inProgressNodes.delete(node.id);
+                                    _this.parseNodeAndUpdate(node, context, result, options);
+                                    return [
+                                        3,
+                                        3
+                                    ];
+                                case 2:
+                                    e = _state.sent();
+                                    error = _instanceof(e, Error) ? e : new Error(String(e));
+                                    result1 = (_this_basePlugin1 = _this.basePlugin) === null || _this_basePlugin1 === void 0 ? void 0 : _this_basePlugin1.hooks.onAsyncNodeError.call(error, node);
+                                    if (result1 === void 0) {
+                                        ;
+                                        playerState = (_this_basePlugin2 = _this.basePlugin) === null || _this_basePlugin2 === void 0 ? void 0 : (_this_basePlugin_getPlayerInstance = _this_basePlugin2.getPlayerInstance()) === null || _this_basePlugin_getPlayerInstance === void 0 ? void 0 : _this_basePlugin_getPlayerInstance.getState();
+                                        if ((playerState === null || playerState === void 0 ? void 0 : playerState.status) === "in-progress") {
+                                            playerState.fail(error);
+                                        }
+                                        return [
+                                            2
+                                        ];
+                                    }
+                                    (_options_logger = options.logger) === null || _options_logger === void 0 ? void 0 : _options_logger.error("Async node handling failed and resolved with a fallback. Error:", error);
+                                    context.inProgressNodes.delete(node.id);
+                                    _this.parseNodeAndUpdate(node, context, result1, options);
+                                    return [
+                                        3,
+                                        3
+                                    ];
+                                case 3:
+                                    return [
+                                        2
+                                    ];
+                            }
+                        });
+                    })();
+                }
+            },
+            {
+                key: "isAsync",
+                value: function isAsync(node) {
+                    return (node === null || node === void 0 ? void 0 : node.type) === NodeType.Async;
+                }
+            },
+            {
+                key: "isDeterminedAsync",
+                value: function isDeterminedAsync(obj) {
+                    return obj && Object.prototype.hasOwnProperty.call(obj, "async");
+                }
+            },
+            {
+                key: "applyParser",
+                value: function applyParser(parser) {
+                    var _this = this;
+                    parser.hooks.parseNode.tap(this.name, function(obj, nodeType, options, childOptions) {
+                        if (_this.isDeterminedAsync(obj)) {
+                            var parsedAsync = parser.parseObject((0, import_timm10.omit)(obj, "async"), nodeType, options);
+                            var parsedNodeId = getNodeID(parsedAsync);
+                            if (parsedAsync === null || !parsedNodeId) {
+                                return childOptions ? [] : null;
+                            }
+                            var asyncAST = parser.createASTNode({
+                                id: parsedNodeId,
+                                type: NodeType.Async,
+                                value: parsedAsync
+                            }, obj);
+                            if (childOptions) {
+                                return asyncAST ? [
+                                    {
+                                        path: _to_consumable_array(childOptions.path).concat([
+                                            childOptions.key
+                                        ]),
+                                        value: asyncAST
+                                    }
+                                ] : [];
+                            }
+                            return asyncAST;
+                        }
+                    });
+                }
+            },
+            {
+                key: "apply",
+                value: function apply(view) {
+                    var _this = this;
+                    var context = {
+                        nodeResolveCache: /* @__PURE__ */ new Map(),
+                        inProgressNodes: /* @__PURE__ */ new Set(),
+                        view: view
+                    };
+                    view.hooks.parser.tap("async", this.applyParser.bind(this));
+                    view.hooks.resolver.tap("async", function(resolver) {
+                        _this.applyResolver(resolver, context);
+                    });
+                }
+            },
+            {
+                key: "applyPlugin",
+                value: function applyPlugin(asyncNodePlugin) {
+                    this.basePlugin = asyncNodePlugin;
+                }
+            }
+        ]);
+        return AsyncNodePluginPlugin;
+    }();
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/chat-message/transform.ts
     var transform2 = function(asset) {
         var _asset_children_, _asset_children;
@@ -7949,13 +8624,155 @@ var ReferenceAssetsPlugin = function() {
         return asyncTransform(asset.value.id, "collection", newAsset);
     };
     var chatMessageTransform = compose(composeBefore(transform2));
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugin.ts
-    var ReferenceAssetsPlugin = /*#__PURE__*/ function() {
-        function ReferenceAssetsPlugin() {
-            _class_call_check(this, ReferenceAssetsPlugin);
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+meta-plugin@0.0.0/node_modules/@player-ui/meta-plugin/dist/index.mjs
+    var MetaPlugin = /*#__PURE__*/ function() {
+        function MetaPlugin() {
+            var plugins = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : [];
+            _class_call_check(this, MetaPlugin);
+            this.name = "meta-plugin";
+            this.plugins = plugins;
+        }
+        _create_class(MetaPlugin, [
+            {
+                key: "apply",
+                value: function apply(player) {
+                    this.plugins.forEach(function(plugin) {
+                        return player.registerPlugin(plugin);
+                    });
+                }
+            }
+        ]);
+        return MetaPlugin;
+    }();
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+expression-plugin@0.0.0/node_modules/@player-ui/expression-plugin/dist/index.mjs
+    var ExpressionPlugin = /*#__PURE__*/ function() {
+        function ExpressionPlugin(expressionMap) {
+            _class_call_check(this, ExpressionPlugin);
+            this.name = "ExpressionPlugin";
+            this.expressions = expressionMap;
+        }
+        _create_class(ExpressionPlugin, [
+            {
+                key: "apply",
+                value: function apply(player) {
+                    var _this = this;
+                    player.hooks.expressionEvaluator.tap(this.name, function(expEvaluator) {
+                        _this.expressions.forEach(function(handler, name) {
+                            expEvaluator.addExpressionFunction(name, handler);
+                        });
+                    });
+                }
+            }
+        ]);
+        return ExpressionPlugin;
+    }();
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugins/chat-ui-demo-plugin.ts
+    var createContentFromMessage = function(message, id) {
+        return {
+            asset: {
+                type: "chat-message",
+                id: id,
+                value: {
+                    asset: {
+                        type: "text",
+                        id: "".concat(id, "-value"),
+                        value: message
+                    }
+                }
+            }
+        };
+    };
+    var ChatUiDemoPlugin = /*#__PURE__*/ function() {
+        function ChatUiDemoPlugin() {
+            _class_call_check(this, ChatUiDemoPlugin);
+            this.name = "chat-ui-demo-plugin";
+        }
+        _create_class(ChatUiDemoPlugin, [
+            {
+                key: "apply",
+                value: function apply(player) {
+                    var asyncNodePlugin = player.findPlugin(AsyncNodePlugin.Symbol);
+                    if (!asyncNodePlugin) {
+                        player.logger.warn("Failed to apply '".concat(this.name, "'. Reason: Could not find AsyncNodePlugin."));
+                        return;
+                    }
+                    var deferredPromises = {};
+                    var allPromiseKeys = [];
+                    var counter = 0;
+                    var sendMessage = function(context, message, nodeId) {
+                        if (nodeId && !(nodeId in deferredPromises)) {
+                            var _context_logger;
+                            (_context_logger = context.logger) === null || _context_logger === void 0 ? void 0 : _context_logger.warn("'send' expression called with unrecognized id '".concat(nodeId, "'"));
+                            return;
+                        }
+                        if (!nodeId && allPromiseKeys.length === 0) {
+                            var _context_logger1;
+                            (_context_logger1 = context.logger) === null || _context_logger1 === void 0 ? void 0 : _context_logger1.warn("'send' called with no waiting async nodes");
+                            return;
+                        }
+                        var keys = nodeId ? [
+                            nodeId
+                        ] : allPromiseKeys;
+                        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                        try {
+                            for(var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                                var id = _step.value;
+                                var content = createContentFromMessage(message, "message-".concat(counter++));
+                                var resolveFunction = deferredPromises[id];
+                                resolveFunction === null || resolveFunction === void 0 ? void 0 : resolveFunction(content);
+                                delete deferredPromises[id];
+                            }
+                        } catch (err) {
+                            _didIteratorError = true;
+                            _iteratorError = err;
+                        } finally{
+                            try {
+                                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                    _iterator.return();
+                                }
+                            } finally{
+                                if (_didIteratorError) {
+                                    throw _iteratorError;
+                                }
+                            }
+                        }
+                        if (nodeId) {
+                            var index = allPromiseKeys.indexOf(nodeId);
+                            allPromiseKeys.splice(index, 1);
+                        } else {
+                            allPromiseKeys = [];
+                        }
+                    };
+                    asyncNodePlugin.hooks.onAsyncNode.tap(this.name, function(node) {
+                        return new Promise(function(res) {
+                            deferredPromises[node.id] = res;
+                            allPromiseKeys.push(node.id);
+                        });
+                    });
+                    player.hooks.view.tap(this.name, function(_) {
+                        deferredPromises = {};
+                        allPromiseKeys = [];
+                        counter = 0;
+                    });
+                    var expressionPlugin = new ExpressionPlugin(/* @__PURE__ */ new Map([
+                        [
+                            "send",
+                            sendMessage
+                        ]
+                    ]));
+                    player.registerPlugin(expressionPlugin);
+                }
+            }
+        ]);
+        return ChatUiDemoPlugin;
+    }();
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugins/reference-assets-transform-plugin.ts
+    var ReferenceAssetsTransformPlugin = /*#__PURE__*/ function() {
+        function ReferenceAssetsTransformPlugin() {
+            _class_call_check(this, ReferenceAssetsTransformPlugin);
             this.name = "reference-assets-transforms";
         }
-        _create_class(ReferenceAssetsPlugin, [
+        _create_class(ReferenceAssetsTransformPlugin, [
             {
                 key: "apply",
                 value: function apply(player) {
@@ -7997,6 +8814,31 @@ var ReferenceAssetsPlugin = function() {
                             chatMessageTransform
                         ]
                     ]));
+                }
+            }
+        ]);
+        return ReferenceAssetsTransformPlugin;
+    }();
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugin.ts
+    var ReferenceAssetsPlugin = /*#__PURE__*/ function() {
+        function ReferenceAssetsPlugin() {
+            _class_call_check(this, ReferenceAssetsPlugin);
+            this.name = "reference-assets-plugin";
+            this.metaPlugin = new MetaPlugin([
+                new AsyncNodePlugin({
+                    plugins: [
+                        new AsyncNodePluginPlugin()
+                    ]
+                }),
+                new ReferenceAssetsTransformPlugin(),
+                new ChatUiDemoPlugin()
+            ]);
+        }
+        _create_class(ReferenceAssetsPlugin, [
+            {
+                key: "apply",
+                value: function apply(player) {
+                    player.registerPlugin(this.metaPlugin);
                 }
             }
         ]);
