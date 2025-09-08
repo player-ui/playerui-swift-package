@@ -51,6 +51,10 @@ function _object_spread_props(target, source) {
     }
     return target;
 }
+function _type_of(obj) {
+    "@swc/helpers - typeof";
+    return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj;
+}
 var MakeFlow = function() {
     var unwrapJSend = // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/make-flow/src/index.ts
     function unwrapJSend(obj) {
@@ -71,7 +75,7 @@ var MakeFlow = function() {
         });
     };
     var __copyProps = function(to, from, except, desc) {
-        if (from && typeof from === "object" || typeof from === "function") {
+        if (from && (typeof from === "undefined" ? "undefined" : _type_of(from)) === "object" || typeof from === "function") {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
             try {
                 var _loop = function() {

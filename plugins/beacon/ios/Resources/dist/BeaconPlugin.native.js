@@ -45,6 +45,10 @@ function _async_to_generator(fn) {
         });
     };
 }
+function _call_super(_this, derived, args) {
+    derived = _get_prototype_of(derived);
+    return _possible_constructor_return(_this, _is_native_reflect_construct() ? Reflect.construct(derived, args || [], _get_prototype_of(_this).constructor) : derived.apply(_this, args));
+}
 function _class_call_check(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
         throw new TypeError("Cannot call a class as a function");
@@ -283,31 +287,15 @@ function _wrap_native_super(Class) {
     return _wrap_native_super(Class);
 }
 function _is_native_reflect_construct() {
-    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-    if (Reflect.construct.sham) return false;
-    if (typeof Proxy === "function") return true;
     try {
-        Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {}));
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
-function _create_super(Derived) {
-    var hasNativeReflectConstruct = _is_native_reflect_construct();
-    return function _createSuperInternal() {
-        var Super = _get_prototype_of(Derived), result;
-        if (hasNativeReflectConstruct) {
-            var NewTarget = _get_prototype_of(this).constructor;
-            result = Reflect.construct(Super, arguments, NewTarget);
-        } else {
-            result = Super.apply(this, arguments);
-        }
-        return _possible_constructor_return(this, result);
-    };
+        var result = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {}));
+    } catch (_) {}
+    return (_is_native_reflect_construct = function() {
+        return !!result;
+    })();
 }
 function _ts_generator(thisArg, body) {
-    var f, y, t, g, _ = {
+    var f, y, t, _ = {
         label: 0,
         sent: function() {
             if (t[0] & 1) throw t[1];
@@ -315,12 +303,8 @@ function _ts_generator(thisArg, body) {
         },
         trys: [],
         ops: []
-    };
-    return g = {
-        next: verb(0),
-        "throw": verb(1),
-        "return": verb(2)
-    }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
+    }, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
+    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() {
         return this;
     }), g;
     function verb(n) {
@@ -333,7 +317,7 @@ function _ts_generator(thisArg, body) {
     }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while(_)try {
+        while(g && (g = 0, op[0] && (_ = 0)), _)try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [
                 op[0] & 2,
@@ -505,7 +489,7 @@ var BeaconPlugin = function() {
     };
     var findInArray = function findInArray(array, key, value) {
         return array.findIndex(function(obj) {
-            if (obj && typeof obj === "object") {
+            if (obj && (typeof obj === "undefined" ? "undefined" : _type_of(obj)) === "object") {
                 return obj[key] == value;
             }
             return false;
@@ -599,7 +583,7 @@ var BeaconPlugin = function() {
         };
     };
     var isExpressionNode = function isExpressionNode(x) {
-        return typeof x === "object" && x !== null && !Array.isArray(x) && x.__id === ExpNodeOpaqueIdentifier;
+        return (typeof x === "undefined" ? "undefined" : _type_of(x)) === "object" && x !== null && !Array.isArray(x) && x.__id === ExpNodeOpaqueIdentifier;
     };
     var throwError = function throwError(message, index) {
         var err = new Error("".concat(message, " at character ").concat(index));
@@ -1187,7 +1171,7 @@ var BeaconPlugin = function() {
     var isPromiseLike = function isPromiseLike(value) {
         var // Check for standard Promise constructor name
         _value_constructor;
-        return value != null && typeof value === "object" && typeof value.then === "function" && // Additional safeguards against false positives
+        return value != null && (typeof value === "undefined" ? "undefined" : _type_of(value)) === "object" && typeof value.then === "function" && // Additional safeguards against false positives
         (_instanceof(value, Promise) || ((_value_constructor = value.constructor) === null || _value_constructor === void 0 ? void 0 : _value_constructor.name) === "Promise" || // Verify it has other Promise-like methods to reduce false positives
         typeof value.catch === "function" && typeof value.finally === "function");
     };
@@ -1202,7 +1186,7 @@ var BeaconPlugin = function() {
         if (isExpressionNode(expr)) {
             return false;
         }
-        return typeof expr === "object" && expr !== null && !Array.isArray(expr) && "value" in expr;
+        return (typeof expr === "undefined" ? "undefined" : _type_of(expr)) === "object" && expr !== null && !Array.isArray(expr) && "value" in expr;
     };
     var makePromiseAwareBinaryOp = function makePromiseAwareBinaryOp(operation) {
         return function(a, b, async) {
@@ -1419,7 +1403,7 @@ var BeaconPlugin = function() {
         if (!node) {
             return;
         }
-        if ("value" in node && typeof node.value === "object" && typeof ((_node_value = node.value) === null || _node_value === void 0 ? void 0 : _node_value.id) === "string") {
+        if ("value" in node && _type_of(node.value) === "object" && typeof ((_node_value = node.value) === null || _node_value === void 0 ? void 0 : _node_value.id) === "string") {
             return node.value.id;
         }
     };
@@ -1453,22 +1437,6 @@ var BeaconPlugin = function() {
                 return resolverOptions.evaluator.evaluate(exp, resolverOptions);
             }
         });
-    };
-    var unpackNode = function unpackNode(item) {
-        var _item_children_, _item_children, _item_children_1, _item_children1;
-        var unpacked = [];
-        if ("children" in item && ((_item_children = item.children) === null || _item_children === void 0 ? void 0 : (_item_children_ = _item_children[0]) === null || _item_children_ === void 0 ? void 0 : _item_children_.value.type) === "asset" && ((_item_children1 = item.children) === null || _item_children1 === void 0 ? void 0 : (_item_children_1 = _item_children1[0]) === null || _item_children_1 === void 0 ? void 0 : _item_children_1.value).children) {
-            var _item_children__value_children_, _item_children__value_children, _item_children_2, _item_children2;
-            if (((_item_children__value_children = ((_item_children2 = item.children) === null || _item_children2 === void 0 ? void 0 : (_item_children_2 = _item_children2[0]) === null || _item_children_2 === void 0 ? void 0 : _item_children_2.value).children) === null || _item_children__value_children === void 0 ? void 0 : (_item_children__value_children_ = _item_children__value_children[0]) === null || _item_children__value_children_ === void 0 ? void 0 : _item_children__value_children_.value.type) === "multi-node") {
-                var _item_children__value_children_1, _item_children__value_children1, _item_children_3, _item_children3;
-                ((_item_children__value_children1 = ((_item_children3 = item.children) === null || _item_children3 === void 0 ? void 0 : (_item_children_3 = _item_children3[0]) === null || _item_children_3 === void 0 ? void 0 : _item_children_3.value).children) === null || _item_children__value_children1 === void 0 ? void 0 : (_item_children__value_children_1 = _item_children__value_children1[0]) === null || _item_children__value_children_1 === void 0 ? void 0 : _item_children__value_children_1.value).values.forEach(function(value) {
-                    unpacked.push(value);
-                });
-            }
-        } else {
-            unpacked.push(item);
-        }
-        return unpacked;
     };
     var hasSomethingToResolve = function hasSomethingToResolve(str) {
         return bindingResolveLookup(str) || expressionResolveLookup(str);
@@ -1547,7 +1515,7 @@ var BeaconPlugin = function() {
         });
     };
     var __copyProps = function(to, from, except, desc) {
-        if (from && typeof from === "object" || typeof from === "function") {
+        if (from && (typeof from === "undefined" ? "undefined" : _type_of(from)) === "object" || typeof from === "function") {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
             try {
                 var _loop = function() {
@@ -1602,15 +1570,16 @@ var BeaconPlugin = function() {
             exports.toError = exports.NestedError = void 0;
             var NestedError4 = /*#__PURE__*/ function(Error1) {
                 _inherits(_NestedError, Error1);
-                var _super = _create_super(_NestedError);
                 function _NestedError(message) {
                     for(var _len = arguments.length, innerErrors = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++){
                         innerErrors[_key - 1] = arguments[_key];
                     }
                     _class_call_check(this, _NestedError);
                     var _this;
-                    _this = _super.call(this, message);
-                    var thisErrorReport = _NestedError.getErrorReport(_assert_this_initialized(_this));
+                    _this = _call_super(this, _NestedError, [
+                        message
+                    ]);
+                    var thisErrorReport = _NestedError.getErrorReport(_this);
                     if (innerErrors.length === 1) {
                         var innerError = toError(innerErrors[0]);
                         _this.innerErrors = [
@@ -1746,7 +1715,7 @@ var BeaconPlugin = function() {
                 return out;
             }
             function isObject(o) {
-                return o != null && typeof o === "object";
+                return o != null && (typeof o === "undefined" ? "undefined" : _type_of(o)) === "object";
             }
             function addLast2(array, val) {
                 if (Array.isArray(val)) return array.concat(val);
@@ -2089,7 +2058,7 @@ var BeaconPlugin = function() {
                     else return 0;
                 }
             }();
-            if (typeof module === "object") module.exports = SortedArray2;
+            if ((typeof module === "undefined" ? "undefined" : _type_of(module)) === "object") module.exports = SortedArray2;
             if (typeof define === "function" && define.amd) define(function() {
                 return SortedArray2;
             });
@@ -2289,10 +2258,9 @@ var BeaconPlugin = function() {
     }();
     var SyncHook = /*#__PURE__*/ function(Hook) {
         _inherits(SyncHook, Hook);
-        var _super = _create_super(SyncHook);
         function SyncHook() {
             _class_call_check(this, SyncHook);
-            return _super.apply(this, arguments);
+            return _call_super(this, SyncHook, arguments);
         }
         _create_class(SyncHook, [
             {
@@ -2325,10 +2293,9 @@ var BeaconPlugin = function() {
     }(Hook);
     var SyncBailHook = /*#__PURE__*/ function(Hook) {
         _inherits(SyncBailHook, Hook);
-        var _super = _create_super(SyncBailHook);
         function SyncBailHook() {
             _class_call_check(this, SyncBailHook);
-            return _super.apply(this, arguments);
+            return _call_super(this, SyncBailHook, arguments);
         }
         _create_class(SyncBailHook, [
             {
@@ -2360,10 +2327,9 @@ var BeaconPlugin = function() {
     }(Hook);
     var SyncWaterfallHook = /*#__PURE__*/ function(Hook) {
         _inherits(SyncWaterfallHook, Hook);
-        var _super = _create_super(SyncWaterfallHook);
         function SyncWaterfallHook() {
             _class_call_check(this, SyncWaterfallHook);
-            return _super.apply(this, arguments);
+            return _call_super(this, SyncWaterfallHook, arguments);
         }
         _create_class(SyncWaterfallHook, [
             {
@@ -2395,10 +2361,9 @@ var BeaconPlugin = function() {
     }(Hook);
     var AsyncSeriesWaterfallHook = /*#__PURE__*/ function(Hook) {
         _inherits(AsyncSeriesWaterfallHook, Hook);
-        var _super = _create_super(AsyncSeriesWaterfallHook);
         function AsyncSeriesWaterfallHook() {
             _class_call_check(this, AsyncSeriesWaterfallHook);
-            return _super.apply(this, arguments);
+            return _call_super(this, AsyncSeriesWaterfallHook, arguments);
         }
         _create_class(AsyncSeriesWaterfallHook, [
             {
@@ -2407,7 +2372,6 @@ var BeaconPlugin = function() {
                     for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
                         args[_key] = arguments[_key];
                     }
-                    var _this = this;
                     return _async_to_generator(function() {
                         var _this_interceptions, _args, rtn, rest, ctx, tapIndex, tapValue, e;
                         return _ts_generator(this, function(_state) {
@@ -2415,7 +2379,7 @@ var BeaconPlugin = function() {
                                 case 0:
                                     _args = _to_array(args), rtn = _args[0], rest = _args.slice(1);
                                     ctx = {};
-                                    (_this_interceptions = _this.interceptions).call.apply(_this_interceptions, [
+                                    (_this_interceptions = this.interceptions).call.apply(_this_interceptions, [
                                         ctx
                                     ].concat(_to_consumable_array(args)));
                                     _state.label = 1;
@@ -2429,13 +2393,13 @@ var BeaconPlugin = function() {
                                     tapIndex = 0;
                                     _state.label = 2;
                                 case 2:
-                                    if (!(tapIndex < _this.taps.length)) return [
+                                    if (!(tapIndex < this.taps.length)) return [
                                         3,
                                         5
                                     ];
                                     return [
                                         4,
-                                        callTap(_this.taps[tapIndex], [
+                                        callTap(this.taps[tapIndex], [
                                             rtn
                                         ].concat(_to_consumable_array(rest)), ctx)
                                     ];
@@ -2458,17 +2422,17 @@ var BeaconPlugin = function() {
                                     ];
                                 case 6:
                                     e = _state.sent();
-                                    _this.interceptions.error(e);
+                                    this.interceptions.error(e);
                                     throw e;
                                 case 7:
-                                    _this.interceptions.result(rtn);
+                                    this.interceptions.result(rtn);
                                     return [
                                         2,
                                         rtn
                                     ];
                             }
                         });
-                    })();
+                    }).call(this);
                 }
             }
         ]);
@@ -2506,7 +2470,7 @@ var BeaconPlugin = function() {
                     for(var _iterator = foo[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
                         len = _step.value;
                         tmp = len;
-                        if (tmp && typeof tmp === "object") {
+                        if (tmp && (typeof tmp === "undefined" ? "undefined" : _type_of(tmp)) === "object") {
                             tmp = find(bar, tmp);
                             if (!tmp) return false;
                         }
@@ -2537,7 +2501,7 @@ var BeaconPlugin = function() {
                     for(var _iterator1 = foo[Symbol.iterator](), _step1; !(_iteratorNormalCompletion1 = (_step1 = _iterator1.next()).done); _iteratorNormalCompletion1 = true){
                         len = _step1.value;
                         tmp = len[0];
-                        if (tmp && typeof tmp === "object") {
+                        if (tmp && (typeof tmp === "undefined" ? "undefined" : _type_of(tmp)) === "object") {
                             tmp = find(bar, tmp);
                             if (!tmp) return false;
                         }
@@ -2576,7 +2540,7 @@ var BeaconPlugin = function() {
                 }
                 return len === -1;
             }
-            if (!ctor || typeof foo === "object") {
+            if (!ctor || (typeof foo === "undefined" ? "undefined" : _type_of(foo)) === "object") {
                 len = 0;
                 for(ctor in foo){
                     if (has.call(foo, ctor) && ++len && !has.call(bar, ctor)) return false;
@@ -2609,7 +2573,7 @@ var BeaconPlugin = function() {
                 var nestedPath = _to_consumable_array(path).concat([
                     key
                 ]);
-                if (typeof val === "object") {
+                if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object") {
                     traverseObj(val, nestedPath, pairs);
                 } else {
                     pairs.set(nestedPath, val);
@@ -2650,7 +2614,7 @@ var BeaconPlugin = function() {
             {
                 /** Add match -> value mapping to the registry */ key: "set",
                 value: function set(match, value) {
-                    var matcher = typeof match === "object" ? createMatcher(match) : createBasicMatcher(match);
+                    var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createMatcher(match) : createBasicMatcher(match);
                     this.store.insert({
                         key: match,
                         value: value,
@@ -2813,6 +2777,7 @@ var BeaconPlugin = function() {
             }
         };
         var identifier = function() {
+            var allowBoolValue = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : false;
             if (!isIdentifierChar(ch)) {
                 return;
             }
@@ -2822,6 +2787,14 @@ var BeaconPlugin = function() {
                     break;
                 }
                 value += ch;
+            }
+            if (allowBoolValue) {
+                if (value === "true") {
+                    return toValue(true);
+                }
+                if (value === "false") {
+                    return toValue(false);
+                }
             }
             if (value) {
                 var maybeNumber = Number(value);
@@ -2871,8 +2844,9 @@ var BeaconPlugin = function() {
             }
         };
         var simpleSegment = function() {
+            var allowBoolValue = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : false;
             var _nestedPath, _ref;
-            return (_ref = (_nestedPath = nestedPath()) !== null && _nestedPath !== void 0 ? _nestedPath : expression()) !== null && _ref !== void 0 ? _ref : identifier();
+            return (_ref = (_nestedPath = nestedPath()) !== null && _nestedPath !== void 0 ? _nestedPath : expression()) !== null && _ref !== void 0 ? _ref : identifier(allowBoolValue);
         };
         var segment = function() {
             var segments = [];
@@ -2887,6 +2861,7 @@ var BeaconPlugin = function() {
             return toConcatenatedNode(segments);
         };
         var optionallyQuotedSegment = function() {
+            var allowBoolValue = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : false;
             whitespace();
             if (ch === SINGLE_QUOTE || ch === DOUBLE_QUOTE) {
                 var singleQuote = ch === SINGLE_QUOTE;
@@ -2895,7 +2870,7 @@ var BeaconPlugin = function() {
                 next(singleQuote ? SINGLE_QUOTE : DOUBLE_QUOTE);
                 return id;
             }
-            return simpleSegment();
+            return simpleSegment(allowBoolValue);
         };
         var equals = function() {
             if (ch !== EQUALS) {
@@ -2915,7 +2890,7 @@ var BeaconPlugin = function() {
                     whitespace();
                     if (equals()) {
                         whitespace();
-                        var second = optionallyQuotedSegment();
+                        var second = optionallyQuotedSegment(true);
                         value = toQuery(value, second);
                         whitespace();
                     }
@@ -3103,7 +3078,7 @@ var BeaconPlugin = function() {
                     appendPathSegments(getValueForNode(resolvedNode));
                     break;
                 case "Value":
-                    appendPathSegments(resolvedNode.value);
+                    appendPathSegments(typeof resolvedNode.value === "boolean" ? String(resolvedNode.value) : resolvedNode.value);
                     break;
                 case "Query":
                     {
@@ -3179,7 +3154,7 @@ var BeaconPlugin = function() {
                     var _this_parseCache_path;
                     var ast = (_this_parseCache_path = this.parseCache[path]) !== null && _this_parseCache_path !== void 0 ? _this_parseCache_path : parse(path);
                     this.parseCache[path] = ast;
-                    if (typeof ast !== "object" || !(ast === null || ast === void 0 ? void 0 : ast.status)) {
+                    if ((typeof ast === "undefined" ? "undefined" : _type_of(ast)) !== "object" || !(ast === null || ast === void 0 ? void 0 : ast.status)) {
                         var _ast_error;
                         throw new TypeError('Cannot normalize path "'.concat(path, '": ').concat((_ast_error = ast === null || ast === void 0 ? void 0 : ast.error) !== null && _ast_error !== void 0 ? _ast_error : "Unknown Error."));
                     }
@@ -3379,14 +3354,13 @@ var BeaconPlugin = function() {
     }();
     var DependencyModel = /*#__PURE__*/ function(DependencyTracker) {
         _inherits(DependencyModel, DependencyTracker);
-        var _super = _create_super(DependencyModel);
         function DependencyModel(rootModel) {
             _class_call_check(this, DependencyModel);
             var _this;
-            _this = _super.call(this);
+            _this = _call_super(this, DependencyModel);
             _this.rootModel = rootModel;
-            _this.set = _this.set.bind(_assert_this_initialized(_this));
-            _this.get = _this.get.bind(_assert_this_initialized(_this));
+            _this.set = _this.set.bind(_this);
+            _this.get = _this.get.bind(_this);
             return _this;
         }
         _create_class(DependencyModel, [
@@ -3930,23 +3904,20 @@ var BeaconPlugin = function() {
      * @experimental These Player APIs are in active development and may change. Use with caution
      */ key: "evaluateAsync",
                 value: function evaluateAsync(expr, options) {
+                    var _this = this;
                     if (Array.isArray(expr)) {
-                        var _this = this;
-                        return collateAwaitable(expr.map(function() {
-                            var _ref = _async_to_generator(function(exp) {
+                        return collateAwaitable(expr.map(function(exp) {
+                            return _async_to_generator(function() {
                                 return _ts_generator(this, function(_state) {
                                     return [
                                         2,
-                                        _this.evaluate(exp, _object_spread_props(_object_spread({}, options), {
+                                        this.evaluate(exp, _object_spread_props(_object_spread({}, options), {
                                             async: true
                                         }))
                                     ];
                                 });
-                            });
-                            return function(exp) {
-                                return _ref.apply(this, arguments);
-                            };
-                        }())).awaitableThen(function(values) {
+                            }).call(_this);
+                        })).awaitableThen(function(values) {
                             return values.pop();
                         });
                     } else {
@@ -4670,23 +4641,8 @@ var BeaconPlugin = function() {
         function Parser() {
             _class_call_check(this, Parser);
             this.hooks = {
-                /**
-         * A hook to interact with an object _before_ parsing it into an AST
-         *
-         * @param value - The object we're are about to parse
-         * @returns - A new value to parse.
-         *  If undefined, the original value is used.
-         *  If null, we stop parsing this node.
-         */ onParseObject: new SyncWaterfallHook(),
-                /**
-         * A callback to interact with an AST _after_ we parse it into the AST
-         *
-         * @param value - The object we parsed
-         * @param node - The AST node we generated
-         * @returns - A new AST node to use
-         *   If undefined, the original value is used.
-         *   If null, we ignore this node all together
-         */ onCreateASTNode: new SyncWaterfallHook(),
+                onParseObject: new SyncWaterfallHook(),
+                onCreateASTNode: new SyncWaterfallHook(),
                 parseNode: new SyncBailHook()
             };
         }
@@ -4724,7 +4680,7 @@ var BeaconPlugin = function() {
                     }
                     var parseLocalObject = function(currentValue, objToParse) {
                         var path = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : [];
-                        if (typeof objToParse !== "object" || objToParse === null) {
+                        if ((typeof objToParse === "undefined" ? "undefined" : _type_of(objToParse)) !== "object" || objToParse === null) {
                             return {
                                 value: objToParse,
                                 children: []
@@ -4761,7 +4717,7 @@ var BeaconPlugin = function() {
                             if (newChildren) {
                                 var _children2;
                                 (_children2 = children2).push.apply(_children2, _to_consumable_array(newChildren));
-                            } else if (localValue && typeof localValue === "object") {
+                            } else if (localValue && (typeof localValue === "undefined" ? "undefined" : _type_of(localValue)) === "object") {
                                 var _children21;
                                 var result = parseLocalObject(accumulation.value, localValue, _to_consumable_array(path).concat([
                                     localKey
@@ -4828,20 +4784,14 @@ var BeaconPlugin = function() {
         function Resolver(root, options) {
             _class_call_check(this, Resolver);
             this.hooks = {
-                /** A hook to allow skipping of the resolution tree for a specific node */ skipResolve: new SyncWaterfallHook(),
-                /** An event emitted before calculating the next update */ beforeUpdate: new SyncHook(),
-                /** An event emitted after calculating the next update */ afterUpdate: new SyncHook(),
-                /** The options passed to a node to resolve it to an object */ resolveOptions: new SyncWaterfallHook(),
-                /** A hook to transform the AST node into a new AST node before resolving it */ beforeResolve: new SyncWaterfallHook(),
-                /**
-         * A hook to transform an AST node into it's resolved value.
-         * This runs _before_ any children are resolved
-         */ resolve: new SyncWaterfallHook(),
-                /**
-         * A hook to transform the resolved value of an AST node.
-         * This runs _after_ all children nodes are resolved
-         */ afterResolve: new SyncWaterfallHook(),
-                /** Called at the very end of a node's tree being updated */ afterNodeUpdate: new SyncHook()
+                skipResolve: new SyncWaterfallHook(),
+                beforeUpdate: new SyncHook(),
+                afterUpdate: new SyncHook(),
+                resolveOptions: new SyncWaterfallHook(),
+                beforeResolve: new SyncWaterfallHook(),
+                resolve: new SyncWaterfallHook(),
+                afterResolve: new SyncWaterfallHook(),
+                afterNodeUpdate: new SyncHook()
             };
             this.root = root;
             this.options = options;
@@ -4849,6 +4799,7 @@ var BeaconPlugin = function() {
             this.ASTMap = /* @__PURE__ */ new Map();
             this.logger = options.logger;
             this.idCache = /* @__PURE__ */ new Set();
+            this.AsyncIdMap = /* @__PURE__ */ new Map();
         }
         _create_class(Resolver, [
             {
@@ -4859,13 +4810,27 @@ var BeaconPlugin = function() {
             },
             {
                 key: "update",
-                value: function update(changes) {
+                value: function update(changes, asyncChanges) {
+                    var _this = this;
                     this.hooks.beforeUpdate.call(changes);
                     var resolveCache = /* @__PURE__ */ new Map();
                     this.idCache.clear();
                     var prevASTMap = new Map(this.ASTMap);
                     this.ASTMap.clear();
-                    var updated = this.computeTree(this.root, void 0, changes, resolveCache, toNodeResolveOptions(this.options), void 0, prevASTMap);
+                    var prevAsyncIdMap = new Map(this.AsyncIdMap);
+                    var nextAsyncIdMap = /* @__PURE__ */ new Map();
+                    asyncChanges === null || asyncChanges === void 0 ? void 0 : asyncChanges.forEach(function(id) {
+                        var current = prevAsyncIdMap.get(id);
+                        while(current && prevASTMap.has(current)){
+                            var next = prevASTMap.get(current);
+                            if (next && _this.resolveCache.has(next)) {
+                                _this.resolveCache.delete(next);
+                            }
+                            current = current.parent;
+                        }
+                    });
+                    var updated = this.computeTree(this.root, void 0, changes, resolveCache, toNodeResolveOptions(this.options), void 0, prevASTMap, nextAsyncIdMap);
+                    this.AsyncIdMap = nextAsyncIdMap;
                     this.resolveCache = resolveCache;
                     this.hooks.afterUpdate.call(updated.value);
                     return updated.value;
@@ -4910,7 +4875,7 @@ var BeaconPlugin = function() {
                     Object.keys(clonedNode).forEach(function(key) {
                         if (key === "parent") return;
                         var value = clonedNode[key];
-                        if (typeof value === "object" && value !== null) {
+                        if ((typeof value === "undefined" ? "undefined" : _type_of(value)) === "object" && value !== null) {
                             clonedNode[key] = Array.isArray(value) ? _to_consumable_array(value) : _object_spread({}, value);
                         }
                     });
@@ -4919,9 +4884,8 @@ var BeaconPlugin = function() {
             },
             {
                 key: "computeTree",
-                value: function computeTree(node, rawParent, dataChanges, cacheUpdate, options, partiallyResolvedParent, prevASTMap) {
+                value: function computeTree(node, rawParent, dataChanges, cacheUpdate, options, partiallyResolvedParent, prevASTMap, nextAsyncIdMap) {
                     var _this = this;
-                    var _partiallyResolvedParent_parent_parent, _partiallyResolvedParent_parent, _resolvedAST_parent, _partiallyResolvedParent_parent1;
                     var dependencyModel = new DependencyModel(options.data.model);
                     dependencyModel.trackSubset("core");
                     var depModelWithParser = withContext(withParser(dependencyModel, this.options.parseBinding));
@@ -4940,15 +4904,6 @@ var BeaconPlugin = function() {
                     var previousDeps = previousResult === null || previousResult === void 0 ? void 0 : previousResult.dependencies;
                     var dataChanged = caresAboutDataChanges(dataChanges, previousDeps);
                     var shouldUseLastValue = this.hooks.skipResolve.call(!dataChanged, node, resolveOptions);
-                    var clonedNode = _object_spread_props(_object_spread({}, this.cloneNode(node)), {
-                        parent: partiallyResolvedParent
-                    });
-                    var _this_hooks_beforeResolve_call;
-                    var resolvedAST = (_this_hooks_beforeResolve_call = this.hooks.beforeResolve.call(clonedNode, resolveOptions)) !== null && _this_hooks_beforeResolve_call !== void 0 ? _this_hooks_beforeResolve_call : {
-                        type: "empty"
-                    };
-                    var isNestedMultiNodeWithAsync = resolvedAST.type === "multi-node" && (partiallyResolvedParent === null || partiallyResolvedParent === void 0 ? void 0 : (_partiallyResolvedParent_parent = partiallyResolvedParent.parent) === null || _partiallyResolvedParent_parent === void 0 ? void 0 : (_partiallyResolvedParent_parent_parent = _partiallyResolvedParent_parent.parent) === null || _partiallyResolvedParent_parent_parent === void 0 ? void 0 : _partiallyResolvedParent_parent_parent.type) === "multi-node" && partiallyResolvedParent.parent.type === "value" && ((_resolvedAST_parent = resolvedAST.parent) === null || _resolvedAST_parent === void 0 ? void 0 : _resolvedAST_parent.type) === "asset" && resolvedAST.parent.value.id.includes("async");
-                    var isNestedMultiNode = resolvedAST.type === "multi-node" && (partiallyResolvedParent === null || partiallyResolvedParent === void 0 ? void 0 : (_partiallyResolvedParent_parent1 = partiallyResolvedParent.parent) === null || _partiallyResolvedParent_parent1 === void 0 ? void 0 : _partiallyResolvedParent_parent1.type) === "multi-node" && partiallyResolvedParent.type === "value";
                     if (previousResult && shouldUseLastValue) {
                         var update2 = _object_spread_props(_object_spread({}, previousResult), {
                             updated: false
@@ -4960,6 +4915,30 @@ var BeaconPlugin = function() {
                                 updated: false
                             });
                             cacheUpdate.set(AST, resolvedUpdate);
+                            if (resolvedUpdate.node.type === "async") {
+                                nextAsyncIdMap.set(resolvedUpdate.node.id, resolvedUpdate.node);
+                            }
+                            var _resolvedUpdate_node_asyncNodesResolved;
+                            var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                            try {
+                                for(var _iterator = ((_resolvedUpdate_node_asyncNodesResolved = resolvedUpdate.node.asyncNodesResolved) !== null && _resolvedUpdate_node_asyncNodesResolved !== void 0 ? _resolvedUpdate_node_asyncNodesResolved : [])[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                                    var key = _step.value;
+                                    nextAsyncIdMap.set(key, resolvedUpdate.node);
+                                }
+                            } catch (err) {
+                                _didIteratorError = true;
+                                _iteratorError = err;
+                            } finally{
+                                try {
+                                    if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                        _iterator.return();
+                                    }
+                                } finally{
+                                    if (_didIteratorError) {
+                                        throw _iteratorError;
+                                    }
+                                }
+                            }
                             var handleChildNode = function(childNode) {
                                 var _prevASTMap_get;
                                 var originalChildNode = (_prevASTMap_get = prevASTMap.get(childNode)) !== null && _prevASTMap_get !== void 0 ? _prevASTMap_get : childNode;
@@ -4982,10 +4961,37 @@ var BeaconPlugin = function() {
                         repopulateASTMapFromCache(previousResult, node, rawParent);
                         return update2;
                     }
-                    if (isNestedMultiNodeWithAsync) {
-                        resolvedAST.parent = partiallyResolvedParent.parent;
-                    } else {
-                        resolvedAST.parent = partiallyResolvedParent;
+                    var clonedNode = _object_spread_props(_object_spread({}, this.cloneNode(node)), {
+                        parent: partiallyResolvedParent
+                    });
+                    var _this_hooks_beforeResolve_call;
+                    var resolvedAST = (_this_hooks_beforeResolve_call = this.hooks.beforeResolve.call(clonedNode, resolveOptions)) !== null && _this_hooks_beforeResolve_call !== void 0 ? _this_hooks_beforeResolve_call : {
+                        type: "empty"
+                    };
+                    resolvedAST.parent = partiallyResolvedParent;
+                    if (resolvedAST.type === "async") {
+                        nextAsyncIdMap.set(resolvedAST.id, resolvedAST);
+                    }
+                    var _resolvedAST_asyncNodesResolved;
+                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                    try {
+                        for(var _iterator = ((_resolvedAST_asyncNodesResolved = resolvedAST.asyncNodesResolved) !== null && _resolvedAST_asyncNodesResolved !== void 0 ? _resolvedAST_asyncNodesResolved : [])[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                            var id = _step.value;
+                            nextAsyncIdMap.set(id, resolvedAST);
+                        }
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally{
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                _iterator.return();
+                            }
+                        } finally{
+                            if (_didIteratorError) {
+                                throw _iteratorError;
+                            }
+                        }
                     }
                     resolveOptions.node = resolvedAST;
                     this.ASTMap.set(resolvedAST, node);
@@ -4999,7 +5005,7 @@ var BeaconPlugin = function() {
                     if ("children" in resolvedAST) {
                         var _resolvedAST_children;
                         var newChildren = (_resolvedAST_children = resolvedAST.children) === null || _resolvedAST_children === void 0 ? void 0 : _resolvedAST_children.map(function(child) {
-                            var computedChildTree = _this.computeTree(child.value, node, dataChanges, cacheUpdate, resolveOptions, resolvedAST, prevASTMap);
+                            var computedChildTree = _this.computeTree(child.value, node, dataChanges, cacheUpdate, resolveOptions, resolvedAST, prevASTMap, nextAsyncIdMap);
                             var childTreeDeps = computedChildTree.dependencies, childNode = computedChildTree.node, childUpdated = computedChildTree.updated, childValue = computedChildTree.value;
                             childTreeDeps.forEach(function(binding) {
                                 return childDependencies.add(binding);
@@ -5020,40 +5026,18 @@ var BeaconPlugin = function() {
                         resolvedAST.children = newChildren;
                     } else if (resolvedAST.type === "multi-node") {
                         var childValue = [];
-                        var rawParentToPassIn = isNestedMultiNode ? partiallyResolvedParent === null || partiallyResolvedParent === void 0 ? void 0 : partiallyResolvedParent.parent : node;
-                        var hasAsync = resolvedAST.values.map(function(value, index) {
-                            return value.type === "async" ? index : -1;
-                        }).filter(function(index) {
-                            return index !== -1;
-                        });
-                        var newValues = resolvedAST.values.map(function(mValue) {
-                            var mTree = _this.computeTree(mValue, rawParentToPassIn, dataChanges, cacheUpdate, resolveOptions, resolvedAST, prevASTMap);
+                        var rawParentToPassIn = node;
+                        resolvedAST.values = resolvedAST.values.map(function(mValue) {
+                            var mTree = _this.computeTree(mValue, rawParentToPassIn, dataChanges, cacheUpdate, resolveOptions, resolvedAST, prevASTMap, nextAsyncIdMap);
                             if (mTree.value !== void 0 && mTree.value !== null) {
-                                if (mValue.type === "async" && mValue.flatten && mTree.value.asset && Array.isArray(mTree.value.asset.values)) {
-                                    unpackAndPush(mTree.value, childValue);
-                                } else {
-                                    childValue.push(mTree.value);
-                                }
+                                mTree.dependencies.forEach(function(bindingDep) {
+                                    return childDependencies.add(bindingDep);
+                                });
+                                updated = updated || mTree.updated;
+                                childValue.push(mTree.value);
                             }
-                            mTree.dependencies.forEach(function(bindingDep) {
-                                return childDependencies.add(bindingDep);
-                            });
-                            updated = updated || mTree.updated;
                             return mTree.node;
                         });
-                        if (hasAsync.length > 0) {
-                            var copy = newValues;
-                            hasAsync.forEach(function(index) {
-                                var _copy;
-                                if (copy[index]) (_copy = copy).splice.apply(_copy, [
-                                    index,
-                                    1
-                                ].concat(_to_consumable_array(unpackNode(copy[index]))));
-                            });
-                            resolvedAST.values = copy;
-                        } else {
-                            resolvedAST.values = newValues;
-                        }
                         resolved = childValue;
                     }
                     childDependencies.forEach(function(bindingDep) {
@@ -5074,7 +5058,7 @@ var BeaconPlugin = function() {
                         value: resolved,
                         dependencies: /* @__PURE__ */ new Set(_to_consumable_array(dependencyModel.getDependencies()).concat(_to_consumable_array(childDependencies)))
                     };
-                    this.hooks.afterNodeUpdate.call(node, isNestedMultiNode ? partiallyResolvedParent === null || partiallyResolvedParent === void 0 ? void 0 : partiallyResolvedParent.parent : rawParent, update);
+                    this.hooks.afterNodeUpdate.call(node, rawParent, update);
                     cacheUpdate.set(node, update);
                     return update;
                 }
@@ -5082,15 +5066,6 @@ var BeaconPlugin = function() {
         ]);
         return Resolver;
     }();
-    function unpackAndPush(item, initial) {
-        if (item.asset.values && Array.isArray(item.asset.values)) {
-            item.asset.values.forEach(function(i) {
-                unpackAndPush(i, initial);
-            });
-        } else {
-            initial.push(item);
-        }
-    }
     var CrossfieldProvider = /*#__PURE__*/ function() {
         function CrossfieldProvider(initialView, parser, logger) {
             _class_call_check(this, CrossfieldProvider);
@@ -5158,9 +5133,11 @@ var BeaconPlugin = function() {
         _create_class(ViewInstance, [
             {
                 key: "updateAsync",
-                value: function updateAsync() {
+                value: function updateAsync(asyncNode) {
                     var _this_resolver;
-                    var update = (_this_resolver = this.resolver) === null || _this_resolver === void 0 ? void 0 : _this_resolver.update();
+                    var update = (_this_resolver = this.resolver) === null || _this_resolver === void 0 ? void 0 : _this_resolver.update(/* @__PURE__ */ new Set(), /* @__PURE__ */ new Set([
+                        asyncNode
+                    ]));
                     this.lastUpdate = update;
                     this.hooks.onUpdate.call(update);
                 }
@@ -5250,7 +5227,7 @@ var BeaconPlugin = function() {
                             for(var _iterator = templateSubstitutions[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
                                 var _step_value = _step.value, expression = _step_value.expression, value = _step_value.value;
                                 var flags = "g";
-                                if (typeof expression === "object") {
+                                if ((typeof expression === "undefined" ? "undefined" : _type_of(expression)) === "object") {
                                     flags = "".concat(expression.flags).concat(expression.global ? "" : "g");
                                 }
                                 templateStr = templateStr.replace(new RegExp(expression, flags), value);
@@ -5399,7 +5376,7 @@ var BeaconPlugin = function() {
     var bindingResolveLookup = createPatternMatcher("{{", "}}");
     var expressionResolveLookup = createPatternMatcher("@[", "]@");
     function resolveAllRefs(node, resolveOptions, propertiesToSkip) {
-        if (node === null || node === void 0 || typeof node !== "object" && typeof node !== "string") {
+        if (node === null || node === void 0 || (typeof node === "undefined" ? "undefined" : _type_of(node)) !== "object" && typeof node !== "string") {
             return node;
         }
         if (typeof node === "string") {
@@ -5412,7 +5389,7 @@ var BeaconPlugin = function() {
             }
             var val = node[key];
             var newVal = val;
-            if (typeof val === "object") {
+            if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object") {
                 newVal = resolveAllRefs(val, resolveOptions, propertiesToSkip);
             } else if (typeof val === "string") {
                 newVal = resolveString(val, resolveOptions);
@@ -5701,7 +5678,7 @@ var BeaconPlugin = function() {
                 key: "applyParser",
                 value: function applyParser(parser) {
                     parser.hooks.parseNode.tap("multi-node", function(obj, nodeType, options, childOptions) {
-                        if (childOptions && !hasTemplateKey(childOptions.key) && Array.isArray(obj)) {
+                        if ((childOptions === void 0 || !hasTemplateKey(childOptions.key)) && Array.isArray(obj)) {
                             var values = obj.map(function(childVal) {
                                 return parser.parseObject(childVal, "value", options);
                             }).filter(function(child) {
@@ -5712,7 +5689,7 @@ var BeaconPlugin = function() {
                             }
                             var multiNode = parser.createASTNode({
                                 type: "multi-node",
-                                override: !hasTemplateValues(childOptions.parentObj, childOptions.key),
+                                override: childOptions !== void 0 && !hasTemplateValues(childOptions.parentObj, childOptions.key),
                                 values: values
                             }, obj);
                             if (!multiNode) {
@@ -5723,7 +5700,7 @@ var BeaconPlugin = function() {
                                     v.parent = multiNode;
                                 });
                             }
-                            return [
+                            return childOptions === void 0 ? multiNode : [
                                 {
                                     path: _to_consumable_array(childOptions.path).concat([
                                         childOptions.key
@@ -5753,7 +5730,7 @@ var BeaconPlugin = function() {
                 key: "applyParser",
                 value: function applyParser(parser) {
                     parser.hooks.parseNode.tap("asset", function(obj, nodeType, options, childOptions) {
-                        if ((childOptions === null || childOptions === void 0 ? void 0 : childOptions.key) === "asset" && typeof obj === "object") {
+                        if ((childOptions === null || childOptions === void 0 ? void 0 : childOptions.key) === "asset" && (typeof obj === "undefined" ? "undefined" : _type_of(obj)) === "object") {
                             var assetAST = parser.parseObject(obj, "asset", options);
                             if (!assetAST) {
                                 return [];
@@ -5953,6 +5930,7 @@ var BeaconPlugin = function() {
     }();
     var FlowInstance = /*#__PURE__*/ function() {
         function FlowInstance(id, flow, options) {
+            var _this = this;
             _class_call_check(this, FlowInstance);
             this.isTransitioning = false;
             this.hooks = {
@@ -5969,60 +5947,55 @@ var BeaconPlugin = function() {
             this.flow = flow;
             this.log = options === null || options === void 0 ? void 0 : options.logger;
             this.history = [];
-            var _this = this;
-            this.hooks.transition.tap("startPromise", function() {
-                var _ref = _async_to_generator(function(_oldState, nextState) {
+            this.hooks.transition.tap("startPromise", function(_oldState, nextState) {
+                return _async_to_generator(function() {
                     var newState;
                     return _ts_generator(this, function(_state) {
                         newState = nextState.value;
-                        if (_this.flowPromise && newState.state_type === "END") {
-                            _this.flowPromise.resolve(newState);
+                        if (this.flowPromise && newState.state_type === "END") {
+                            this.flowPromise.resolve(newState);
                         }
                         return [
                             2
                         ];
                     });
-                });
-                return function(_oldState, nextState) {
-                    return _ref.apply(this, arguments);
-                };
-            }());
+                }).call(_this);
+            });
         }
         _create_class(FlowInstance, [
             {
                 key: "start",
                 value: /** Start the state machine */ function start() {
-                    var _this = this;
                     return _async_to_generator(function() {
                         var _this_log, initialState;
                         return _ts_generator(this, function(_state) {
-                            if (_this.flowPromise) {
+                            if (this.flowPromise) {
                                 ;
-                                (_this_log = _this.log) === null || _this_log === void 0 ? void 0 : _this_log.warn("Already called start for flow");
+                                (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.warn("Already called start for flow");
                                 return [
                                     2,
-                                    _this.flowPromise.promise
+                                    this.flowPromise.promise
                                 ];
                             }
-                            _this.flow = _this.hooks.beforeStart.call(_this.flow) || _this.flow;
-                            if (_this.flow.onStart) {
-                                _this.hooks.onStart.call(_this.flow.onStart);
+                            this.flow = this.hooks.beforeStart.call(this.flow) || this.flow;
+                            if (this.flow.onStart) {
+                                this.hooks.onStart.call(this.flow.onStart);
                             }
-                            initialState = _this.flow.startState;
+                            initialState = this.flow.startState;
                             if (!initialState) {
                                 return [
                                     2,
                                     Promise.reject(new Error("No 'startState' defined for flow"))
                                 ];
                             }
-                            _this.flowPromise = (0, import_p_defer2.default)();
-                            _this.pushHistory(initialState);
+                            this.flowPromise = (0, import_p_defer2.default)();
+                            this.pushHistory(initialState);
                             return [
                                 2,
-                                _this.flowPromise.promise
+                                this.flowPromise.promise
                             ];
                         });
-                    })();
+                    }).call(this);
                 }
             },
             {
@@ -6074,7 +6047,7 @@ var BeaconPlugin = function() {
                         throw new Error("No flow definition for: ".concat(stateName, " was found."));
                     }
                     var nextState = this.flow[stateName];
-                    if (!this.flow[stateName] || typeof nextState !== "object" || !("state_type" in nextState)) {
+                    if (!this.flow[stateName] || (typeof nextState === "undefined" ? "undefined" : _type_of(nextState)) !== "object" || !("state_type" in nextState)) {
                         var _this_log;
                         (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.error("Flow doesn't contain any states named: ".concat(stateName));
                         return;
@@ -6134,30 +6107,30 @@ var BeaconPlugin = function() {
             {
                 key: "run",
                 value: function run(startState) {
-                    var _this = this;
                     return _async_to_generator(function() {
-                        var _this_log, startFlow, flow, end, firstItem;
+                        var _this, _this_log, startFlow, flow, end, firstItem;
                         return _ts_generator(this, function(_state) {
                             switch(_state.label){
                                 case 0:
-                                    if (!Object.prototype.hasOwnProperty.call(_this.navigation, startState)) {
+                                    _this = this;
+                                    if (!Object.prototype.hasOwnProperty.call(this.navigation, startState)) {
                                         return [
                                             2,
                                             Promise.reject(new Error("No flow defined for: ".concat(startState)))
                                         ];
                                     }
-                                    startFlow = _this.navigation[startState];
-                                    if (startFlow === null || typeof startFlow !== "object") {
+                                    startFlow = this.navigation[startState];
+                                    if (startFlow === null || (typeof startFlow === "undefined" ? "undefined" : _type_of(startFlow)) !== "object") {
                                         return [
                                             2,
                                             Promise.reject(new Error("Flow: ".concat(startState, " needs to be an object")))
                                         ];
                                     }
-                                    (_this_log = _this.log) === null || _this_log === void 0 ? void 0 : _this_log.debug("Starting flow: ".concat(startState));
+                                    (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.debug("Starting flow: ".concat(startState));
                                     flow = new FlowInstance(startState, startFlow, {
-                                        logger: _this.log
+                                        logger: this.log
                                     });
-                                    _this.addNewFlow(flow);
+                                    this.addNewFlow(flow);
                                     flow.hooks.afterTransition.tap("flow-controller", function(flowInstance) {
                                         var _flowInstance_currentState;
                                         if (((_flowInstance_currentState = flowInstance.currentState) === null || _flowInstance_currentState === void 0 ? void 0 : _flowInstance_currentState.value.state_type) === "FLOW") {
@@ -6177,10 +6150,10 @@ var BeaconPlugin = function() {
                                     ];
                                 case 1:
                                     end = _state.sent();
-                                    _this.navStack.pop();
-                                    if (_this.navStack.length > 0) {
+                                    this.navStack.pop();
+                                    if (this.navStack.length > 0) {
                                         firstItem = 0;
-                                        _this.current = _this.navStack[firstItem];
+                                        this.current = this.navStack[firstItem];
                                     }
                                     return [
                                         2,
@@ -6188,16 +6161,15 @@ var BeaconPlugin = function() {
                                     ];
                             }
                         });
-                    })();
+                    }).call(this);
                 }
             },
             {
                 key: "start",
                 value: function start() {
-                    var _this = this;
                     return _async_to_generator(function() {
                         return _ts_generator(this, function(_state) {
-                            if (!_this.navigation.BEGIN) {
+                            if (!this.navigation.BEGIN) {
                                 return [
                                     2,
                                     Promise.reject(new Error("Must supply a BEGIN state"))
@@ -6205,10 +6177,10 @@ var BeaconPlugin = function() {
                             }
                             return [
                                 2,
-                                _this.run(_this.navigation.BEGIN)
+                                this.run(this.navigation.BEGIN)
                             ];
                         });
-                    })();
+                    }).call(this);
                 }
             }
         ]);
@@ -7315,7 +7287,7 @@ var BeaconPlugin = function() {
                     var parentBinding = resolved.parent();
                     var property = resolved.key();
                     var parentValue = this.get(parentBinding);
-                    var existedBeforeDelete = typeof parentValue === "object" && parentValue !== null && Object.prototype.hasOwnProperty.call(parentValue, property);
+                    var existedBeforeDelete = (typeof parentValue === "undefined" ? "undefined" : _type_of(parentValue)) === "object" && parentValue !== null && Object.prototype.hasOwnProperty.call(parentValue, property);
                     this.getModel().delete(resolved, options);
                     if (existedBeforeDelete && !this.get(resolved)) {
                         this.trash.add(resolved);
@@ -7416,7 +7388,7 @@ var BeaconPlugin = function() {
                     var expressionEvaluator;
                     var handleEval = function(exp) {
                         if (exp) {
-                            if (typeof exp === "object" && "exp" in exp) {
+                            if ((typeof exp === "undefined" ? "undefined" : _type_of(exp)) === "object" && "exp" in exp) {
                                 expressionEvaluator === null || expressionEvaluator === void 0 ? void 0 : expressionEvaluator.evaluate(exp.exp);
                             } else {
                                 expressionEvaluator === null || expressionEvaluator === void 0 ? void 0 : expressionEvaluator.evaluate(exp);
@@ -7677,7 +7649,7 @@ var BeaconPlugin = function() {
                         flow.hooks.beforeTransition.tap("player", function(state, transitionVal) {
                             var computedTransitionVal = state.transitions[transitionVal] ? transitionVal : "*";
                             if (state.onEnd && state.transitions[computedTransitionVal]) {
-                                if (typeof state.onEnd === "object" && "exp" in state.onEnd) {
+                                if (_type_of(state.onEnd) === "object" && "exp" in state.onEnd) {
                                     expressionEvaluator === null || expressionEvaluator === void 0 ? void 0 : expressionEvaluator.evaluate(state.onEnd.exp);
                                 } else {
                                     expressionEvaluator === null || expressionEvaluator === void 0 ? void 0 : expressionEvaluator.evaluate(state.onEnd);
@@ -7836,12 +7808,12 @@ var BeaconPlugin = function() {
             {
                 key: "start",
                 value: function start(payload) {
-                    var _this = this;
                     return _async_to_generator(function() {
-                        var _payload_id, ref, maybeUpdateState, _this_setupFlow, state, start, endProps, _tmp, error, errorState;
+                        var _this, _payload_id, ref, maybeUpdateState, _this_setupFlow, state, start, endProps, _tmp, error, errorState;
                         return _ts_generator(this, function(_state) {
                             switch(_state.label){
                                 case 0:
+                                    _this = this;
                                     ref = Symbol((_payload_id = payload === null || payload === void 0 ? void 0 : payload.id) !== null && _payload_id !== void 0 ? _payload_id : "payload");
                                     maybeUpdateState = function(newState) {
                                         if (_this.state.ref !== ref) {
@@ -7851,7 +7823,7 @@ var BeaconPlugin = function() {
                                         _this.setState(newState);
                                         return newState;
                                     };
-                                    _this.setState({
+                                    this.setState({
                                         status: "not-started",
                                         ref: ref
                                     });
@@ -7863,8 +7835,8 @@ var BeaconPlugin = function() {
                                         ,
                                         4
                                     ]);
-                                    _this_setupFlow = _this.setupFlow(payload), state = _this_setupFlow.state, start = _this_setupFlow.start;
-                                    _this.setState(_object_spread({
+                                    _this_setupFlow = this.setupFlow(payload), state = _this_setupFlow.state, start = _this_setupFlow.start;
+                                    this.setState(_object_spread({
                                         ref: ref
                                     }, state));
                                     start();
@@ -7909,7 +7881,7 @@ var BeaconPlugin = function() {
                                     ];
                             }
                         });
-                    })();
+                    }).call(this);
                 }
             }
         ]);
@@ -8024,51 +7996,53 @@ var BeaconPlugin = function() {
             {
                 key: "beacon",
                 value: function beacon(event) {
+                    var _this = this;
                     var action = event.action, element = event.element, asset = event.asset, view = event.view;
                     var _this_beaconContext = this.beaconContext, currentView = _this_beaconContext.view;
-                    var _this = this;
-                    setTimeout(/*#__PURE__*/ _async_to_generator(function() {
-                        var _event_asset_metaData, _event_asset, _this_resolveDataRefs, _this1, _this_player, unresolvedData, _this_resolveDataRefs1, data, defaultBeacon, state, hookArgs, beacon, shouldCancel, _this_logger;
-                        return _ts_generator(this, function(_state) {
-                            switch(_state.label){
-                                case 0:
-                                    unresolvedData = (event === null || event === void 0 ? void 0 : event.data) || ((_event_asset = event.asset) === null || _event_asset === void 0 ? void 0 : (_event_asset_metaData = _event_asset.metaData) === null || _event_asset_metaData === void 0 ? void 0 : _event_asset_metaData.beacon);
-                                    data = (_this_resolveDataRefs1 = (_this_resolveDataRefs = (_this1 = _this).resolveDataRefs) === null || _this_resolveDataRefs === void 0 ? void 0 : _this_resolveDataRefs.call(_this1, unresolvedData)) !== null && _this_resolveDataRefs1 !== void 0 ? _this_resolveDataRefs1 : unresolvedData;
-                                    defaultBeacon = {
-                                        action: action,
-                                        element: element,
-                                        data: data,
-                                        assetId: asset === null || asset === void 0 ? void 0 : asset.id,
-                                        viewId: currentView === null || currentView === void 0 ? void 0 : currentView.id
-                                    };
-                                    state = (_this_player = _this.player) === null || _this_player === void 0 ? void 0 : _this_player.getState();
-                                    hookArgs = _object_spread_props(_object_spread({}, event), {
-                                        data: data,
-                                        state: state,
-                                        view: view !== null && view !== void 0 ? view : currentView,
-                                        logger: _this.logger
-                                    });
-                                    return [
-                                        4,
-                                        _this.hooks.buildBeacon.call(defaultBeacon, hookArgs)
-                                    ];
-                                case 1:
-                                    beacon = _state.sent() || defaultBeacon;
-                                    if (beacon !== defaultBeacon && _this.resolveDataRefs) {
-                                        beacon = _this.resolveDataRefs(beacon);
-                                    }
-                                    shouldCancel = _this.hooks.cancelBeacon.call(hookArgs) || false;
-                                    if (!shouldCancel) {
-                                        ;
-                                        (_this_logger = _this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.debug("Sending beacon event", beacon);
-                                        _this.hooks.publishBeacon.call(beacon);
-                                    }
-                                    return [
-                                        2
-                                    ];
-                            }
-                        });
-                    }), 0);
+                    setTimeout(function() {
+                        return _async_to_generator(function() {
+                            var _event_asset_metaData, _event_asset, _this_resolveDataRefs, _this, _this_player, unresolvedData, _this_resolveDataRefs1, data, defaultBeacon, state, hookArgs, beacon, shouldCancel, _this_logger;
+                            return _ts_generator(this, function(_state) {
+                                switch(_state.label){
+                                    case 0:
+                                        unresolvedData = (event === null || event === void 0 ? void 0 : event.data) || ((_event_asset = event.asset) === null || _event_asset === void 0 ? void 0 : (_event_asset_metaData = _event_asset.metaData) === null || _event_asset_metaData === void 0 ? void 0 : _event_asset_metaData.beacon);
+                                        data = (_this_resolveDataRefs1 = (_this_resolveDataRefs = (_this = this).resolveDataRefs) === null || _this_resolveDataRefs === void 0 ? void 0 : _this_resolveDataRefs.call(_this, unresolvedData)) !== null && _this_resolveDataRefs1 !== void 0 ? _this_resolveDataRefs1 : unresolvedData;
+                                        defaultBeacon = {
+                                            action: action,
+                                            element: element,
+                                            data: data,
+                                            assetId: asset === null || asset === void 0 ? void 0 : asset.id,
+                                            viewId: currentView === null || currentView === void 0 ? void 0 : currentView.id
+                                        };
+                                        state = (_this_player = this.player) === null || _this_player === void 0 ? void 0 : _this_player.getState();
+                                        hookArgs = _object_spread_props(_object_spread({}, event), {
+                                            data: data,
+                                            state: state,
+                                            view: view !== null && view !== void 0 ? view : currentView,
+                                            logger: this.logger
+                                        });
+                                        return [
+                                            4,
+                                            this.hooks.buildBeacon.call(defaultBeacon, hookArgs)
+                                        ];
+                                    case 1:
+                                        beacon = _state.sent() || defaultBeacon;
+                                        if (beacon !== defaultBeacon && this.resolveDataRefs) {
+                                            beacon = this.resolveDataRefs(beacon);
+                                        }
+                                        shouldCancel = this.hooks.cancelBeacon.call(hookArgs) || false;
+                                        if (!shouldCancel) {
+                                            ;
+                                            (_this_logger = this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.debug("Sending beacon event", beacon);
+                                            this.hooks.publishBeacon.call(beacon);
+                                        }
+                                        return [
+                                            2
+                                        ];
+                                }
+                            });
+                        }).call(_this);
+                    }, 0);
                 }
             }
         ]);
