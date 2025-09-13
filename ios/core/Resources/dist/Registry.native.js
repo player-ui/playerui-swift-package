@@ -68,6 +68,10 @@ function _sliced_to_array(arr, i) {
 function _to_consumable_array(arr) {
     return _array_without_holes(arr) || _iterable_to_array(arr) || _unsupported_iterable_to_array(arr) || _non_iterable_spread();
 }
+function _type_of(obj) {
+    "@swc/helpers - typeof";
+    return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj;
+}
 function _unsupported_iterable_to_array(o, minLen) {
     if (!o) return;
     if (typeof o === "string") return _array_like_to_array(o, minLen);
@@ -141,7 +145,7 @@ var Registry = function() {
         });
     };
     var __copyProps = function(to, from, except, desc) {
-        if (from && typeof from === "object" || typeof from === "function") {
+        if (from && (typeof from === "undefined" ? "undefined" : _type_of(from)) === "object" || typeof from === "function") {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
             try {
                 var _loop = function() {
@@ -261,7 +265,7 @@ var Registry = function() {
                     else return 0;
                 }
             }();
-            if (typeof module === "object") module.exports = SortedArray2;
+            if ((typeof module === "undefined" ? "undefined" : _type_of(module)) === "object") module.exports = SortedArray2;
             if (typeof define === "function" && define.amd) define(function() {
                 return SortedArray2;
             });
@@ -289,7 +293,7 @@ var Registry = function() {
                 var nestedPath = _to_consumable_array(path).concat([
                     key
                 ]);
-                if (typeof val === "object") {
+                if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object") {
                     traverseObj(val, nestedPath, pairs);
                 } else {
                     pairs.set(nestedPath, val);
@@ -330,7 +334,7 @@ var Registry = function() {
             {
                 /** Add match -> value mapping to the registry */ key: "set",
                 value: function set(match, value) {
-                    var matcher = typeof match === "object" ? createMatcher(match) : createBasicMatcher(match);
+                    var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createMatcher(match) : createBasicMatcher(match);
                     this.store.insert({
                         key: match,
                         value: value,
