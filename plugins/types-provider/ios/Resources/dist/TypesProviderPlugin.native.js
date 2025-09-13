@@ -56,6 +56,10 @@ function _non_iterable_rest() {
 function _sliced_to_array(arr, i) {
     return _array_with_holes(arr) || _iterable_to_array_limit(arr, i) || _unsupported_iterable_to_array(arr, i) || _non_iterable_rest();
 }
+function _type_of(obj) {
+    "@swc/helpers - typeof";
+    return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj;
+}
 function _unsupported_iterable_to_array(o, minLen) {
     if (!o) return;
     if (typeof o === "string") return _array_like_to_array(o, minLen);
@@ -76,7 +80,7 @@ var TypesProviderPlugin = function() {
         });
     };
     var __copyProps = function(to, from, except, desc) {
-        if (from && typeof from === "object" || typeof from === "function") {
+        if (from && (typeof from === "undefined" ? "undefined" : _type_of(from)) === "object" || typeof from === "function") {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
             try {
                 var _loop = function() {
