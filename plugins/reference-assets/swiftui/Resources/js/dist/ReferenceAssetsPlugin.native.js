@@ -8528,7 +8528,6 @@ var ReferenceAssetsPlugin = function() {
     var AsyncNodePluginPlugin = /*#__PURE__*/ function() {
         function AsyncNodePluginPlugin() {
             _class_call_check(this, AsyncNodePluginPlugin);
-            this.asyncNode = new AsyncParallelBailHook();
             this.name = "AsyncNode";
         }
         _create_class(AsyncNodePluginPlugin, [
@@ -8588,6 +8587,10 @@ var ReferenceAssetsPlugin = function() {
                         }
                         var resolvedNode = context.nodeResolveCache.get(node.id);
                         if (resolvedNode !== void 0) {
+                            if (resolvedNode.asyncNodesResolved === void 0) {
+                                resolvedNode.asyncNodesResolved = [];
+                            }
+                            resolvedNode.asyncNodesResolved.push(node.id);
                             return _this.resolveAsyncChildren(resolvedNode, context);
                         }
                         if (context.inProgressNodes.has(node.id)) {
