@@ -385,11 +385,50 @@ function _ts_generator(thisArg, body) {
         };
     }
 }
-var ReferenceAssetsPlugin = function() {
+var AsyncNodePlugin = function() {
+    var equalToOrIn = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/tapable-ts@0.2.4/node_modules/tapable-ts/dist/hooks.mjs
+    function equalToOrIn(value, check) {
+        if (Array.isArray(check)) {
+            return check.includes(value);
+        }
+        return check === value;
+    };
+    var callTap = function callTap(tap, args, ctx) {
+        var _tap;
+        if (tap.context) {
+            var _tap1;
+            return (_tap1 = tap).callback.apply(_tap1, [
+                ctx
+            ].concat(_to_consumable_array(args)));
+        }
+        return (_tap = tap).callback.apply(_tap, _to_consumable_array(args));
+    };
     var dlv_es_default = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/dlv@1.1.3/node_modules/dlv/dist/dlv.es.js
     function dlv_es_default(t2, e, l, n, r) {
         for(e = e.split ? e.split(".") : e, n = 0; n < e.length; n++)t2 = t2 ? t2[e[n]] : r;
         return t2 === r ? l : t2;
+    };
+    var find = function find(iter, tar, key) {
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = iter.keys()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                key = _step.value;
+                if (dequal(key, tar)) return key;
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
     };
     var createMatcher = function createMatcher(partialObj) {
         var pairs = traverseObj(partialObj);
@@ -428,137 +467,6 @@ var ReferenceAssetsPlugin = function() {
         };
         matcher.count = 1;
         return matcher;
-    };
-    var composeTransforms = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+asset-transform-plugin@0.0.0/node_modules/@player-ui/asset-transform-plugin/dist/index.mjs
-    function composeTransforms() {
-        for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
-            args[_key] = arguments[_key];
-        }
-        var _args_reverse = _to_array(args.reverse()), fn = _args_reverse[0], fns = _args_reverse.slice(1);
-        return function(asset, options, store) {
-            var value = fn(asset, options, store);
-            if (!fns.length) {
-                return value;
-            }
-            return fns.reduce(function(prevValue, current) {
-                return current(prevValue, options, store);
-            }, value);
-        };
-    };
-    var composeBefore = function composeBefore() {
-        for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
-            args[_key] = arguments[_key];
-        }
-        return {
-            beforeResolve: composeTransforms.apply(void 0, _to_consumable_array(args))
-        };
-    };
-    var compose = function compose() {
-        for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
-            args[_key] = arguments[_key];
-        }
-        var beforeResolveFns = [];
-        var resolveFns = [];
-        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-        try {
-            for(var _iterator = args[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                var arg = _step.value;
-                if (typeof arg === "function") {
-                    resolveFns.push(arg);
-                } else {
-                    if (arg === null || arg === void 0 ? void 0 : arg.resolve) {
-                        resolveFns.push(arg.resolve);
-                    }
-                    if (arg === null || arg === void 0 ? void 0 : arg.beforeResolve) {
-                        beforeResolveFns.push(arg.beforeResolve);
-                    }
-                }
-            }
-        } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-        } finally{
-            try {
-                if (!_iteratorNormalCompletion && _iterator.return != null) {
-                    _iterator.return();
-                }
-            } finally{
-                if (_didIteratorError) {
-                    throw _iteratorError;
-                }
-            }
-        }
-        return {
-            beforeResolve: beforeResolveFns.length ? composeTransforms.apply(void 0, _to_consumable_array(beforeResolveFns)) : void 0,
-            resolve: resolveFns.length ? composeTransforms.apply(void 0, _to_consumable_array(resolveFns)) : void 0
-        };
-    };
-    var maybeCompose = function maybeCompose(maybeFn) {
-        if ((typeof maybeFn === "undefined" ? "undefined" : _type_of(maybeFn)) === "object") {
-            return maybeFn;
-        }
-        return compose(maybeFn);
-    };
-    var cleanupTransformRegistry = function cleanupTransformRegistry(maybeRegistry) {
-        if (Array.isArray(maybeRegistry)) {
-            var wrappedTransforms = maybeRegistry.map(function(param) {
-                var _param = _sliced_to_array(param, 2), key = _param[0], value = _param[1];
-                return [
-                    key,
-                    maybeCompose(value)
-                ];
-            });
-            return new Registry(wrappedTransforms);
-        }
-        var registry = new Registry();
-        maybeRegistry.forEach(function(param) {
-            var key = param.key, value = param.value;
-            registry.set(key, maybeCompose(value));
-        });
-        return registry;
-    };
-    var isBackAction = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/action/transform.ts
-    function isBackAction(action) {
-        return action.value === "Prev";
-    };
-    var equalToOrIn = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/tapable-ts@0.2.4/node_modules/tapable-ts/dist/hooks.mjs
-    function equalToOrIn(value, check) {
-        if (Array.isArray(check)) {
-            return check.includes(value);
-        }
-        return check === value;
-    };
-    var callTap = function callTap(tap, args, ctx) {
-        var _tap;
-        if (tap.context) {
-            var _tap1;
-            return (_tap1 = tap).callback.apply(_tap1, [
-                ctx
-            ].concat(_to_consumable_array(args)));
-        }
-        return (_tap = tap).callback.apply(_tap, _to_consumable_array(args));
-    };
-    var find = function find(iter, tar, key) {
-        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-        try {
-            for(var _iterator = iter.keys()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                key = _step.value;
-                if (dequal(key, tar)) return key;
-            }
-        } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-        } finally{
-            try {
-                if (!_iteratorNormalCompletion && _iterator.return != null) {
-                    _iterator.return();
-                }
-            } finally{
-                if (_didIteratorError) {
-                    throw _iteratorError;
-                }
-            }
-        }
     };
     var isBinding = function isBinding(binding) {
         return !(typeof binding === "string" || Array.isArray(binding));
@@ -1652,87 +1560,6 @@ var ReferenceAssetsPlugin = function() {
             value: true
         }), mod);
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js
-    var require_sorted_array = __commonJS({
-        "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js": function(exports, module) {
-            "use strict";
-            var SortedArray2 = function() {
-                var SortedArray3 = defclass({
-                    constructor: function constructor(array, compare) {
-                        this.array = [];
-                        this.compare = compare || compareDefault;
-                        var length = array.length, index = 0;
-                        while(index < length)this.insert(array[index++]);
-                    },
-                    insert: function insert(element) {
-                        var array = this.array, compare = this.compare, high = array.length - 1, low = 0, pos = -1, index, ordering;
-                        while(high >= low){
-                            index = (high + low) / 2 >>> 0;
-                            ordering = compare(array[index], element);
-                            if (ordering < 0) low = index + 1;
-                            else if (ordering > 0) high = index - 1;
-                            else {
-                                pos = index;
-                                break;
-                            }
-                            ;
-                        }
-                        if (pos === -1) {
-                            pos = high;
-                        }
-                        pos++;
-                        high = array.length - 1;
-                        while(pos < high && compare(element, array[pos]) === 0){
-                            pos++;
-                        }
-                        index = array.length;
-                        array.push(element);
-                        while(index > pos){
-                            array[index] = array[--index];
-                        }
-                        array[pos] = element;
-                        return this;
-                    },
-                    search: function search(element) {
-                        var array = this.array, compare = this.compare, high = array.length - 1, low = 0, index, ordering;
-                        while(high >= low){
-                            index = (high + low) / 2 >>> 0;
-                            ordering = compare(array[index], element);
-                            if (ordering < 0) low = index + 1;
-                            else if (ordering > 0) high = index - 1;
-                            else return index;
-                        }
-                        return -1;
-                    },
-                    remove: function remove(element) {
-                        var index = this.search(element);
-                        if (index >= 0) this.array.splice(index, 1);
-                        return this;
-                    }
-                });
-                SortedArray3.comparing = function(property, array) {
-                    return new SortedArray3(array, function(a, b) {
-                        return compareDefault(a[property], b[property]);
-                    });
-                };
-                return SortedArray3;
-                function defclass(prototype) {
-                    var constructor = prototype.constructor;
-                    constructor.prototype = prototype;
-                    return constructor;
-                }
-                function compareDefault(a, b) {
-                    if (a < b) return -1;
-                    else if (a > b) return 1;
-                    else return 0;
-                }
-            }();
-            if ((typeof module === "undefined" ? "undefined" : _type_of(module)) === "object") module.exports = SortedArray2;
-            if (typeof define === "function" && define.amd) define(function() {
-                return SortedArray2;
-            });
-        }
-    });
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/ts-nested-error@1.2.1/node_modules/ts-nested-error/build/nested-error.js
     var require_nested_error = __commonJS({
         "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/ts-nested-error@1.2.1/node_modules/ts-nested-error/build/nested-error.js": function(exports) {
@@ -2156,346 +1983,106 @@ var ReferenceAssetsPlugin = function() {
             };
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/index.ts
-    var src_exports = {};
-    __export(src_exports, {
-        ReferenceAssetsPlugin: function() {
-            return ReferenceAssetsPlugin;
-        },
-        actionTransform: function() {
-            return actionTransform;
-        },
-        chatMessageTransform: function() {
-            return chatMessageTransform;
-        },
-        choiceTransform: function() {
-            return choiceTransform;
-        },
-        expPropTransform: function() {
-            return expPropTransform;
-        },
-        imageTransform: function() {
-            return imageTransform;
-        },
-        infoTransform: function() {
-            return infoTransform;
-        },
-        inputTransform: function() {
-            return inputTransform;
-        },
-        isBackAction: function() {
-            return isBackAction;
-        },
-        transform: function() {
-            return transform2;
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js
+    var require_sorted_array = __commonJS({
+        "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js": function(exports, module) {
+            "use strict";
+            var SortedArray2 = function() {
+                var SortedArray3 = defclass({
+                    constructor: function constructor(array, compare) {
+                        this.array = [];
+                        this.compare = compare || compareDefault;
+                        var length = array.length, index = 0;
+                        while(index < length)this.insert(array[index++]);
+                    },
+                    insert: function insert(element) {
+                        var array = this.array, compare = this.compare, high = array.length - 1, low = 0, pos = -1, index, ordering;
+                        while(high >= low){
+                            index = (high + low) / 2 >>> 0;
+                            ordering = compare(array[index], element);
+                            if (ordering < 0) low = index + 1;
+                            else if (ordering > 0) high = index - 1;
+                            else {
+                                pos = index;
+                                break;
+                            }
+                            ;
+                        }
+                        if (pos === -1) {
+                            pos = high;
+                        }
+                        pos++;
+                        high = array.length - 1;
+                        while(pos < high && compare(element, array[pos]) === 0){
+                            pos++;
+                        }
+                        index = array.length;
+                        array.push(element);
+                        while(index > pos){
+                            array[index] = array[--index];
+                        }
+                        array[pos] = element;
+                        return this;
+                    },
+                    search: function search(element) {
+                        var array = this.array, compare = this.compare, high = array.length - 1, low = 0, index, ordering;
+                        while(high >= low){
+                            index = (high + low) / 2 >>> 0;
+                            ordering = compare(array[index], element);
+                            if (ordering < 0) low = index + 1;
+                            else if (ordering > 0) high = index - 1;
+                            else return index;
+                        }
+                        return -1;
+                    },
+                    remove: function remove(element) {
+                        var index = this.search(element);
+                        if (index >= 0) this.array.splice(index, 1);
+                        return this;
+                    }
+                });
+                SortedArray3.comparing = function(property, array) {
+                    return new SortedArray3(array, function(a, b) {
+                        return compareDefault(a[property], b[property]);
+                    });
+                };
+                return SortedArray3;
+                function defclass(prototype) {
+                    var constructor = prototype.constructor;
+                    constructor.prototype = prototype;
+                    return constructor;
+                }
+                function compareDefault(a, b) {
+                    if (a < b) return -1;
+                    else if (a > b) return 1;
+                    else return 0;
+                }
+            }();
+            if ((typeof module === "undefined" ? "undefined" : _type_of(module)) === "object") module.exports = SortedArray2;
+            if (typeof define === "function" && define.amd) define(function() {
+                return SortedArray2;
+            });
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/input/transform.ts
-    var inputTransform = function(asset, options) {
-        var _options_validation, _options_validation1;
-        return _object_spread_props(_object_spread({}, asset), {
-            format: function format(val) {
-                if (asset.binding === void 0) {
-                    return val;
-                }
-                return options.data.format(asset.binding, val);
-            },
-            set: function set(val) {
-                if (asset.binding === void 0) {
-                    return;
-                }
-                return options.data.model.set([
-                    [
-                        asset.binding,
-                        val
-                    ]
-                ], {
-                    formatted: true
-                });
-            },
-            value: asset.binding === void 0 ? "" : options.data.model.get(asset.binding, {
-                includeInvalid: true,
-                formatted: true
-            }),
-            validation: asset.binding === void 0 ? void 0 : (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : _options_validation.get(asset.binding, {
-                track: true
-            }),
-            dataType: asset.binding === void 0 ? void 0 : (_options_validation1 = options.validation) === null || _options_validation1 === void 0 ? void 0 : _options_validation1.type(asset.binding)
-        });
-    };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
-    var import_sorted_array = __toESM(require_sorted_array(), 1);
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
-    function traverseObj(object) {
-        var path = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [], pairs = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : /* @__PURE__ */ new Map();
-        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-        try {
-            for(var _iterator = Object.keys(object)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                var key = _step.value;
-                var val = object[key];
-                var nestedPath = _to_consumable_array(path).concat([
-                    key
-                ]);
-                if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object") {
-                    traverseObj(val, nestedPath, pairs);
-                } else {
-                    pairs.set(nestedPath, val);
-                }
-            }
-        } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-        } finally{
-            try {
-                if (!_iteratorNormalCompletion && _iterator.return != null) {
-                    _iterator.return();
-                }
-            } finally{
-                if (_didIteratorError) {
-                    throw _iteratorError;
-                }
-            }
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/async-node/core/src/index.ts
+    var src_exports = {};
+    __export(src_exports, {
+        AsyncNodePlugin: function() {
+            return AsyncNodePlugin;
+        },
+        AsyncNodePluginPlugin: function() {
+            return AsyncNodePluginPlugin;
+        },
+        AsyncNodePluginSymbol: function() {
+            return AsyncNodePluginSymbol;
+        },
+        asyncTransform: function() {
+            return asyncTransform;
+        },
+        createAsyncTransform: function() {
+            return createAsyncTransform;
         }
-        return pairs;
-    }
-    var createSortedArray = function() {
-        return new import_sorted_array.default([], function(c) {
-            return c.matcher.count;
-        });
-    };
-    var Registry = /*#__PURE__*/ function() {
-        function Registry(initialSet) {
-            var _this = this;
-            _class_call_check(this, Registry);
-            this.store = createSortedArray();
-            initialSet === null || initialSet === void 0 ? void 0 : initialSet.forEach(function(param) {
-                var _param = _sliced_to_array(param, 2), match = _param[0], value = _param[1];
-                _this.set(match, value);
-            });
-        }
-        _create_class(Registry, [
-            {
-                /** Add match -> value mapping to the registry */ key: "set",
-                value: function set(match, value) {
-                    var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createMatcher(match) : createBasicMatcher(match);
-                    this.store.insert({
-                        key: match,
-                        value: value,
-                        matcher: matcher
-                    });
-                }
-            },
-            {
-                /** Fetch the best match in the registry */ key: "get",
-                value: function get(query) {
-                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                    try {
-                        for(var _iterator = this.store.array[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                            var entry = _step.value;
-                            if (entry.matcher(query)) {
-                                return entry.value;
-                            }
-                        }
-                    } catch (err) {
-                        _didIteratorError = true;
-                        _iteratorError = err;
-                    } finally{
-                        try {
-                            if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                _iterator.return();
-                            }
-                        } finally{
-                            if (_didIteratorError) {
-                                throw _iteratorError;
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                /** Loop over all entries and run callback */ key: "forEach",
-                value: function forEach(callbackfn) {
-                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                    try {
-                        for(var _iterator = this.store.array[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                            var entry = _step.value;
-                            callbackfn(entry);
-                        }
-                    } catch (err) {
-                        _didIteratorError = true;
-                        _iteratorError = err;
-                    } finally{
-                        try {
-                            if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                _iterator.return();
-                            }
-                        } finally{
-                            if (_didIteratorError) {
-                                throw _iteratorError;
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                /** Reset the items in the registry */ key: "clear",
-                value: function clear() {
-                    this.store = createSortedArray();
-                }
-            },
-            {
-                /** Check if the registry is empty*/ key: "isRegistryEmpty",
-                value: function isRegistryEmpty() {
-                    return this.store.array.length === 0;
-                }
-            }
-        ]);
-        return Registry;
-    }();
-    var AssetTransformPlugin = /*#__PURE__*/ function() {
-        function AssetTransformPlugin(transforms) {
-            _class_call_check(this, AssetTransformPlugin);
-            this.name = "asset-transform";
-            this.registry = cleanupTransformRegistry(transforms);
-        }
-        _create_class(AssetTransformPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    var _this = this;
-                    player.hooks.viewController.tap(this.name, function(vc) {
-                        _this.registry.forEach(function(param) {
-                            var key = param.key, value = param.value;
-                            return vc.transformRegistry.set(key, maybeCompose(value));
-                        });
-                    });
-                }
-            }
-        ]);
-        return AssetTransformPlugin;
-    }();
-    var transform = function(action, options) {
-        return _object_spread_props(_object_spread({}, action), {
-            run: function run() {
-                if (action.exp) {
-                    options.evaluate(action.exp);
-                }
-                if (action.value) {
-                    var _action_metaData, _options_transition;
-                    var skipValidation = (_action_metaData = action.metaData) === null || _action_metaData === void 0 ? void 0 : _action_metaData.skipValidation;
-                    (_options_transition = options.transition) === null || _options_transition === void 0 ? void 0 : _options_transition.call(options, action.value, {
-                        force: skipValidation
-                    });
-                }
-            }
-        });
-    };
-    var backIconTransform = function(action) {
-        var _action_metaData;
-        if (isBackAction(action) && (action === null || action === void 0 ? void 0 : (_action_metaData = action.metaData) === null || _action_metaData === void 0 ? void 0 : _action_metaData.role) === void 0) {
-            return _object_spread_props(_object_spread({}, action), {
-                metaData: _object_spread_props(_object_spread({}, action === null || action === void 0 ? void 0 : action.metaData), {
-                    role: "back"
-                })
-            });
-        }
-        return action;
-    };
-    var expPropTransform = function(asset) {
-        var _asset_plugins_stringResolver, _asset_plugins, _asset_plugins1, _asset_plugins_stringResolver1, _asset_plugins2;
-        var skipArray = (_asset_plugins = asset.plugins) === null || _asset_plugins === void 0 ? void 0 : (_asset_plugins_stringResolver = _asset_plugins.stringResolver) === null || _asset_plugins_stringResolver === void 0 ? void 0 : _asset_plugins_stringResolver.propertiesToSkip;
-        if (skipArray && skipArray.indexOf("exp") > 1) {
-            return asset;
-        }
-        var _asset_plugins_stringResolver_propertiesToSkip;
-        return _object_spread_props(_object_spread({}, asset), {
-            plugins: _object_spread_props(_object_spread({}, asset.plugins), {
-                stringResolver: _object_spread_props(_object_spread({}, asset === null || asset === void 0 ? void 0 : (_asset_plugins1 = asset.plugins) === null || _asset_plugins1 === void 0 ? void 0 : _asset_plugins1.stringResolver), {
-                    propertiesToSkip: _to_consumable_array((_asset_plugins_stringResolver_propertiesToSkip = (_asset_plugins2 = asset.plugins) === null || _asset_plugins2 === void 0 ? void 0 : (_asset_plugins_stringResolver1 = _asset_plugins2.stringResolver) === null || _asset_plugins_stringResolver1 === void 0 ? void 0 : _asset_plugins_stringResolver1.propertiesToSkip) !== null && _asset_plugins_stringResolver_propertiesToSkip !== void 0 ? _asset_plugins_stringResolver_propertiesToSkip : []).concat([
-                        "exp"
-                    ])
-                })
-            })
-        });
-    };
-    var actionTransform = compose(transform, backIconTransform, composeBefore(expPropTransform));
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/info/transform.ts
-    var infoTransform = function(infoAsset) {
-        var actions = infoAsset === null || infoAsset === void 0 ? void 0 : infoAsset.actions;
-        var segmentedActions = actions === null || actions === void 0 ? void 0 : actions.reduce(function(segmentedActionsArray, action) {
-            segmentedActionsArray[isBackAction(action.asset) ? "prev" : "next"].push(action);
-            return segmentedActionsArray;
-        }, {
-            next: [],
-            prev: []
-        });
-        return _object_spread_props(_object_spread({}, infoAsset), {
-            segmentedActions: segmentedActions
-        });
-    };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/image/transform.ts
-    var getImageAlt = function(props) {
-        var metaData = props.metaData, placeholder = props.placeholder;
-        if (metaData.accessibility) return metaData.accessibility;
-        if (placeholder) return placeholder;
-        return "Image";
-    };
-    var imageTransform = function(props) {
-        var altText = getImageAlt(props);
-        var newImage = _object_spread_props(_object_spread({}, props), {
-            altText: altText
-        });
-        return newImage;
-    };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/choice/transform.ts
-    var choiceTransform = function(asset, options) {
-        var _options_validation, _options_validation1;
-        var items = asset.items, binding = asset.binding, rest = _object_without_properties(asset, [
-            "items",
-            "binding"
-        ]);
-        var assetHasBinding = binding !== void 0;
-        var currentValue = assetHasBinding ? options.data.model.get(binding, {
-            includeInvalid: true
-        }) : void 0;
-        var resetValue = function() {
-            if (assetHasBinding) {
-                return options.data.model.set([
-                    [
-                        binding,
-                        null
-                    ]
-                ]);
-            }
-        };
-        var transformedChoiceItems = (items || []).map(function(item, index) {
-            var _item_id;
-            return _object_spread_props(_object_spread({}, item), {
-                id: (_item_id = item.id) !== null && _item_id !== void 0 ? _item_id : "".concat(asset.id, "-choice-").concat(index),
-                select: function select() {
-                    if (assetHasBinding) {
-                        return options.data.model.set([
-                            [
-                                binding,
-                                item.value
-                            ]
-                        ]);
-                    }
-                },
-                unselect: resetValue
-            });
-        });
-        return _object_spread_props(_object_spread({}, rest), {
-            binding: binding,
-            clearSelection: resetValue,
-            items: transformedChoiceItems,
-            value: currentValue,
-            validation: assetHasBinding ? (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : _options_validation.get(binding, {
-                track: true
-            }) : void 0,
-            dataType: assetHasBinding ? (_options_validation1 = options.validation) === null || _options_validation1 === void 0 ? void 0 : _options_validation1.type(binding) : void 0
-        });
-    };
+    });
     var InterceptionManager = /*#__PURE__*/ function() {
         function InterceptionManager() {
             _class_call_check(this, InterceptionManager);
@@ -2863,6 +2450,7 @@ var ReferenceAssetsPlugin = function() {
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_ts_nested_error = __toESM(require_nested_error(), 1);
     var import_ts_nested_error2 = __toESM(require_nested_error(), 1);
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_timm = __toESM(require_timm(), 1);
     var import_ts_nested_error3 = __toESM(require_nested_error(), 1);
     var import_timm2 = __toESM(require_timm(), 1);
@@ -2982,6 +2570,135 @@ var ReferenceAssetsPlugin = function() {
     var import_p_defer2 = __toESM(require_p_defer(), 1);
     var import_timm9 = __toESM(require_timm(), 1);
     var import_queue_microtask2 = __toESM(require_queue_microtask(), 1);
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
+    var import_sorted_array = __toESM(require_sorted_array(), 1);
+    function traverseObj(object) {
+        var path = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [], pairs = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : /* @__PURE__ */ new Map();
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = Object.keys(object)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                var key = _step.value;
+                var val = object[key];
+                var nestedPath = _to_consumable_array(path).concat([
+                    key
+                ]);
+                if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object") {
+                    traverseObj(val, nestedPath, pairs);
+                } else {
+                    pairs.set(nestedPath, val);
+                }
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+        return pairs;
+    }
+    var createSortedArray = function() {
+        return new import_sorted_array.default([], function(c) {
+            return c.matcher.count;
+        });
+    };
+    var Registry = /*#__PURE__*/ function() {
+        function Registry(initialSet) {
+            var _this = this;
+            _class_call_check(this, Registry);
+            this.store = createSortedArray();
+            initialSet === null || initialSet === void 0 ? void 0 : initialSet.forEach(function(param) {
+                var _param = _sliced_to_array(param, 2), match = _param[0], value = _param[1];
+                _this.set(match, value);
+            });
+        }
+        _create_class(Registry, [
+            {
+                /** Add match -> value mapping to the registry */ key: "set",
+                value: function set(match, value) {
+                    var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createMatcher(match) : createBasicMatcher(match);
+                    this.store.insert({
+                        key: match,
+                        value: value,
+                        matcher: matcher
+                    });
+                }
+            },
+            {
+                /** Fetch the best match in the registry */ key: "get",
+                value: function get(query) {
+                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                    try {
+                        for(var _iterator = this.store.array[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                            var entry = _step.value;
+                            if (entry.matcher(query)) {
+                                return entry.value;
+                            }
+                        }
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally{
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                _iterator.return();
+                            }
+                        } finally{
+                            if (_didIteratorError) {
+                                throw _iteratorError;
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                /** Loop over all entries and run callback */ key: "forEach",
+                value: function forEach(callbackfn) {
+                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                    try {
+                        for(var _iterator = this.store.array[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                            var entry = _step.value;
+                            callbackfn(entry);
+                        }
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally{
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                _iterator.return();
+                            }
+                        } finally{
+                            if (_didIteratorError) {
+                                throw _iteratorError;
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                /** Reset the items in the registry */ key: "clear",
+                value: function clear() {
+                    this.store = createSortedArray();
+                }
+            },
+            {
+                /** Check if the registry is empty*/ key: "isRegistryEmpty",
+                value: function isRegistryEmpty() {
+                    return this.store.array.length === 0;
+                }
+            }
+        ]);
+        return Registry;
+    }();
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var __defProp2 = Object.defineProperty;
     var __export2 = function(target, all) {
         for(var name in all)__defProp2(target, name, {
@@ -6320,11 +6037,11 @@ var ReferenceAssetsPlugin = function() {
                         };
                         resolver.hooks.beforeResolve.tap("asset-transform", function(node, options) {
                             if (node && (node.type === "asset" || node.type === "view")) {
-                                var transform3 = _this.registry.get(node.value);
-                                if (transform3 === null || transform3 === void 0 ? void 0 : transform3.beforeResolve) {
+                                var transform = _this.registry.get(node.value);
+                                if (transform === null || transform === void 0 ? void 0 : transform.beforeResolve) {
                                     var _options_node;
                                     var store = getStore((_options_node = options.node) !== null && _options_node !== void 0 ? _options_node : node, _this.beforeResolveSymbol);
-                                    return transform3.beforeResolve(node, options, store);
+                                    return transform.beforeResolve(node, options, store);
                                 }
                             }
                             return node;
@@ -6348,10 +6065,10 @@ var ReferenceAssetsPlugin = function() {
                             if (!originalNode) {
                                 return value;
                             }
-                            var transform3 = _this.registry.get(value);
-                            if (transform3 === null || transform3 === void 0 ? void 0 : transform3.resolve) {
+                            var transform = _this.registry.get(value);
+                            if (transform === null || transform === void 0 ? void 0 : transform.resolve) {
                                 var store = getStore(originalNode, _this.resolveSymbol);
-                                return transform3 === null || transform3 === void 0 ? void 0 : transform3.resolve(value, options, store);
+                                return transform === null || transform === void 0 ? void 0 : transform.resolve(value, options, store);
                             }
                             return value;
                         });
@@ -8324,8 +8041,31 @@ var ReferenceAssetsPlugin = function() {
         version: PLAYER_VERSION,
         commit: COMMIT
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+async-node-plugin@0.0.0/node_modules/@player-ui/async-node-plugin/dist/index.mjs
-    var import_queue_microtask3 = __toESM(require_queue_microtask(), 1);
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/async-node/core/src/index.ts
+    var import_queue_microtask3 = __toESM(require_queue_microtask());
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/async-node/core/src/transform.ts
+    var asyncTransform = function(assetId, wrapperAssetType, asset, flatten2) {
+        var path = arguments.length > 4 && arguments[4] !== void 0 ? arguments[4] : [
+            "values"
+        ];
+        var id = "async-" + assetId;
+        var asyncNode = Builder.asyncNode(id, flatten2);
+        var multiNode;
+        var assetNode;
+        if (asset) {
+            assetNode = Builder.assetWrapper(asset);
+            multiNode = Builder.multiNode(assetNode, asyncNode);
+        } else {
+            multiNode = Builder.multiNode(asyncNode);
+        }
+        var wrapperAsset = Builder.asset({
+            id: wrapperAssetType + "-" + id,
+            type: wrapperAssetType
+        });
+        Builder.addChild(wrapperAsset, path, multiNode);
+        return wrapperAsset;
+    };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/async-node/core/src/utils/extractNodeFromPath.ts
     var getMatchValue = function(pathA, pathB) {
         if (pathA.length > pathB.length) {
             return 0;
@@ -8381,6 +8121,7 @@ var ReferenceAssetsPlugin = function() {
         }
         return extractNodeFromPath(bestMatch.value, path.slice(matchResult));
     };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/async-node/core/src/utils/traverseAndReplace.ts
     var traverseAndReplace = function(node, replaceFn) {
         if (node.type === NodeType.MultiNode) {
             var index = 0;
@@ -8402,6 +8143,7 @@ var ReferenceAssetsPlugin = function() {
         }
         return replaceFn(node);
     };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/async-node/core/src/utils/unwrapAsset.ts
     var unwrapAsset = function(node) {
         var _node_children;
         if (node.type !== NodeType.Value) {
@@ -8415,6 +8157,7 @@ var ReferenceAssetsPlugin = function() {
         }
         return child.value;
     };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/async-node/core/src/utils/requiresAssetWrapper.ts
     var requiresAssetWrapper = function(node) {
         if (node.type === NodeType.Asset) {
             return true;
@@ -8424,6 +8167,7 @@ var ReferenceAssetsPlugin = function() {
         }
         return node.value.type === NodeType.Asset;
     };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/async-node/core/src/createAsyncTransform.ts
     var defaultGetNodeId = function(node) {
         return "async-".concat(node.value.id);
     };
@@ -8480,12 +8224,13 @@ var ReferenceAssetsPlugin = function() {
         };
         return asyncTransform2;
     };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/async-node/core/src/index.ts
     var AsyncNodePluginSymbol = Symbol.for("AsyncNodePlugin");
     var _AsyncNodePlugin = /*#__PURE__*/ function() {
-        function _AsyncNodePlugin2(options, asyncHandler) {
+        function _AsyncNodePlugin(options, asyncHandler) {
             var _this = this;
-            _class_call_check(this, _AsyncNodePlugin2);
-            this.symbol = _AsyncNodePlugin2.Symbol;
+            _class_call_check(this, _AsyncNodePlugin);
+            this.symbol = _AsyncNodePlugin.Symbol;
             this.hooks = {
                 onAsyncNode: new AsyncSeriesBailHook(),
                 onAsyncNodeError: new SyncBailHook()
@@ -8518,7 +8263,7 @@ var ReferenceAssetsPlugin = function() {
                 });
             }
         }
-        _create_class(_AsyncNodePlugin2, [
+        _create_class(_AsyncNodePlugin, [
             {
                 key: "getPlayerInstance",
                 value: function getPlayerInstance() {
@@ -8541,7 +8286,7 @@ var ReferenceAssetsPlugin = function() {
                 }
             }
         ]);
-        return _AsyncNodePlugin2;
+        return _AsyncNodePlugin;
     }();
     _AsyncNodePlugin.Symbol = AsyncNodePluginSymbol;
     var AsyncNodePlugin = _AsyncNodePlugin;
@@ -8802,240 +8547,6 @@ var ReferenceAssetsPlugin = function() {
             }
         ]);
         return AsyncNodePluginPlugin;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/chat-message/transform.ts
-    var transform2 = createAsyncTransform({
-        transformAssetType: "chat-message",
-        wrapperAssetType: "collection",
-        getNestedAsset: function(node) {
-            var _node_children_, _node_children;
-            return (_node_children = node.children) === null || _node_children === void 0 ? void 0 : (_node_children_ = _node_children[0]) === null || _node_children_ === void 0 ? void 0 : _node_children_.value;
-        }
-    });
-    var chatMessageTransform = compose(composeBefore(transform2));
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+meta-plugin@0.0.0/node_modules/@player-ui/meta-plugin/dist/index.mjs
-    var MetaPlugin = /*#__PURE__*/ function() {
-        function MetaPlugin() {
-            var plugins = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : [];
-            _class_call_check(this, MetaPlugin);
-            this.name = "meta-plugin";
-            this.plugins = plugins;
-        }
-        _create_class(MetaPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    this.plugins.forEach(function(plugin) {
-                        return player.registerPlugin(plugin);
-                    });
-                }
-            }
-        ]);
-        return MetaPlugin;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+expression-plugin@0.0.0/node_modules/@player-ui/expression-plugin/dist/index.mjs
-    var ExpressionPlugin = /*#__PURE__*/ function() {
-        function ExpressionPlugin(expressionMap) {
-            _class_call_check(this, ExpressionPlugin);
-            this.name = "ExpressionPlugin";
-            this.expressions = expressionMap;
-        }
-        _create_class(ExpressionPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    var _this = this;
-                    player.hooks.expressionEvaluator.tap(this.name, function(expEvaluator) {
-                        _this.expressions.forEach(function(handler, name) {
-                            expEvaluator.addExpressionFunction(name, handler);
-                        });
-                    });
-                }
-            }
-        ]);
-        return ExpressionPlugin;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugins/chat-ui-demo-plugin.ts
-    var createContentFromMessage = function(message, id) {
-        return {
-            asset: {
-                type: "chat-message",
-                id: id,
-                value: {
-                    asset: {
-                        type: "text",
-                        id: "".concat(id, "-value"),
-                        value: message
-                    }
-                }
-            }
-        };
-    };
-    var ChatUiDemoPlugin = /*#__PURE__*/ function() {
-        function ChatUiDemoPlugin() {
-            _class_call_check(this, ChatUiDemoPlugin);
-            this.name = "chat-ui-demo-plugin";
-        }
-        _create_class(ChatUiDemoPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    var asyncNodePlugin = player.findPlugin(AsyncNodePlugin.Symbol);
-                    if (!asyncNodePlugin) {
-                        player.logger.warn("Failed to apply '".concat(this.name, "'. Reason: Could not find AsyncNodePlugin."));
-                        return;
-                    }
-                    var deferredPromises = {};
-                    var allPromiseKeys = [];
-                    var counter = 0;
-                    var sendMessage = function(context, message, nodeId) {
-                        if (nodeId && !(nodeId in deferredPromises)) {
-                            var _context_logger;
-                            (_context_logger = context.logger) === null || _context_logger === void 0 ? void 0 : _context_logger.warn("'send' expression called with unrecognized id '".concat(nodeId, "'"));
-                            return;
-                        }
-                        if (!nodeId && allPromiseKeys.length === 0) {
-                            var _context_logger1;
-                            (_context_logger1 = context.logger) === null || _context_logger1 === void 0 ? void 0 : _context_logger1.warn("'send' called with no waiting async nodes");
-                            return;
-                        }
-                        var keys = nodeId ? [
-                            nodeId
-                        ] : allPromiseKeys;
-                        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                        try {
-                            for(var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                                var id = _step.value;
-                                var content = createContentFromMessage(message, "chat-demo-".concat(counter++));
-                                var resolveFunction = deferredPromises[id];
-                                resolveFunction === null || resolveFunction === void 0 ? void 0 : resolveFunction(content);
-                                delete deferredPromises[id];
-                            }
-                        } catch (err) {
-                            _didIteratorError = true;
-                            _iteratorError = err;
-                        } finally{
-                            try {
-                                if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                    _iterator.return();
-                                }
-                            } finally{
-                                if (_didIteratorError) {
-                                    throw _iteratorError;
-                                }
-                            }
-                        }
-                        if (nodeId) {
-                            var index = allPromiseKeys.indexOf(nodeId);
-                            allPromiseKeys.splice(index, 1);
-                        } else {
-                            allPromiseKeys = [];
-                        }
-                    };
-                    asyncNodePlugin.hooks.onAsyncNode.tap(this.name, function(node) {
-                        var _node_parent_parent, _node_parent, _node_parent_parent1, _node_parent1;
-                        if (((_node_parent = node.parent) === null || _node_parent === void 0 ? void 0 : (_node_parent_parent = _node_parent.parent) === null || _node_parent_parent === void 0 ? void 0 : _node_parent_parent.type) !== NodeType.Asset && ((_node_parent1 = node.parent) === null || _node_parent1 === void 0 ? void 0 : (_node_parent_parent1 = _node_parent1.parent) === null || _node_parent_parent1 === void 0 ? void 0 : _node_parent_parent1.type) !== NodeType.View || !node.parent.parent.value.id.startsWith("collection-async-chat-demo")) {
-                            return Promise.resolve(void 0);
-                        }
-                        return new Promise(function(res) {
-                            deferredPromises[node.id] = res;
-                            allPromiseKeys.push(node.id);
-                        });
-                    });
-                    player.hooks.view.tap(this.name, function(_) {
-                        deferredPromises = {};
-                        allPromiseKeys = [];
-                        counter = 0;
-                    });
-                    var expressionPlugin = new ExpressionPlugin(/* @__PURE__ */ new Map([
-                        [
-                            "send",
-                            sendMessage
-                        ]
-                    ]));
-                    player.registerPlugin(expressionPlugin);
-                }
-            }
-        ]);
-        return ChatUiDemoPlugin;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugins/reference-assets-transform-plugin.ts
-    var ReferenceAssetsTransformPlugin = /*#__PURE__*/ function() {
-        function ReferenceAssetsTransformPlugin() {
-            _class_call_check(this, ReferenceAssetsTransformPlugin);
-            this.name = "reference-assets-transforms";
-        }
-        _create_class(ReferenceAssetsTransformPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    player.registerPlugin(new AssetTransformPlugin([
-                        [
-                            {
-                                type: "action"
-                            },
-                            actionTransform
-                        ],
-                        [
-                            {
-                                type: "input"
-                            },
-                            inputTransform
-                        ],
-                        [
-                            {
-                                type: "image"
-                            },
-                            imageTransform
-                        ],
-                        [
-                            {
-                                type: "info"
-                            },
-                            infoTransform
-                        ],
-                        [
-                            {
-                                type: "choice"
-                            },
-                            choiceTransform
-                        ],
-                        [
-                            {
-                                type: "chat-message"
-                            },
-                            chatMessageTransform
-                        ]
-                    ]));
-                }
-            }
-        ]);
-        return ReferenceAssetsTransformPlugin;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugin.ts
-    var ReferenceAssetsPlugin = /*#__PURE__*/ function() {
-        function ReferenceAssetsPlugin() {
-            _class_call_check(this, ReferenceAssetsPlugin);
-            this.name = "reference-assets-plugin";
-            this.metaPlugin = new MetaPlugin([
-                new AsyncNodePlugin({
-                    plugins: [
-                        new AsyncNodePluginPlugin()
-                    ]
-                }),
-                new ReferenceAssetsTransformPlugin(),
-                new ChatUiDemoPlugin()
-            ]);
-        }
-        _create_class(ReferenceAssetsPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    player.registerPlugin(this.metaPlugin);
-                }
-            }
-        ]);
-        return ReferenceAssetsPlugin;
     }();
     return __toCommonJS(src_exports);
 }(); /*! Bundled license information:
