@@ -7,7 +7,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PlayerUI'
-  s.version          = '0.14.0'
+  s.version          = '0.14.1-next.7'
   s.summary          = 'A native renderer for Player content'
   s.swift_versions   = ['5.1']
   s.description      = <<-DESC
@@ -119,6 +119,7 @@ and display it as a SwiftUI view comprised of registered assets.
   }
 
   # <PLUGINS>
+  ios_plugin.call("AsyncNodePlugin", "async-node", true)
   ios_plugin.call("BaseBeaconPlugin", "beacon", true)
   ios_plugin.call("CheckPathPlugin", "check-path", true)
   ios_plugin.call("CommonExpressionsPlugin", "common-expressions", true)

@@ -86,7 +86,7 @@ var Registry = function() {
         for(e = e.split ? e.split(".") : e, n = 0; n < e.length; n++)t = t ? t[e[n]] : r;
         return t === r ? l : t;
     };
-    var createMatcher = function createMatcher(partialObj) {
+    var createObjectMatcher = function createObjectMatcher(partialObj) {
         var pairs = traverseObj(partialObj);
         var matchFunction = function(searchObj) {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
@@ -278,7 +278,7 @@ var Registry = function() {
             return Registry;
         },
         createObjectMatcher: function() {
-            return createMatcher;
+            return createObjectMatcher;
         }
     });
     var import_sorted_array = __toESM(require_sorted_array());
@@ -334,7 +334,7 @@ var Registry = function() {
             {
                 /** Add match -> value mapping to the registry */ key: "set",
                 value: function set(match, value) {
-                    var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createMatcher(match) : createBasicMatcher(match);
+                    var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createObjectMatcher(match) : createBasicMatcher(match);
                     this.store.insert({
                         key: match,
                         value: value,

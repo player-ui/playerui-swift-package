@@ -385,7 +385,7 @@ function _ts_generator(thisArg, body) {
         };
     }
 }
-var CommonTypesPlugin = function() {
+var AsyncNodePlugin = function() {
     var equalToOrIn = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/tapable-ts@0.2.4/node_modules/tapable-ts/dist/hooks.mjs
     function equalToOrIn(value, check) {
         if (Array.isArray(check)) {
@@ -654,7 +654,7 @@ var CommonTypesPlugin = function() {
         var strictMode = (_options_strict = options === null || options === void 0 ? void 0 : options.strict) !== null && _options_strict !== void 0 ? _options_strict : true;
         var charAtFunc = expr.charAt;
         var charCodeAtFunc = expr.charCodeAt;
-        var length2 = expr.length;
+        var length = expr.length;
         var index = 0;
         var getLocation = function(startChar) {
             return {
@@ -681,7 +681,7 @@ var CommonTypesPlugin = function() {
             var chCode;
             var startCharIndex = index;
             ++index;
-            while(index < length2){
+            while(index < length){
                 gobbleSpaces();
                 chCode = exprICode(index);
                 if (chCode === CCURL_CODE) {
@@ -742,7 +742,7 @@ var CommonTypesPlugin = function() {
             var test = gobbleBinaryExpression();
             gobbleSpaces();
             var startCharIndex = index;
-            if (index < length2 && exprICode(index) === QUMARK_CODE) {
+            if (index < length && exprICode(index) === QUMARK_CODE) {
                 index++;
                 var consequent = gobbleExpression();
                 if (!consequent) {
@@ -920,7 +920,7 @@ var CommonTypesPlugin = function() {
             var str = "";
             var closed = false;
             var startCharIndex = index;
-            while(index < length2){
+            while(index < length){
                 var ch = exprI(index++);
                 if (ch === quote) {
                     closed = true;
@@ -970,7 +970,7 @@ var CommonTypesPlugin = function() {
             var openBraceCount = 1;
             var startCharIndex = index;
             index += 2;
-            while(index < length2){
+            while(index < length){
                 var ch = exprI(index++);
                 if (ch === "}" && exprICode(index) === CCURL_CODE) {
                     index++;
@@ -1006,7 +1006,7 @@ var CommonTypesPlugin = function() {
             } else {
                 throwError("Unexpected ".concat(exprI(index)), index);
             }
-            while(index < length2){
+            while(index < length){
                 ch = exprICode(index);
                 if (isIdentifierPart(ch)) {
                     index++;
@@ -1042,7 +1042,7 @@ var CommonTypesPlugin = function() {
             var args = [];
             var charIndex;
             var node;
-            while(index < length2){
+            while(index < length){
                 gobbleSpaces();
                 charIndex = exprICode(index);
                 if (charIndex === termination) {
@@ -1133,7 +1133,7 @@ var CommonTypesPlugin = function() {
         }
         var nodes = [];
         try {
-            while(index < length2){
+            while(index < length){
                 var chIndex = exprICode(index);
                 if (chIndex === SEMCOL_CODE || chIndex === COMMA_CODE) {
                     index++;
@@ -1142,7 +1142,7 @@ var CommonTypesPlugin = function() {
                 var node = gobbleExpression();
                 if (node) {
                     nodes.push(node);
-                } else if (strictMode && index < length2) {
+                } else if (strictMode && index < length) {
                     throwError('Unexpected "'.concat(exprI(index), '"'), index);
                 }
             }
@@ -1494,14 +1494,6 @@ var CommonTypesPlugin = function() {
             ]);
         });
         return batchTxn;
-    };
-    var skipNullish = function skipNullish(validationFn) {
-        return function(context, value, options) {
-            if (value === null || value === void 0) {
-                return;
-            }
-            return validationFn(context, value, options);
-        };
     };
     var __create = Object.create;
     var __defProp = Object.defineProperty;
@@ -2000,8 +1992,8 @@ var CommonTypesPlugin = function() {
                     constructor: function constructor(array, compare) {
                         this.array = [];
                         this.compare = compare || compareDefault;
-                        var length2 = array.length, index = 0;
-                        while(index < length2)this.insert(array[index++]);
+                        var length = array.length, index = 0;
+                        while(index < length)this.insert(array[index++]);
                     },
                     insert: function insert(element) {
                         var array = this.array, compare = this.compare, high = array.length - 1, low = 0, pos = -1, index, ordering;
@@ -2072,117 +2064,23 @@ var CommonTypesPlugin = function() {
             });
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/common-types/core/src/index.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/async-node/core/src/index.ts
     var src_exports = {};
     __export(src_exports, {
-        CommonTypesPlugin: function() {
-            return CommonTypesPlugin;
+        AsyncNodePlugin: function() {
+            return AsyncNodePlugin;
         },
-        PLACEHOLDER: function() {
-            return PLACEHOLDER;
+        AsyncNodePluginPlugin: function() {
+            return AsyncNodePluginPlugin;
         },
-        createMaskedNumericFormatter: function() {
-            return createMaskedNumericFormatter;
+        AsyncNodePluginSymbol: function() {
+            return AsyncNodePluginSymbol;
         },
-        dataTypes: function() {
-            return types_exports;
+        asyncTransform: function() {
+            return asyncTransform;
         },
-        formatAsEnum: function() {
-            return formatAsEnum;
-        },
-        formatAsMasked: function() {
-            return formatAsMasked;
-        },
-        formats: function() {
-            return formats_exports;
-        },
-        removeFormatCharactersFromMaskedString: function() {
-            return removeFormatCharactersFromMaskedString;
-        },
-        validators: function() {
-            return validators_exports;
-        }
-    });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+types-provider-plugin@0.0.0/node_modules/@player-ui/types-provider-plugin/dist/index.mjs
-    var TypesProviderPlugin = /*#__PURE__*/ function() {
-        function TypesProviderPlugin(config) {
-            _class_call_check(this, TypesProviderPlugin);
-            this.name = "TypesProviderPlugin";
-            this.config = config;
-        }
-        _create_class(TypesProviderPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    var _this = this;
-                    player.hooks.schema.tap(this.name, function(schema) {
-                        if (_this.config.types) {
-                            schema.addDataTypes(_this.config.types);
-                        }
-                        if (_this.config.formats) {
-                            schema.addFormatters(_this.config.formats);
-                        }
-                    });
-                    if (this.config.validators) {
-                        player.hooks.validationController.tap(this.name, function(validationController) {
-                            validationController.hooks.createValidatorRegistry.tap(_this.name, function(validationRegistry) {
-                                var _this_config_validators;
-                                (_this_config_validators = _this.config.validators) === null || _this_config_validators === void 0 ? void 0 : _this_config_validators.forEach(function(param) {
-                                    var _param = _sliced_to_array(param, 2), name = _param[0], handler = _param[1];
-                                    validationRegistry.register(name, handler);
-                                });
-                            });
-                        });
-                    }
-                }
-            }
-        ]);
-        return TypesProviderPlugin;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/common-types/core/src/validators/index.ts
-    var validators_exports = {};
-    __export(validators_exports, {
-        collection: function() {
-            return collection;
-        },
-        email: function() {
-            return email;
-        },
-        expression: function() {
-            return expression;
-        },
-        integer: function() {
-            return integer;
-        },
-        length: function() {
-            return length;
-        },
-        max: function() {
-            return max;
-        },
-        min: function() {
-            return min;
-        },
-        oneOf: function() {
-            return oneOf;
-        },
-        phone: function() {
-            return phone;
-        },
-        readonly: function() {
-            return readonly;
-        },
-        regex: function() {
-            return regex;
-        },
-        required: function() {
-            return required;
-        },
-        string: function() {
-            return string;
-        },
-        zip: function() {
-            return zip;
+        createAsyncTransform: function() {
+            return createAsyncTransform;
         }
     });
     var InterceptionManager = /*#__PURE__*/ function() {
@@ -2469,6 +2367,85 @@ var CommonTypesPlugin = function() {
             }
         ]);
         return SyncWaterfallHook;
+    }(Hook);
+    var AsyncSeriesBailHook = /*#__PURE__*/ function(Hook) {
+        _inherits(AsyncSeriesBailHook, Hook);
+        function AsyncSeriesBailHook() {
+            _class_call_check(this, AsyncSeriesBailHook);
+            return _call_super(this, AsyncSeriesBailHook, arguments);
+        }
+        _create_class(AsyncSeriesBailHook, [
+            {
+                key: "call",
+                value: function call() {
+                    for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
+                        args[_key] = arguments[_key];
+                    }
+                    return _async_to_generator(function() {
+                        var _this_interceptions, ctx, tapIndex, rtn, e;
+                        return _ts_generator(this, function(_state) {
+                            switch(_state.label){
+                                case 0:
+                                    ctx = {};
+                                    (_this_interceptions = this.interceptions).call.apply(_this_interceptions, [
+                                        ctx
+                                    ].concat(_to_consumable_array(args)));
+                                    _state.label = 1;
+                                case 1:
+                                    _state.trys.push([
+                                        1,
+                                        6,
+                                        ,
+                                        7
+                                    ]);
+                                    tapIndex = 0;
+                                    _state.label = 2;
+                                case 2:
+                                    if (!(tapIndex < this.taps.length)) return [
+                                        3,
+                                        5
+                                    ];
+                                    return [
+                                        4,
+                                        callTap(this.taps[tapIndex], args, ctx)
+                                    ];
+                                case 3:
+                                    rtn = _state.sent();
+                                    if (rtn !== void 0) {
+                                        this.interceptions.result(rtn);
+                                        return [
+                                            2,
+                                            rtn
+                                        ];
+                                    }
+                                    _state.label = 4;
+                                case 4:
+                                    tapIndex += 1;
+                                    return [
+                                        3,
+                                        2
+                                    ];
+                                case 5:
+                                    return [
+                                        3,
+                                        7
+                                    ];
+                                case 6:
+                                    e = _state.sent();
+                                    this.interceptions.error(e);
+                                    throw e;
+                                case 7:
+                                    this.interceptions.done();
+                                    return [
+                                        2
+                                    ];
+                            }
+                        });
+                    }).call(this);
+                }
+            }
+        ]);
+        return AsyncSeriesBailHook;
     }(Hook);
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_ts_nested_error = __toESM(require_nested_error(), 1);
@@ -2834,7 +2811,7 @@ var CommonTypesPlugin = function() {
                 return toValue(value);
             }
         };
-        var expression2 = function() {
+        var expression = function() {
             if (ch === BACK_TICK) {
                 next(BACK_TICK);
                 var exp = ch;
@@ -2850,7 +2827,7 @@ var CommonTypesPlugin = function() {
                 }
             }
         };
-        var regex2 = function(match) {
+        var regex = function(match) {
             if (!(ch === null || ch === void 0 ? void 0 : ch.match(match))) {
                 return;
             }
@@ -2878,7 +2855,7 @@ var CommonTypesPlugin = function() {
         var simpleSegment = function() {
             var allowBoolValue = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : false;
             var _nestedPath, _ref;
-            return (_ref = (_nestedPath = nestedPath()) !== null && _nestedPath !== void 0 ? _nestedPath : expression2()) !== null && _ref !== void 0 ? _ref : identifier(allowBoolValue);
+            return (_ref = (_nestedPath = nestedPath()) !== null && _nestedPath !== void 0 ? _nestedPath : expression()) !== null && _ref !== void 0 ? _ref : identifier(allowBoolValue);
         };
         var segment = function() {
             var segments = [];
@@ -2898,7 +2875,7 @@ var CommonTypesPlugin = function() {
             if (ch === SINGLE_QUOTE || ch === DOUBLE_QUOTE) {
                 var singleQuote = ch === SINGLE_QUOTE;
                 next(singleQuote ? SINGLE_QUOTE : DOUBLE_QUOTE);
-                var id = regex2(/[^'"]+/);
+                var id = regex(/[^'"]+/);
                 next(singleQuote ? SINGLE_QUOTE : DOUBLE_QUOTE);
                 return id;
             }
@@ -3912,22 +3889,22 @@ var CommonTypesPlugin = function() {
                         }
                     }));
                     var _this_hooks_beforeEvaluate_call;
-                    var expression2 = (_this_hooks_beforeEvaluate_call = this.hooks.beforeEvaluate.call(expr, resolvedOpts)) !== null && _this_hooks_beforeEvaluate_call !== void 0 ? _this_hooks_beforeEvaluate_call : expr;
-                    while(isObjectExpression(expression2)){
-                        expression2 = expression2.value;
+                    var expression = (_this_hooks_beforeEvaluate_call = this.hooks.beforeEvaluate.call(expr, resolvedOpts)) !== null && _this_hooks_beforeEvaluate_call !== void 0 ? _this_hooks_beforeEvaluate_call : expr;
+                    while(isObjectExpression(expression)){
+                        expression = expression.value;
                     }
-                    if (typeof expression2 === "number" || typeof expression2 === "boolean" || expression2 === void 0 || expression2 === null) {
-                        return expression2;
+                    if (typeof expression === "number" || typeof expression === "boolean" || expression === void 0 || expression === null) {
+                        return expression;
                     }
-                    if (isExpressionNode(expression2)) {
-                        return this._execAST(expression2, resolvedOpts);
+                    if (isExpressionNode(expression)) {
+                        return this._execAST(expression, resolvedOpts);
                     }
-                    if (Array.isArray(expression2)) {
-                        return expression2.reduce(function(_nothing, exp) {
+                    if (Array.isArray(expression)) {
+                        return expression.reduce(function(_nothing, exp) {
                             return _this.evaluate(exp, options);
                         }, null);
                     }
-                    return this._execString(String(expression2), resolvedOpts);
+                    return this._execString(String(expression), resolvedOpts);
                 }
             },
             {
@@ -4666,6 +4643,19 @@ var CommonTypesPlugin = function() {
         ]);
         return ValidatorRegistry;
     }();
+    var NodeType = /* @__PURE__ */ function(NodeType2) {
+        NodeType2["Asset"] = "asset";
+        NodeType2["View"] = "view";
+        NodeType2["Applicability"] = "applicability";
+        NodeType2["Template"] = "template";
+        NodeType2["Value"] = "value";
+        NodeType2["MultiNode"] = "multi-node";
+        NodeType2["Switch"] = "switch";
+        NodeType2["Async"] = "async";
+        NodeType2["Unknown"] = "unknown";
+        NodeType2["Empty"] = "empty";
+        return NodeType2;
+    }(NodeType || {});
     var EMPTY_NODE = {
         type: "empty"
     };
@@ -5219,6 +5209,134 @@ var CommonTypesPlugin = function() {
         ]);
         return ViewInstance;
     }();
+    var Builder = /*#__PURE__*/ function() {
+        function _Builder() {
+            _class_call_check(this, _Builder);
+        }
+        _create_class(_Builder, null, [
+            {
+                key: "asset",
+                value: /**
+     * Creates an asset node
+     *
+     * @param value - the value to put in the asset node
+     */ function asset(value) {
+                    return {
+                        type: "asset",
+                        value: value
+                    };
+                }
+            },
+            {
+                key: "assetWrapper",
+                value: function assetWrapper(value) {
+                    var valueNode = _Builder.value();
+                    _Builder.addChild(valueNode, "asset", value);
+                    return valueNode;
+                }
+            },
+            {
+                key: "value",
+                value: /**
+     * Creates a value node
+     *
+     * @param v - The object to put in the value node
+     */ function value(v) {
+                    return {
+                        type: "value",
+                        value: v
+                    };
+                }
+            },
+            {
+                key: "multiNode",
+                value: /**
+     * Creates a multiNode and associates the multiNode as the parent
+     * of all the value nodes
+     *
+     * @param values - the value, applicability or async nodes to put in the multinode
+     */ function multiNode() {
+                    for(var _len = arguments.length, values = new Array(_len), _key = 0; _key < _len; _key++){
+                        values[_key] = arguments[_key];
+                    }
+                    var m = {
+                        type: "multi-node",
+                        override: true,
+                        values: values
+                    };
+                    values.forEach(function(v) {
+                        v.parent = m;
+                    });
+                    return m;
+                }
+            },
+            {
+                key: "asyncNode",
+                value: /**
+     * Creates an async node
+     *
+     * @param id - the id of async node. It should be identical for each async node
+     */ function asyncNode(id) {
+                    var flatten2 = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true, onValueReceived = arguments.length > 2 ? arguments[2] : void 0;
+                    return {
+                        id: id,
+                        type: "async",
+                        flatten: flatten2,
+                        onValueReceived: onValueReceived,
+                        value: {
+                            type: "value",
+                            value: {
+                                id: id
+                            }
+                        }
+                    };
+                }
+            },
+            {
+                key: "addChild",
+                value: /**
+     * Adds a child node to a node
+     *
+     * @param node - The node to add a child to
+     * @param path - The path at which to add the child
+     * @param child - The child node
+     */ function addChild(node, path, child) {
+                    child.parent = node;
+                    var newChild = {
+                        path: Array.isArray(path) ? path : [
+                            path
+                        ],
+                        value: child
+                    };
+                    node.children = node.children || [];
+                    node.children.push(newChild);
+                    return node;
+                }
+            },
+            {
+                key: "updateChildrenByPath",
+                value: /**
+     * Updates children of a node of the same path and preserves order
+     *
+     * @param node - The node to update children for
+     * @param pathToMatch - The path to match against child paths
+     * @param mapFn - Function to transform matching children
+     */ function updateChildrenByPath(node, pathToMatch, updateFn) {
+                    if (!node.children) return node;
+                    var updatedChildren = node.children.map(function(child) {
+                        return(// Check if paths match exactly
+                        child.path.join() === pathToMatch.join() ? _object_spread_props(_object_spread({}, child), {
+                            value: updateFn(child)
+                        }) : child);
+                    });
+                    return _object_spread_props(_object_spread({}, node), {
+                        children: updatedChildren
+                    });
+                }
+            }
+        ]);
+        return _Builder;
+    }();
     var templateSymbol = Symbol("template");
     var TemplatePlugin = /*#__PURE__*/ function() {
         function TemplatePlugin(options) {
@@ -5257,12 +5375,12 @@ var CommonTypesPlugin = function() {
                         var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
                         try {
                             for(var _iterator = templateSubstitutions[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                                var _step_value = _step.value, expression2 = _step_value.expression, value = _step_value.value;
+                                var _step_value = _step.value, expression = _step_value.expression, value = _step_value.value;
                                 var flags = "g";
-                                if ((typeof expression2 === "undefined" ? "undefined" : _type_of(expression2)) === "object") {
-                                    flags = "".concat(expression2.flags).concat(expression2.global ? "" : "g");
+                                if ((typeof expression === "undefined" ? "undefined" : _type_of(expression)) === "object") {
+                                    flags = "".concat(expression.flags).concat(expression.global ? "" : "g");
                                 }
-                                templateStr = templateStr.replace(new RegExp(expression2, flags), value);
+                                templateStr = templateStr.replace(new RegExp(expression, flags), value);
                             }
                         } catch (err) {
                             _didIteratorError = true;
@@ -7632,8 +7750,8 @@ var CommonTypesPlugin = function() {
                         set: function(transaction) {
                             return dataController.set(transaction);
                         },
-                        evaluate: function(expression2) {
-                            return expressionEvaluator.evaluate(expression2);
+                        evaluate: function(expression) {
+                            return expressionEvaluator.evaluate(expression);
                         }
                     });
                     this.hooks.bindingParser.call(pathResolver);
@@ -7923,724 +8041,512 @@ var CommonTypesPlugin = function() {
         version: PLAYER_VERSION,
         commit: COMMIT
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/common-types/core/src/validators/index.ts
-    var EMAIL_REGEX = // eslint-disable-next-line no-control-regex
-    /^((([a-z]|\d|[!#$%&'*+\-/=?^_`{|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#$%&'*+-/=?^_`{|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i;
-    var PHONE_REGEX = /^\+?[1]?[- ]?\(?\d{3}[)\- ]?\s?\d{3}[ -]?\d{4}$/;
-    var ZIP_REGEX = /^\d{5}(-\d{4})?$/;
-    var string = skipNullish(function(context, value) {
-        if (typeof value !== "string") {
-            var message = context.constants.getConstants("validation.string", "constants", "Value must be a string");
-            return {
-                message: message,
-                parameters: {
-                    type: typeof value === "undefined" ? "undefined" : _type_of(value)
-                }
-            };
-        }
-    });
-    var readonly = function(context) {
-        var message = context.constants.getConstants("validation.readonly", "constants", "Value cannot be modified");
-        return {
-            message: message
-        };
-    };
-    var collection = skipNullish(function(context, value) {
-        if (!Array.isArray(value)) {
-            var message = context.constants.getConstants("validation.collection", "constants", "Cannot set collection to non-array");
-            return {
-                message: message
-            };
-        }
-    });
-    var integer = skipNullish(function(context, value) {
-        if (value && (typeof value !== "number" || Math.floor(value) !== value || Number(value) > Number.MAX_SAFE_INTEGER || Number(value) < Number.MIN_SAFE_INTEGER)) {
-            var message = context.constants.getConstants("validation.integer", "constants", "Value must be an integer");
-            return {
-                message: message,
-                parameters: {
-                    type: typeof value === "undefined" ? "undefined" : _type_of(value),
-                    flooredValue: Math.floor(value)
-                }
-            };
-        }
-    });
-    var oneOf = skipNullish(function(context, value, options) {
-        var _options_options;
-        if ((options === null || options === void 0 ? void 0 : options.options) === void 0 || ((_options_options = options.options) === null || _options_options === void 0 ? void 0 : _options_options.includes(value))) {
-            return;
-        }
-        var message = context.constants.getConstants("validation.oneOf", "constants", "Invalid entry");
-        return {
-            message: message
-        };
-    });
-    var expression = function(context, value, options) {
-        if ((options === null || options === void 0 ? void 0 : options.exp) === void 0) {
-            context.logger.warn("No expression defined for validation");
-            return;
-        }
-        var result = context.evaluate(options.exp);
-        if (!result) {
-            var message = context.constants.getConstants("validation.expression", "constants", "Expression evaluation failed");
-            return {
-                message: message
-            };
-        }
-    };
-    var required = function(context, value, options) {
-        if ((options === null || options === void 0 ? void 0 : options.if) && !context.evaluate(options.if) || (options === null || options === void 0 ? void 0 : options.ifNot) && context.evaluate(options.ifNot)) {
-            return;
-        }
-        if (value === void 0 || value === null || value === "") {
-            var message = context.constants.getConstants("validation.required", "constants", "A value is required");
-            return {
-                message: message,
-                severity: "error"
-            };
-        }
-    };
-    var regex = skipNullish(function(context, value, options) {
-        if (value === void 0 || value === null || value === "" || typeof (options === null || options === void 0 ? void 0 : options.regex) !== "string") {
-            return;
-        }
-        var resolvedRegex = resolveDataRefs(options.regex, context);
-        var patternMatch = resolvedRegex.match(/^\/(.*)\/(\w)*$/);
-        var regexp = patternMatch ? new RegExp(patternMatch[1], patternMatch[2]) : new RegExp(resolvedRegex);
-        if (!regexp.test(value)) {
-            var message = context.constants.getConstants("validation.regex", "constants", "Invalid entry");
-            return {
-                message: message
-            };
-        }
-    });
-    var length = skipNullish(function(context, value, options) {
-        if ((typeof options === "undefined" ? "undefined" : _type_of(options)) !== "object") {
-            context.logger.warn("Missing comparison in length validation");
-            return;
-        }
-        var valLength;
-        var itemName = "items";
-        if (typeof value === "string") {
-            valLength = value.length;
-            itemName = "characters";
-        } else if ((typeof value === "undefined" ? "undefined" : _type_of(value)) === "object" && value !== null) {
-            valLength = Object.keys(value).length;
-        }
-        if (valLength === void 0) {
-            context.logger.warn("Unable to determine a length for value of type: ".concat(value));
-            return;
-        }
-        if ("exact" in options) {
-            if (valLength !== options.exact) {
-                return {
-                    message: "Must be exactly ".concat(options.exact, " ").concat(itemName, " long"),
-                    parameters: {
-                        validationLength: valLength
-                    }
-                };
-            }
-            return;
-        }
-        if (options.min !== void 0 && valLength < options.min) {
-            var message = context.constants.getConstants("validation.length.minimum", "constants", "At least ".concat(options.min, " ").concat(itemName, " needed"));
-            return {
-                message: message,
-                parameters: {
-                    validationLength: valLength
-                }
-            };
-        }
-        if (options.max !== void 0 && valLength > options.max) {
-            var message1 = context.constants.getConstants("validation.length.maximum", "constants", "Up to ".concat(options.max, " ").concat(itemName, " allowed"));
-            return {
-                message: message1,
-                parameters: {
-                    validationLength: valLength
-                }
-            };
-        }
-    });
-    var min = skipNullish(function(context, value, options) {
-        if (typeof value !== "number" || (options === null || options === void 0 ? void 0 : options.value) === void 0) {
-            return;
-        }
-        if (value < options.value) {
-            var message = context.constants.getConstants("validation.min", "constants", "Must be at least ".concat(options.value));
-            return {
-                message: message
-            };
-        }
-    });
-    var max = skipNullish(function(context, value, options) {
-        if (typeof value !== "number" || (options === null || options === void 0 ? void 0 : options.value) === void 0) {
-            return;
-        }
-        if (value > options.value) {
-            var message = context.constants.getConstants("validation.max", "constants", "Cannot exceed ".concat(options.value));
-            return {
-                message: message
-            };
-        }
-    });
-    var stringRegexValidator = function(test, messagePath, invalidMessage) {
-        return skipNullish(function(context, value) {
-            if (typeof value === "string" && value === "") {
-                return;
-            }
-            if (typeof value !== "string" || !test.test(value)) {
-                var message = context.constants.getConstants(messagePath, "constants", invalidMessage);
-                return {
-                    message: message
-                };
-            }
-        });
-    };
-    var email = stringRegexValidator(EMAIL_REGEX, "validation.email", "Improper email format");
-    var phone = stringRegexValidator(PHONE_REGEX, "validation.phone", "Invalid phone number");
-    var zip = stringRegexValidator(ZIP_REGEX, "validation.regex", "Invalid zip code");
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/common-types/core/src/data-types/types.ts
-    var types_exports = {};
-    __export(types_exports, {
-        BooleanType: function() {
-            return BooleanType;
-        },
-        CollectionType: function() {
-            return CollectionType;
-        },
-        DateType: function() {
-            return DateType;
-        },
-        IntegerNNType: function() {
-            return IntegerNNType;
-        },
-        IntegerPosType: function() {
-            return IntegerPosType;
-        },
-        IntegerType: function() {
-            return IntegerType;
-        },
-        PhoneType: function() {
-            return PhoneType;
-        },
-        StringType: function() {
-            return StringType;
-        }
-    });
-    var BooleanType = {
-        type: "BooleanType",
-        default: false,
-        validation: [
-            {
-                type: "oneOf",
-                message: "Value must be true or false",
-                options: [
-                    true,
-                    false
-                ]
-            }
-        ]
-    };
-    var IntegerType = {
-        type: "IntegerType",
-        validation: [
-            {
-                type: "integer"
-            }
-        ],
-        format: {
-            type: "integer"
-        }
-    };
-    var IntegerPosType = {
-        type: "IntegerPosType",
-        validation: [
-            {
-                type: "integer"
-            },
-            {
-                type: "min",
-                value: 1
-            }
-        ],
-        format: {
-            type: "integer"
-        }
-    };
-    var IntegerNNType = {
-        type: "IntegerNNType",
-        validation: [
-            {
-                type: "integer"
-            },
-            {
-                type: "min",
-                value: 0
-            }
-        ],
-        format: {
-            type: "integer"
-        }
-    };
-    var StringType = {
-        type: "StringType",
-        default: "",
-        validation: [
-            {
-                type: "string"
-            }
-        ],
-        format: {
-            type: "string"
-        }
-    };
-    var CollectionType = {
-        type: "CollectionType",
-        validation: [
-            {
-                type: "collection"
-            }
-        ]
-    };
-    var DateType = {
-        type: "DateType",
-        validation: [
-            {
-                type: "string"
-            }
-        ],
-        format: {
-            type: "date"
-        }
-    };
-    var PhoneType = {
-        type: "PhoneType",
-        validation: [
-            {
-                type: "phone"
-            }
-        ],
-        format: {
-            type: "phone"
-        }
-    };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/common-types/core/src/formats/index.ts
-    var formats_exports = {};
-    __export(formats_exports, {
-        commaNumber: function() {
-            return commaNumber;
-        },
-        currency: function() {
-            return currency;
-        },
-        date: function() {
-            return date;
-        },
-        integer: function() {
-            return integer2;
-        },
-        phone: function() {
-            return phone2;
-        }
-    });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/common-types/core/src/formats/utils.ts
-    var PLACEHOLDER = "#";
-    var removeFormatCharactersFromMaskedString = function(value, mask) {
-        var reserved = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : [
-            PLACEHOLDER
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/async-node/core/src/index.ts
+    var import_queue_microtask3 = __toESM(require_queue_microtask());
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/async-node/core/src/transform.ts
+    var asyncTransform = function(assetId, wrapperAssetType, asset, flatten2) {
+        var path = arguments.length > 4 && arguments[4] !== void 0 ? arguments[4] : [
+            "values"
         ];
-        var reservedMatchesLength = mask.split("").filter(function(val) {
-            return reserved.includes(val);
-        }).length;
-        var replacements = 0;
-        return value.split("").reduce(function(newString, nextChar, nextIndex) {
-            var maskedVal = mask[nextIndex];
-            if (maskedVal === void 0) {
-                return newString;
-            }
-            if (reservedMatchesLength === replacements) {
-                return newString;
-            }
-            if (reserved.includes(maskedVal)) {
-                replacements++;
-                return newString + nextChar;
-            }
-            if (maskedVal !== nextChar) {
-                replacements++;
-                return newString + nextChar;
-            }
-            return newString;
-        }, "");
-    };
-    var formatAsEnum = function(value, acceptedValues, options) {
-        var autoCompletionsByOverlapCount = acceptedValues.reduce(function(validCompletions, validValue) {
-            var overlap = 0;
-            for(var charIndex = 0; charIndex < Math.min(validValue.length, value.length); charIndex++){
-                var validChar = (options === null || options === void 0 ? void 0 : options.ignoreCase) ? validValue[charIndex].toLowerCase() : validValue[charIndex];
-                var actualChar = (options === null || options === void 0 ? void 0 : options.ignoreCase) ? value[charIndex].toLowerCase() : value[charIndex];
-                if (validChar !== actualChar) {
-                    break;
-                }
-                overlap += 1;
-            }
-            if (overlap === 0) {
-                return validCompletions;
-            }
-            validCompletions.push({
-                count: overlap,
-                target: validValue
-            });
-            return validCompletions;
-        }, []).sort(function(e) {
-            return e.count;
+        var id = "async-" + assetId;
+        var asyncNode = Builder.asyncNode(id, flatten2);
+        var multiNode;
+        var assetNode;
+        if (asset) {
+            assetNode = Builder.assetWrapper(asset);
+            multiNode = Builder.multiNode(assetNode, asyncNode);
+        } else {
+            multiNode = Builder.multiNode(asyncNode);
+        }
+        var wrapperAsset = Builder.asset({
+            id: wrapperAssetType + "-" + id,
+            type: wrapperAssetType
         });
-        if (autoCompletionsByOverlapCount.length === 0) {
+        Builder.addChild(wrapperAsset, path, multiNode);
+        return wrapperAsset;
+    };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/async-node/core/src/utils/extractNodeFromPath.ts
+    var getMatchValue = function(pathA, pathB) {
+        if (pathA.length > pathB.length) {
+            return 0;
+        }
+        var matchCount = 0;
+        for(var i = 0; i < pathA.length; i++){
+            if (pathA[i] === pathB[i]) {
+                matchCount++;
+            } else {
+                return 0;
+            }
+        }
+        return matchCount;
+    };
+    var extractNodeFromPath = function(node, path) {
+        if (path === void 0 || path.length === 0) {
+            return node;
+        }
+        if (!("children" in node && node.children)) {
             return void 0;
         }
-        if (autoCompletionsByOverlapCount.length === 1 && (options === null || options === void 0 ? void 0 : options.autocomplete)) {
-            return autoCompletionsByOverlapCount[0].target;
+        var matchResult = 0;
+        var bestMatch;
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = node.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                var child = _step.value;
+                var matchValue = getMatchValue(child.path, path);
+                if (matchValue > matchResult) {
+                    matchResult = matchValue;
+                    bestMatch = child;
+                }
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
         }
-        return autoCompletionsByOverlapCount[0].target.substr(0, autoCompletionsByOverlapCount[0].count);
+        if (!bestMatch) {
+            return void 0;
+        }
+        if (matchResult >= path.length) {
+            return bestMatch.value;
+        }
+        return extractNodeFromPath(bestMatch.value, path.slice(matchResult));
     };
-    var formatAsMasked = function(value, valueCharMaskMatch, mask) {
-        var valStr = String(value);
-        var withMask = mask;
-        if (valStr.trim() === "") {
-            return "";
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/async-node/core/src/utils/traverseAndReplace.ts
+    var traverseAndReplace = function(node, replaceFn) {
+        if (node.type === NodeType.MultiNode) {
+            var index = 0;
+            while(index < node.values.length){
+                var child = node.values[index];
+                if (!child) {
+                    index++;
+                    continue;
+                }
+                var result = replaceFn(child);
+                if (result.type === NodeType.MultiNode) {
+                    node.values = _to_consumable_array(node.values.slice(0, index)).concat(_to_consumable_array(result.values), _to_consumable_array(node.values.slice(index + 1)));
+                } else {
+                    node.values[index] = result;
+                    index++;
+                }
+            }
+            return node;
         }
-        valStr.replace(valueCharMaskMatch, function(match) {
-            withMask = withMask.replace(PLACEHOLDER, match);
-            return match;
+        return replaceFn(node);
+    };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/async-node/core/src/utils/unwrapAsset.ts
+    var unwrapAsset = function(node) {
+        var _node_children;
+        if (node.type !== NodeType.Value) {
+            return node;
+        }
+        var child = (_node_children = node.children) === null || _node_children === void 0 ? void 0 : _node_children.find(function(x) {
+            return x.path.length === 1 && x.path[0] === "asset";
         });
-        return withMask.split(PLACEHOLDER)[0];
+        if (!child) {
+            return node;
+        }
+        return child.value;
     };
-    var createMaskedNumericFormatter = function(name, mask) {
-        return {
-            name: name,
-            format: function(value, options) {
-                if (typeof value !== "string") {
-                    return value;
-                }
-                if ((options === null || options === void 0 ? void 0 : options.exceptions) && options.exceptions.length > 0) {
-                    var formattedUsingExceptions = formatAsEnum(value, options.exceptions, {
-                        autocomplete: true,
-                        ignoreCase: true
-                    });
-                    if (formattedUsingExceptions !== void 0) {
-                        return formattedUsingExceptions;
-                    }
-                }
-                return formatAsMasked(value, /\d/g, mask);
-            },
-            deformat: function(value, options) {
-                if (typeof value !== "string") {
-                    return value;
-                }
-                if ((options === null || options === void 0 ? void 0 : options.exceptions) && options.exceptions.length > 0) {
-                    var usingExceptions = formatAsEnum(value, options.exceptions, {
-                        autocomplete: false,
-                        ignoreCase: false
-                    });
-                    if (usingExceptions !== void 0) {
-                        return usingExceptions;
-                    }
-                }
-                return formatAsMasked(value, /\d/g, mask.replace(/[^#]/g, ""));
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/async-node/core/src/utils/requiresAssetWrapper.ts
+    var requiresAssetWrapper = function(node) {
+        if (node.type === NodeType.Asset) {
+            return true;
+        }
+        if (node.type !== NodeType.Applicability) {
+            return false;
+        }
+        return node.value.type === NodeType.Asset;
+    };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/async-node/core/src/createAsyncTransform.ts
+    var defaultGetNodeId = function(node) {
+        return "async-".concat(node.value.id);
+    };
+    var createAsyncTransform = function(options) {
+        var transformAssetType = options.transformAssetType, wrapperAssetType = options.wrapperAssetType, getNestedAsset = options.getNestedAsset, _options_getAsyncNodeId = options.getAsyncNodeId, getAsyncNodeId = _options_getAsyncNodeId === void 0 ? defaultGetNodeId : _options_getAsyncNodeId, _options_path = options.path, path = _options_path === void 0 ? [
+            "values"
+        ] : _options_path, tmp = options.flatten, flatten2 = tmp === void 0 ? true : tmp, _options_asyncNodePosition = options.asyncNodePosition, asyncNodePosition = _options_asyncNodePosition === void 0 ? "append" : _options_asyncNodePosition;
+        var replaceNode = function(node) {
+            var unwrapped = unwrapAsset(node);
+            if (unwrapped.type !== NodeType.Asset || unwrapped.value.type !== transformAssetType) {
+                return node;
             }
+            var transformed = asyncTransform2(unwrapped);
+            var _extractNodeFromPath;
+            return (_extractNodeFromPath = extractNodeFromPath(transformed, path)) !== null && _extractNodeFromPath !== void 0 ? _extractNodeFromPath : node;
         };
-    };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/common-types/core/src/formats/index.ts
-    var LENGTH_OF_MAX_INT = String(Number.MAX_SAFE_INTEGER).split("").length;
-    var integer2 = {
-        name: "integer",
-        /** Converts any integer to a string */ format: function(value) {
-            var _integer2_deformat;
-            if (value === "-") {
-                return value;
-            }
-            var _integer2_deformat1;
-            var formatted = (_integer2_deformat1 = (_integer2_deformat = integer2.deformat) === null || _integer2_deformat === void 0 ? void 0 : _integer2_deformat.call(integer2, value)) !== null && _integer2_deformat1 !== void 0 ? _integer2_deformat1 : value;
-            if (typeof formatted === "number") {
-                return String(formatted);
-            }
-            return "";
-        },
-        /** Converts any string or number to an integer */ deformat: function(value) {
-            if (typeof value === "number") {
-                return Math.floor(value) + 0;
-            }
-            if (typeof value !== "string") {
-                return;
-            }
-            var isNeg = value.replace(/[^0-9.-]/g, "").charAt(0) === "-";
-            var digits = value.replace(/[^0-9.]/g, "");
-            var decimalPlace = digits.indexOf(".");
-            if (decimalPlace > -1) {
-                digits = digits.substring(0, decimalPlace);
-            }
-            if (digits.length === 0) {
-                return;
-            }
-            digits = digits.substr(0, LENGTH_OF_MAX_INT);
-            var num = Number("".concat(isNeg ? "-" : "").concat(digits));
-            return Math.floor(num) + 0;
-        }
-    };
-    var commaNumber = {
-        name: "commaNumber",
-        /** Go from number to number w/ commas */ format: function(_value, options) {
-            if (_value === void 0 || _value === "") {
-                return _value;
-            }
-            if (typeof _value !== "string" && typeof _value !== "number") {
-                return "";
-            }
-            var value = String(_value);
-            var isNeg = value.replace(/[^0-9.-]/g, "").charAt(0) === "-";
-            var digitAndDecimal = value.replace(/[^0-9.]/g, "");
-            digitAndDecimal = digitAndDecimal.replace(/^(0*)((0.)?\d)/g, "$2");
-            var firstDecimal = digitAndDecimal.indexOf(".");
-            var digitsOnly = digitAndDecimal.replace(/[^0-9]/g, "");
-            var preDecDigits = digitsOnly;
-            var postDecDigits = "";
-            if (firstDecimal >= 0) {
-                preDecDigits = digitsOnly.substring(0, firstDecimal).substr(0, LENGTH_OF_MAX_INT);
-                postDecDigits = digitsOnly.substring(firstDecimal);
-            } else {
-                preDecDigits = preDecDigits.substr(0, LENGTH_OF_MAX_INT);
-            }
-            if ((options === null || options === void 0 ? void 0 : options.precision) !== void 0) {
-                postDecDigits = postDecDigits.substring(0, options.precision).padEnd(options.precision, "0");
-            }
-            preDecDigits = preDecDigits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            if (preDecDigits === "" && firstDecimal === 0) {
-                preDecDigits = "0";
-            }
-            var retVal = preDecDigits;
-            if (isNeg) {
-                retVal = "-".concat(retVal);
-            }
-            if ((firstDecimal >= 0 || (options === null || options === void 0 ? void 0 : options.precision) !== void 0) && postDecDigits !== "") {
-                retVal += ".".concat(postDecDigits);
-            }
-            return retVal;
-        },
-        /** Go from string with comma's to numbers */ deformat: function(value) {
-            if (typeof value !== "string") {
-                return value;
-            }
-            var strValue = value.replace(/,/g, "");
-            if (strValue === "") {
-                return void 0;
-            }
-            var number = Number(strValue);
-            return isNaN(number) || number > Number.MAX_SAFE_INTEGER || number < Number.MIN_SAFE_INTEGER ? void 0 : number;
-        }
-    };
-    var date = {
-        name: "date",
-        format: function(_value, options) {
-            var _options_mask;
-            var value = typeof _value === "number" ? String(_value) : _value;
-            if (_value === void 0) {
-                return void 0;
-            }
-            if (typeof value !== "string" || value === "") {
-                return "";
-            }
-            if (value.match(/^\d{4}[-]\d{1,2}[-]\d{1,2}$/)) {
-                var tempVal = value.split("-");
-                value = "".concat(tempVal[1], "/").concat(tempVal[2], "/").concat(tempVal[0]);
-            }
-            var _options_mask_toUpperCase;
-            var dateFormat = (_options_mask_toUpperCase = options === null || options === void 0 ? void 0 : (_options_mask = options.mask) === null || _options_mask === void 0 ? void 0 : _options_mask.toUpperCase()) !== null && _options_mask_toUpperCase !== void 0 ? _options_mask_toUpperCase : "MM/DD/YYYY";
-            var delimiter = dateFormat.replace(/[^/.-]/g, "").charAt(0);
-            var formatParts = dateFormat.split(delimiter);
-            var valueParts = value.split(delimiter);
-            var processedValueParts = [];
-            var lastMatchIsFull = true;
-            for(var index = 0; index < valueParts.length; index++){
-                var part = valueParts[index];
-                if (lastMatchIsFull && index < formatParts.length) {
-                    part = part.replace(/[^0-9]/g, "");
-                    var isLastExpectedField = formatParts.length - 1 === index;
-                    var hasDelimiterAfter = valueParts.length - 1 > index;
-                    var curFormat = formatParts[index];
-                    if (curFormat === "YYYY") {
-                        if (part.length > 4) {
-                            valueParts[index + 1] = [
-                                "*",
-                                part.substring(4),
-                                valueParts[index + 1]
-                            ].join("");
-                            part = part.substring(0, 4);
-                        }
-                        if (part.length === 4) {
-                            lastMatchIsFull = true;
-                            processedValueParts.push(part);
-                        }
-                        if (part.length === 3) {
-                            if (isLastExpectedField || !hasDelimiterAfter) {
-                                lastMatchIsFull = false;
-                                processedValueParts.push(part);
-                            } else {
-                                valueParts[index + 1] = "*".concat(part.substring(2)).concat(valueParts[index + 1]);
-                                part = part.substring(0, 2);
-                            }
-                        }
-                        if (part.length === 2) {
-                            var autocomplete = void 0;
-                            if (part.length === 2 && (hasDelimiterAfter || isLastExpectedField && part !== "19" && part !== "20")) {
-                                autocomplete = "20".concat(part);
-                                if (part > (/* @__PURE__ */ new Date().getFullYear() + 5).toString().substring(2)) {
-                                    autocomplete = "19".concat(part);
-                                }
-                            }
-                            if (autocomplete) {
-                                lastMatchIsFull = true;
-                                processedValueParts.push(autocomplete);
-                            } else {
-                                lastMatchIsFull = false;
-                                processedValueParts.push(part);
-                            }
-                        }
-                        if (part.length === 1 || part.length === 0) {
-                            lastMatchIsFull = false;
-                            processedValueParts.push(part);
-                        }
-                    } else if (curFormat === "YY") {
-                        if (part.length > 2) {
-                            valueParts[index + 1] = [
-                                "*",
-                                part.substring(2),
-                                valueParts[index + 1]
-                            ].join("");
-                            part = part.substring(0, 2);
-                        }
-                        if (part.length === 2) {
-                            lastMatchIsFull = true;
-                            processedValueParts.push(part);
-                        }
-                        if (part.length === 1 || part.length === 0) {
-                            lastMatchIsFull = false;
-                            processedValueParts.push(part);
-                        }
-                    } else {
-                        if (part.length > 2) {
-                            valueParts[index + 1] = [
-                                "*",
-                                part.substring(2),
-                                valueParts[index + 1]
-                            ].join("");
-                            part = part.substring(0, 2);
-                        }
-                        if (part.length === 2) {
-                            if (part === "00" && !hasDelimiterAfter) {
-                                lastMatchIsFull = false;
-                                processedValueParts.push("0");
-                            } else {
-                                lastMatchIsFull = true;
-                                processedValueParts.push(part);
-                            }
-                        }
-                        if (part.length === 1) {
-                            if (hasDelimiterAfter) {
-                                lastMatchIsFull = true;
-                                processedValueParts.push("0".concat(part));
-                            } else {
-                                lastMatchIsFull = false;
-                                processedValueParts.push(part);
-                            }
-                        }
-                        if (part.length === 0) {
-                            lastMatchIsFull = false;
-                            processedValueParts.push(part);
-                        }
-                    }
+        var replacer = function(node) {
+            return traverseAndReplace(node, replaceNode);
+        };
+        var asyncTransform2 = function(node) {
+            var _Builder;
+            var id = getAsyncNodeId(node);
+            var asset = getNestedAsset === null || getNestedAsset === void 0 ? void 0 : getNestedAsset(node);
+            var replaceFunction = flatten2 ? replacer : void 0;
+            var asyncNode = Builder.asyncNode(id, flatten2, replaceFunction);
+            var values = [
+                asyncNode
+            ];
+            if (asset) {
+                var otherValues = [];
+                if (requiresAssetWrapper(asset)) {
+                    otherValues.push(Builder.assetWrapper(asset));
+                } else if (asset.type === NodeType.MultiNode) {
+                    var _otherValues;
+                    (_otherValues = otherValues).push.apply(_otherValues, _to_consumable_array(asset.values));
+                } else {
+                    otherValues.push(asset);
+                }
+                if (asyncNodePosition === "append") {
+                    var _values;
+                    (_values = values).unshift.apply(_values, _to_consumable_array(otherValues));
+                } else {
+                    var _values1;
+                    (_values1 = values).push.apply(_values1, _to_consumable_array(otherValues));
                 }
             }
-            return processedValueParts.join(delimiter);
-        }
+            var multiNode = (_Builder = Builder).multiNode.apply(_Builder, _to_consumable_array(values));
+            var wrapperAsset = Builder.asset({
+                id: wrapperAssetType + "-" + id,
+                type: wrapperAssetType
+            });
+            Builder.addChild(wrapperAsset, path, multiNode);
+            return wrapperAsset;
+        };
+        return asyncTransform2;
     };
-    var currency = {
-        name: "currency",
-        format: function(_value, options) {
-            var value = typeof _value === "number" ? String(_value) : _value;
-            var _ref = options !== null && options !== void 0 ? options : {}, _ref_currencySymbol = _ref.currencySymbol, currencySymbol = _ref_currencySymbol === void 0 ? "" : _ref_currencySymbol, _ref_useParensForNeg = _ref.useParensForNeg, useParensForNeg = _ref_useParensForNeg === void 0 ? false : _ref_useParensForNeg, _ref_precision = _ref.precision, precision = _ref_precision === void 0 ? 2 : _ref_precision;
-            if (value === void 0 || value === "") {
-                return value;
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/async-node/core/src/index.ts
+    var AsyncNodePluginSymbol = Symbol.for("AsyncNodePlugin");
+    var _AsyncNodePlugin = /*#__PURE__*/ function() {
+        function _AsyncNodePlugin(options, asyncHandler) {
+            var _this = this;
+            _class_call_check(this, _AsyncNodePlugin);
+            this.symbol = _AsyncNodePlugin.Symbol;
+            this.hooks = {
+                onAsyncNode: new AsyncSeriesBailHook(),
+                onAsyncNodeError: new SyncBailHook()
+            };
+            this.name = "AsyncNode";
+            if (options === null || options === void 0 ? void 0 : options.plugins) {
+                this.plugins = options.plugins;
+                options.plugins.forEach(function(plugin) {
+                    plugin.applyPlugin(_this);
+                });
             }
-            if (typeof value !== "string") {
-                return value;
+            if (asyncHandler) {
+                this.hooks.onAsyncNode.tap("async", function(node, callback) {
+                    return _async_to_generator(function() {
+                        return _ts_generator(this, function(_state) {
+                            switch(_state.label){
+                                case 0:
+                                    return [
+                                        4,
+                                        asyncHandler(node, callback)
+                                    ];
+                                case 1:
+                                    return [
+                                        2,
+                                        _state.sent()
+                                    ];
+                            }
+                        });
+                    })();
+                });
             }
-            var sign = /^\s*-/.test(value) ? -1 : 1;
-            var dotIndex = value.indexOf(".");
-            var preDecimal;
-            var postDecimal;
-            if (dotIndex >= 0) {
-                preDecimal = value.substr(0, dotIndex).replace(/\D+/g, "");
-                postDecimal = value.substr(dotIndex + 1).replace(/\D+/g, "");
-            } else {
-                preDecimal = value.replace(/\D+/g, "");
-                postDecimal = "0";
-            }
-            var numericalValue = sign * Number("".concat(preDecimal, ".").concat(postDecimal));
-            var fixedString = numericalValue.toFixed(precision);
-            var prettyString = fixedString.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            if (prettyString.charAt(0) === "-") {
-                if (useParensForNeg) {
-                    return "(".concat(currencySymbol).concat(prettyString.substring(1), ")");
+        }
+        _create_class(_AsyncNodePlugin, [
+            {
+                key: "getPlayerInstance",
+                value: function getPlayerInstance() {
+                    return this.playerInstance;
                 }
-                return "-".concat(currencySymbol).concat(prettyString.substring(1));
-            }
-            return currencySymbol + prettyString;
-        },
-        deformat: function(value, options) {
-            var _commaNumber_deformat;
-            if (typeof value === "number") {
-                return value;
-            }
-            if (typeof value !== "string") {
-                return void 0;
-            }
-            var deformatted = value;
-            if (options === null || options === void 0 ? void 0 : options.currencySymbol) {
-                deformatted = value.replace(options.currencySymbol, "");
-            }
-            return (_commaNumber_deformat = commaNumber.deformat) === null || _commaNumber_deformat === void 0 ? void 0 : _commaNumber_deformat.call(commaNumber, deformatted);
-        }
-    };
-    var basePhoneFormatter = createMaskedNumericFormatter("phone", "(###) ###-####");
-    var phone2 = _object_spread_props(_object_spread({}, basePhoneFormatter), {
-        deformat: function(value) {
-            var _basePhoneFormatter_deformat;
-            return (_basePhoneFormatter_deformat = basePhoneFormatter.deformat) === null || _basePhoneFormatter_deformat === void 0 ? void 0 : _basePhoneFormatter_deformat.call(basePhoneFormatter, value);
-        },
-        format: function(value) {
-            var _basePhoneFormatter_format;
-            var _basePhoneFormatter_format1;
-            return (_basePhoneFormatter_format1 = (_basePhoneFormatter_format = basePhoneFormatter.format) === null || _basePhoneFormatter_format === void 0 ? void 0 : _basePhoneFormatter_format.call(basePhoneFormatter, value === "(" ? "" : value)) !== null && _basePhoneFormatter_format1 !== void 0 ? _basePhoneFormatter_format1 : value;
-        }
-    });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/common-types/core/src/index.ts
-    var CommonTypesPlugin = /*#__PURE__*/ function() {
-        function CommonTypesPlugin() {
-            _class_call_check(this, CommonTypesPlugin);
-            this.name = "CommonTypes";
-        }
-        _create_class(CommonTypesPlugin, [
+            },
             {
                 key: "apply",
                 value: function apply(player) {
-                    player.registerPlugin(new TypesProviderPlugin({
-                        types: Object.values(types_exports),
-                        formats: Object.values(formats_exports),
-                        validators: Object.entries(validators_exports)
-                    }));
+                    var _this = this;
+                    this.playerInstance = player;
+                    player.hooks.viewController.tap(this.name, function(viewController) {
+                        viewController.hooks.view.tap(_this.name, function(view) {
+                            var _this_plugins;
+                            (_this_plugins = _this.plugins) === null || _this_plugins === void 0 ? void 0 : _this_plugins.forEach(function(plugin) {
+                                plugin.apply(view);
+                            });
+                        });
+                    });
                 }
             }
         ]);
-        return CommonTypesPlugin;
+        return _AsyncNodePlugin;
+    }();
+    _AsyncNodePlugin.Symbol = AsyncNodePluginSymbol;
+    var AsyncNodePlugin = _AsyncNodePlugin;
+    var AsyncNodePluginPlugin = /*#__PURE__*/ function() {
+        function AsyncNodePluginPlugin() {
+            _class_call_check(this, AsyncNodePluginPlugin);
+            this.name = "AsyncNode";
+        }
+        _create_class(AsyncNodePluginPlugin, [
+            {
+                /**
+     * Parses the node from the result and triggers an asynchronous view update if necessary.
+     * @param node The asynchronous node that might be updated.
+     * @param result The result obtained from resolving the async node. This could be any data structure or value.
+     * @param options Options provided for node resolution, including a potential parseNode function to process the result.
+     * @param view The view instance where the node resides. This can be undefined if the view is not currently active.
+     */ key: "parseNodeAndUpdate",
+                value: function parseNodeAndUpdate(node, context, result, options) {
+                    var parsedNode = options.parseNode && result ? options.parseNode(result) : void 0;
+                    if (parsedNode && node.onValueReceived) {
+                        parsedNode = node.onValueReceived(parsedNode);
+                    }
+                    this.handleAsyncUpdate(node, context, parsedNode);
+                }
+            },
+            {
+                /**
+     * Updates the node asynchronously based on the result provided.
+     * This method is responsible for handling the update logic of asynchronous nodes.
+     * It checks if the node needs to be updated based on the new result and updates the mapping accordingly.
+     * If an update is necessary, it triggers an asynchronous update on the view.
+     * @param node The asynchronous node that might be updated.
+     * @param newNode The new node to replace the async node.
+     * @param view The view instance where the node resides. This can be undefined if the view is not currently active.
+     */ key: "handleAsyncUpdate",
+                value: function handleAsyncUpdate(node, context, newNode) {
+                    var nodeResolveCache = context.nodeResolveCache, view = context.view;
+                    if (nodeResolveCache.get(node.id) !== newNode) {
+                        nodeResolveCache.set(node.id, newNode ? newNode : node);
+                        view.updateAsync(node.id);
+                    }
+                }
+            },
+            {
+                key: "hasValidMapping",
+                value: function hasValidMapping(node, context) {
+                    var nodeResolveCache = context.nodeResolveCache;
+                    return nodeResolveCache.has(node.id) && nodeResolveCache.get(node.id) !== node;
+                }
+            },
+            {
+                /**
+     * Handles the asynchronous API integration for resolving nodes.
+     * This method sets up a hook on the resolver's `beforeResolve` event to process async nodes.
+     * @param resolver The resolver instance to attach the hook to.
+     * @param view
+     */ key: "applyResolver",
+                value: function applyResolver(resolver, context) {
+                    var _this = this;
+                    resolver.hooks.beforeResolve.tap(this.name, function(node, options) {
+                        if (!_this.isAsync(node)) {
+                            return node === null ? node : _this.resolveAsyncChildren(node, context);
+                        }
+                        var resolvedNode = context.nodeResolveCache.get(node.id);
+                        if (resolvedNode !== void 0) {
+                            if (resolvedNode.asyncNodesResolved === void 0) {
+                                resolvedNode.asyncNodesResolved = [];
+                            }
+                            resolvedNode.asyncNodesResolved.push(node.id);
+                            return _this.resolveAsyncChildren(resolvedNode, context);
+                        }
+                        if (context.inProgressNodes.has(node.id)) {
+                            return node;
+                        }
+                        context.inProgressNodes.add(node.id);
+                        (0, import_queue_microtask3.default)(function() {
+                            _this.runAsyncNode(node, context, options).finally();
+                        });
+                        return node;
+                    });
+                }
+            },
+            {
+                /**
+     * Replaces child async nodes with their resolved content and flattens when necessary. Resolving the children directly helps manage the `parent` reference without needing as much work within the resolver itself.
+     * Handles async node chains as well to make sure all applicable nodes can get flattened.
+     * @param node - The node whose children need to be resolved.
+     * @param context - the async plugin context needed to reach into the cache
+     * @returns The same node but with async node children mapped to their resolved AST.
+     */ key: "resolveAsyncChildren",
+                value: function resolveAsyncChildren(node, context) {
+                    var _this = this;
+                    var _node_asyncNodesResolved;
+                    var asyncNodesResolved = (_node_asyncNodesResolved = node.asyncNodesResolved) !== null && _node_asyncNodesResolved !== void 0 ? _node_asyncNodesResolved : [];
+                    node.asyncNodesResolved = asyncNodesResolved;
+                    if (node.type === NodeType.MultiNode) {
+                        var index = 0;
+                        while(index < node.values.length){
+                            var childNode = node.values[index];
+                            if ((childNode === null || childNode === void 0 ? void 0 : childNode.type) !== NodeType.Async || !this.hasValidMapping(childNode, context)) {
+                                index++;
+                                continue;
+                            }
+                            var mappedNode = context.nodeResolveCache.get(childNode.id);
+                            asyncNodesResolved.push(childNode.id);
+                            if (mappedNode.type === NodeType.MultiNode && childNode.flatten) {
+                                mappedNode.values.forEach(function(v) {
+                                    return v.parent = node;
+                                });
+                                node.values = _to_consumable_array(node.values.slice(0, index)).concat(_to_consumable_array(mappedNode.values), _to_consumable_array(node.values.slice(index + 1)));
+                            } else {
+                                node.values[index] = mappedNode;
+                                mappedNode.parent = node;
+                            }
+                        }
+                    } else if ("children" in node) {
+                        var _node_children;
+                        (_node_children = node.children) === null || _node_children === void 0 ? void 0 : _node_children.forEach(function(c) {
+                            while(c.value.type === NodeType.Async && _this.hasValidMapping(c.value, context)){
+                                asyncNodesResolved.push(c.value.id);
+                                c.value = context.nodeResolveCache.get(c.value.id);
+                                c.value.parent = node;
+                            }
+                        });
+                    }
+                    return node;
+                }
+            },
+            {
+                key: "runAsyncNode",
+                value: function runAsyncNode(node, context, options) {
+                    return _async_to_generator(function() {
+                        var _this, _this_basePlugin, result, e, _this_basePlugin1, _options_logger, error, result1, _this_basePlugin_getPlayerInstance, _this_basePlugin2, playerState;
+                        return _ts_generator(this, function(_state) {
+                            switch(_state.label){
+                                case 0:
+                                    _this = this;
+                                    _state.label = 1;
+                                case 1:
+                                    _state.trys.push([
+                                        1,
+                                        3,
+                                        ,
+                                        4
+                                    ]);
+                                    return [
+                                        4,
+                                        (_this_basePlugin = this.basePlugin) === null || _this_basePlugin === void 0 ? void 0 : _this_basePlugin.hooks.onAsyncNode.call(node, function(result2) {
+                                            _this.parseNodeAndUpdate(node, context, result2, options);
+                                        })
+                                    ];
+                                case 2:
+                                    result = _state.sent();
+                                    context.inProgressNodes.delete(node.id);
+                                    this.parseNodeAndUpdate(node, context, result, options);
+                                    return [
+                                        3,
+                                        4
+                                    ];
+                                case 3:
+                                    e = _state.sent();
+                                    error = _instanceof(e, Error) ? e : new Error(String(e));
+                                    result1 = (_this_basePlugin1 = this.basePlugin) === null || _this_basePlugin1 === void 0 ? void 0 : _this_basePlugin1.hooks.onAsyncNodeError.call(error, node);
+                                    if (result1 === void 0) {
+                                        ;
+                                        playerState = (_this_basePlugin2 = this.basePlugin) === null || _this_basePlugin2 === void 0 ? void 0 : (_this_basePlugin_getPlayerInstance = _this_basePlugin2.getPlayerInstance()) === null || _this_basePlugin_getPlayerInstance === void 0 ? void 0 : _this_basePlugin_getPlayerInstance.getState();
+                                        if ((playerState === null || playerState === void 0 ? void 0 : playerState.status) === "in-progress") {
+                                            playerState.fail(error);
+                                        }
+                                        return [
+                                            2
+                                        ];
+                                    }
+                                    (_options_logger = options.logger) === null || _options_logger === void 0 ? void 0 : _options_logger.error("Async node handling failed and resolved with a fallback. Error:", error);
+                                    context.inProgressNodes.delete(node.id);
+                                    this.parseNodeAndUpdate(node, context, result1, options);
+                                    return [
+                                        3,
+                                        4
+                                    ];
+                                case 4:
+                                    return [
+                                        2
+                                    ];
+                            }
+                        });
+                    }).call(this);
+                }
+            },
+            {
+                key: "isAsync",
+                value: function isAsync(node) {
+                    return (node === null || node === void 0 ? void 0 : node.type) === NodeType.Async;
+                }
+            },
+            {
+                key: "isDeterminedAsync",
+                value: function isDeterminedAsync(obj) {
+                    return (typeof obj === "undefined" ? "undefined" : _type_of(obj)) === "object" && obj !== null && Object.prototype.hasOwnProperty.call(obj, "async");
+                }
+            },
+            {
+                key: "applyParser",
+                value: function applyParser(parser) {
+                    var _this = this;
+                    parser.hooks.parseNode.tap(this.name, function(obj, nodeType, options, childOptions) {
+                        if (_this.isDeterminedAsync(obj)) {
+                            var async = obj.async, flatten2 = obj.flatten, rest = _object_without_properties(obj, [
+                                "async",
+                                "flatten"
+                            ]);
+                            var parsedAsync = parser.parseObject(rest, nodeType, options);
+                            var parsedNodeId = getNodeID(parsedAsync);
+                            if (parsedAsync === null || !parsedNodeId) {
+                                return childOptions ? [] : null;
+                            }
+                            var asyncAST = parser.createASTNode({
+                                id: parsedNodeId,
+                                type: NodeType.Async,
+                                value: parsedAsync,
+                                flatten: flatten2
+                            }, obj);
+                            if (childOptions) {
+                                return asyncAST ? [
+                                    {
+                                        path: _to_consumable_array(childOptions.path).concat([
+                                            childOptions.key
+                                        ]),
+                                        value: asyncAST
+                                    }
+                                ] : [];
+                            }
+                            return asyncAST;
+                        }
+                    });
+                }
+            },
+            {
+                key: "apply",
+                value: function apply(view) {
+                    var _this = this;
+                    var context = {
+                        nodeResolveCache: /* @__PURE__ */ new Map(),
+                        inProgressNodes: /* @__PURE__ */ new Set(),
+                        view: view
+                    };
+                    view.hooks.parser.tap("async", this.applyParser.bind(this));
+                    view.hooks.resolver.tap("async", function(resolver) {
+                        _this.applyResolver(resolver, context);
+                    });
+                }
+            },
+            {
+                key: "applyPlugin",
+                value: function applyPlugin(asyncNodePlugin) {
+                    this.basePlugin = asyncNodePlugin;
+                }
+            }
+        ]);
+        return AsyncNodePluginPlugin;
     }();
     return __toCommonJS(src_exports);
 }(); /*! Bundled license information:
