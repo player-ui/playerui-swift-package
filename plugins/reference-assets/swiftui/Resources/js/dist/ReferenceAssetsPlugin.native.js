@@ -391,7 +391,7 @@ var ReferenceAssetsPlugin = function() {
         for(e = e.split ? e.split(".") : e, n = 0; n < e.length; n++)t2 = t2 ? t2[e[n]] : r;
         return t2 === r ? l : t2;
     };
-    var createMatcher = function createMatcher(partialObj) {
+    var createObjectMatcher = function createObjectMatcher(partialObj) {
         var pairs = traverseObj(partialObj);
         var matchFunction = function(searchObj) {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
@@ -2277,7 +2277,7 @@ var ReferenceAssetsPlugin = function() {
             {
                 /** Add match -> value mapping to the registry */ key: "set",
                 value: function set(match, value) {
-                    var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createMatcher(match) : createBasicMatcher(match);
+                    var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createObjectMatcher(match) : createBasicMatcher(match);
                     this.store.insert({
                         key: match,
                         value: value,
@@ -2781,13 +2781,13 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return SyncWaterfallHook;
     }(Hook);
-    var AsyncParallelBailHook = /*#__PURE__*/ function(Hook) {
-        _inherits(AsyncParallelBailHook, Hook);
-        function AsyncParallelBailHook() {
-            _class_call_check(this, AsyncParallelBailHook);
-            return _call_super(this, AsyncParallelBailHook, arguments);
+    var AsyncSeriesBailHook = /*#__PURE__*/ function(Hook) {
+        _inherits(AsyncSeriesBailHook, Hook);
+        function AsyncSeriesBailHook() {
+            _class_call_check(this, AsyncSeriesBailHook);
+            return _call_super(this, AsyncSeriesBailHook, arguments);
         }
-        _create_class(AsyncParallelBailHook, [
+        _create_class(AsyncSeriesBailHook, [
             {
                 key: "call",
                 value: function call() {
@@ -2795,7 +2795,7 @@ var ReferenceAssetsPlugin = function() {
                         args[_key] = arguments[_key];
                     }
                     return _async_to_generator(function() {
-                        var _this_interceptions, ctx, rtn, e;
+                        var _this_interceptions, ctx, tapIndex, rtn, e;
                         return _ts_generator(this, function(_state) {
                             switch(_state.label){
                                 case 0:
@@ -2807,28 +2807,48 @@ var ReferenceAssetsPlugin = function() {
                                 case 1:
                                     _state.trys.push([
                                         1,
-                                        3,
+                                        6,
                                         ,
-                                        4
+                                        7
                                     ]);
+                                    tapIndex = 0;
+                                    _state.label = 2;
+                                case 2:
+                                    if (!(tapIndex < this.taps.length)) return [
+                                        3,
+                                        5
+                                    ];
                                     return [
                                         4,
-                                        Promise.race(this.taps.map(function(tap) {
-                                            return callTap(tap, args, ctx);
-                                        }))
-                                    ];
-                                case 2:
-                                    rtn = _state.sent();
-                                    this.interceptions.result(rtn);
-                                    return [
-                                        2,
-                                        rtn
+                                        callTap(this.taps[tapIndex], args, ctx)
                                     ];
                                 case 3:
+                                    rtn = _state.sent();
+                                    if (rtn !== void 0) {
+                                        this.interceptions.result(rtn);
+                                        return [
+                                            2,
+                                            rtn
+                                        ];
+                                    }
+                                    _state.label = 4;
+                                case 4:
+                                    tapIndex += 1;
+                                    return [
+                                        3,
+                                        2
+                                    ];
+                                case 5:
+                                    return [
+                                        3,
+                                        7
+                                    ];
+                                case 6:
                                     e = _state.sent();
                                     this.interceptions.error(e);
                                     throw e;
-                                case 4:
+                                case 7:
+                                    this.interceptions.done();
                                     return [
                                         2
                                     ];
@@ -2838,7 +2858,7 @@ var ReferenceAssetsPlugin = function() {
                 }
             }
         ]);
-        return AsyncParallelBailHook;
+        return AsyncSeriesBailHook;
     }(Hook);
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_ts_nested_error = __toESM(require_nested_error(), 1);
@@ -8467,7 +8487,7 @@ var ReferenceAssetsPlugin = function() {
             _class_call_check(this, _AsyncNodePlugin2);
             this.symbol = _AsyncNodePlugin2.Symbol;
             this.hooks = {
-                onAsyncNode: new AsyncParallelBailHook(),
+                onAsyncNode: new AsyncSeriesBailHook(),
                 onAsyncNodeError: new SyncBailHook()
             };
             this.name = "AsyncNode";
@@ -8528,7 +8548,6 @@ var ReferenceAssetsPlugin = function() {
     var AsyncNodePluginPlugin = /*#__PURE__*/ function() {
         function AsyncNodePluginPlugin() {
             _class_call_check(this, AsyncNodePluginPlugin);
-            this.asyncNode = new AsyncParallelBailHook();
             this.name = "AsyncNode";
         }
         _create_class(AsyncNodePluginPlugin, [
@@ -8588,6 +8607,10 @@ var ReferenceAssetsPlugin = function() {
                         }
                         var resolvedNode = context.nodeResolveCache.get(node.id);
                         if (resolvedNode !== void 0) {
+                            if (resolvedNode.asyncNodesResolved === void 0) {
+                                resolvedNode.asyncNodesResolved = [];
+                            }
+                            resolvedNode.asyncNodesResolved.push(node.id);
                             return _this.resolveAsyncChildren(resolvedNode, context);
                         }
                         if (context.inProgressNodes.has(node.id)) {
@@ -8883,7 +8906,7 @@ var ReferenceAssetsPlugin = function() {
                         try {
                             for(var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
                                 var id = _step.value;
-                                var content = createContentFromMessage(message, "message-".concat(counter++));
+                                var content = createContentFromMessage(message, "chat-demo-".concat(counter++));
                                 var resolveFunction = deferredPromises[id];
                                 resolveFunction === null || resolveFunction === void 0 ? void 0 : resolveFunction(content);
                                 delete deferredPromises[id];
@@ -8910,6 +8933,10 @@ var ReferenceAssetsPlugin = function() {
                         }
                     };
                     asyncNodePlugin.hooks.onAsyncNode.tap(this.name, function(node) {
+                        var _node_parent_parent, _node_parent, _node_parent_parent1, _node_parent1;
+                        if (((_node_parent = node.parent) === null || _node_parent === void 0 ? void 0 : (_node_parent_parent = _node_parent.parent) === null || _node_parent_parent === void 0 ? void 0 : _node_parent_parent.type) !== NodeType.Asset && ((_node_parent1 = node.parent) === null || _node_parent1 === void 0 ? void 0 : (_node_parent_parent1 = _node_parent1.parent) === null || _node_parent_parent1 === void 0 ? void 0 : _node_parent_parent1.type) !== NodeType.View || !node.parent.parent.value.id.startsWith("collection-async-chat-demo")) {
+                            return Promise.resolve(void 0);
+                        }
                         return new Promise(function(res) {
                             deferredPromises[node.id] = res;
                             allPromiseKeys.push(node.id);

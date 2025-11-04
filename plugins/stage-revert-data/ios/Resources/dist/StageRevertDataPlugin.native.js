@@ -430,7 +430,7 @@ var StageRevertDataPlugin = function() {
             }
         }
     };
-    var createMatcher = function createMatcher(partialObj) {
+    var createObjectMatcher = function createObjectMatcher(partialObj) {
         var pairs = traverseObj(partialObj);
         var matchFunction = function(searchObj) {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
@@ -2532,7 +2532,7 @@ var StageRevertDataPlugin = function() {
             {
                 /** Add match -> value mapping to the registry */ key: "set",
                 value: function set(match, value) {
-                    var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createMatcher(match) : createBasicMatcher(match);
+                    var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createObjectMatcher(match) : createBasicMatcher(match);
                     this.store.insert({
                         key: match,
                         value: value,

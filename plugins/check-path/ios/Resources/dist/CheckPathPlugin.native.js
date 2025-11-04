@@ -430,7 +430,7 @@ var CheckPathPlugin = function() {
             }
         }
     };
-    var createMatcher = function createMatcher(partialObj) {
+    var createObjectMatcher = function createObjectMatcher(partialObj) {
         var pairs = traverseObj(partialObj);
         var matchFunction = function(searchObj) {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
@@ -1495,17 +1495,17 @@ var CheckPathPlugin = function() {
         });
         return batchTxn;
     };
-    var createMatcher2 = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/check-path/core/src/index.ts
-    function createMatcher2(match) {
+    var createMatcher = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/check-path/core/src/index.ts
+    function createMatcher(match) {
         if (typeof match === "string" || typeof match === "number") {
-            return createMatcher({
+            return createObjectMatcher({
                 type: match
             });
         }
         if (typeof match === "function") {
             return match;
         }
-        return createMatcher(match);
+        return createObjectMatcher(match);
     };
     var getParent = function getParent(node, viewInfo) {
         var working = node;
@@ -2554,7 +2554,7 @@ var CheckPathPlugin = function() {
             {
                 /** Add match -> value mapping to the registry */ key: "set",
                 value: function set(match, value) {
-                    var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createMatcher(match) : createBasicMatcher(match);
+                    var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createObjectMatcher(match) : createBasicMatcher(match);
                     this.store.insert({
                         key: match,
                         value: value,
@@ -7917,7 +7917,7 @@ var CheckPathPlugin = function() {
                         if (depth++ >= 50) {
                             throw new Error("Recursion depth exceeded. Check for cycles in the AST graph");
                         }
-                        var matcher = createMatcher2(parentQuery);
+                        var matcher = createMatcher(parentQuery);
                         var resolved = this.getAssetFromAssetNode(potentialMatch);
                         if (resolved && matcher(resolved)) {
                             if (queryArray.length === 0) {
@@ -7994,7 +7994,7 @@ var CheckPathPlugin = function() {
                         return true;
                     }
                     var _query = _to_array(query), first = _query[0], rest = _query.slice(1);
-                    var matcher = createMatcher2(first);
+                    var matcher = createMatcher(first);
                     if (node.type === NodeType.Asset || node.type === NodeType.View || node.type === NodeType.Applicability) {
                         var resolvedValue = this.getResolvedValue(node);
                         var _ref;
@@ -8109,7 +8109,7 @@ var CheckPathPlugin = function() {
                                 path = _to_consumable_array((_childProp_path = childProp === null || childProp === void 0 ? void 0 : childProp.path) !== null && _childProp_path !== void 0 ? _childProp_path : []).concat(_to_consumable_array(path));
                             }
                             if (parentQuery) {
-                                var matcher = createMatcher2(parentQuery);
+                                var matcher = createMatcher(parentQuery);
                                 if (matcher(this.getResolvedValue(parent))) {
                                     parentQuery = queryArray.shift();
                                     if (!parentQuery) return path;
