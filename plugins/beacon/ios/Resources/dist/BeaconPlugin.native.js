@@ -7478,8 +7478,8 @@ var BeaconPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = "__VERSION__";
-    var COMMIT = "__GIT_COMMIT__";
+    var PLAYER_VERSION = true ? "0.14.2--canary.761.29270" : "__VERSION__";
+    var COMMIT = true ? "7ad7ac8d77d980570694bae836e4da9de7b09d88" : "__GIT_COMMIT__";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
