@@ -7431,8 +7431,8 @@ var CheckPathPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = "__VERSION__";
-    var COMMIT = "__GIT_COMMIT__";
+    var PLAYER_VERSION = true ? "0.14.2--canary.761.29238" : "__VERSION__";
+    var COMMIT = true ? "1fe582d9f52bd214b56c8e2fb28f44944e402b5e" : "__GIT_COMMIT__";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
