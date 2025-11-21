@@ -7510,8 +7510,8 @@ var CommonTypesPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = "__VERSION__";
-    var COMMIT = "__GIT_COMMIT__";
+    var PLAYER_VERSION = true ? "0.14.2--canary.761.29359" : "unknown";
+    var COMMIT = true ? "210a554c81d37db703e7307209db816b66c0502e" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
