@@ -7911,8 +7911,8 @@ var ReferenceAssetsPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = "__VERSION__";
-    var COMMIT = "__GIT_COMMIT__";
+    var PLAYER_VERSION = true ? "0.15.0-next.1" : "unknown";
+    var COMMIT = true ? "4161f9e3d880cd6499f36006bc62f935ea6f5782" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
