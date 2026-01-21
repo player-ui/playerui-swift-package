@@ -5050,7 +5050,6 @@ var Player = function() {
             this.ASTMap = /* @__PURE__ */ new Map();
             this.logger = options.logger;
             this.idCache = /* @__PURE__ */ new Set();
-            this.AsyncIdMap = /* @__PURE__ */ new Map();
         }
         _create_class(Resolver, [
             {
@@ -5061,27 +5060,44 @@ var Player = function() {
             },
             {
                 key: "update",
-                value: function update(changes, asyncChanges) {
-                    var _this = this;
-                    this.hooks.beforeUpdate.call(changes);
+                value: function update(dataChanges, nodeChanges) {
+                    this.hooks.beforeUpdate.call(dataChanges);
                     var resolveCache = /* @__PURE__ */ new Map();
                     this.idCache.clear();
                     var prevASTMap = new Map(this.ASTMap);
                     this.ASTMap.clear();
-                    var prevAsyncIdMap = new Map(this.AsyncIdMap);
-                    var nextAsyncIdMap = /* @__PURE__ */ new Map();
-                    asyncChanges === null || asyncChanges === void 0 ? void 0 : asyncChanges.forEach(function(id) {
-                        var current = prevAsyncIdMap.get(id);
-                        while(current && prevASTMap.has(current)){
-                            var next = prevASTMap.get(current);
-                            if (next && _this.resolveCache.has(next)) {
-                                _this.resolveCache.delete(next);
+                    var realNodeChanges = /* @__PURE__ */ new Set();
+                    var _nodeChanges_values;
+                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                    try {
+                        for(var _iterator = ((_nodeChanges_values = nodeChanges === null || nodeChanges === void 0 ? void 0 : nodeChanges.values()) !== null && _nodeChanges_values !== void 0 ? _nodeChanges_values : [])[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                            var node = _step.value;
+                            var current = node;
+                            while(current){
+                                var _prevASTMap_get;
+                                var original = (_prevASTMap_get = prevASTMap.get(current)) !== null && _prevASTMap_get !== void 0 ? _prevASTMap_get : current;
+                                if (realNodeChanges.has(original)) {
+                                    break;
+                                }
+                                realNodeChanges.add(original);
+                                current = current.parent;
                             }
-                            current = current.parent;
                         }
-                    });
-                    var updated = this.computeTree(this.root, void 0, changes, resolveCache, toNodeResolveOptions(this.options), void 0, prevASTMap, nextAsyncIdMap);
-                    this.AsyncIdMap = nextAsyncIdMap;
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally{
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                _iterator.return();
+                            }
+                        } finally{
+                            if (_didIteratorError) {
+                                throw _iteratorError;
+                            }
+                        }
+                    }
+                    var updated = this.computeTree(this.root, void 0, dataChanges, resolveCache, toNodeResolveOptions(this.options), void 0, prevASTMap, realNodeChanges);
                     this.resolveCache = resolveCache;
                     this.hooks.afterUpdate.call(updated.value);
                     return updated.value;
@@ -5135,7 +5151,7 @@ var Player = function() {
             },
             {
                 key: "computeTree",
-                value: function computeTree(node, rawParent, dataChanges, cacheUpdate, options, partiallyResolvedParent, prevASTMap, nextAsyncIdMap) {
+                value: function computeTree(node, rawParent, dataChanges, cacheUpdate, options, partiallyResolvedParent, prevASTMap, nodeChanges) {
                     var _this = this;
                     var dependencyModel = new DependencyModel(options.data.model);
                     dependencyModel.trackSubset("core");
@@ -5153,8 +5169,9 @@ var Player = function() {
                     }), node);
                     var previousResult = this.getPreviousResult(node);
                     var previousDeps = previousResult === null || previousResult === void 0 ? void 0 : previousResult.dependencies;
+                    var isChanged = nodeChanges.has(node);
                     var dataChanged = caresAboutDataChanges(dataChanges, previousDeps);
-                    var shouldUseLastValue = this.hooks.skipResolve.call(!dataChanged, node, resolveOptions);
+                    var shouldUseLastValue = this.hooks.skipResolve.call(!dataChanged && !isChanged, node, resolveOptions);
                     if (previousResult && shouldUseLastValue) {
                         var update2 = _object_spread_props(_object_spread({}, previousResult), {
                             updated: false
@@ -5166,30 +5183,6 @@ var Player = function() {
                                 updated: false
                             });
                             cacheUpdate.set(AST, resolvedUpdate);
-                            if (resolvedUpdate.node.type === "async" /* Async */ ) {
-                                nextAsyncIdMap.set(resolvedUpdate.node.id, resolvedUpdate.node);
-                            }
-                            var _resolvedUpdate_node_asyncNodesResolved;
-                            var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                            try {
-                                for(var _iterator = ((_resolvedUpdate_node_asyncNodesResolved = resolvedUpdate.node.asyncNodesResolved) !== null && _resolvedUpdate_node_asyncNodesResolved !== void 0 ? _resolvedUpdate_node_asyncNodesResolved : [])[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                                    var key = _step.value;
-                                    nextAsyncIdMap.set(key, resolvedUpdate.node);
-                                }
-                            } catch (err) {
-                                _didIteratorError = true;
-                                _iteratorError = err;
-                            } finally{
-                                try {
-                                    if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                        _iterator.return();
-                                    }
-                                } finally{
-                                    if (_didIteratorError) {
-                                        throw _iteratorError;
-                                    }
-                                }
-                            }
                             var handleChildNode = function(childNode) {
                                 var _prevASTMap_get;
                                 var originalChildNode = (_prevASTMap_get = prevASTMap.get(childNode)) !== null && _prevASTMap_get !== void 0 ? _prevASTMap_get : childNode;
@@ -5220,30 +5213,6 @@ var Player = function() {
                         type: "empty" /* Empty */ 
                     };
                     resolvedAST.parent = partiallyResolvedParent;
-                    if (resolvedAST.type === "async" /* Async */ ) {
-                        nextAsyncIdMap.set(resolvedAST.id, resolvedAST);
-                    }
-                    var _resolvedAST_asyncNodesResolved;
-                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                    try {
-                        for(var _iterator = ((_resolvedAST_asyncNodesResolved = resolvedAST.asyncNodesResolved) !== null && _resolvedAST_asyncNodesResolved !== void 0 ? _resolvedAST_asyncNodesResolved : [])[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                            var id = _step.value;
-                            nextAsyncIdMap.set(id, resolvedAST);
-                        }
-                    } catch (err) {
-                        _didIteratorError = true;
-                        _iteratorError = err;
-                    } finally{
-                        try {
-                            if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                _iterator.return();
-                            }
-                        } finally{
-                            if (_didIteratorError) {
-                                throw _iteratorError;
-                            }
-                        }
-                    }
                     resolveOptions.node = resolvedAST;
                     this.ASTMap.set(resolvedAST, node);
                     var resolved = this.hooks.resolve.call(void 0, resolvedAST, resolveOptions);
@@ -5256,7 +5225,7 @@ var Player = function() {
                     if ("children" in resolvedAST) {
                         var _resolvedAST_children;
                         var newChildren = (_resolvedAST_children = resolvedAST.children) === null || _resolvedAST_children === void 0 ? void 0 : _resolvedAST_children.map(function(child) {
-                            var computedChildTree = _this.computeTree(child.value, node, dataChanges, cacheUpdate, resolveOptions, resolvedAST, prevASTMap, nextAsyncIdMap);
+                            var computedChildTree = _this.computeTree(child.value, node, dataChanges, cacheUpdate, resolveOptions, resolvedAST, prevASTMap, nodeChanges);
                             var childTreeDeps = computedChildTree.dependencies, childNode = computedChildTree.node, childUpdated = computedChildTree.updated, childValue = computedChildTree.value;
                             childTreeDeps.forEach(function(binding) {
                                 return childDependencies.add(binding);
@@ -5279,7 +5248,7 @@ var Player = function() {
                         var childValue = [];
                         var rawParentToPassIn = node;
                         resolvedAST.values = resolvedAST.values.map(function(mValue) {
-                            var mTree = _this.computeTree(mValue, rawParentToPassIn, dataChanges, cacheUpdate, resolveOptions, resolvedAST, prevASTMap, nextAsyncIdMap);
+                            var mTree = _this.computeTree(mValue, rawParentToPassIn, dataChanges, cacheUpdate, resolveOptions, resolvedAST, prevASTMap, nodeChanges);
                             if (mTree.value !== void 0 && mTree.value !== null) {
                                 mTree.dependencies.forEach(function(bindingDep) {
                                     return childDependencies.add(bindingDep);
@@ -5384,19 +5353,17 @@ var Player = function() {
         }
         _create_class(ViewInstance, [
             {
-                key: "updateAsync",
+                /** @deprecated use ViewController.updateViewAST */ key: "updateAsync",
                 value: function updateAsync(asyncNode) {
                     var _this_resolver;
-                    var update = (_this_resolver = this.resolver) === null || _this_resolver === void 0 ? void 0 : _this_resolver.update(/* @__PURE__ */ new Set(), /* @__PURE__ */ new Set([
-                        asyncNode
-                    ]));
+                    var update = (_this_resolver = this.resolver) === null || _this_resolver === void 0 ? void 0 : _this_resolver.update();
                     this.lastUpdate = update;
                     this.hooks.onUpdate.call(update);
                 }
             },
             {
                 key: "update",
-                value: function update(changes) {
+                value: function update(changes, nodeChanges) {
                     var _this_resolver;
                     if (this.rootNode === void 0) {
                         this.validationProvider = new CrossfieldProvider(this.initialView, this.resolverOptions.parseBinding, this.resolverOptions.logger);
@@ -5414,7 +5381,7 @@ var Player = function() {
                         }));
                         this.hooks.resolver.call(this.resolver);
                     }
-                    var update = (_this_resolver = this.resolver) === null || _this_resolver === void 0 ? void 0 : _this_resolver.update(changes);
+                    var update = (_this_resolver = this.resolver) === null || _this_resolver === void 0 ? void 0 : _this_resolver.update(changes, nodeChanges);
                     if (this.lastUpdate === update) {
                         return this.lastUpdate;
                     }
@@ -7486,6 +7453,10 @@ var Player = function() {
         return Registry;
     }();
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/view/controller.ts
+    var mergeSets = function(setA, setB) {
+        var _setA_values, _setB_values;
+        return /* @__PURE__ */ new Set(_to_consumable_array((_setA_values = setA === null || setA === void 0 ? void 0 : setA.values()) !== null && _setA_values !== void 0 ? _setA_values : []).concat(_to_consumable_array((_setB_values = setB === null || setB === void 0 ? void 0 : setB.values()) !== null && _setB_values !== void 0 ? _setB_values : [])));
+    };
     var ViewController = /*#__PURE__*/ function() {
         function ViewController(initialViews, options) {
             var _this = this;
@@ -7515,7 +7486,7 @@ var Player = function() {
                 var silent = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : false;
                 if (_this1.currentView) {
                     if (_this1.optimizeUpdates) {
-                        _this1.queueUpdate(updates, silent);
+                        _this1.queueUpdate(updates, void 0, silent);
                     } else {
                         _this1.currentView.update();
                     }
@@ -7545,25 +7516,26 @@ var Player = function() {
         _create_class(ViewController, [
             {
                 key: "queueUpdate",
-                value: function queueUpdate(bindings) {
+                value: function queueUpdate(bindings, nodes) {
                     var _this = this;
-                    var silent = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : false;
-                    var _this_pendingUpdate;
-                    if ((_this_pendingUpdate = this.pendingUpdate) === null || _this_pendingUpdate === void 0 ? void 0 : _this_pendingUpdate.changedBindings) {
-                        this.pendingUpdate.changedBindings = /* @__PURE__ */ new Set(_to_consumable_array(this.pendingUpdate.changedBindings).concat(_to_consumable_array(bindings)));
-                    } else {
+                    var silent = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : false;
+                    if (!this.pendingUpdate) {
                         this.pendingUpdate = {
-                            changedBindings: bindings,
                             scheduled: false
                         };
                     }
+                    this.pendingUpdate = _object_spread_props(_object_spread({}, this.pendingUpdate), {
+                        changedBindings: mergeSets(this.pendingUpdate.changedBindings, bindings),
+                        changedNodes: mergeSets(this.pendingUpdate.changedNodes, nodes)
+                    });
                     if (!this.pendingUpdate.scheduled && !silent) {
                         this.pendingUpdate.scheduled = true;
                         (0, import_queue_microtask.default)(function() {
-                            var _this_pendingUpdate, _this_currentView;
-                            var updates = (_this_pendingUpdate = _this.pendingUpdate) === null || _this_pendingUpdate === void 0 ? void 0 : _this_pendingUpdate.changedBindings;
+                            var _this_currentView;
+                            var _this_pendingUpdate;
+                            var _ref = (_this_pendingUpdate = _this.pendingUpdate) !== null && _this_pendingUpdate !== void 0 ? _this_pendingUpdate : {}, changedBindings = _ref.changedBindings, changedNodes = _ref.changedNodes;
                             _this.pendingUpdate = void 0;
-                            (_this_currentView = _this.currentView) === null || _this_currentView === void 0 ? void 0 : _this_currentView.update(updates);
+                            (_this_currentView = _this.currentView) === null || _this_currentView === void 0 ? void 0 : _this_currentView.update(changedBindings, changedNodes);
                         });
                     }
                 }
@@ -7639,6 +7611,15 @@ var Player = function() {
                         new TemplatePlugin(pluginOptions),
                         new MultiNodePlugin()
                     ];
+                }
+            },
+            {
+                /** Marks all AST nodes in `nodes` as changed, triggering the view to update and re-resolve these nodes. View updates are triggered asynchronously and many calls to this in a short time will batch into a single update.
+     *
+     * NOTE: In most cases view updates are handled automatically by changes to data or any other built-in functionality that would require a view update. Only call this function if absolutely necessary.
+     */ key: "updateViewAST",
+                value: function updateViewAST(nodes) {
+                    this.queueUpdate(void 0, nodes);
                 }
             }
         ]);
@@ -8020,8 +8001,8 @@ var Player = function() {
         status: "not-started"
     };
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/player.ts
-    var PLAYER_VERSION = "__VERSION__";
-    var COMMIT = "__GIT_COMMIT__";
+    var PLAYER_VERSION = true ? "0.15.0--canary.777.30344" : "unknown";
+    var COMMIT = true ? "9de7afd3d7093dd77fa1b31467d01ed5be9da8d5" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player(config) {
             var _this = this;
