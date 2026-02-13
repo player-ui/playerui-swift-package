@@ -1530,15 +1530,6 @@ var ReferenceAssetsPlugin = function() {
             }
         });
     };
-    var hasSomethingToResolve = function hasSomethingToResolve(str) {
-        return bindingResolveLookup(str) || expressionResolveLookup(str);
-    };
-    var resolveString = function resolveString(str, resolveOptions) {
-        return hasSomethingToResolve(str) ? resolveDataRefs(str, {
-            model: resolveOptions.data.model,
-            evaluate: resolveOptions.evaluate
-        }) : str;
-    };
     var replaceParams = function replaceParams(message, params) {
         return message.slice().replace(ANY_CHAR_REGEX, function(keyExpr) {
             return params[keyExpr.slice(1)] || keyExpr;
@@ -1586,6 +1577,15 @@ var ReferenceAssetsPlugin = function() {
             ]);
         });
         return batchTxn;
+    };
+    var hasSomethingToResolve = function hasSomethingToResolve(str) {
+        return bindingResolveLookup(str) || expressionResolveLookup(str);
+    };
+    var resolveString = function resolveString(str, resolveOptions) {
+        return hasSomethingToResolve(str) ? resolveDataRefs(str, {
+            model: resolveOptions.data.model,
+            evaluate: resolveOptions.evaluate
+        }) : str;
     };
     var __create = Object.create;
     var __defProp = Object.defineProperty;
@@ -2185,6 +2185,9 @@ var ReferenceAssetsPlugin = function() {
         },
         isBackAction: function() {
             return isBackAction;
+        },
+        throwingTransform: function() {
+            return throwingTransform;
         },
         transform: function() {
             return transform2;
@@ -2974,13 +2977,13 @@ var ReferenceAssetsPlugin = function() {
     }
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_timm5 = __toESM(require_timm(), 1);
+    var import_p_defer = __toESM(require_p_defer(), 1);
     var import_timm6 = __toESM(require_timm(), 1);
+    var import_queue_microtask = __toESM(require_queue_microtask(), 1);
     var import_timm7 = __toESM(require_timm(), 1);
     var import_timm8 = __toESM(require_timm(), 1);
-    var import_p_defer = __toESM(require_p_defer(), 1);
-    var import_queue_microtask = __toESM(require_queue_microtask(), 1);
-    var import_p_defer2 = __toESM(require_p_defer(), 1);
     var import_timm9 = __toESM(require_timm(), 1);
+    var import_p_defer2 = __toESM(require_p_defer(), 1);
     var import_queue_microtask2 = __toESM(require_queue_microtask(), 1);
     var __defProp2 = Object.defineProperty;
     var __export2 = function(target, all) {
@@ -5207,1127 +5210,164 @@ var ReferenceAssetsPlugin = function() {
                 key: "computeTree",
                 value: function computeTree(node, rawParent, dataChanges, cacheUpdate, options, partiallyResolvedParent, prevASTMap, nodeChanges) {
                     var _this = this;
-                    var dependencyModel = new DependencyModel(options.data.model);
-                    dependencyModel.trackSubset("core");
-                    var depModelWithParser = withContext(withParser(dependencyModel, this.options.parseBinding));
-                    var resolveOptions = this.hooks.resolveOptions.call(_object_spread_props(_object_spread({}, options), {
-                        data: _object_spread_props(_object_spread({}, options.data), {
-                            model: depModelWithParser
-                        }),
-                        evaluate: function(exp) {
-                            return _this.options.evaluator.evaluate(exp, {
+                    try {
+                        var dependencyModel = new DependencyModel(options.data.model);
+                        dependencyModel.trackSubset("core");
+                        var depModelWithParser = withContext(withParser(dependencyModel, this.options.parseBinding));
+                        var resolveOptions = this.hooks.resolveOptions.call(_object_spread_props(_object_spread({}, options), {
+                            data: _object_spread_props(_object_spread({}, options.data), {
                                 model: depModelWithParser
-                            });
-                        },
-                        node: node
-                    }), node);
-                    var previousResult = this.getPreviousResult(node);
-                    var previousDeps = previousResult === null || previousResult === void 0 ? void 0 : previousResult.dependencies;
-                    var isChanged = nodeChanges.has(node);
-                    var dataChanged = caresAboutDataChanges(dataChanges, previousDeps);
-                    var shouldUseLastValue = this.hooks.skipResolve.call(!dataChanged && !isChanged, node, resolveOptions);
-                    if (previousResult && shouldUseLastValue) {
-                        var update2 = _object_spread_props(_object_spread({}, previousResult), {
-                            updated: false
-                        });
-                        var repopulateASTMapFromCache = function(resolvedNode, AST, ASTParent) {
-                            var resolvedASTLocal = resolvedNode.node;
-                            _this.ASTMap.set(resolvedASTLocal, AST);
-                            var resolvedUpdate = _object_spread_props(_object_spread({}, resolvedNode), {
+                            }),
+                            evaluate: function(exp) {
+                                return _this.options.evaluator.evaluate(exp, {
+                                    model: depModelWithParser
+                                });
+                            },
+                            node: node
+                        }), node);
+                        var previousResult = this.getPreviousResult(node);
+                        var previousDeps = previousResult === null || previousResult === void 0 ? void 0 : previousResult.dependencies;
+                        var isChanged = nodeChanges.has(node);
+                        var dataChanged = caresAboutDataChanges(dataChanges, previousDeps);
+                        var shouldUseLastValue = this.hooks.skipResolve.call(!dataChanged && !isChanged, node, resolveOptions);
+                        if (previousResult && shouldUseLastValue) {
+                            var update2 = _object_spread_props(_object_spread({}, previousResult), {
                                 updated: false
                             });
-                            cacheUpdate.set(AST, resolvedUpdate);
-                            var handleChildNode = function(childNode) {
-                                var _prevASTMap_get;
-                                var originalChildNode = (_prevASTMap_get = prevASTMap.get(childNode)) !== null && _prevASTMap_get !== void 0 ? _prevASTMap_get : childNode;
-                                var previousChildResult = _this.getPreviousResult(originalChildNode);
-                                if (!previousChildResult) return;
-                                repopulateASTMapFromCache(previousChildResult, originalChildNode, AST);
-                            };
-                            if ("children" in resolvedASTLocal) {
-                                var _resolvedASTLocal_children;
-                                (_resolvedASTLocal_children = resolvedASTLocal.children) === null || _resolvedASTLocal_children === void 0 ? void 0 : _resolvedASTLocal_children.forEach(function(param) {
-                                    var childAST = param.value;
-                                    return handleChildNode(childAST);
+                            var repopulateASTMapFromCache = function(resolvedNode, AST, ASTParent) {
+                                var resolvedASTLocal = resolvedNode.node;
+                                _this.ASTMap.set(resolvedASTLocal, AST);
+                                var resolvedUpdate = _object_spread_props(_object_spread({}, resolvedNode), {
+                                    updated: false
                                 });
-                            } else if (resolvedASTLocal.type === "multi-node") {
-                                resolvedASTLocal.values.forEach(handleChildNode);
-                            }
-                            _this.hooks.afterNodeUpdate.call(AST, ASTParent, resolvedUpdate);
-                        };
-                        previousResult.node.parent = partiallyResolvedParent;
-                        repopulateASTMapFromCache(previousResult, node, rawParent);
-                        return update2;
-                    }
-                    var clonedNode = _object_spread_props(_object_spread({}, this.cloneNode(node)), {
-                        parent: partiallyResolvedParent
-                    });
-                    var _this_hooks_beforeResolve_call;
-                    var resolvedAST = (_this_hooks_beforeResolve_call = this.hooks.beforeResolve.call(clonedNode, resolveOptions)) !== null && _this_hooks_beforeResolve_call !== void 0 ? _this_hooks_beforeResolve_call : {
-                        type: "empty"
-                    };
-                    resolvedAST.parent = partiallyResolvedParent;
-                    resolveOptions.node = resolvedAST;
-                    this.ASTMap.set(resolvedAST, node);
-                    var resolved = this.hooks.resolve.call(void 0, resolvedAST, resolveOptions);
-                    var updated = !dequal(previousResult === null || previousResult === void 0 ? void 0 : previousResult.value, resolved);
-                    if (previousResult && !updated) {
-                        resolved = previousResult === null || previousResult === void 0 ? void 0 : previousResult.value;
-                    }
-                    var childDependencies = /* @__PURE__ */ new Set();
-                    dependencyModel.trackSubset("children");
-                    if ("children" in resolvedAST) {
-                        var _resolvedAST_children;
-                        var newChildren = (_resolvedAST_children = resolvedAST.children) === null || _resolvedAST_children === void 0 ? void 0 : _resolvedAST_children.map(function(child) {
-                            var computedChildTree = _this.computeTree(child.value, node, dataChanges, cacheUpdate, resolveOptions, resolvedAST, prevASTMap, nodeChanges);
-                            var childTreeDeps = computedChildTree.dependencies, childNode = computedChildTree.node, childUpdated = computedChildTree.updated, childValue = computedChildTree.value;
-                            childTreeDeps.forEach(function(binding) {
-                                return childDependencies.add(binding);
-                            });
-                            if (childValue) {
-                                if (childNode.type === "multi-node" && !childNode.override) {
-                                    var arr = (0, import_timm4.addLast)(dlv_es_default(resolved, child.path, []), childValue);
-                                    resolved = (0, import_timm4.setIn)(resolved, child.path, arr);
-                                } else {
-                                    resolved = (0, import_timm4.setIn)(resolved, child.path, childValue);
+                                cacheUpdate.set(AST, resolvedUpdate);
+                                var handleChildNode = function(childNode) {
+                                    var _prevASTMap_get;
+                                    var originalChildNode = (_prevASTMap_get = prevASTMap.get(childNode)) !== null && _prevASTMap_get !== void 0 ? _prevASTMap_get : childNode;
+                                    var previousChildResult = _this.getPreviousResult(originalChildNode);
+                                    if (!previousChildResult) return;
+                                    repopulateASTMapFromCache(previousChildResult, originalChildNode, AST);
+                                };
+                                if ("children" in resolvedASTLocal) {
+                                    var _resolvedASTLocal_children;
+                                    (_resolvedASTLocal_children = resolvedASTLocal.children) === null || _resolvedASTLocal_children === void 0 ? void 0 : _resolvedASTLocal_children.forEach(function(param) {
+                                        var childAST = param.value;
+                                        return handleChildNode(childAST);
+                                    });
+                                } else if (resolvedASTLocal.type === "multi-node") {
+                                    resolvedASTLocal.values.forEach(handleChildNode);
                                 }
-                            }
-                            updated = updated || childUpdated;
-                            return _object_spread_props(_object_spread({}, child), {
-                                value: childNode
-                            });
-                        });
-                        resolvedAST.children = newChildren;
-                    } else if (resolvedAST.type === "multi-node") {
-                        var childValue = [];
-                        var rawParentToPassIn = node;
-                        resolvedAST.values = resolvedAST.values.map(function(mValue) {
-                            var mTree = _this.computeTree(mValue, rawParentToPassIn, dataChanges, cacheUpdate, resolveOptions, resolvedAST, prevASTMap, nodeChanges);
-                            if (mTree.value !== void 0 && mTree.value !== null) {
-                                mTree.dependencies.forEach(function(bindingDep) {
-                                    return childDependencies.add(bindingDep);
-                                });
-                                updated = updated || mTree.updated;
-                                childValue.push(mTree.value);
-                            }
-                            return mTree.node;
-                        });
-                        resolved = childValue;
-                    }
-                    childDependencies.forEach(function(bindingDep) {
-                        return dependencyModel.addChildReadDep(bindingDep);
-                    });
-                    dependencyModel.trackSubset("core");
-                    if (previousResult && !updated) {
-                        resolved = previousResult === null || previousResult === void 0 ? void 0 : previousResult.value;
-                    }
-                    resolved = this.hooks.afterResolve.call(resolved, resolvedAST, _object_spread_props(_object_spread({}, resolveOptions), {
-                        getDependencies: function(scope) {
-                            return dependencyModel.getDependencies(scope);
+                                _this.hooks.afterNodeUpdate.call(AST, ASTParent, resolvedUpdate);
+                            };
+                            previousResult.node.parent = partiallyResolvedParent;
+                            repopulateASTMapFromCache(previousResult, node, rawParent);
+                            return update2;
                         }
-                    }));
-                    var update = {
-                        node: resolvedAST,
-                        updated: updated,
-                        value: resolved,
-                        dependencies: /* @__PURE__ */ new Set(_to_consumable_array(dependencyModel.getDependencies()).concat(_to_consumable_array(childDependencies)))
-                    };
-                    this.hooks.afterNodeUpdate.call(node, rawParent, update);
-                    cacheUpdate.set(node, update);
-                    return update;
+                        var clonedNode = _object_spread_props(_object_spread({}, this.cloneNode(node)), {
+                            parent: partiallyResolvedParent
+                        });
+                        var _this_hooks_beforeResolve_call;
+                        var resolvedAST = (_this_hooks_beforeResolve_call = this.hooks.beforeResolve.call(clonedNode, resolveOptions)) !== null && _this_hooks_beforeResolve_call !== void 0 ? _this_hooks_beforeResolve_call : {
+                            type: "empty"
+                        };
+                        resolvedAST.parent = partiallyResolvedParent;
+                        resolveOptions.node = resolvedAST;
+                        this.ASTMap.set(resolvedAST, node);
+                        var resolved = this.hooks.resolve.call(void 0, resolvedAST, resolveOptions);
+                        var updated = !dequal(previousResult === null || previousResult === void 0 ? void 0 : previousResult.value, resolved);
+                        if (previousResult && !updated) {
+                            resolved = previousResult === null || previousResult === void 0 ? void 0 : previousResult.value;
+                        }
+                        var childDependencies = /* @__PURE__ */ new Set();
+                        dependencyModel.trackSubset("children");
+                        if ("children" in resolvedAST) {
+                            var _resolvedAST_children;
+                            var newChildren = (_resolvedAST_children = resolvedAST.children) === null || _resolvedAST_children === void 0 ? void 0 : _resolvedAST_children.map(function(child) {
+                                var computedChildTree = _this.computeTree(child.value, node, dataChanges, cacheUpdate, resolveOptions, resolvedAST, prevASTMap, nodeChanges);
+                                var childTreeDeps = computedChildTree.dependencies, childNode = computedChildTree.node, childUpdated = computedChildTree.updated, childValue = computedChildTree.value;
+                                childTreeDeps.forEach(function(binding) {
+                                    return childDependencies.add(binding);
+                                });
+                                if (childValue) {
+                                    if (childNode.type === "multi-node" && !childNode.override) {
+                                        var arr = (0, import_timm4.addLast)(dlv_es_default(resolved, child.path, []), childValue);
+                                        resolved = (0, import_timm4.setIn)(resolved, child.path, arr);
+                                    } else {
+                                        resolved = (0, import_timm4.setIn)(resolved, child.path, childValue);
+                                    }
+                                }
+                                updated = updated || childUpdated;
+                                return _object_spread_props(_object_spread({}, child), {
+                                    value: childNode
+                                });
+                            });
+                            resolvedAST.children = newChildren;
+                        } else if (resolvedAST.type === "multi-node") {
+                            var childValue = [];
+                            var rawParentToPassIn = node;
+                            resolvedAST.values = resolvedAST.values.map(function(mValue) {
+                                var mTree = _this.computeTree(mValue, rawParentToPassIn, dataChanges, cacheUpdate, resolveOptions, resolvedAST, prevASTMap, nodeChanges);
+                                if (mTree.value !== void 0 && mTree.value !== null) {
+                                    mTree.dependencies.forEach(function(bindingDep) {
+                                        return childDependencies.add(bindingDep);
+                                    });
+                                    updated = updated || mTree.updated;
+                                    childValue.push(mTree.value);
+                                }
+                                return mTree.node;
+                            });
+                            resolved = childValue;
+                        }
+                        childDependencies.forEach(function(bindingDep) {
+                            return dependencyModel.addChildReadDep(bindingDep);
+                        });
+                        dependencyModel.trackSubset("core");
+                        if (previousResult && !updated) {
+                            resolved = previousResult === null || previousResult === void 0 ? void 0 : previousResult.value;
+                        }
+                        resolved = this.hooks.afterResolve.call(resolved, resolvedAST, _object_spread_props(_object_spread({}, resolveOptions), {
+                            getDependencies: function(scope) {
+                                return dependencyModel.getDependencies(scope);
+                            }
+                        }));
+                        var update = {
+                            node: resolvedAST,
+                            updated: updated,
+                            value: resolved,
+                            dependencies: /* @__PURE__ */ new Set(_to_consumable_array(dependencyModel.getDependencies()).concat(_to_consumable_array(childDependencies)))
+                        };
+                        this.hooks.afterNodeUpdate.call(node, rawParent, update);
+                        cacheUpdate.set(node, update);
+                        return update;
+                    } catch (err) {
+                        var error = _instanceof(err, Error) ? err : new Error(String(err));
+                        var resolverError = _instanceof(error, ResolverError) ? error : new ResolverError(error, ResolverStages.BeforeResolve, node);
+                        throw resolverError;
+                    }
                 }
             }
         ]);
         return Resolver;
     }();
-    var CrossfieldProvider = /*#__PURE__*/ function() {
-        function CrossfieldProvider(initialView, parser, logger) {
-            _class_call_check(this, CrossfieldProvider);
-            this.allValidations = /* @__PURE__ */ new Set();
-            this.byBinding = /* @__PURE__ */ new Map();
-            this.logger = logger;
-            this.parse(initialView, parser);
-        }
-        _create_class(CrossfieldProvider, [
-            {
-                key: "parse",
-                value: function parse(contentView, parser) {
-                    var _this = this;
-                    var xfieldRefs = contentView.validation;
-                    if (xfieldRefs === void 0) {
-                        return;
-                    }
-                    if (!Array.isArray(xfieldRefs)) {
-                        var _this_logger;
-                        (_this_logger = this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.warn("Unable to register view validations for id: ".concat(contentView.id, ". 'validation' property must be an Array."));
-                        return;
-                    }
-                    xfieldRefs.forEach(function(vRef) {
-                        var withDefaults = _object_spread({
-                            trigger: "navigation",
-                            severity: "error"
-                        }, vRef);
-                        _this.allValidations.add(withDefaults);
-                        var ref = vRef.ref;
-                        if (ref) {
-                            var parsed = parser(ref);
-                            if (_this.byBinding.has(parsed)) {
-                                var _this_byBinding_get;
-                                (_this_byBinding_get = _this.byBinding.get(parsed)) === null || _this_byBinding_get === void 0 ? void 0 : _this_byBinding_get.push(withDefaults);
-                            } else {
-                                _this.byBinding.set(parsed, [
-                                    withDefaults
-                                ]);
-                            }
-                        }
-                    });
-                }
-            },
-            {
-                key: "getValidationsForBinding",
-                value: function getValidationsForBinding(binding) {
-                    return this.byBinding.get(binding);
-                }
-            }
-        ]);
-        return CrossfieldProvider;
-    }();
-    var ViewInstance = /*#__PURE__*/ function() {
-        function ViewInstance(initialView, resolverOptions) {
-            _class_call_check(this, ViewInstance);
-            this.hooks = {
-                onUpdate: new SyncHook(),
-                parser: new SyncHook(),
-                resolver: new SyncHook(),
-                templatePlugin: new SyncHook()
-            };
-            this.initialView = initialView;
-            this.resolverOptions = resolverOptions;
-        }
-        _create_class(ViewInstance, [
-            {
-                /** @deprecated use ViewController.updateViewAST */ key: "updateAsync",
-                value: function updateAsync(asyncNode) {
-                    var _this_resolver;
-                    var update = (_this_resolver = this.resolver) === null || _this_resolver === void 0 ? void 0 : _this_resolver.update();
-                    this.lastUpdate = update;
-                    this.hooks.onUpdate.call(update);
-                }
-            },
-            {
-                key: "update",
-                value: function update(changes, nodeChanges) {
-                    var _this_resolver;
-                    if (this.rootNode === void 0) {
-                        this.validationProvider = new CrossfieldProvider(this.initialView, this.resolverOptions.parseBinding, this.resolverOptions.logger);
-                        if (this.templatePlugin) {
-                            this.hooks.templatePlugin.call(this.templatePlugin);
-                        } else {
-                            var _this_resolverOptions_logger;
-                            (_this_resolverOptions_logger = this.resolverOptions.logger) === null || _this_resolverOptions_logger === void 0 ? void 0 : _this_resolverOptions_logger.warn("templatePlugin not set for View, legacy templates may not work");
-                        }
-                        var parser = new Parser();
-                        this.hooks.parser.call(parser);
-                        this.rootNode = parser.parseView(this.initialView);
-                        this.resolver = new Resolver(this.rootNode, _object_spread_props(_object_spread({}, this.resolverOptions), {
-                            parseNode: parser.parseObject.bind(parser)
-                        }));
-                        this.hooks.resolver.call(this.resolver);
-                    }
-                    var update = (_this_resolver = this.resolver) === null || _this_resolver === void 0 ? void 0 : _this_resolver.update(changes, nodeChanges);
-                    if (this.lastUpdate === update) {
-                        return this.lastUpdate;
-                    }
-                    this.lastUpdate = update;
-                    this.hooks.onUpdate.call(update);
-                    return update;
-                }
-            },
-            {
-                key: "getValidationsForBinding",
-                value: function getValidationsForBinding(binding) {
-                    var _this_validationProvider;
-                    return (_this_validationProvider = this.validationProvider) === null || _this_validationProvider === void 0 ? void 0 : _this_validationProvider.getValidationsForBinding(binding);
-                }
-            },
-            {
-                key: "setTemplatePlugin",
-                value: function setTemplatePlugin(plugin) {
-                    this.templatePlugin = plugin;
-                }
-            }
-        ]);
-        return ViewInstance;
-    }();
-    var Builder = /*#__PURE__*/ function() {
-        function _Builder() {
-            _class_call_check(this, _Builder);
-        }
-        _create_class(_Builder, null, [
-            {
-                key: "asset",
-                value: /**
-     * Creates an asset node
-     *
-     * @param value - the value to put in the asset node
-     */ function asset(value) {
-                    return {
-                        type: "asset",
-                        value: value
-                    };
-                }
-            },
-            {
-                key: "assetWrapper",
-                value: function assetWrapper(value) {
-                    var valueNode = _Builder.value();
-                    _Builder.addChild(valueNode, "asset", value);
-                    return valueNode;
-                }
-            },
-            {
-                key: "value",
-                value: /**
-     * Creates a value node
-     *
-     * @param v - The object to put in the value node
-     */ function value(v) {
-                    return {
-                        type: "value",
-                        value: v
-                    };
-                }
-            },
-            {
-                key: "multiNode",
-                value: /**
-     * Creates a multiNode and associates the multiNode as the parent
-     * of all the value nodes
-     *
-     * @param values - the value, applicability or async nodes to put in the multinode
-     */ function multiNode() {
-                    for(var _len = arguments.length, values = new Array(_len), _key = 0; _key < _len; _key++){
-                        values[_key] = arguments[_key];
-                    }
-                    var m = {
-                        type: "multi-node",
-                        override: true,
-                        values: values
-                    };
-                    values.forEach(function(v) {
-                        v.parent = m;
-                    });
-                    return m;
-                }
-            },
-            {
-                key: "asyncNode",
-                value: /**
-     * Creates an async node
-     *
-     * @param id - the id of async node. It should be identical for each async node
-     */ function asyncNode(id) {
-                    var flatten2 = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true, onValueReceived = arguments.length > 2 ? arguments[2] : void 0;
-                    return {
-                        id: id,
-                        type: "async",
-                        flatten: flatten2,
-                        onValueReceived: onValueReceived,
-                        value: {
-                            type: "value",
-                            value: {
-                                id: id
-                            }
-                        }
-                    };
-                }
-            },
-            {
-                key: "addChild",
-                value: /**
-     * Adds a child node to a node
-     *
-     * @param node - The node to add a child to
-     * @param path - The path at which to add the child
-     * @param child - The child node
-     */ function addChild(node, path, child) {
-                    child.parent = node;
-                    var newChild = {
-                        path: Array.isArray(path) ? path : [
-                            path
-                        ],
-                        value: child
-                    };
-                    node.children = node.children || [];
-                    node.children.push(newChild);
-                    return node;
-                }
-            },
-            {
-                key: "updateChildrenByPath",
-                value: /**
-     * Updates children of a node of the same path and preserves order
-     *
-     * @param node - The node to update children for
-     * @param pathToMatch - The path to match against child paths
-     * @param mapFn - Function to transform matching children
-     */ function updateChildrenByPath(node, pathToMatch, updateFn) {
-                    if (!node.children) return node;
-                    var updatedChildren = node.children.map(function(child) {
-                        return(// Check if paths match exactly
-                        child.path.join() === pathToMatch.join() ? _object_spread_props(_object_spread({}, child), {
-                            value: updateFn(child)
-                        }) : child);
-                    });
-                    return _object_spread_props(_object_spread({}, node), {
-                        children: updatedChildren
-                    });
-                }
-            }
-        ]);
-        return _Builder;
-    }();
-    var templateSymbol = Symbol("template");
-    var TemplatePlugin = /*#__PURE__*/ function() {
-        function TemplatePlugin(options) {
-            _class_call_check(this, TemplatePlugin);
-            this.hooks = {
-                resolveTemplateSubstitutions: new SyncWaterfallHook()
-            };
-            this.options = options;
-        }
-        _create_class(TemplatePlugin, [
-            {
-                key: "parseTemplate",
-                value: function parseTemplate(parseObject, node, options) {
-                    var _this = this;
-                    var template = node.template, depth = node.depth;
-                    var data = options.data.model.get(node.data);
-                    if (!data) {
-                        return null;
-                    }
-                    if (!Array.isArray(data)) {
-                        throw new Error("Template using '".concat(node.data, "' but is not an array"));
-                    }
-                    var values = [];
-                    data.forEach(function(dataItem, index) {
-                        var templateSubstitutions = _this.hooks.resolveTemplateSubstitutions.call([
-                            {
-                                expression: new RegExp("_index".concat(depth || "", "_")),
-                                value: String(index)
-                            }
-                        ], {
-                            depth: depth,
-                            data: dataItem,
-                            index: index
-                        });
-                        var templateStr = JSON.stringify(template);
-                        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                        try {
-                            for(var _iterator = templateSubstitutions[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                                var _step_value = _step.value, expression = _step_value.expression, value = _step_value.value;
-                                var flags = "g";
-                                if ((typeof expression === "undefined" ? "undefined" : _type_of(expression)) === "object") {
-                                    flags = "".concat(expression.flags).concat(expression.global ? "" : "g");
-                                }
-                                templateStr = templateStr.replace(new RegExp(expression, flags), value);
-                            }
-                        } catch (err) {
-                            _didIteratorError = true;
-                            _iteratorError = err;
-                        } finally{
-                            try {
-                                if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                    _iterator.return();
-                                }
-                            } finally{
-                                if (_didIteratorError) {
-                                    throw _iteratorError;
-                                }
-                            }
-                        }
-                        var parsed = parseObject(JSON.parse(templateStr), "value", {
-                            templateDepth: node.depth + 1
-                        });
-                        if (parsed) {
-                            values.push(parsed);
-                        }
-                    });
-                    var result = {
-                        type: "multi-node",
-                        override: false,
-                        values: values
-                    };
-                    if (node.placement !== void 0) {
-                        result[templateSymbol] = node.placement;
-                    }
-                    return result;
-                }
-            },
-            {
-                key: "applyParser",
-                value: function applyParser(parser) {
-                    var _this = this;
-                    parser.hooks.onCreateASTNode.tap("template", function(node) {
-                        if (node && node.type === "template" && !node.dynamic) {
-                            return _this.parseTemplate(parser.parseObject.bind(parser), node, _this.options);
-                        }
-                        return node;
-                    });
-                    parser.hooks.onCreateASTNode.tap("template", function(node) {
-                        var getTemplateSymbolValue = function getTemplateSymbolValue(node2) {
-                            if (node2.type === "multi-node") {
-                                return node2[templateSymbol];
-                            } else if (node2.type === "template") {
-                                return node2.placement;
-                            }
-                            return void 0;
-                        };
-                        if (node && (node.type === "view" || node.type === "asset") && Array.isArray(node.children)) {
-                            node.children = node.children.sort(function(a, b) {
-                                var aPath = a.path.join();
-                                var bPath = b.path.join();
-                                var pathsEqual = aPath === bPath;
-                                if (pathsEqual) {
-                                    var aPlacement = getTemplateSymbolValue(a.value);
-                                    var bPlacement = getTemplateSymbolValue(b.value);
-                                    if (aPlacement !== void 0 && bPlacement === void 0) {
-                                        return aPlacement === "prepend" ? -1 : 1;
-                                    } else if (bPlacement !== void 0 && aPlacement === void 0) {
-                                        return bPlacement === "prepend" ? 1 : -1;
-                                    } else if (aPlacement !== void 0 && bPlacement !== void 0) {
-                                        if (aPlacement === bPlacement) {
-                                            return 0;
-                                        }
-                                        return aPlacement === "prepend" ? -1 : 1;
-                                    }
-                                    return 0;
-                                }
-                                return aPath > bPath ? 1 : -1;
-                            });
-                        }
-                        return node;
-                    });
-                    parser.hooks.parseNode.tap("template", function(obj, _nodeType, options, childOptions) {
-                        if (childOptions && hasTemplateKey(childOptions.key)) {
-                            return obj.map(function(template) {
-                                var _options_templateDepth, _template_dynamic;
-                                var templateAST = parser.createASTNode({
-                                    type: "template",
-                                    depth: (_options_templateDepth = options.templateDepth) !== null && _options_templateDepth !== void 0 ? _options_templateDepth : 0,
-                                    data: template.data,
-                                    template: template.value,
-                                    dynamic: (_template_dynamic = template.dynamic) !== null && _template_dynamic !== void 0 ? _template_dynamic : false,
-                                    placement: template.placement
-                                }, template);
-                                if (!templateAST) return;
-                                if (templateAST.type === "multi-node") {
-                                    templateAST.values.forEach(function(v) {
-                                        v.parent = templateAST;
-                                    });
-                                }
-                                return {
-                                    path: _to_consumable_array(childOptions.path).concat([
-                                        template.output
-                                    ]),
-                                    value: templateAST
-                                };
-                            }).filter(Boolean);
-                        }
-                    });
-                }
-            },
-            {
-                key: "applyResolverHooks",
-                value: function applyResolverHooks(resolver) {
-                    var _this = this;
-                    resolver.hooks.beforeResolve.tap("template", function(node, options) {
-                        if (node && node.type === "template" && node.dynamic) {
-                            return _this.parseTemplate(options.parseNode, node, options);
-                        }
-                        return node;
-                    });
-                }
-            },
-            {
-                key: "apply",
-                value: function apply(view) {
-                    view.hooks.parser.tap("template", this.applyParser.bind(this));
-                    view.hooks.resolver.tap("template", this.applyResolverHooks.bind(this));
-                    view.setTemplatePlugin(this);
-                }
-            }
-        ]);
-        return TemplatePlugin;
-    }();
-    var createPatternMatcher = function(start, end) {
-        return function(testStr) {
-            var startLocation = testStr.indexOf(start);
-            if (startLocation === -1) {
-                return false;
-            }
-            var endLocation = testStr.indexOf(end);
-            if (endLocation === -1) {
-                return false;
-            }
-            return startLocation < endLocation;
-        };
+    var ResolverStages = {
+        ResolveOptions: "resolve-options",
+        BeforeResolve: "before-resolve"
     };
-    var bindingResolveLookup = createPatternMatcher("{{", "}}");
-    var expressionResolveLookup = createPatternMatcher("@[", "]@");
-    function resolveAllRefs(node, resolveOptions, propertiesToSkip) {
-        if (node === null || node === void 0 || (typeof node === "undefined" ? "undefined" : _type_of(node)) !== "object" && typeof node !== "string") {
-            return node;
+    var ResolverError = /*#__PURE__*/ function(Error1) {
+        _inherits(ResolverError, Error1);
+        function ResolverError(cause, stage, node) {
+            _class_call_check(this, ResolverError);
+            var _this;
+            _this = _call_super(this, ResolverError, [
+                "An error in the resolver occurred at stage '".concat(stage, "'")
+            ]);
+            _this.cause = cause;
+            _this.stage = stage;
+            _this.node = node;
+            return _this;
         }
-        if (typeof node === "string") {
-            return resolveString(node, resolveOptions);
-        }
-        var newNode = node;
-        Object.keys(node).forEach(function(key) {
-            if (propertiesToSkip.has(key)) {
-                return;
-            }
-            var val = node[key];
-            var newVal = val;
-            if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object") {
-                newVal = resolveAllRefs(val, resolveOptions, propertiesToSkip);
-            } else if (typeof val === "string") {
-                newVal = resolveString(val, resolveOptions);
-            }
-            if (newVal !== val) {
-                newNode = (0, import_timm6.set)(newNode, key, newVal);
-            }
-        });
-        return newNode;
-    }
-    var findBasePath = function(node, resolver) {
-        var parentNode = node.parent;
-        if (!parentNode) {
-            return [];
-        }
-        if ("children" in parentNode) {
-            var _parentNode_children_find, _parentNode_children;
-            var original = resolver.getSourceNode(node);
-            var _parentNode_children_find_path;
-            return (_parentNode_children_find_path = (_parentNode_children = parentNode.children) === null || _parentNode_children === void 0 ? void 0 : (_parentNode_children_find = _parentNode_children.find(function(child) {
-                return child.value === original;
-            })) === null || _parentNode_children_find === void 0 ? void 0 : _parentNode_children_find.path) !== null && _parentNode_children_find_path !== void 0 ? _parentNode_children_find_path : [];
-        }
-        if (parentNode.type !== "multi-node") {
-            return [];
-        }
-        return findBasePath(parentNode, resolver);
-    };
-    var StringResolverPlugin = /*#__PURE__*/ function() {
-        function StringResolverPlugin() {
-            _class_call_check(this, StringResolverPlugin);
-            this.propertiesToSkipCache = /* @__PURE__ */ new Map();
-        }
-        _create_class(StringResolverPlugin, [
-            {
-                key: "applyResolver",
-                value: function applyResolver(resolver) {
-                    var _this = this;
-                    resolver.hooks.resolve.tap("string-resolver", function(value, node, options) {
-                        if (node.type === "empty" || node.type === "unknown") {
-                            return null;
-                        }
-                        if (node.type === "value" || node.type === "asset" || node.type === "view") {
-                            var _node_parent, _node_parent_parent, _node_parent1, _node_parent_parent1, _node_parent2, _node_parent_parent_value;
-                            var propsToSkip;
-                            if (node.type === "asset" || node.type === "view") {
-                                var _node_plugins_stringResolver, _node_plugins, _node_value;
-                                var _node_plugins_stringResolver_propertiesToSkip;
-                                propsToSkip = new Set((_node_plugins_stringResolver_propertiesToSkip = (_node_plugins = node.plugins) === null || _node_plugins === void 0 ? void 0 : (_node_plugins_stringResolver = _node_plugins.stringResolver) === null || _node_plugins_stringResolver === void 0 ? void 0 : _node_plugins_stringResolver.propertiesToSkip) !== null && _node_plugins_stringResolver_propertiesToSkip !== void 0 ? _node_plugins_stringResolver_propertiesToSkip : [
-                                    "exp"
-                                ]);
-                                if ((_node_value = node.value) === null || _node_value === void 0 ? void 0 : _node_value.id) {
-                                    _this.propertiesToSkipCache.set(node.value.id, propsToSkip);
-                                }
-                            } else if (((_node_parent = node.parent) === null || _node_parent === void 0 ? void 0 : _node_parent.type) === "multi-node" && (((_node_parent1 = node.parent) === null || _node_parent1 === void 0 ? void 0 : (_node_parent_parent = _node_parent1.parent) === null || _node_parent_parent === void 0 ? void 0 : _node_parent_parent.type) === "asset" || ((_node_parent2 = node.parent) === null || _node_parent2 === void 0 ? void 0 : (_node_parent_parent1 = _node_parent2.parent) === null || _node_parent_parent1 === void 0 ? void 0 : _node_parent_parent1.type) === "view") && ((_node_parent_parent_value = node.parent.parent.value) === null || _node_parent_parent_value === void 0 ? void 0 : _node_parent_parent_value.id) && _this.propertiesToSkipCache.has(node.parent.parent.value.id)) {
-                                propsToSkip = _this.propertiesToSkipCache.get(node.parent.parent.value.id);
-                            } else {
-                                propsToSkip = /* @__PURE__ */ new Set([
-                                    "exp"
-                                ]);
-                            }
-                            var nodePath = findBasePath(node, resolver);
-                            if (nodePath.length > 0 && nodePath.some(function(segment) {
-                                return propsToSkip.has(segment.toString());
-                            })) {
-                                return node.value;
-                            }
-                            return resolveAllRefs(node.value, options, propsToSkip);
-                        }
-                        return value;
-                    });
-                }
-            },
-            {
-                key: "apply",
-                value: function apply(view) {
-                    view.hooks.resolver.tap("string-resolver", this.applyResolver.bind(this));
-                }
-            }
-        ]);
-        return StringResolverPlugin;
-    }();
-    var ApplicabilityPlugin = /*#__PURE__*/ function() {
-        function ApplicabilityPlugin() {
-            _class_call_check(this, ApplicabilityPlugin);
-        }
-        _create_class(ApplicabilityPlugin, [
-            {
-                key: "isApplicability",
-                value: function isApplicability(obj) {
-                    return obj && Object.prototype.hasOwnProperty.call(obj, "applicability");
-                }
-            },
-            {
-                key: "applyResolver",
-                value: function applyResolver(resolver) {
-                    resolver.hooks.beforeResolve.tap("applicability", function(node, options) {
-                        var newNode = node;
-                        if ((node === null || node === void 0 ? void 0 : node.type) === "applicability") {
-                            var isApplicable = options.evaluate(node.expression);
-                            if (isApplicable === false) {
-                                return null;
-                            }
-                            newNode = node.value;
-                        }
-                        return newNode;
-                    });
-                }
-            },
-            {
-                key: "applyParser",
-                value: function applyParser(parser) {
-                    var _this = this;
-                    parser.hooks.parseNode.tap("applicability", function(obj, nodeType, options, childOptions) {
-                        if (_this.isApplicability(obj)) {
-                            var parsedApplicability = parser.parseObject((0, import_timm7.omit)(obj, "applicability"), nodeType, options);
-                            if (!parsedApplicability) {
-                                return childOptions ? [] : null;
-                            }
-                            var applicabilityNode = parser.createASTNode({
-                                type: "applicability",
-                                expression: obj.applicability,
-                                value: parsedApplicability
-                            }, obj);
-                            if (!applicabilityNode) {
-                                return childOptions ? [] : null;
-                            }
-                            if (applicabilityNode.type === "applicability") {
-                                applicabilityNode.value.parent = applicabilityNode;
-                            }
-                            return childOptions ? [
-                                {
-                                    path: _to_consumable_array(childOptions.path).concat([
-                                        childOptions.key
-                                    ]),
-                                    value: applicabilityNode
-                                }
-                            ] : applicabilityNode;
-                        }
-                    });
-                }
-            },
-            {
-                key: "apply",
-                value: function apply(view) {
-                    view.hooks.resolver.tap("applicability", this.applyResolver.bind(this));
-                    view.hooks.parser.tap("applicability", this.applyParser.bind(this));
-                }
-            }
-        ]);
-        return ApplicabilityPlugin;
-    }();
-    var SwitchPlugin = /*#__PURE__*/ function() {
-        function SwitchPlugin(options) {
-            _class_call_check(this, SwitchPlugin);
-            this.options = options;
-        }
-        _create_class(SwitchPlugin, [
-            {
-                key: "resolveSwitch",
-                value: function resolveSwitch(node, options) {
-                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                    try {
-                        for(var _iterator = node.cases[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                            var switchCase = _step.value;
-                            var isApplicable = options.evaluate(switchCase.case);
-                            if (isApplicable) {
-                                return switchCase.value;
-                            }
-                        }
-                    } catch (err) {
-                        _didIteratorError = true;
-                        _iteratorError = err;
-                    } finally{
-                        try {
-                            if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                _iterator.return();
-                            }
-                        } finally{
-                            if (_didIteratorError) {
-                                throw _iteratorError;
-                            }
-                        }
-                    }
-                    return EMPTY_NODE;
-                }
-            },
-            {
-                key: "isSwitch",
-                value: function isSwitch(obj) {
-                    return obj && (Object.prototype.hasOwnProperty.call(obj, "dynamicSwitch") || Object.prototype.hasOwnProperty.call(obj, "staticSwitch"));
-                }
-            },
-            {
-                key: "applyParser",
-                value: function applyParser(parser) {
-                    var _this = this;
-                    parser.hooks.onCreateASTNode.tap("switch", function(node) {
-                        if (node && node.type === "switch" && !node.dynamic) {
-                            return _this.resolveSwitch(node, _this.options);
-                        }
-                        return node;
-                    });
-                    parser.hooks.parseNode.tap("switch", function(obj, _nodeType, options, childOptions) {
-                        if (_this.isSwitch(obj) || childOptions && hasSwitchKey(childOptions.key)) {
-                            var objToParse = childOptions && hasSwitchKey(childOptions.key) ? _define_property({}, childOptions.key, obj) : obj;
-                            var dynamic = "dynamicSwitch" in objToParse;
-                            var switchContent = dynamic ? objToParse.dynamicSwitch : objToParse.staticSwitch;
-                            var cases = switchContent.map(function(switchCase) {
-                                var switchCaseExpr = switchCase.case, switchBody = _object_without_properties(switchCase, [
-                                    "case"
-                                ]);
-                                var value = parser.parseObject(switchBody, "value", options);
-                                if (value) {
-                                    return {
-                                        case: switchCaseExpr,
-                                        value: value
-                                    };
-                                }
-                                return;
-                            }).filter(Boolean);
-                            var switchAST = parser.createASTNode({
-                                type: "switch",
-                                dynamic: dynamic,
-                                cases: cases
-                            }, objToParse);
-                            if (!switchAST || switchAST.type === "empty") {
-                                return childOptions ? [] : null;
-                            }
-                            if (switchAST.type === "switch") {
-                                switchAST.cases.forEach(function(sCase) {
-                                    sCase.value.parent = switchAST;
-                                });
-                            }
-                            if (childOptions) {
-                                var _switchAST_children;
-                                var path = _to_consumable_array(childOptions.path).concat([
-                                    childOptions.key
-                                ]);
-                                var value = switchAST;
-                                if (switchAST.type === "value" && ((_switchAST_children = switchAST.children) === null || _switchAST_children === void 0 ? void 0 : _switchAST_children.length) === 1 && switchAST.value === void 0) {
-                                    var firstChild = switchAST.children[0];
-                                    path = _to_consumable_array(path).concat(_to_consumable_array(firstChild.path));
-                                    value = firstChild.value;
-                                }
-                                return [
-                                    {
-                                        path: path,
-                                        value: value
-                                    }
-                                ];
-                            }
-                            return switchAST;
-                        }
-                    });
-                }
-            },
-            {
-                key: "applyResolver",
-                value: function applyResolver(resolver) {
-                    var _this = this;
-                    resolver.hooks.beforeResolve.tap("switch", function(node, options) {
-                        if (node && node.type === "switch" && node.dynamic) {
-                            return _this.resolveSwitch(node, options);
-                        }
-                        return node;
-                    });
-                }
-            },
-            {
-                key: "apply",
-                value: function apply(view) {
-                    view.hooks.parser.tap("switch", this.applyParser.bind(this));
-                    view.hooks.resolver.tap("switch", this.applyResolver.bind(this));
-                }
-            }
-        ]);
-        return SwitchPlugin;
-    }();
-    var MultiNodePlugin = /*#__PURE__*/ function() {
-        function MultiNodePlugin() {
-            _class_call_check(this, MultiNodePlugin);
-        }
-        _create_class(MultiNodePlugin, [
-            {
-                key: "applyParser",
-                value: function applyParser(parser) {
-                    parser.hooks.parseNode.tap("multi-node", function(obj, nodeType, options, childOptions) {
-                        if ((childOptions === void 0 || !hasTemplateKey(childOptions.key)) && Array.isArray(obj)) {
-                            var values = obj.map(function(childVal) {
-                                return parser.parseObject(childVal, "value", options);
-                            }).filter(function(child) {
-                                return !!child;
-                            });
-                            if (!values.length) {
-                                return [];
-                            }
-                            var multiNode = parser.createASTNode({
-                                type: "multi-node",
-                                override: childOptions !== void 0 && !hasTemplateValues(childOptions.parentObj, childOptions.key),
-                                values: values
-                            }, obj);
-                            if (!multiNode) {
-                                return [];
-                            }
-                            if (multiNode.type === "multi-node") {
-                                multiNode.values.forEach(function(v) {
-                                    v.parent = multiNode;
-                                });
-                            }
-                            return childOptions === void 0 ? multiNode : [
-                                {
-                                    path: _to_consumable_array(childOptions.path).concat([
-                                        childOptions.key
-                                    ]),
-                                    value: multiNode
-                                }
-                            ];
-                        }
-                    });
-                }
-            },
-            {
-                key: "apply",
-                value: function apply(view) {
-                    view.hooks.parser.tap("multi-node", this.applyParser.bind(this));
-                }
-            }
-        ]);
-        return MultiNodePlugin;
-    }();
-    var AssetPlugin = /*#__PURE__*/ function() {
-        function AssetPlugin() {
-            _class_call_check(this, AssetPlugin);
-        }
-        _create_class(AssetPlugin, [
-            {
-                key: "applyParser",
-                value: function applyParser(parser) {
-                    parser.hooks.parseNode.tap("asset", function(obj, nodeType, options, childOptions) {
-                        if ((childOptions === null || childOptions === void 0 ? void 0 : childOptions.key) === "asset" && (typeof obj === "undefined" ? "undefined" : _type_of(obj)) === "object") {
-                            var assetAST = parser.parseObject(obj, "asset", options);
-                            if (!assetAST) {
-                                return [];
-                            }
-                            return [
-                                {
-                                    path: _to_consumable_array(childOptions.path).concat([
-                                        childOptions.key
-                                    ]),
-                                    value: assetAST
-                                }
-                            ];
-                        }
-                    });
-                }
-            },
-            {
-                key: "apply",
-                value: function apply(view) {
-                    view.hooks.parser.tap("asset", this.applyParser.bind(this));
-                }
-            }
-        ]);
-        return AssetPlugin;
-    }();
-    var LocalStateStore = /*#__PURE__*/ function() {
-        function LocalStateStore(onUpdate) {
-            _class_call_check(this, LocalStateStore);
-            this.updateCallback = onUpdate;
-            this.state = /* @__PURE__ */ new Map();
-        }
-        _create_class(LocalStateStore, [
-            {
-                key: "removeKey",
-                value: function removeKey(key) {
-                    this.state.delete(key);
-                }
-            },
-            {
-                key: "reset",
-                value: function reset() {
-                    this.state.clear();
-                }
-            },
-            {
-                key: "useSharedState",
-                value: function useSharedState(key) {
-                    var _this = this;
-                    return function(initialState) {
-                        if (!_this.state.has(key)) {
-                            _this.state.set(key, initialState);
-                        }
-                        return [
-                            _this.state.get(key),
-                            function(newState) {
-                                var current = _this.state.get(key);
-                                _this.state.set(key, newState);
-                                if (current !== newState) {
-                                    var _this_updateCallback, _this1;
-                                    (_this_updateCallback = (_this1 = _this).updateCallback) === null || _this_updateCallback === void 0 ? void 0 : _this_updateCallback.call(_this1);
-                                }
-                            }
-                        ];
-                    };
-                }
-            },
-            {
-                key: "getLocalStateFunction",
-                value: function getLocalStateFunction(key, countKey) {
-                    var _this = this;
-                    return function(initialState) {
-                        if (!_this.state.has(key)) {
-                            _this.state.set(key, []);
-                        }
-                        if (!_this.state.has(countKey)) {
-                            _this.state.set(countKey, 0);
-                        }
-                        var localState = _this.state.get(key);
-                        var oldCount = _this.state.get(countKey);
-                        _this.state.set(countKey, oldCount + 1);
-                        if (localState.length <= oldCount) {
-                            localState.push(initialState);
-                        }
-                        var value = localState[oldCount];
-                        return [
-                            value,
-                            function(newState) {
-                                var oldValue = localState[oldCount];
-                                localState[oldCount] = newState;
-                                if (oldValue !== newState) {
-                                    var _this_updateCallback, _this1;
-                                    (_this_updateCallback = (_this1 = _this).updateCallback) === null || _this_updateCallback === void 0 ? void 0 : _this_updateCallback.call(_this1);
-                                }
-                            }
-                        ];
-                    };
-                }
-            }
-        ]);
-        return LocalStateStore;
-    }();
-    function findUp(node, target) {
-        if (node === target) {
-            return true;
-        }
-        if (node.parent) {
-            return findUp(node.parent, target);
-        }
-        return false;
-    }
-    var AssetTransformCorePlugin = /*#__PURE__*/ function() {
-        function AssetTransformCorePlugin(registry) {
-            _class_call_check(this, AssetTransformCorePlugin);
-            this.registry = registry;
-            this.stateStore = /* @__PURE__ */ new Map();
-            this.beforeResolveSymbol = Symbol("before resolve");
-            this.resolveSymbol = Symbol("resolve");
-            this.beforeResolveCountSymbol = Symbol("before resolve count");
-            this.resolveCountSymbol = Symbol("resolve count");
-        }
-        _create_class(AssetTransformCorePlugin, [
-            {
-                key: "apply",
-                value: function apply(view) {
-                    var _this = this;
-                    this.stateStore.clear();
-                    view.hooks.resolver.tap("asset-transform", function(resolver) {
-                        var lastUpdatedNode;
-                        var updateState = function(node) {
-                            lastUpdatedNode = node;
-                            view.update(/* @__PURE__ */ new Set());
-                        };
-                        var getStore = function(node, stepKey) {
-                            var store;
-                            var countKey = stepKey === _this.resolveSymbol ? _this.resolveCountSymbol : _this.beforeResolveCountSymbol;
-                            var storedState = _this.stateStore.get(node);
-                            if (storedState) {
-                                store = storedState;
-                                store.removeKey(countKey);
-                            } else {
-                                store = new LocalStateStore(function() {
-                                    updateState(node);
-                                });
-                                _this.stateStore.set(node, store);
-                            }
-                            return {
-                                useSharedState: function(key) {
-                                    return store.useSharedState(key);
-                                },
-                                useLocalState: function(initialState) {
-                                    return store.getLocalStateFunction(stepKey, countKey)(initialState);
-                                }
-                            };
-                        };
-                        resolver.hooks.beforeResolve.tap("asset-transform", function(node, options) {
-                            if (node && (node.type === "asset" || node.type === "view")) {
-                                var transform3 = _this.registry.get(node.value);
-                                if (transform3 === null || transform3 === void 0 ? void 0 : transform3.beforeResolve) {
-                                    var _options_node;
-                                    var store = getStore((_options_node = options.node) !== null && _options_node !== void 0 ? _options_node : node, _this.beforeResolveSymbol);
-                                    return transform3.beforeResolve(node, options, store);
-                                }
-                            }
-                            return node;
-                        });
-                        resolver.hooks.afterUpdate.tap("asset-transform", function() {
-                            lastUpdatedNode = void 0;
-                        });
-                        resolver.hooks.skipResolve.tap("asset-transform", function(skip, node) {
-                            if (!skip || !lastUpdatedNode) {
-                                return skip;
-                            }
-                            var isParentOfUpdated = findUp(lastUpdatedNode, node);
-                            var isChildOfUpdated = findUp(node, lastUpdatedNode);
-                            return !isParentOfUpdated && !isChildOfUpdated;
-                        });
-                        resolver.hooks.afterResolve.tap("asset-transform", function(value, node, options) {
-                            if (node.type !== "asset" && node.type !== "view") {
-                                return value;
-                            }
-                            var originalNode = resolver.getSourceNode(node);
-                            if (!originalNode) {
-                                return value;
-                            }
-                            var transform3 = _this.registry.get(value);
-                            if (transform3 === null || transform3 === void 0 ? void 0 : transform3.resolve) {
-                                var store = getStore(originalNode, _this.resolveSymbol);
-                                return transform3 === null || transform3 === void 0 ? void 0 : transform3.resolve(value, options, store);
-                            }
-                            return value;
-                        });
-                    });
-                }
-            }
-        ]);
-        return AssetTransformCorePlugin;
-    }();
+        return ResolverError;
+    }(_wrap_native_super(Error));
     var FlowInstance = /*#__PURE__*/ function() {
         function FlowInstance(id, flow, options) {
             var _this = this;
@@ -6388,7 +5428,7 @@ var ReferenceAssetsPlugin = function() {
                                     Promise.reject(new Error("No 'startState' defined for flow"))
                                 ];
                             }
-                            this.flowPromise = (0, import_p_defer2.default)();
+                            this.flowPromise = (0, import_p_defer.default)();
                             this.pushHistory(initialState);
                             return [
                                 2,
@@ -6396,6 +5436,64 @@ var ReferenceAssetsPlugin = function() {
                             ];
                         });
                     }).call(this);
+                }
+            },
+            {
+                /**
+     * Get the flow-level error transitions map
+     */ key: "getFlowErrorTransitions",
+                value: function getFlowErrorTransitions() {
+                    return this.flow.errorTransitions;
+                }
+            },
+            {
+                /**
+     * Helper to lookup a key in a map with wildcard fallback
+     */ key: "lookupInMap",
+                value: function lookupInMap(map, key) {
+                    if (!map) return void 0;
+                    return map[key] || map["*"];
+                }
+            },
+            {
+                /**
+     * Navigate using errorTransitions map.
+     * Tries node-level first, then falls back to flow-level.
+     * Bypasses validation hooks and expression resolution.
+     * @throws Error if errorTransitions references a non-existent state
+     */ key: "errorTransition",
+                value: function errorTransition(errorType) {
+                    var _this_currentState, _this_log;
+                    if (((_this_currentState = this.currentState) === null || _this_currentState === void 0 ? void 0 : _this_currentState.value.state_type) === "END") {
+                        var _this_log1;
+                        (_this_log1 = this.log) === null || _this_log1 === void 0 ? void 0 : _this_log1.warn("Cannot error transition from END state");
+                        return;
+                    }
+                    if (this.currentState) {
+                        var nodeState = this.lookupInMap(this.currentState.value.errorTransitions, errorType);
+                        if (nodeState) {
+                            if (!Object.prototype.hasOwnProperty.call(this.flow, nodeState)) {
+                                var _this_log2;
+                                (_this_log2 = this.log) === null || _this_log2 === void 0 ? void 0 : _this_log2.debug('Node-level errorTransition references non-existent state "'.concat(nodeState, '", trying flow-level fallback'));
+                            } else {
+                                var _this_log3;
+                                (_this_log3 = this.log) === null || _this_log3 === void 0 ? void 0 : _this_log3.debug("Error transition (node-level) from ".concat(this.currentState.name, " to ").concat(nodeState, " using ").concat(errorType));
+                                return this.pushHistory(nodeState);
+                            }
+                        }
+                    }
+                    var flowState = this.lookupInMap(this.flow.errorTransitions, errorType);
+                    if (flowState) {
+                        if (!Object.prototype.hasOwnProperty.call(this.flow, flowState)) {
+                            var _this_log4;
+                            (_this_log4 = this.log) === null || _this_log4 === void 0 ? void 0 : _this_log4.debug('Flow-level errorTransition references non-existent state "'.concat(flowState, '"'));
+                        } else {
+                            var _this_log5;
+                            (_this_log5 = this.log) === null || _this_log5 === void 0 ? void 0 : _this_log5.debug("Error transition (flow-level) to ".concat(flowState, " using ").concat(errorType).concat(this.currentState ? " from ".concat(this.currentState.name) : ""));
+                            return this.pushHistory(flowState);
+                        }
+                    }
+                    (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.warn("No errorTransition found for ".concat(errorType, " (checked node and flow level)"));
                 }
             },
             {
@@ -6408,12 +5506,13 @@ var ReferenceAssetsPlugin = function() {
                     }
                     if (((_this_currentState = this.currentState) === null || _this_currentState === void 0 ? void 0 : _this_currentState.value.state_type) === "END") {
                         var _this_log1;
-                        (_this_log1 = this.log) === null || _this_log1 === void 0 ? void 0 : _this_log1.warn("Skipping transition using ".concat(transitionValue, ". Already at and END state"));
+                        (_this_log1 = this.log) === null || _this_log1 === void 0 ? void 0 : _this_log1.warn("Skipping transition using ".concat(transitionValue, ". Already at END state"));
                         return;
                     }
                     if (this.currentState === void 0) {
                         throw new Error("Cannot transition when there's no current state");
                     }
+                    var currentState = this.currentState.value;
                     if (options === null || options === void 0 ? void 0 : options.force) {
                         var _this_log2;
                         (_this_log2 = this.log) === null || _this_log2 === void 0 ? void 0 : _this_log2.debug("Forced transition. Skipping validation checks");
@@ -6425,7 +5524,7 @@ var ReferenceAssetsPlugin = function() {
                             return;
                         }
                     }
-                    var state = this.hooks.beforeTransition.call(this.currentState.value, transitionValue);
+                    var state = this.hooks.beforeTransition.call(currentState, transitionValue);
                     if (!("transitions" in state)) {
                         throw new Error("No transitions defined for ".concat(this.currentState.value));
                     }
@@ -6861,7 +5960,7 @@ var ReferenceAssetsPlugin = function() {
                         }
                         var _originalValue_value_blocking;
                         var blocking = (_originalValue_value_blocking = originalValue.value.blocking) !== null && _originalValue_value_blocking !== void 0 ? _originalValue_value_blocking : originalValue.value.severity === "warning" && "once" || true;
-                        var obj = (0, import_timm9.setIn)(originalValue, [
+                        var obj = (0, import_timm6.setIn)(originalValue, [
                             "value",
                             "blocking"
                         ], blocking);
@@ -7429,7 +6528,7 @@ var ReferenceAssetsPlugin = function() {
                     });
                     if (!this.pendingUpdate.scheduled && !silent) {
                         this.pendingUpdate.scheduled = true;
-                        (0, import_queue_microtask2.default)(function() {
+                        (0, import_queue_microtask.default)(function() {
                             var _this_currentView;
                             var _this_pendingUpdate;
                             var _ref = (_this_pendingUpdate = _this.pendingUpdate) !== null && _this_pendingUpdate !== void 0 ? _this_pendingUpdate : {}, changedBindings = _ref.changedBindings, changedNodes = _ref.changedNodes;
@@ -7465,7 +6564,7 @@ var ReferenceAssetsPlugin = function() {
                     if (!source) {
                         throw new Error("No view with id ".concat(viewId));
                     }
-                    var view = new ViewInstance(source, this.viewOptions);
+                    var view = new ViewInstance(source, this.viewOptions, this.viewOptions.errorController);
                     this.currentView = view;
                     this.applyViewPlugins(view);
                     this.hooks.view.call(view);
@@ -7523,6 +6622,82 @@ var ReferenceAssetsPlugin = function() {
             }
         ]);
         return ViewController;
+    }();
+    var LocalStateStore = /*#__PURE__*/ function() {
+        function LocalStateStore(onUpdate) {
+            _class_call_check(this, LocalStateStore);
+            this.updateCallback = onUpdate;
+            this.state = /* @__PURE__ */ new Map();
+        }
+        _create_class(LocalStateStore, [
+            {
+                key: "removeKey",
+                value: function removeKey(key) {
+                    this.state.delete(key);
+                }
+            },
+            {
+                key: "reset",
+                value: function reset() {
+                    this.state.clear();
+                }
+            },
+            {
+                key: "useSharedState",
+                value: function useSharedState(key) {
+                    var _this = this;
+                    return function(initialState) {
+                        if (!_this.state.has(key)) {
+                            _this.state.set(key, initialState);
+                        }
+                        return [
+                            _this.state.get(key),
+                            function(newState) {
+                                var current = _this.state.get(key);
+                                _this.state.set(key, newState);
+                                if (current !== newState) {
+                                    var _this_updateCallback, _this1;
+                                    (_this_updateCallback = (_this1 = _this).updateCallback) === null || _this_updateCallback === void 0 ? void 0 : _this_updateCallback.call(_this1);
+                                }
+                            }
+                        ];
+                    };
+                }
+            },
+            {
+                key: "getLocalStateFunction",
+                value: function getLocalStateFunction(key, countKey) {
+                    var _this = this;
+                    return function(initialState) {
+                        if (!_this.state.has(key)) {
+                            _this.state.set(key, []);
+                        }
+                        if (!_this.state.has(countKey)) {
+                            _this.state.set(countKey, 0);
+                        }
+                        var localState = _this.state.get(key);
+                        var oldCount = _this.state.get(countKey);
+                        _this.state.set(countKey, oldCount + 1);
+                        if (localState.length <= oldCount) {
+                            localState.push(initialState);
+                        }
+                        var value = localState[oldCount];
+                        return [
+                            value,
+                            function(newState) {
+                                var oldValue = localState[oldCount];
+                                localState[oldCount] = newState;
+                                if (oldValue !== newState) {
+                                    var _this_updateCallback, _this1;
+                                    (_this_updateCallback = (_this1 = _this).updateCallback) === null || _this_updateCallback === void 0 ? void 0 : _this_updateCallback.call(_this1);
+                                }
+                            }
+                        ];
+                    };
+                }
+            }
+        ]);
+        return LocalStateStore;
     }();
     var ReadOnlyDataController = /*#__PURE__*/ function() {
         function ReadOnlyDataController(controller, logger) {
@@ -7789,6 +6964,1200 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return ConstantsController;
     }();
+    var ErrorStateMiddleware = /*#__PURE__*/ function() {
+        function ErrorStateMiddleware(options) {
+            _class_call_check(this, ErrorStateMiddleware);
+            this.name = "error-state-middleware";
+            this.logger = options.logger;
+            this.writeSymbol = options.writeSymbol;
+        }
+        _create_class(ErrorStateMiddleware, [
+            {
+                key: "set",
+                value: function set(transaction, options, next) {
+                    var _this = this;
+                    if ((options === null || options === void 0 ? void 0 : options.writeSymbol) === this.writeSymbol) {
+                        var _next_set;
+                        return (_next_set = next === null || next === void 0 ? void 0 : next.set(transaction, options)) !== null && _next_set !== void 0 ? _next_set : [];
+                    }
+                    var filteredTransaction = [];
+                    var blockedBindings = [];
+                    transaction.forEach(function(param) {
+                        var _param = _sliced_to_array(param, 2), binding = _param[0], value = _param[1];
+                        var path = binding.asString();
+                        if (path === "errorState" || path.startsWith("errorState.")) {
+                            var _this_logger;
+                            blockedBindings.push(binding);
+                            (_this_logger = _this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.warn("[ErrorStateMiddleware] Blocked write to protected path: ".concat(path));
+                        } else {
+                            filteredTransaction.push([
+                                binding,
+                                value
+                            ]);
+                        }
+                    });
+                    var _next_set1;
+                    var validResults = (_next_set1 = next === null || next === void 0 ? void 0 : next.set(filteredTransaction, options)) !== null && _next_set1 !== void 0 ? _next_set1 : [];
+                    var blockedResults = blockedBindings.map(function(binding) {
+                        return {
+                            binding: binding,
+                            oldValue: next === null || next === void 0 ? void 0 : next.get(binding, options),
+                            newValue: next === null || next === void 0 ? void 0 : next.get(binding, options),
+                            // Keep old value
+                            force: false
+                        };
+                    });
+                    return _to_consumable_array(validResults).concat(_to_consumable_array(blockedResults));
+                }
+            },
+            {
+                key: "get",
+                value: function get(binding, options, next) {
+                    return next === null || next === void 0 ? void 0 : next.get(binding, options);
+                }
+            },
+            {
+                key: "delete",
+                value: function _delete(binding, options, next) {
+                    if ((options === null || options === void 0 ? void 0 : options.writeSymbol) === this.writeSymbol) {
+                        next === null || next === void 0 ? void 0 : next.delete(binding, options);
+                        return;
+                    }
+                    var path = binding.asString();
+                    if (path === "errorState" || path.startsWith("errorState.")) {
+                        var _this_logger;
+                        (_this_logger = this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.warn("[ErrorStateMiddleware] Blocked delete of protected path: ".concat(path));
+                        return;
+                    }
+                    next === null || next === void 0 ? void 0 : next.delete(binding, options);
+                }
+            }
+        ]);
+        return ErrorStateMiddleware;
+    }();
+    var errorControllerWriteSymbol = Symbol("errorControllerWrite");
+    var makeJsonStringifyReplacer = function() {
+        var cache = /* @__PURE__ */ new Set();
+        return function(_, value) {
+            if ((typeof value === "undefined" ? "undefined" : _type_of(value)) === "object" && value !== null) {
+                if (cache.has(value)) {
+                    return "[CIRCULAR]";
+                }
+                cache.add(value);
+            }
+            return value;
+        };
+    };
+    var ErrorController = /*#__PURE__*/ function() {
+        function ErrorController(options) {
+            _class_call_check(this, ErrorController);
+            this.hooks = {
+                onError: new SyncBailHook()
+            };
+            this.errorHistory = [];
+            this.options = options;
+            this.middleware = new ErrorStateMiddleware({
+                logger: options.logger,
+                writeSymbol: errorControllerWriteSymbol
+            });
+        }
+        _create_class(ErrorController, [
+            {
+                /**
+     * Get the middleware for protecting errorState
+     * This should be added to DataController's middleware array
+     */ key: "getDataMiddleware",
+                value: function getDataMiddleware() {
+                    return this.middleware;
+                }
+            },
+            {
+                /**
+     * Set the DataController after initialization
+     */ key: "setOptions",
+                value: function setOptions(options) {
+                    this.options.model = options.model;
+                }
+            },
+            {
+                /**
+     * Capture error with metadata, add to history, fire hooks, update data model, and navigate
+     */ key: "captureError",
+                value: function captureError(error, errorType, severity, metadata) {
+                    var playerError = {
+                        error: error,
+                        errorType: errorType,
+                        severity: severity,
+                        metadata: metadata,
+                        skipped: false
+                    };
+                    this.errorHistory.push(playerError);
+                    this.currentError = playerError;
+                    this.options.logger.debug("[ErrorController] Captured error: ".concat(error.message), // TODO: Find a better way to do this. Either centralize the stringify replacer in the print plugin or something else.
+                    JSON.stringify({
+                        errorType: errorType,
+                        severity: severity,
+                        metadata: metadata
+                    }, makeJsonStringifyReplacer()));
+                    var _this_hooks_onError_call;
+                    var shouldSkip = (_this_hooks_onError_call = this.hooks.onError.call(playerError)) !== null && _this_hooks_onError_call !== void 0 ? _this_hooks_onError_call : false;
+                    if (shouldSkip) {
+                        playerError.skipped = true;
+                        this.options.logger.debug("[ErrorController] Error state navigation skipped by plugin");
+                        return playerError;
+                    }
+                    this.setErrorInDataModel(playerError);
+                    this.navigateToErrorState(playerError);
+                    return playerError;
+                }
+            },
+            {
+                /**
+     * Navigate to error state using errorTransitions.
+     * Uses errorTransition() which handles node-level and flow-level fallback internally.
+     */ key: "navigateToErrorState",
+                value: function navigateToErrorState(playerError) {
+                    var flowInstance = this.options.flow.current;
+                    if (!flowInstance) {
+                        this.options.logger.warn("[ErrorController] No active flow instance for error navigation");
+                        return;
+                    }
+                    try {
+                        flowInstance.errorTransition(playerError.errorType);
+                    } catch (e) {
+                        this.options.logger.error("[ErrorController] Error transition failed with unexpected error: ".concat(e));
+                        this.options.logger.debug("[ErrorController] Rejecting flow with error");
+                        this.options.fail(playerError.error);
+                    }
+                }
+            },
+            {
+                /**
+     * Get most recent error
+     */ key: "getCurrentError",
+                value: function getCurrentError() {
+                    return this.currentError;
+                }
+            },
+            {
+                /**
+     * Get error history (read-only)
+     */ key: "getErrors",
+                value: function getErrors() {
+                    return this.errorHistory;
+                }
+            },
+            {
+                /**
+     * Clear all errors (history + current + data model)
+     */ key: "clearErrors",
+                value: function clearErrors() {
+                    this.errorHistory = [];
+                    this.currentError = void 0;
+                    this.deleteErrorFromDataModel();
+                    this.options.logger.debug("[ErrorController] All errors cleared");
+                }
+            },
+            {
+                /**
+     * Clear only current error and remove from data model, preserve history
+     */ key: "clearCurrentError",
+                value: function clearCurrentError() {
+                    this.currentError = void 0;
+                    this.deleteErrorFromDataModel();
+                    this.options.logger.debug("[ErrorController] Current error cleared");
+                }
+            },
+            {
+                /**
+     * Write error to data model errorState
+     */ key: "setErrorInDataModel",
+                value: function setErrorInDataModel(playerError) {
+                    if (!this.options.model) {
+                        this.options.logger.warn("[ErrorController] No DataController available");
+                        return;
+                    }
+                    try {
+                        var error = playerError.error, errorType = playerError.errorType, severity = playerError.severity, metadata = playerError.metadata;
+                        this.options.model.set([
+                            [
+                                "errorState",
+                                _object_spread({
+                                    message: error.message,
+                                    name: error.name,
+                                    errorType: errorType,
+                                    severity: severity
+                                }, metadata)
+                            ]
+                        ], {
+                            writeSymbol: errorControllerWriteSymbol
+                        });
+                        this.options.logger.debug("[ErrorController] Error set in data model at 'data.errorState'");
+                    } catch (e) {
+                        this.options.logger.error("[ErrorController] Failed to set error in data model", e);
+                    }
+                }
+            },
+            {
+                /**
+     * Remove errorState from data model
+     */ key: "deleteErrorFromDataModel",
+                value: function deleteErrorFromDataModel() {
+                    if (!this.options.model) {
+                        return;
+                    }
+                    try {
+                        this.options.model.delete("errorState", {
+                            writeSymbol: errorControllerWriteSymbol
+                        });
+                        this.options.logger.debug("[ErrorController] errorState deleted from data model");
+                    } catch (e) {
+                        this.options.logger.error("[ErrorController] Failed to delete errorState from data model", e);
+                    }
+                }
+            }
+        ]);
+        return ErrorController;
+    }();
+    var ErrorTypes = {
+        EXPRESSION: "expression",
+        BINDING: "binding",
+        VIEW: "view",
+        ASSET: "asset",
+        NAVIGATION: "navigation",
+        VALIDATION: "validation",
+        DATA: "data",
+        SCHEMA: "schema",
+        NETWORK: "network",
+        PLUGIN: "plugin",
+        RENDER: "render"
+    };
+    var CrossfieldProvider = /*#__PURE__*/ function() {
+        function CrossfieldProvider(initialView, parser, logger) {
+            _class_call_check(this, CrossfieldProvider);
+            this.allValidations = /* @__PURE__ */ new Set();
+            this.byBinding = /* @__PURE__ */ new Map();
+            this.logger = logger;
+            this.parse(initialView, parser);
+        }
+        _create_class(CrossfieldProvider, [
+            {
+                key: "parse",
+                value: function parse(contentView, parser) {
+                    var _this = this;
+                    var xfieldRefs = contentView.validation;
+                    if (xfieldRefs === void 0) {
+                        return;
+                    }
+                    if (!Array.isArray(xfieldRefs)) {
+                        var _this_logger;
+                        (_this_logger = this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.warn("Unable to register view validations for id: ".concat(contentView.id, ". 'validation' property must be an Array."));
+                        return;
+                    }
+                    xfieldRefs.forEach(function(vRef) {
+                        var withDefaults = _object_spread({
+                            trigger: "navigation",
+                            severity: "error"
+                        }, vRef);
+                        _this.allValidations.add(withDefaults);
+                        var ref = vRef.ref;
+                        if (ref) {
+                            var parsed = parser(ref);
+                            if (_this.byBinding.has(parsed)) {
+                                var _this_byBinding_get;
+                                (_this_byBinding_get = _this.byBinding.get(parsed)) === null || _this_byBinding_get === void 0 ? void 0 : _this_byBinding_get.push(withDefaults);
+                            } else {
+                                _this.byBinding.set(parsed, [
+                                    withDefaults
+                                ]);
+                            }
+                        }
+                    });
+                }
+            },
+            {
+                key: "getValidationsForBinding",
+                value: function getValidationsForBinding(binding) {
+                    return this.byBinding.get(binding);
+                }
+            }
+        ]);
+        return CrossfieldProvider;
+    }();
+    var ViewInstance = /*#__PURE__*/ function() {
+        function ViewInstance(initialView, resolverOptions, errorController) {
+            _class_call_check(this, ViewInstance);
+            this.hooks = {
+                onUpdate: new SyncHook(),
+                parser: new SyncHook(),
+                resolver: new SyncHook(),
+                templatePlugin: new SyncHook()
+            };
+            this.initialView = initialView;
+            this.resolverOptions = resolverOptions;
+            this.errorController = errorController;
+        }
+        _create_class(ViewInstance, [
+            {
+                /** @deprecated use ViewController.updateViewAST */ key: "updateAsync",
+                value: function updateAsync(asyncNode) {
+                    var _this_resolver;
+                    var update = (_this_resolver = this.resolver) === null || _this_resolver === void 0 ? void 0 : _this_resolver.update();
+                    this.lastUpdate = update;
+                    this.hooks.onUpdate.call(update);
+                }
+            },
+            {
+                key: "update",
+                value: function update(changes, nodeChanges) {
+                    if (this.rootNode === void 0) {
+                        this.validationProvider = new CrossfieldProvider(this.initialView, this.resolverOptions.parseBinding, this.resolverOptions.logger);
+                        if (this.templatePlugin) {
+                            this.hooks.templatePlugin.call(this.templatePlugin);
+                        } else {
+                            var _this_resolverOptions_logger;
+                            (_this_resolverOptions_logger = this.resolverOptions.logger) === null || _this_resolverOptions_logger === void 0 ? void 0 : _this_resolverOptions_logger.warn("templatePlugin not set for View, legacy templates may not work");
+                        }
+                        var parser = new Parser();
+                        this.hooks.parser.call(parser);
+                        this.rootNode = parser.parseView(this.initialView);
+                        this.resolver = new Resolver(this.rootNode, _object_spread_props(_object_spread({}, this.resolverOptions), {
+                            parseNode: parser.parseObject.bind(parser)
+                        }));
+                        this.hooks.resolver.call(this.resolver);
+                    }
+                    try {
+                        var _this_resolver;
+                        var update = (_this_resolver = this.resolver) === null || _this_resolver === void 0 ? void 0 : _this_resolver.update(changes, nodeChanges);
+                        if (this.lastUpdate === update) {
+                            return this.lastUpdate;
+                        }
+                        this.lastUpdate = update;
+                        this.hooks.onUpdate.call(update);
+                        return update;
+                    } catch (err) {
+                        if (!this.errorController) {
+                            throw err;
+                        }
+                        var error = _instanceof(err, Error) ? err : new Error(String(err));
+                        var metadata = {};
+                        if (_instanceof(error, ResolverError)) {
+                            metadata.node = error.node;
+                        }
+                        this.errorController.captureError(error, ErrorTypes.VIEW, "error", metadata);
+                        return this.lastUpdate;
+                    }
+                }
+            },
+            {
+                key: "getValidationsForBinding",
+                value: function getValidationsForBinding(binding) {
+                    var _this_validationProvider;
+                    return (_this_validationProvider = this.validationProvider) === null || _this_validationProvider === void 0 ? void 0 : _this_validationProvider.getValidationsForBinding(binding);
+                }
+            },
+            {
+                key: "setTemplatePlugin",
+                value: function setTemplatePlugin(plugin) {
+                    this.templatePlugin = plugin;
+                }
+            }
+        ]);
+        return ViewInstance;
+    }();
+    var Builder = /*#__PURE__*/ function() {
+        function _Builder() {
+            _class_call_check(this, _Builder);
+        }
+        _create_class(_Builder, null, [
+            {
+                key: "asset",
+                value: /**
+     * Creates an asset node
+     *
+     * @param value - the value to put in the asset node
+     */ function asset(value) {
+                    return {
+                        type: "asset",
+                        value: value
+                    };
+                }
+            },
+            {
+                key: "assetWrapper",
+                value: function assetWrapper(value) {
+                    var valueNode = _Builder.value();
+                    _Builder.addChild(valueNode, "asset", value);
+                    return valueNode;
+                }
+            },
+            {
+                key: "value",
+                value: /**
+     * Creates a value node
+     *
+     * @param v - The object to put in the value node
+     */ function value(v) {
+                    return {
+                        type: "value",
+                        value: v
+                    };
+                }
+            },
+            {
+                key: "multiNode",
+                value: /**
+     * Creates a multiNode and associates the multiNode as the parent
+     * of all the value nodes
+     *
+     * @param values - the value, applicability or async nodes to put in the multinode
+     */ function multiNode() {
+                    for(var _len = arguments.length, values = new Array(_len), _key = 0; _key < _len; _key++){
+                        values[_key] = arguments[_key];
+                    }
+                    var m = {
+                        type: "multi-node",
+                        override: true,
+                        values: values
+                    };
+                    values.forEach(function(v) {
+                        v.parent = m;
+                    });
+                    return m;
+                }
+            },
+            {
+                key: "asyncNode",
+                value: /**
+     * Creates an async node
+     *
+     * @param id - the id of async node. It should be identical for each async node
+     */ function asyncNode(id) {
+                    var flatten2 = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true, onValueReceived = arguments.length > 2 ? arguments[2] : void 0;
+                    return {
+                        id: id,
+                        type: "async",
+                        flatten: flatten2,
+                        onValueReceived: onValueReceived,
+                        value: {
+                            type: "value",
+                            value: {
+                                id: id
+                            }
+                        }
+                    };
+                }
+            },
+            {
+                key: "addChild",
+                value: /**
+     * Adds a child node to a node
+     *
+     * @param node - The node to add a child to
+     * @param path - The path at which to add the child
+     * @param child - The child node
+     */ function addChild(node, path, child) {
+                    child.parent = node;
+                    var newChild = {
+                        path: Array.isArray(path) ? path : [
+                            path
+                        ],
+                        value: child
+                    };
+                    node.children = node.children || [];
+                    node.children.push(newChild);
+                    return node;
+                }
+            },
+            {
+                key: "updateChildrenByPath",
+                value: /**
+     * Updates children of a node of the same path and preserves order
+     *
+     * @param node - The node to update children for
+     * @param pathToMatch - The path to match against child paths
+     * @param mapFn - Function to transform matching children
+     */ function updateChildrenByPath(node, pathToMatch, updateFn) {
+                    if (!node.children) return node;
+                    var updatedChildren = node.children.map(function(child) {
+                        return(// Check if paths match exactly
+                        child.path.join() === pathToMatch.join() ? _object_spread_props(_object_spread({}, child), {
+                            value: updateFn(child)
+                        }) : child);
+                    });
+                    return _object_spread_props(_object_spread({}, node), {
+                        children: updatedChildren
+                    });
+                }
+            }
+        ]);
+        return _Builder;
+    }();
+    var templateSymbol = Symbol("template");
+    var TemplatePlugin = /*#__PURE__*/ function() {
+        function TemplatePlugin(options) {
+            _class_call_check(this, TemplatePlugin);
+            this.hooks = {
+                resolveTemplateSubstitutions: new SyncWaterfallHook()
+            };
+            this.options = options;
+        }
+        _create_class(TemplatePlugin, [
+            {
+                key: "parseTemplate",
+                value: function parseTemplate(parseObject, node, options) {
+                    var _this = this;
+                    var template = node.template, depth = node.depth;
+                    var data = options.data.model.get(node.data);
+                    if (!data) {
+                        return null;
+                    }
+                    if (!Array.isArray(data)) {
+                        throw new Error("Template using '".concat(node.data, "' but is not an array"));
+                    }
+                    var values = [];
+                    data.forEach(function(dataItem, index) {
+                        var templateSubstitutions = _this.hooks.resolveTemplateSubstitutions.call([
+                            {
+                                expression: new RegExp("_index".concat(depth || "", "_")),
+                                value: String(index)
+                            }
+                        ], {
+                            depth: depth,
+                            data: dataItem,
+                            index: index
+                        });
+                        var templateStr = JSON.stringify(template);
+                        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                        try {
+                            for(var _iterator = templateSubstitutions[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                                var _step_value = _step.value, expression = _step_value.expression, value = _step_value.value;
+                                var flags = "g";
+                                if ((typeof expression === "undefined" ? "undefined" : _type_of(expression)) === "object") {
+                                    flags = "".concat(expression.flags).concat(expression.global ? "" : "g");
+                                }
+                                templateStr = templateStr.replace(new RegExp(expression, flags), value);
+                            }
+                        } catch (err) {
+                            _didIteratorError = true;
+                            _iteratorError = err;
+                        } finally{
+                            try {
+                                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                    _iterator.return();
+                                }
+                            } finally{
+                                if (_didIteratorError) {
+                                    throw _iteratorError;
+                                }
+                            }
+                        }
+                        var parsed = parseObject(JSON.parse(templateStr), "value", {
+                            templateDepth: node.depth + 1
+                        });
+                        if (parsed) {
+                            values.push(parsed);
+                        }
+                    });
+                    var result = {
+                        type: "multi-node",
+                        override: false,
+                        values: values
+                    };
+                    if (node.placement !== void 0) {
+                        result[templateSymbol] = node.placement;
+                    }
+                    return result;
+                }
+            },
+            {
+                key: "applyParser",
+                value: function applyParser(parser) {
+                    var _this = this;
+                    parser.hooks.onCreateASTNode.tap("template", function(node) {
+                        if (node && node.type === "template" && !node.dynamic) {
+                            return _this.parseTemplate(parser.parseObject.bind(parser), node, _this.options);
+                        }
+                        return node;
+                    });
+                    parser.hooks.onCreateASTNode.tap("template", function(node) {
+                        var getTemplateSymbolValue = function getTemplateSymbolValue(node2) {
+                            if (node2.type === "multi-node") {
+                                return node2[templateSymbol];
+                            } else if (node2.type === "template") {
+                                return node2.placement;
+                            }
+                            return void 0;
+                        };
+                        if (node && (node.type === "view" || node.type === "asset") && Array.isArray(node.children)) {
+                            node.children = node.children.sort(function(a, b) {
+                                var aPath = a.path.join();
+                                var bPath = b.path.join();
+                                var pathsEqual = aPath === bPath;
+                                if (pathsEqual) {
+                                    var aPlacement = getTemplateSymbolValue(a.value);
+                                    var bPlacement = getTemplateSymbolValue(b.value);
+                                    if (aPlacement !== void 0 && bPlacement === void 0) {
+                                        return aPlacement === "prepend" ? -1 : 1;
+                                    } else if (bPlacement !== void 0 && aPlacement === void 0) {
+                                        return bPlacement === "prepend" ? 1 : -1;
+                                    } else if (aPlacement !== void 0 && bPlacement !== void 0) {
+                                        if (aPlacement === bPlacement) {
+                                            return 0;
+                                        }
+                                        return aPlacement === "prepend" ? -1 : 1;
+                                    }
+                                    return 0;
+                                }
+                                return aPath > bPath ? 1 : -1;
+                            });
+                        }
+                        return node;
+                    });
+                    parser.hooks.parseNode.tap("template", function(obj, _nodeType, options, childOptions) {
+                        if (childOptions && hasTemplateKey(childOptions.key)) {
+                            return obj.map(function(template) {
+                                var _options_templateDepth, _template_dynamic;
+                                var templateAST = parser.createASTNode({
+                                    type: "template",
+                                    depth: (_options_templateDepth = options.templateDepth) !== null && _options_templateDepth !== void 0 ? _options_templateDepth : 0,
+                                    data: template.data,
+                                    template: template.value,
+                                    dynamic: (_template_dynamic = template.dynamic) !== null && _template_dynamic !== void 0 ? _template_dynamic : false,
+                                    placement: template.placement
+                                }, template);
+                                if (!templateAST) return;
+                                if (templateAST.type === "multi-node") {
+                                    templateAST.values.forEach(function(v) {
+                                        v.parent = templateAST;
+                                    });
+                                }
+                                return {
+                                    path: _to_consumable_array(childOptions.path).concat([
+                                        template.output
+                                    ]),
+                                    value: templateAST
+                                };
+                            }).filter(Boolean);
+                        }
+                    });
+                }
+            },
+            {
+                key: "applyResolverHooks",
+                value: function applyResolverHooks(resolver) {
+                    var _this = this;
+                    resolver.hooks.beforeResolve.tap("template", function(node, options) {
+                        if (node && node.type === "template" && node.dynamic) {
+                            return _this.parseTemplate(options.parseNode, node, options);
+                        }
+                        return node;
+                    });
+                }
+            },
+            {
+                key: "apply",
+                value: function apply(view) {
+                    view.hooks.parser.tap("template", this.applyParser.bind(this));
+                    view.hooks.resolver.tap("template", this.applyResolverHooks.bind(this));
+                    view.setTemplatePlugin(this);
+                }
+            }
+        ]);
+        return TemplatePlugin;
+    }();
+    var createPatternMatcher = function(start, end) {
+        return function(testStr) {
+            var startLocation = testStr.indexOf(start);
+            if (startLocation === -1) {
+                return false;
+            }
+            var endLocation = testStr.indexOf(end);
+            if (endLocation === -1) {
+                return false;
+            }
+            return startLocation < endLocation;
+        };
+    };
+    var bindingResolveLookup = createPatternMatcher("{{", "}}");
+    var expressionResolveLookup = createPatternMatcher("@[", "]@");
+    function resolveAllRefs(node, resolveOptions, propertiesToSkip) {
+        if (node === null || node === void 0 || (typeof node === "undefined" ? "undefined" : _type_of(node)) !== "object" && typeof node !== "string") {
+            return node;
+        }
+        if (typeof node === "string") {
+            return resolveString(node, resolveOptions);
+        }
+        var newNode = node;
+        Object.keys(node).forEach(function(key) {
+            if (propertiesToSkip.has(key)) {
+                return;
+            }
+            var val = node[key];
+            var newVal = val;
+            if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object") {
+                newVal = resolveAllRefs(val, resolveOptions, propertiesToSkip);
+            } else if (typeof val === "string") {
+                newVal = resolveString(val, resolveOptions);
+            }
+            if (newVal !== val) {
+                newNode = (0, import_timm7.set)(newNode, key, newVal);
+            }
+        });
+        return newNode;
+    }
+    var findBasePath = function(node, resolver) {
+        var parentNode = node.parent;
+        if (!parentNode) {
+            return [];
+        }
+        if ("children" in parentNode) {
+            var _parentNode_children_find, _parentNode_children;
+            var original = resolver.getSourceNode(node);
+            var _parentNode_children_find_path;
+            return (_parentNode_children_find_path = (_parentNode_children = parentNode.children) === null || _parentNode_children === void 0 ? void 0 : (_parentNode_children_find = _parentNode_children.find(function(child) {
+                return child.value === original;
+            })) === null || _parentNode_children_find === void 0 ? void 0 : _parentNode_children_find.path) !== null && _parentNode_children_find_path !== void 0 ? _parentNode_children_find_path : [];
+        }
+        if (parentNode.type !== "multi-node") {
+            return [];
+        }
+        return findBasePath(parentNode, resolver);
+    };
+    var StringResolverPlugin = /*#__PURE__*/ function() {
+        function StringResolverPlugin() {
+            _class_call_check(this, StringResolverPlugin);
+            this.propertiesToSkipCache = /* @__PURE__ */ new Map();
+        }
+        _create_class(StringResolverPlugin, [
+            {
+                key: "applyResolver",
+                value: function applyResolver(resolver) {
+                    var _this = this;
+                    resolver.hooks.resolve.tap("string-resolver", function(value, node, options) {
+                        if (node.type === "empty" || node.type === "unknown") {
+                            return null;
+                        }
+                        if (node.type === "value" || node.type === "asset" || node.type === "view") {
+                            var _node_parent, _node_parent_parent, _node_parent1, _node_parent_parent1, _node_parent2, _node_parent_parent_value;
+                            var propsToSkip;
+                            if (node.type === "asset" || node.type === "view") {
+                                var _node_plugins_stringResolver, _node_plugins, _node_value;
+                                var _node_plugins_stringResolver_propertiesToSkip;
+                                propsToSkip = new Set((_node_plugins_stringResolver_propertiesToSkip = (_node_plugins = node.plugins) === null || _node_plugins === void 0 ? void 0 : (_node_plugins_stringResolver = _node_plugins.stringResolver) === null || _node_plugins_stringResolver === void 0 ? void 0 : _node_plugins_stringResolver.propertiesToSkip) !== null && _node_plugins_stringResolver_propertiesToSkip !== void 0 ? _node_plugins_stringResolver_propertiesToSkip : [
+                                    "exp"
+                                ]);
+                                if ((_node_value = node.value) === null || _node_value === void 0 ? void 0 : _node_value.id) {
+                                    _this.propertiesToSkipCache.set(node.value.id, propsToSkip);
+                                }
+                            } else if (((_node_parent = node.parent) === null || _node_parent === void 0 ? void 0 : _node_parent.type) === "multi-node" && (((_node_parent1 = node.parent) === null || _node_parent1 === void 0 ? void 0 : (_node_parent_parent = _node_parent1.parent) === null || _node_parent_parent === void 0 ? void 0 : _node_parent_parent.type) === "asset" || ((_node_parent2 = node.parent) === null || _node_parent2 === void 0 ? void 0 : (_node_parent_parent1 = _node_parent2.parent) === null || _node_parent_parent1 === void 0 ? void 0 : _node_parent_parent1.type) === "view") && ((_node_parent_parent_value = node.parent.parent.value) === null || _node_parent_parent_value === void 0 ? void 0 : _node_parent_parent_value.id) && _this.propertiesToSkipCache.has(node.parent.parent.value.id)) {
+                                propsToSkip = _this.propertiesToSkipCache.get(node.parent.parent.value.id);
+                            } else {
+                                propsToSkip = /* @__PURE__ */ new Set([
+                                    "exp"
+                                ]);
+                            }
+                            var nodePath = findBasePath(node, resolver);
+                            if (nodePath.length > 0 && nodePath.some(function(segment) {
+                                return propsToSkip.has(segment.toString());
+                            })) {
+                                return node.value;
+                            }
+                            return resolveAllRefs(node.value, options, propsToSkip);
+                        }
+                        return value;
+                    });
+                }
+            },
+            {
+                key: "apply",
+                value: function apply(view) {
+                    view.hooks.resolver.tap("string-resolver", this.applyResolver.bind(this));
+                }
+            }
+        ]);
+        return StringResolverPlugin;
+    }();
+    var ApplicabilityPlugin = /*#__PURE__*/ function() {
+        function ApplicabilityPlugin() {
+            _class_call_check(this, ApplicabilityPlugin);
+        }
+        _create_class(ApplicabilityPlugin, [
+            {
+                key: "isApplicability",
+                value: function isApplicability(obj) {
+                    return obj && Object.prototype.hasOwnProperty.call(obj, "applicability");
+                }
+            },
+            {
+                key: "applyResolver",
+                value: function applyResolver(resolver) {
+                    resolver.hooks.beforeResolve.tap("applicability", function(node, options) {
+                        var newNode = node;
+                        if ((node === null || node === void 0 ? void 0 : node.type) === "applicability") {
+                            var isApplicable = options.evaluate(node.expression);
+                            if (isApplicable === false) {
+                                return null;
+                            }
+                            newNode = node.value;
+                        }
+                        return newNode;
+                    });
+                }
+            },
+            {
+                key: "applyParser",
+                value: function applyParser(parser) {
+                    var _this = this;
+                    parser.hooks.parseNode.tap("applicability", function(obj, nodeType, options, childOptions) {
+                        if (_this.isApplicability(obj)) {
+                            var parsedApplicability = parser.parseObject((0, import_timm8.omit)(obj, "applicability"), nodeType, options);
+                            if (!parsedApplicability) {
+                                return childOptions ? [] : null;
+                            }
+                            var applicabilityNode = parser.createASTNode({
+                                type: "applicability",
+                                expression: obj.applicability,
+                                value: parsedApplicability
+                            }, obj);
+                            if (!applicabilityNode) {
+                                return childOptions ? [] : null;
+                            }
+                            if (applicabilityNode.type === "applicability") {
+                                applicabilityNode.value.parent = applicabilityNode;
+                            }
+                            return childOptions ? [
+                                {
+                                    path: _to_consumable_array(childOptions.path).concat([
+                                        childOptions.key
+                                    ]),
+                                    value: applicabilityNode
+                                }
+                            ] : applicabilityNode;
+                        }
+                    });
+                }
+            },
+            {
+                key: "apply",
+                value: function apply(view) {
+                    view.hooks.resolver.tap("applicability", this.applyResolver.bind(this));
+                    view.hooks.parser.tap("applicability", this.applyParser.bind(this));
+                }
+            }
+        ]);
+        return ApplicabilityPlugin;
+    }();
+    var SwitchPlugin = /*#__PURE__*/ function() {
+        function SwitchPlugin(options) {
+            _class_call_check(this, SwitchPlugin);
+            this.options = options;
+        }
+        _create_class(SwitchPlugin, [
+            {
+                key: "resolveSwitch",
+                value: function resolveSwitch(node, options) {
+                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                    try {
+                        for(var _iterator = node.cases[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                            var switchCase = _step.value;
+                            var isApplicable = options.evaluate(switchCase.case);
+                            if (isApplicable) {
+                                return switchCase.value;
+                            }
+                        }
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally{
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                _iterator.return();
+                            }
+                        } finally{
+                            if (_didIteratorError) {
+                                throw _iteratorError;
+                            }
+                        }
+                    }
+                    return EMPTY_NODE;
+                }
+            },
+            {
+                key: "isSwitch",
+                value: function isSwitch(obj) {
+                    return obj && (Object.prototype.hasOwnProperty.call(obj, "dynamicSwitch") || Object.prototype.hasOwnProperty.call(obj, "staticSwitch"));
+                }
+            },
+            {
+                key: "applyParser",
+                value: function applyParser(parser) {
+                    var _this = this;
+                    parser.hooks.onCreateASTNode.tap("switch", function(node) {
+                        if (node && node.type === "switch" && !node.dynamic) {
+                            return _this.resolveSwitch(node, _this.options);
+                        }
+                        return node;
+                    });
+                    parser.hooks.parseNode.tap("switch", function(obj, _nodeType, options, childOptions) {
+                        if (_this.isSwitch(obj) || childOptions && hasSwitchKey(childOptions.key)) {
+                            var objToParse = childOptions && hasSwitchKey(childOptions.key) ? _define_property({}, childOptions.key, obj) : obj;
+                            var dynamic = "dynamicSwitch" in objToParse;
+                            var switchContent = dynamic ? objToParse.dynamicSwitch : objToParse.staticSwitch;
+                            var cases = switchContent.map(function(switchCase) {
+                                var switchCaseExpr = switchCase.case, switchBody = _object_without_properties(switchCase, [
+                                    "case"
+                                ]);
+                                var value = parser.parseObject(switchBody, "value", options);
+                                if (value) {
+                                    return {
+                                        case: switchCaseExpr,
+                                        value: value
+                                    };
+                                }
+                                return;
+                            }).filter(Boolean);
+                            var switchAST = parser.createASTNode({
+                                type: "switch",
+                                dynamic: dynamic,
+                                cases: cases
+                            }, objToParse);
+                            if (!switchAST || switchAST.type === "empty") {
+                                return childOptions ? [] : null;
+                            }
+                            if (switchAST.type === "switch") {
+                                switchAST.cases.forEach(function(sCase) {
+                                    sCase.value.parent = switchAST;
+                                });
+                            }
+                            if (childOptions) {
+                                var _switchAST_children;
+                                var path = _to_consumable_array(childOptions.path).concat([
+                                    childOptions.key
+                                ]);
+                                var value = switchAST;
+                                if (switchAST.type === "value" && ((_switchAST_children = switchAST.children) === null || _switchAST_children === void 0 ? void 0 : _switchAST_children.length) === 1 && switchAST.value === void 0) {
+                                    var firstChild = switchAST.children[0];
+                                    path = _to_consumable_array(path).concat(_to_consumable_array(firstChild.path));
+                                    value = firstChild.value;
+                                }
+                                return [
+                                    {
+                                        path: path,
+                                        value: value
+                                    }
+                                ];
+                            }
+                            return switchAST;
+                        }
+                    });
+                }
+            },
+            {
+                key: "applyResolver",
+                value: function applyResolver(resolver) {
+                    var _this = this;
+                    resolver.hooks.beforeResolve.tap("switch", function(node, options) {
+                        if (node && node.type === "switch" && node.dynamic) {
+                            return _this.resolveSwitch(node, options);
+                        }
+                        return node;
+                    });
+                }
+            },
+            {
+                key: "apply",
+                value: function apply(view) {
+                    view.hooks.parser.tap("switch", this.applyParser.bind(this));
+                    view.hooks.resolver.tap("switch", this.applyResolver.bind(this));
+                }
+            }
+        ]);
+        return SwitchPlugin;
+    }();
+    var MultiNodePlugin = /*#__PURE__*/ function() {
+        function MultiNodePlugin() {
+            _class_call_check(this, MultiNodePlugin);
+        }
+        _create_class(MultiNodePlugin, [
+            {
+                key: "applyParser",
+                value: function applyParser(parser) {
+                    parser.hooks.parseNode.tap("multi-node", function(obj, nodeType, options, childOptions) {
+                        if ((childOptions === void 0 || !hasTemplateKey(childOptions.key)) && Array.isArray(obj)) {
+                            var values = obj.map(function(childVal) {
+                                return parser.parseObject(childVal, "value", options);
+                            }).filter(function(child) {
+                                return !!child;
+                            });
+                            if (!values.length) {
+                                return [];
+                            }
+                            var multiNode = parser.createASTNode({
+                                type: "multi-node",
+                                override: childOptions !== void 0 && !hasTemplateValues(childOptions.parentObj, childOptions.key),
+                                values: values
+                            }, obj);
+                            if (!multiNode) {
+                                return [];
+                            }
+                            if (multiNode.type === "multi-node") {
+                                multiNode.values.forEach(function(v) {
+                                    v.parent = multiNode;
+                                });
+                            }
+                            return childOptions === void 0 ? multiNode : [
+                                {
+                                    path: _to_consumable_array(childOptions.path).concat([
+                                        childOptions.key
+                                    ]),
+                                    value: multiNode
+                                }
+                            ];
+                        }
+                    });
+                }
+            },
+            {
+                key: "apply",
+                value: function apply(view) {
+                    view.hooks.parser.tap("multi-node", this.applyParser.bind(this));
+                }
+            }
+        ]);
+        return MultiNodePlugin;
+    }();
+    var AssetPlugin = /*#__PURE__*/ function() {
+        function AssetPlugin() {
+            _class_call_check(this, AssetPlugin);
+        }
+        _create_class(AssetPlugin, [
+            {
+                key: "applyParser",
+                value: function applyParser(parser) {
+                    parser.hooks.parseNode.tap("asset", function(obj, nodeType, options, childOptions) {
+                        if ((childOptions === null || childOptions === void 0 ? void 0 : childOptions.key) === "asset" && (typeof obj === "undefined" ? "undefined" : _type_of(obj)) === "object") {
+                            var assetAST = parser.parseObject(obj, "asset", options);
+                            if (!assetAST) {
+                                return [];
+                            }
+                            return [
+                                {
+                                    path: _to_consumable_array(childOptions.path).concat([
+                                        childOptions.key
+                                    ]),
+                                    value: assetAST
+                                }
+                            ];
+                        }
+                    });
+                }
+            },
+            {
+                key: "apply",
+                value: function apply(view) {
+                    view.hooks.parser.tap("asset", this.applyParser.bind(this));
+                }
+            }
+        ]);
+        return AssetPlugin;
+    }();
+    function findUp(node, target) {
+        if (node === target) {
+            return true;
+        }
+        if (node.parent) {
+            return findUp(node.parent, target);
+        }
+        return false;
+    }
+    var AssetTransformCorePlugin = /*#__PURE__*/ function() {
+        function AssetTransformCorePlugin(registry) {
+            _class_call_check(this, AssetTransformCorePlugin);
+            this.registry = registry;
+            this.stateStore = /* @__PURE__ */ new Map();
+            this.beforeResolveSymbol = Symbol("before resolve");
+            this.resolveSymbol = Symbol("resolve");
+            this.beforeResolveCountSymbol = Symbol("before resolve count");
+            this.resolveCountSymbol = Symbol("resolve count");
+        }
+        _create_class(AssetTransformCorePlugin, [
+            {
+                key: "apply",
+                value: function apply(view) {
+                    var _this = this;
+                    this.stateStore.clear();
+                    view.hooks.resolver.tap("asset-transform", function(resolver) {
+                        var lastUpdatedNode;
+                        var updateState = function(node) {
+                            lastUpdatedNode = node;
+                            view.update(/* @__PURE__ */ new Set());
+                        };
+                        var getStore = function(node, stepKey) {
+                            var store;
+                            var countKey = stepKey === _this.resolveSymbol ? _this.resolveCountSymbol : _this.beforeResolveCountSymbol;
+                            var storedState = _this.stateStore.get(node);
+                            if (storedState) {
+                                store = storedState;
+                                store.removeKey(countKey);
+                            } else {
+                                store = new LocalStateStore(function() {
+                                    updateState(node);
+                                });
+                                _this.stateStore.set(node, store);
+                            }
+                            return {
+                                useSharedState: function(key) {
+                                    return store.useSharedState(key);
+                                },
+                                useLocalState: function(initialState) {
+                                    return store.getLocalStateFunction(stepKey, countKey)(initialState);
+                                }
+                            };
+                        };
+                        resolver.hooks.beforeResolve.tap("asset-transform", function(node, options) {
+                            if (node && (node.type === "asset" || node.type === "view")) {
+                                var transform3 = _this.registry.get(node.value);
+                                if (transform3 === null || transform3 === void 0 ? void 0 : transform3.beforeResolve) {
+                                    var _options_node;
+                                    var store = getStore((_options_node = options.node) !== null && _options_node !== void 0 ? _options_node : node, _this.beforeResolveSymbol);
+                                    return transform3.beforeResolve(node, options, store);
+                                }
+                            }
+                            return node;
+                        });
+                        resolver.hooks.afterUpdate.tap("asset-transform", function() {
+                            lastUpdatedNode = void 0;
+                        });
+                        resolver.hooks.skipResolve.tap("asset-transform", function(skip, node) {
+                            if (!skip || !lastUpdatedNode) {
+                                return skip;
+                            }
+                            var isParentOfUpdated = findUp(lastUpdatedNode, node);
+                            var isChildOfUpdated = findUp(node, lastUpdatedNode);
+                            return !isParentOfUpdated && !isChildOfUpdated;
+                        });
+                        resolver.hooks.afterResolve.tap("asset-transform", function(value, node, options) {
+                            if (node.type !== "asset" && node.type !== "view") {
+                                return value;
+                            }
+                            var originalNode = resolver.getSourceNode(node);
+                            if (!originalNode) {
+                                return value;
+                            }
+                            var transform3 = _this.registry.get(value);
+                            if (transform3 === null || transform3 === void 0 ? void 0 : transform3.resolve) {
+                                var store = getStore(originalNode, _this.resolveSymbol);
+                                return transform3 === null || transform3 === void 0 ? void 0 : transform3.resolve(value, options, store);
+                            }
+                            return value;
+                        });
+                    });
+                }
+            }
+        ]);
+        return AssetTransformCorePlugin;
+    }();
     var FlowExpPlugin = /*#__PURE__*/ function() {
         function FlowExpPlugin() {
             _class_call_check(this, FlowExpPlugin);
@@ -7892,8 +8261,8 @@ var ReferenceAssetsPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "0.15.0" : "unknown";
-    var COMMIT = true ? "42891c40875b011e707e0ac48a14c995518f84fe" : "unknown";
+    var PLAYER_VERSION = true ? "0.15.1--canary.802.31569" : "unknown";
+    var COMMIT = true ? "17ce531cbbca3f4188f7f0fcb915fce16094a189" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
@@ -7911,6 +8280,7 @@ var ReferenceAssetsPlugin = function() {
                 schema: new SyncHook(),
                 validationController: new SyncHook(),
                 bindingParser: new SyncHook(),
+                errorController: new SyncHook(),
                 state: new SyncHook(),
                 onStart: new SyncHook(),
                 onEnd: new SyncHook(),
@@ -8020,14 +8390,22 @@ var ReferenceAssetsPlugin = function() {
                     });
                     this.hooks.bindingParser.call(pathResolver);
                     var parseBinding = pathResolver.parse;
-                    var flowResultDeferred = (0, import_p_defer.default)();
+                    var flowResultDeferred = (0, import_p_defer2.default)();
                     var schema = new SchemaController(userFlow.schema);
                     this.hooks.schema.call(schema);
                     var validationController = new ValidationController(schema);
                     this.hooks.validationController.call(validationController);
+                    var errorController = new ErrorController({
+                        logger: this.logger,
+                        flow: flowController,
+                        fail: flowResultDeferred.reject
+                    });
+                    this.hooks.errorController.call(errorController);
                     dataController = new DataController(userFlow.data, {
                         pathResolver: pathResolver,
-                        middleware: validationController.getDataMiddleware(),
+                        middleware: _to_consumable_array(validationController.getDataMiddleware()).concat([
+                            errorController.getDataMiddleware()
+                        ]),
                         logger: this.logger
                     });
                     dataController.hooks.format.tap("player", function(value, binding) {
@@ -8041,6 +8419,9 @@ var ReferenceAssetsPlugin = function() {
                     dataController.hooks.resolveDefaultValue.tap("player", function(binding) {
                         var _schema_getApparentType;
                         return (_schema_getApparentType = schema.getApparentType(binding)) === null || _schema_getApparentType === void 0 ? void 0 : _schema_getApparentType.default;
+                    });
+                    errorController.setOptions({
+                        model: dataController
                     });
                     var viewController;
                     expressionEvaluator = new ExpressionEvaluator({
@@ -8072,7 +8453,7 @@ var ReferenceAssetsPlugin = function() {
                             if (!("transitions" in state) || !state.transitions[computedTransitionVal]) {
                                 return state;
                             }
-                            return (0, import_timm8.setIn)(state, [
+                            return (0, import_timm9.setIn)(state, [
                                 "transitions",
                                 computedTransitionVal
                             ], resolveStrings(state.transitions[computedTransitionVal]));
@@ -8092,12 +8473,12 @@ var ReferenceAssetsPlugin = function() {
                         flow.hooks.resolveTransitionNode.tap("player", function(state) {
                             var newState = state;
                             if ("ref" in state) {
-                                newState = (0, import_timm8.setIn)(state, [
+                                newState = (0, import_timm9.setIn)(state, [
                                     "ref"
                                 ], resolveStrings(state.ref));
                             }
                             if ("param" in state) {
-                                newState = (0, import_timm8.setIn)(state, [
+                                newState = (0, import_timm9.setIn)(state, [
                                     "param"
                                 ], resolveStrings(state.param, false));
                             }
@@ -8117,7 +8498,7 @@ var ReferenceAssetsPlugin = function() {
                                     var result = expressionEvaluator.evaluateAsync(exp);
                                     if (isPromiseLike(result)) {
                                         if (value.await) {
-                                            (0, import_queue_microtask.default)(function() {
+                                            (0, import_queue_microtask2.default)(function() {
                                                 result.then(function(r) {
                                                     return flowController === null || flowController === void 0 ? void 0 : flowController.transition(String(r));
                                                 }).catch(flowResultDeferred.reject);
@@ -8178,7 +8559,8 @@ var ReferenceAssetsPlugin = function() {
                                 return schema.getType(parseBinding(b));
                             }
                         }),
-                        constants: this.constantsController
+                        constants: this.constantsController,
+                        errorController: errorController
                     });
                     viewController.hooks.view.tap("player", function(view) {
                         validationController.onView(view);
@@ -8210,7 +8592,8 @@ var ReferenceAssetsPlugin = function() {
                                 schema: schema,
                                 expression: expressionEvaluator,
                                 binding: pathResolver,
-                                validation: validationController
+                                validation: validationController,
+                                error: errorController
                             },
                             fail: flowResultDeferred.reject,
                             flow: userFlow,
@@ -8461,6 +8844,9 @@ var ReferenceAssetsPlugin = function() {
         };
         return asyncTransform2;
     };
+    var isThingType = function(thing) {
+        return true;
+    };
     var AsyncNodePluginSymbol = Symbol.for("AsyncNodePlugin");
     var _AsyncNodePlugin = /*#__PURE__*/ function() {
         function _AsyncNodePlugin2(options, asyncHandler) {
@@ -8545,8 +8931,8 @@ var ReferenceAssetsPlugin = function() {
      * @param options Options provided for node resolution, including a potential parseNode function to process the result.
      * @param view The view instance where the node resides. This can be undefined if the view is not currently active.
      */ key: "parseNodeAndUpdate",
-                value: function parseNodeAndUpdate(node, context, result, options) {
-                    var parsedNode = options.parseNode && result ? options.parseNode(result) : void 0;
+                value: function parseNodeAndUpdate(node, context, result, parseFunction) {
+                    var parsedNode = parseFunction && result ? parseFunction(result) : void 0;
                     if (parsedNode && node.onValueReceived) {
                         parsedNode = node.onValueReceived(parsedNode);
                     }
@@ -8591,14 +8977,49 @@ var ReferenceAssetsPlugin = function() {
      */ key: "applyResolver",
                 value: function applyResolver(resolver, context) {
                     var _this = this;
+                    resolver.hooks.resolveOptions.tap(this.name, function(options, node) {
+                        var _options_asyncData, _options_asyncData1;
+                        if (!isThingType(options)) {
+                            return options;
+                        }
+                        var generatedArray = Array.isArray((_options_asyncData = options.asyncData) === null || _options_asyncData === void 0 ? void 0 : _options_asyncData.generatedBy) ? (_options_asyncData1 = options.asyncData) === null || _options_asyncData1 === void 0 ? void 0 : _options_asyncData1.generatedBy : [];
+                        if (_this.isAsync(node)) {
+                            return _object_spread_props(_object_spread({}, options), {
+                                asyncData: {
+                                    generatedBy: [
+                                        node.id
+                                    ].concat(_to_consumable_array(generatedArray))
+                                }
+                            });
+                        }
+                        var thing = context.oneMoreCache.get(node);
+                        if (thing) {
+                            return _object_spread_props(_object_spread({}, options), {
+                                asyncData: {
+                                    generatedBy: [
+                                        thing
+                                    ].concat(_to_consumable_array(generatedArray))
+                                }
+                            });
+                        }
+                        return options;
+                    });
+                    resolver.hooks.afterNodeUpdate.tap(this.name, function(original, parent, update) {
+                        if (update.node.type !== NodeType.Asset && update.node.type !== NodeType.View) {
+                            return;
+                        }
+                        context.assetIdCache.set(update.value.id, original);
+                    });
                     resolver.hooks.beforeResolve.tap(this.name, function(node, options) {
                         if (!_this.isAsync(node)) {
                             return node === null ? node : _this.resolveAsyncChildren(node, context);
                         }
+                        context.sureWhyNotOneMoreThing.set(node.id, node);
                         if (options.node) {
                             context.originalNodeCache.set(node.id, /* @__PURE__ */ new Set([
                                 options.node
                             ]));
+                            context.oneMoreCache.set(options.node, node.id);
                         }
                         var resolvedNode = context.nodeResolveCache.get(node.id);
                         if (resolvedNode !== void 0) {
@@ -8632,6 +9053,7 @@ var ReferenceAssetsPlugin = function() {
                                 index++;
                                 return "continue";
                             }
+                            context.sureWhyNotOneMoreThing.set(childNode.id, childNode);
                             var mappedNode = context.nodeResolveCache.get(childNode.id);
                             var nodeSet = /* @__PURE__ */ new Set();
                             if (mappedNode.type === NodeType.MultiNode && childNode.flatten) {
@@ -8646,6 +9068,26 @@ var ReferenceAssetsPlugin = function() {
                                 nodeSet.add(mappedNode);
                             }
                             context.originalNodeCache.set(childNode.id, nodeSet);
+                            var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                            try {
+                                for(var _iterator = nodeSet[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                                    var n = _step.value;
+                                    context.oneMoreCache.set(n, childNode.id);
+                                }
+                            } catch (err) {
+                                _didIteratorError = true;
+                                _iteratorError = err;
+                            } finally{
+                                try {
+                                    if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                        _iterator.return();
+                                    }
+                                } finally{
+                                    if (_didIteratorError) {
+                                        throw _iteratorError;
+                                    }
+                                }
+                            }
                         };
                         var index = 0;
                         while(index < node.values.length)_this1 = this, _loop();
@@ -8657,6 +9099,7 @@ var ReferenceAssetsPlugin = function() {
                                 context.originalNodeCache.set(c.value.id, /* @__PURE__ */ new Set([
                                     mappedNode
                                 ]));
+                                context.oneMoreCache.set(mappedNode, c.value.id);
                                 c.value = mappedNode;
                                 c.value.parent = node;
                             }
@@ -8685,13 +9128,13 @@ var ReferenceAssetsPlugin = function() {
                                     return [
                                         4,
                                         (_this_basePlugin = this.basePlugin) === null || _this_basePlugin === void 0 ? void 0 : _this_basePlugin.hooks.onAsyncNode.call(node, function(result2) {
-                                            _this.parseNodeAndUpdate(node, context, result2, options);
+                                            _this.parseNodeAndUpdate(node, context, result2, options.parseNode);
                                         })
                                     ];
                                 case 2:
                                     result = _state.sent();
                                     context.inProgressNodes.delete(node.id);
-                                    this.parseNodeAndUpdate(node, context, result, options);
+                                    this.parseNodeAndUpdate(node, context, result, options.parseNode);
                                     return [
                                         3,
                                         4
@@ -8712,7 +9155,7 @@ var ReferenceAssetsPlugin = function() {
                                     }
                                     (_options_logger = options.logger) === null || _options_logger === void 0 ? void 0 : _options_logger.error("Async node handling failed and resolved with a fallback. Error:", error);
                                     context.inProgressNodes.delete(node.id);
-                                    this.parseNodeAndUpdate(node, context, result1, options);
+                                    this.parseNodeAndUpdate(node, context, result1, options.parseNode);
                                     return [
                                         3,
                                         4
@@ -8784,15 +9227,52 @@ var ReferenceAssetsPlugin = function() {
                 key: "applyPlayer",
                 value: function applyPlayer(player) {
                     var _this = this;
+                    var currentContext = void 0;
+                    var parser = void 0;
+                    player.hooks.errorController.tap("async", function(errorController) {
+                        errorController.hooks.onError.tap("async", function(playerError) {
+                            if (currentContext === void 0) {
+                                return void 0;
+                            }
+                            var node = getNodeFromError(playerError, currentContext);
+                            while(node !== void 0){
+                                var generatedBy = currentContext.oneMoreCache.get(node);
+                                if (generatedBy) {
+                                    var _this_basePlugin;
+                                    var asyncNode = currentContext.sureWhyNotOneMoreThing.get(generatedBy);
+                                    if (!asyncNode) {
+                                        continue;
+                                    }
+                                    var result = (_this_basePlugin = _this.basePlugin) === null || _this_basePlugin === void 0 ? void 0 : _this_basePlugin.hooks.onAsyncNodeError.call(playerError.error, asyncNode);
+                                    if (result !== void 0) {
+                                        var _player_logger;
+                                        (_player_logger = player.logger) === null || _player_logger === void 0 ? void 0 : _player_logger.error("Async node handling failed and resolved with a fallback. Cause:", playerError.error.message);
+                                        currentContext.inProgressNodes.delete(generatedBy);
+                                        _this.parseNodeAndUpdate(asyncNode, currentContext, result, parser === null || parser === void 0 ? void 0 : parser.parseObject.bind(parser));
+                                        return true;
+                                    }
+                                }
+                                node = node.parent;
+                            }
+                            return void 0;
+                        });
+                    });
                     player.hooks.viewController.tap("async", function(viewController) {
                         viewController.hooks.view.tap("async", function(view) {
+                            view.hooks.parser.tap(_this.name, function(p) {
+                                parser = p;
+                            });
                             var context = {
                                 nodeResolveCache: /* @__PURE__ */ new Map(),
                                 inProgressNodes: /* @__PURE__ */ new Set(),
                                 view: view,
                                 viewController: viewController,
-                                originalNodeCache: /* @__PURE__ */ new Map()
+                                originalNodeCache: /* @__PURE__ */ new Map(),
+                                oneMoreCache: /* @__PURE__ */ new Map(),
+                                assetIdCache: /* @__PURE__ */ new Map(),
+                                sureWhyNotOneMoreThing: /* @__PURE__ */ new Map()
                             };
+                            currentContext = context;
                             view.hooks.resolver.tap("async", function(resolver) {
                                 _this.applyResolver(resolver, context);
                             });
@@ -8809,6 +9289,23 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return AsyncNodePluginPlugin;
     }();
+    var getNodeFromError = function(playerError, context) {
+        if (playerError.errorType === ErrorTypes.RENDER) {
+            var _playerError_metadata;
+            var assetId = ((_playerError_metadata = playerError.metadata) !== null && _playerError_metadata !== void 0 ? _playerError_metadata : {}).assetId;
+            if (typeof assetId !== "string") {
+                return void 0;
+            }
+            return context.assetIdCache.get(assetId);
+        }
+        if (playerError.errorType === ErrorTypes.VIEW) {
+            var _playerError_metadata1;
+            var node = ((_playerError_metadata1 = playerError.metadata) !== null && _playerError_metadata1 !== void 0 ? _playerError_metadata1 : {}).node;
+            if ((typeof node === "undefined" ? "undefined" : _type_of(node)) === "object" && node !== null && !Array.isArray(node)) {
+                return node;
+            }
+        }
+    };
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/chat-message/transform.ts
     var transform2 = createAsyncTransform({
         transformAssetType: "chat-message",
@@ -8819,6 +9316,13 @@ var ReferenceAssetsPlugin = function() {
         }
     });
     var chatMessageTransform = compose(composeBefore(transform2));
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/throwing/transform.ts
+    var throwingTransform = function(asset) {
+        if (asset.timing === "transform") {
+            throw new Error(asset.message);
+        }
+        return asset;
+    };
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+meta-plugin@0.0.0/node_modules/@player-ui/meta-plugin/dist/index.mjs
     var MetaPlugin = /*#__PURE__*/ function() {
         function MetaPlugin() {
@@ -8877,6 +9381,22 @@ var ReferenceAssetsPlugin = function() {
             }
         };
     };
+    var createBrokenContentFromMessage = function(message, id, timing) {
+        return {
+            asset: {
+                type: "chat-message",
+                id: id,
+                value: {
+                    asset: {
+                        type: "throwing",
+                        id: "".concat(id, "-value"),
+                        value: message,
+                        timing: timing
+                    }
+                }
+            }
+        };
+    };
     var ChatUiDemoPlugin = /*#__PURE__*/ function() {
         function ChatUiDemoPlugin() {
             _class_call_check(this, ChatUiDemoPlugin);
@@ -8894,7 +9414,7 @@ var ReferenceAssetsPlugin = function() {
                     var deferredPromises = {};
                     var allPromiseKeys = [];
                     var counter = 0;
-                    var sendMessage = function(context, message, nodeId) {
+                    var sendMessage = function(context, nodeId, getContent) {
                         if (nodeId && !(nodeId in deferredPromises)) {
                             var _context_logger;
                             (_context_logger = context.logger) === null || _context_logger === void 0 ? void 0 : _context_logger.warn("'send' expression called with unrecognized id '".concat(nodeId, "'"));
@@ -8912,9 +9432,8 @@ var ReferenceAssetsPlugin = function() {
                         try {
                             for(var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
                                 var id = _step.value;
-                                var content = createContentFromMessage(message, "chat-demo-".concat(counter++));
                                 var resolveFunction = deferredPromises[id];
-                                resolveFunction === null || resolveFunction === void 0 ? void 0 : resolveFunction(content);
+                                resolveFunction === null || resolveFunction === void 0 ? void 0 : resolveFunction(getContent === null || getContent === void 0 ? void 0 : getContent());
                                 delete deferredPromises[id];
                             }
                         } catch (err) {
@@ -8948,6 +9467,21 @@ var ReferenceAssetsPlugin = function() {
                             allPromiseKeys.push(node.id);
                         });
                     });
+                    var sendRealMessage = function(context, message, nodeId) {
+                        return sendMessage(context, nodeId, function() {
+                            return createContentFromMessage(message, "chat-demo-".concat(counter++));
+                        });
+                    };
+                    var sendBrokenMessage = function(context, message, nodeId) {
+                        return sendMessage(context, nodeId, function() {
+                            return createBrokenContentFromMessage(message, "chat-demo-".concat(counter++), "render");
+                        });
+                    };
+                    var sendBrokenTransformMessage = function(context, message, nodeId) {
+                        return sendMessage(context, nodeId, function() {
+                            return createBrokenContentFromMessage(message, "chat-demo-".concat(counter++), "transform");
+                        });
+                    };
                     player.hooks.view.tap(this.name, function(_) {
                         deferredPromises = {};
                         allPromiseKeys = [];
@@ -8956,7 +9490,15 @@ var ReferenceAssetsPlugin = function() {
                     var expressionPlugin = new ExpressionPlugin(/* @__PURE__ */ new Map([
                         [
                             "send",
-                            sendMessage
+                            sendRealMessage
+                        ],
+                        [
+                            "sendBroken",
+                            sendBrokenMessage
+                        ],
+                        [
+                            "sendBrokenTransform",
+                            sendBrokenTransformMessage
                         ]
                     ]));
                     player.registerPlugin(expressionPlugin);
@@ -9011,12 +9553,51 @@ var ReferenceAssetsPlugin = function() {
                                 type: "chat-message"
                             },
                             chatMessageTransform
+                        ],
+                        [
+                            {
+                                type: "throwing"
+                            },
+                            throwingTransform
                         ]
                     ]));
                 }
             }
         ]);
         return ReferenceAssetsTransformPlugin;
+    }();
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugins/error-recovery-plugin.ts
+    var ErrorRecoveryPlugin = /*#__PURE__*/ function() {
+        function ErrorRecoveryPlugin() {
+            _class_call_check(this, ErrorRecoveryPlugin);
+            this.name = "ErrorRecoveryPlugin";
+        }
+        _create_class(ErrorRecoveryPlugin, [
+            {
+                /** */ key: "apply",
+                value: function apply(player) {
+                    var _this = this;
+                    player.applyTo(AsyncNodePlugin.Symbol, function(plugin) {
+                        plugin.hooks.onAsyncNodeError.tap(_this.name, function(err, node) {
+                            return {
+                                asset: {
+                                    type: "chat-message",
+                                    id: "".concat(node.id, "-recovery"),
+                                    value: {
+                                        asset: {
+                                            id: "".concat(node.id, "-recovery-text"),
+                                            type: "text",
+                                            value: "Something went wrong, please try again."
+                                        }
+                                    }
+                                }
+                            };
+                        });
+                    });
+                }
+            }
+        ]);
+        return ErrorRecoveryPlugin;
     }();
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugin.ts
     var ReferenceAssetsPlugin = /*#__PURE__*/ function() {
@@ -9030,7 +9611,8 @@ var ReferenceAssetsPlugin = function() {
                     ]
                 }),
                 new ReferenceAssetsTransformPlugin(),
-                new ChatUiDemoPlugin()
+                new ChatUiDemoPlugin(),
+                new ErrorRecoveryPlugin()
             ]);
         }
         _create_class(ReferenceAssetsPlugin, [
