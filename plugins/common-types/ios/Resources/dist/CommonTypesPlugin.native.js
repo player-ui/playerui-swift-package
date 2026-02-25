@@ -7491,8 +7491,8 @@ var CommonTypesPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "0.15.0" : "unknown";
-    var COMMIT = true ? "42891c40875b011e707e0ac48a14c995518f84fe" : "unknown";
+    var PLAYER_VERSION = true ? "0.15.1-next.0" : "unknown";
+    var COMMIT = true ? "181cf0e85819575b514047ad2c5ef85c9955b04f" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
