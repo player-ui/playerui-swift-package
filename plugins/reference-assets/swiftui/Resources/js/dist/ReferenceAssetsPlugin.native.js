@@ -7892,8 +7892,8 @@ var ReferenceAssetsPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "0.15.0" : "unknown";
-    var COMMIT = true ? "42891c40875b011e707e0ac48a14c995518f84fe" : "unknown";
+    var PLAYER_VERSION = true ? "0.15.1--canary.808.32985" : "unknown";
+    var COMMIT = true ? "1c9028e03239892dc14f552e500d1d7725dbff53" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
