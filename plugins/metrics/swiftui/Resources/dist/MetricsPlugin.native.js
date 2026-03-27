@@ -7471,8 +7471,8 @@ var MetricsPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "0.15.1" : "unknown";
-    var COMMIT = true ? "a1dd006fbfa35608e0e28d2560a0f32d6dae34a7" : "unknown";
+    var PLAYER_VERSION = true ? "0.15.2--canary.832.34327" : "unknown";
+    var COMMIT = true ? "b6bddeefdc78e08b94a7fe6a8a2b730735efb1dd" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
