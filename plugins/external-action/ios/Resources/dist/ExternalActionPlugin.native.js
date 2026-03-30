@@ -150,6 +150,12 @@ function _ts_generator(thisArg, body) {
     }
 }
 var ExternalActionPlugin = function() {
+    var isExternal = function isExternal(state) {
+        return state.state_type === "EXTERNAL";
+    };
+    var isInProgress = function isInProgress(state) {
+        return state.status === "in-progress";
+    };
     var __defProp = Object.defineProperty;
     var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
     var __getOwnPropNames = Object.getOwnPropertyNames;
@@ -216,68 +222,61 @@ var ExternalActionPlugin = function() {
                     var _this = this;
                     player.hooks.flowController.tap(this.name, function(flowController) {
                         flowController.hooks.flow.tap(_this.name, function(flow) {
-                            flow.hooks.transition.tap(_this.name, function(fromState, toState) {
-                                var state = toState.value;
-                                if (state.state_type === "EXTERNAL") {
-                                    setTimeout(function() {
-                                        return _async_to_generator(function() {
-                                            var shouldTransition, currentState, transitionValue, latestState, error;
-                                            return _ts_generator(this, function(_state) {
-                                                switch(_state.label){
-                                                    case 0:
-                                                        shouldTransition = function(currentState2) {
-                                                            var _currentState2_controllers_flow_current_currentState, _currentState2_controllers_flow_current;
-                                                            return currentState2.status === "in-progress" && ((_currentState2_controllers_flow_current = currentState2.controllers.flow.current) === null || _currentState2_controllers_flow_current === void 0 ? void 0 : (_currentState2_controllers_flow_current_currentState = _currentState2_controllers_flow_current.currentState) === null || _currentState2_controllers_flow_current_currentState === void 0 ? void 0 : _currentState2_controllers_flow_current_currentState.value) === state;
-                                                        };
-                                                        currentState = player.getState();
-                                                        if (!shouldTransition(currentState)) return [
-                                                            3,
-                                                            4
-                                                        ];
-                                                        _state.label = 1;
-                                                    case 1:
-                                                        _state.trys.push([
-                                                            1,
-                                                            3,
-                                                            ,
-                                                            4
-                                                        ]);
-                                                        return [
-                                                            4,
-                                                            this.handler(state, currentState.controllers)
-                                                        ];
-                                                    case 2:
-                                                        transitionValue = _state.sent();
-                                                        if (transitionValue !== void 0) {
-                                                            latestState = player.getState();
-                                                            if (shouldTransition(latestState)) {
-                                                                latestState.controllers.flow.transition(transitionValue);
-                                                            } else {
-                                                                player.logger.warn("External state resolved with [".concat(transitionValue, "], but Player already navigated away from [").concat(toState.name, "]"));
-                                                            }
-                                                        }
-                                                        return [
-                                                            3,
-                                                            4
-                                                        ];
-                                                    case 3:
-                                                        error = _state.sent();
-                                                        if (_instanceof(error, Error)) {
-                                                            currentState.fail(error);
-                                                        }
-                                                        return [
-                                                            3,
-                                                            4
-                                                        ];
-                                                    case 4:
-                                                        return [
-                                                            2
-                                                        ];
+                            flow.hooks.afterTransition.tap(_this.name, function(flowInstance) {
+                                return _async_to_generator(function() {
+                                    var state, currentState, transitionValue, _latestState_controllers_flow_current_currentState, _latestState_controllers_flow_current, latestState, error;
+                                    return _ts_generator(this, function(_state) {
+                                        switch(_state.label){
+                                            case 0:
+                                                state = flowInstance.currentState;
+                                                currentState = player.getState();
+                                                if (!(state && state.value && isExternal(state.value) && isInProgress(currentState))) return [
+                                                    3,
+                                                    4
+                                                ];
+                                                _state.label = 1;
+                                            case 1:
+                                                _state.trys.push([
+                                                    1,
+                                                    3,
+                                                    ,
+                                                    4
+                                                ]);
+                                                return [
+                                                    4,
+                                                    this.handler(state.value, currentState.controllers)
+                                                ];
+                                            case 2:
+                                                transitionValue = _state.sent();
+                                                if (transitionValue !== void 0) {
+                                                    ;
+                                                    latestState = player.getState();
+                                                    if (isInProgress(latestState) && ((_latestState_controllers_flow_current = latestState.controllers.flow.current) === null || _latestState_controllers_flow_current === void 0 ? void 0 : (_latestState_controllers_flow_current_currentState = _latestState_controllers_flow_current.currentState) === null || _latestState_controllers_flow_current_currentState === void 0 ? void 0 : _latestState_controllers_flow_current_currentState.name) === state.name) {
+                                                        latestState.controllers.flow.transition(transitionValue);
+                                                    } else {
+                                                        player.logger.warn("External state resolved with [".concat(transitionValue, "], but Player already navigated away from [").concat(state.name, "]"));
+                                                    }
                                                 }
-                                            });
-                                        }).call(_this);
-                                    }, 0);
-                                }
+                                                return [
+                                                    3,
+                                                    4
+                                                ];
+                                            case 3:
+                                                error = _state.sent();
+                                                if (_instanceof(error, Error)) {
+                                                    currentState.fail(error);
+                                                }
+                                                return [
+                                                    3,
+                                                    4
+                                                ];
+                                            case 4:
+                                                return [
+                                                    2
+                                                ];
+                                        }
+                                    });
+                                }).call(_this);
                             });
                         });
                     });
