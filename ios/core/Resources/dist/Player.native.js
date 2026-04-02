@@ -45,10 +45,6 @@ function _async_to_generator(fn) {
         });
     };
 }
-function _call_super(_this, derived, args) {
-    derived = _get_prototype_of(derived);
-    return _possible_constructor_return(_this, _is_native_reflect_construct() ? Reflect.construct(derived, args || [], _get_prototype_of(_this).constructor) : derived.apply(_this, args));
-}
 function _class_call_check(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
         throw new TypeError("Cannot call a class as a function");
@@ -287,15 +283,31 @@ function _wrap_native_super(Class) {
     return _wrap_native_super(Class);
 }
 function _is_native_reflect_construct() {
+    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+    if (Reflect.construct.sham) return false;
+    if (typeof Proxy === "function") return true;
     try {
-        var result = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {}));
-    } catch (_) {}
-    return (_is_native_reflect_construct = function() {
-        return !!result;
-    })();
+        Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {}));
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+function _create_super(Derived) {
+    var hasNativeReflectConstruct = _is_native_reflect_construct();
+    return function _createSuperInternal() {
+        var Super = _get_prototype_of(Derived), result;
+        if (hasNativeReflectConstruct) {
+            var NewTarget = _get_prototype_of(this).constructor;
+            result = Reflect.construct(Super, arguments, NewTarget);
+        } else {
+            result = Super.apply(this, arguments);
+        }
+        return _possible_constructor_return(this, result);
+    };
 }
 function _ts_generator(thisArg, body) {
-    var f, y, t, _ = {
+    var f, y, t, g, _ = {
         label: 0,
         sent: function() {
             if (t[0] & 1) throw t[1];
@@ -303,8 +315,12 @@ function _ts_generator(thisArg, body) {
         },
         trys: [],
         ops: []
-    }, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
-    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() {
+    };
+    return g = {
+        next: verb(0),
+        "throw": verb(1),
+        "return": verb(2)
+    }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
         return this;
     }), g;
     function verb(n) {
@@ -317,7 +333,7 @@ function _ts_generator(thisArg, body) {
     }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while(g && (g = 0, op[0] && (_ = 0)), _)try {
+        while(_)try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [
                 op[0] & 2,
@@ -425,7 +441,7 @@ var Player = function() {
     };
     var findInArray = function findInArray(array, key, value) {
         return array.findIndex(function(obj) {
-            if (obj && (typeof obj === "undefined" ? "undefined" : _type_of(obj)) === "object") {
+            if (obj && typeof obj === "object") {
                 return obj[key] == value;
             }
             return false;
@@ -524,7 +540,7 @@ var Player = function() {
         return t2 === r ? l : t2;
     };
     var isExpressionNode = function isExpressionNode(x) {
-        return (typeof x === "undefined" ? "undefined" : _type_of(x)) === "object" && x !== null && !Array.isArray(x) && x.__id === ExpNodeOpaqueIdentifier;
+        return typeof x === "object" && x !== null && !Array.isArray(x) && x.__id === ExpNodeOpaqueIdentifier;
     };
     var throwError = function throwError(message, index) {
         var err = new Error("".concat(message, " at character ").concat(index));
@@ -1113,7 +1129,7 @@ var Player = function() {
     function isPromiseLike(value) {
         var // Check for standard Promise constructor name
         _value_constructor;
-        return value != null && (typeof value === "undefined" ? "undefined" : _type_of(value)) === "object" && typeof value.then === "function" && // Additional safeguards against false positives
+        return value != null && typeof value === "object" && typeof value.then === "function" && // Additional safeguards against false positives
         (_instanceof(value, Promise) || ((_value_constructor = value.constructor) === null || _value_constructor === void 0 ? void 0 : _value_constructor.name) === "Promise" || // Verify it has other Promise-like methods to reduce false positives
         typeof value.catch === "function" && typeof value.finally === "function");
     };
@@ -1140,7 +1156,7 @@ var Player = function() {
         if (isExpressionNode(expr)) {
             return false;
         }
-        return (typeof expr === "undefined" ? "undefined" : _type_of(expr)) === "object" && expr !== null && !Array.isArray(expr) && "value" in expr;
+        return typeof expr === "object" && expr !== null && !Array.isArray(expr) && "value" in expr;
     };
     var isErrorWithLocation = function isErrorWithLocation(error) {
         return error.index !== void 0 && error.description !== void 0;
@@ -1384,7 +1400,7 @@ var Player = function() {
         if (!node) {
             return;
         }
-        if ("value" in node && _type_of(node.value) === "object" && typeof ((_node_value = node.value) === null || _node_value === void 0 ? void 0 : _node_value.id) === "string") {
+        if ("value" in node && typeof node.value === "object" && typeof ((_node_value = node.value) === null || _node_value === void 0 ? void 0 : _node_value.id) === "string") {
             return node.value.id;
         }
     };
@@ -1535,7 +1551,7 @@ var Player = function() {
         });
     };
     var __copyProps = function(to, from, except, desc) {
-        if (from && (typeof from === "undefined" ? "undefined" : _type_of(from)) === "object" || typeof from === "function") {
+        if (from && typeof from === "object" || typeof from === "function") {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
             try {
                 var _loop = function() {
@@ -1590,16 +1606,15 @@ var Player = function() {
             exports.toError = exports.NestedError = void 0;
             var NestedError4 = /*#__PURE__*/ function(Error1) {
                 _inherits(_NestedError, Error1);
+                var _super = _create_super(_NestedError);
                 function _NestedError(message) {
                     for(var _len = arguments.length, innerErrors = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++){
                         innerErrors[_key - 1] = arguments[_key];
                     }
                     _class_call_check(this, _NestedError);
                     var _this;
-                    _this = _call_super(this, _NestedError, [
-                        message
-                    ]);
-                    var thisErrorReport = _NestedError.getErrorReport(_this);
+                    _this = _super.call(this, message);
+                    var thisErrorReport = _NestedError.getErrorReport(_assert_this_initialized(_this));
                     if (innerErrors.length === 1) {
                         var innerError = toError(innerErrors[0]);
                         _this.innerErrors = [
@@ -1735,7 +1750,7 @@ var Player = function() {
                 return out;
             }
             function isObject(o) {
-                return o != null && (typeof o === "undefined" ? "undefined" : _type_of(o)) === "object";
+                return o != null && typeof o === "object";
             }
             function addLast2(array, val) {
                 if (Array.isArray(val)) return array.concat(val);
@@ -2078,7 +2093,7 @@ var Player = function() {
                     else return 0;
                 }
             }();
-            if ((typeof module === "undefined" ? "undefined" : _type_of(module)) === "object") module.exports = SortedArray2;
+            if (typeof module === "object") module.exports = SortedArray2;
             if (typeof define === "function" && define.amd) define(function() {
                 return SortedArray2;
             });
@@ -2500,9 +2515,10 @@ var Player = function() {
     }();
     var SyncHook = /*#__PURE__*/ function(Hook) {
         _inherits(SyncHook, Hook);
+        var _super = _create_super(SyncHook);
         function SyncHook() {
             _class_call_check(this, SyncHook);
-            return _call_super(this, SyncHook, arguments);
+            return _super.apply(this, arguments);
         }
         _create_class(SyncHook, [
             {
@@ -2535,9 +2551,10 @@ var Player = function() {
     }(Hook);
     var SyncBailHook = /*#__PURE__*/ function(Hook) {
         _inherits(SyncBailHook, Hook);
+        var _super = _create_super(SyncBailHook);
         function SyncBailHook() {
             _class_call_check(this, SyncBailHook);
-            return _call_super(this, SyncBailHook, arguments);
+            return _super.apply(this, arguments);
         }
         _create_class(SyncBailHook, [
             {
@@ -2569,9 +2586,10 @@ var Player = function() {
     }(Hook);
     var SyncWaterfallHook = /*#__PURE__*/ function(Hook) {
         _inherits(SyncWaterfallHook, Hook);
+        var _super = _create_super(SyncWaterfallHook);
         function SyncWaterfallHook() {
             _class_call_check(this, SyncWaterfallHook);
-            return _call_super(this, SyncWaterfallHook, arguments);
+            return _super.apply(this, arguments);
         }
         _create_class(SyncWaterfallHook, [
             {
@@ -3067,7 +3085,7 @@ var Player = function() {
                     var _this_parseCache_path;
                     var ast = (_this_parseCache_path = this.parseCache[path]) !== null && _this_parseCache_path !== void 0 ? _this_parseCache_path : parse(path);
                     this.parseCache[path] = ast;
-                    if ((typeof ast === "undefined" ? "undefined" : _type_of(ast)) !== "object" || !(ast === null || ast === void 0 ? void 0 : ast.status)) {
+                    if (typeof ast !== "object" || !(ast === null || ast === void 0 ? void 0 : ast.status)) {
                         var _ast_error;
                         throw new TypeError('Cannot normalize path "'.concat(path, '": ').concat((_ast_error = ast === null || ast === void 0 ? void 0 : ast.error) !== null && _ast_error !== void 0 ? _ast_error : "Unknown Error."));
                     }
@@ -3268,12 +3286,13 @@ var Player = function() {
     }();
     var DependencyMiddleware = /*#__PURE__*/ function(DependencyTracker) {
         _inherits(DependencyMiddleware, DependencyTracker);
+        var _super = _create_super(DependencyMiddleware);
         function DependencyMiddleware() {
             _class_call_check(this, DependencyMiddleware);
             var _this;
-            _this = _call_super(this, DependencyMiddleware);
-            _this.get = _this.get.bind(_this);
-            _this.set = _this.set.bind(_this);
+            _this = _super.call(this);
+            _this.get = _this.get.bind(_assert_this_initialized(_this));
+            _this.set = _this.set.bind(_assert_this_initialized(_this));
             return _this;
         }
         _create_class(DependencyMiddleware, [
@@ -3308,13 +3327,14 @@ var Player = function() {
     }(DependencyTracker);
     var DependencyModel = /*#__PURE__*/ function(DependencyTracker) {
         _inherits(DependencyModel, DependencyTracker);
+        var _super = _create_super(DependencyModel);
         function DependencyModel(rootModel) {
             _class_call_check(this, DependencyModel);
             var _this;
-            _this = _call_super(this, DependencyModel);
+            _this = _super.call(this);
             _this.rootModel = rootModel;
-            _this.set = _this.set.bind(_this);
-            _this.get = _this.get.bind(_this);
+            _this.set = _this.set.bind(_assert_this_initialized(_this));
+            _this.get = _this.get.bind(_assert_this_initialized(_this));
             return _this;
         }
         _create_class(DependencyModel, [
@@ -3948,20 +3968,23 @@ var Player = function() {
      * @experimental These Player APIs are in active development and may change. Use with caution
      */ key: "evaluateAsync",
                 value: function evaluateAsync(expr, options) {
-                    var _this = this;
                     if (Array.isArray(expr)) {
-                        return collateAwaitable(expr.map(function(exp) {
-                            return _async_to_generator(function() {
+                        var _this = this;
+                        return collateAwaitable(expr.map(function() {
+                            var _ref = _async_to_generator(function(exp) {
                                 return _ts_generator(this, function(_state) {
                                     return [
                                         2,
-                                        this.evaluate(exp, _object_spread_props(_object_spread({}, options), {
+                                        _this.evaluate(exp, _object_spread_props(_object_spread({}, options), {
                                             async: true
                                         }))
                                     ];
                                 });
-                            }).call(_this);
-                        })).awaitableThen(function(values) {
+                            });
+                            return function(exp) {
+                                return _ref.apply(this, arguments);
+                            };
+                        }())).awaitableThen(function(values) {
                             return values.pop();
                         });
                     } else {
@@ -4786,7 +4809,7 @@ var Player = function() {
                     for(var _iterator = foo[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
                         len = _step.value;
                         tmp = len;
-                        if (tmp && (typeof tmp === "undefined" ? "undefined" : _type_of(tmp)) === "object") {
+                        if (tmp && typeof tmp === "object") {
                             tmp = find(bar, tmp);
                             if (!tmp) return false;
                         }
@@ -4817,7 +4840,7 @@ var Player = function() {
                     for(var _iterator1 = foo[Symbol.iterator](), _step1; !(_iteratorNormalCompletion1 = (_step1 = _iterator1.next()).done); _iteratorNormalCompletion1 = true){
                         len = _step1.value;
                         tmp = len[0];
-                        if (tmp && (typeof tmp === "undefined" ? "undefined" : _type_of(tmp)) === "object") {
+                        if (tmp && typeof tmp === "object") {
                             tmp = find(bar, tmp);
                             if (!tmp) return false;
                         }
@@ -4856,7 +4879,7 @@ var Player = function() {
                 }
                 return len === -1;
             }
-            if (!ctor || (typeof foo === "undefined" ? "undefined" : _type_of(foo)) === "object") {
+            if (!ctor || typeof foo === "object") {
                 len = 0;
                 for(ctor in foo){
                     if (has.call(foo, ctor) && ++len && !has.call(bar, ctor)) return false;
@@ -4930,7 +4953,7 @@ var Player = function() {
                     }
                     var parseLocalObject = function(currentValue, objToParse) {
                         var path = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : [];
-                        if ((typeof objToParse === "undefined" ? "undefined" : _type_of(objToParse)) !== "object" || objToParse === null) {
+                        if (typeof objToParse !== "object" || objToParse === null) {
                             return {
                                 value: objToParse,
                                 children: []
@@ -4967,7 +4990,7 @@ var Player = function() {
                             if (newChildren) {
                                 var _children2;
                                 (_children2 = children2).push.apply(_children2, _to_consumable_array(newChildren));
-                            } else if (localValue && (typeof localValue === "undefined" ? "undefined" : _type_of(localValue)) === "object") {
+                            } else if (localValue && typeof localValue === "object") {
                                 var _children21;
                                 var result = parseLocalObject(accumulation.value, localValue, _to_consumable_array(path).concat([
                                     localKey
@@ -5142,7 +5165,7 @@ var Player = function() {
                     Object.keys(clonedNode).forEach(function(key) {
                         if (key === "parent") return;
                         var value = clonedNode[key];
-                        if ((typeof value === "undefined" ? "undefined" : _type_of(value)) === "object" && value !== null) {
+                        if (typeof value === "object" && value !== null) {
                             clonedNode[key] = Array.isArray(value) ? _to_consumable_array(value) : _object_spread({}, value);
                         }
                     });
@@ -5576,7 +5599,7 @@ var Player = function() {
                             for(var _iterator = templateSubstitutions[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
                                 var _step_value = _step.value, expression = _step_value.expression, value = _step_value.value;
                                 var flags = "g";
-                                if ((typeof expression === "undefined" ? "undefined" : _type_of(expression)) === "object") {
+                                if (typeof expression === "object") {
                                     flags = "".concat(expression.flags).concat(expression.global ? "" : "g");
                                 }
                                 templateStr = templateStr.replace(new RegExp(expression, flags), value);
@@ -5727,7 +5750,7 @@ var Player = function() {
     var bindingResolveLookup = createPatternMatcher("{{", "}}");
     var expressionResolveLookup = createPatternMatcher("@[", "]@");
     function resolveAllRefs(node, resolveOptions, propertiesToSkip) {
-        if (node === null || node === void 0 || (typeof node === "undefined" ? "undefined" : _type_of(node)) !== "object" && typeof node !== "string") {
+        if (node === null || node === void 0 || typeof node !== "object" && typeof node !== "string") {
             return node;
         }
         if (typeof node === "string") {
@@ -5740,7 +5763,7 @@ var Player = function() {
             }
             var val = node[key];
             var newVal = val;
-            if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object") {
+            if (typeof val === "object") {
                 newVal = resolveAllRefs(val, resolveOptions, propertiesToSkip);
             } else if (typeof val === "string") {
                 newVal = resolveString(val, resolveOptions);
@@ -6086,7 +6109,7 @@ var Player = function() {
                 key: "applyParser",
                 value: function applyParser(parser) {
                     parser.hooks.parseNode.tap("asset", function(obj, nodeType, options, childOptions) {
-                        if ((childOptions === null || childOptions === void 0 ? void 0 : childOptions.key) === "asset" && (typeof obj === "undefined" ? "undefined" : _type_of(obj)) === "object") {
+                        if ((childOptions === null || childOptions === void 0 ? void 0 : childOptions.key) === "asset" && typeof obj === "object") {
                             var assetAST = parser.parseObject(obj, "asset" /* Asset */ , options);
                             if (!assetAST) {
                                 return [];
@@ -6294,7 +6317,6 @@ var Player = function() {
     var import_p_defer = __toESM(require_p_defer());
     var FlowInstance = /*#__PURE__*/ function() {
         function FlowInstance(id, flow, options) {
-            var _this = this;
             _class_call_check(this, FlowInstance);
             this.isTransitioning = false;
             this.hooks = {
@@ -6311,55 +6333,60 @@ var Player = function() {
             this.flow = flow;
             this.log = options === null || options === void 0 ? void 0 : options.logger;
             this.history = [];
-            this.hooks.transition.tap("startPromise", function(_oldState, nextState) {
-                return _async_to_generator(function() {
+            var _this = this;
+            this.hooks.transition.tap("startPromise", function() {
+                var _ref = _async_to_generator(function(_oldState, nextState) {
                     var newState;
                     return _ts_generator(this, function(_state) {
                         newState = nextState.value;
-                        if (this.flowPromise && newState.state_type === "END") {
-                            this.flowPromise.resolve(newState);
+                        if (_this.flowPromise && newState.state_type === "END") {
+                            _this.flowPromise.resolve(newState);
                         }
                         return [
                             2
                         ];
                     });
-                }).call(_this);
-            });
+                });
+                return function(_oldState, nextState) {
+                    return _ref.apply(this, arguments);
+                };
+            }());
         }
         _create_class(FlowInstance, [
             {
                 key: "start",
                 value: /** Start the state machine */ function start() {
+                    var _this = this;
                     return _async_to_generator(function() {
                         var _this_log, initialState;
                         return _ts_generator(this, function(_state) {
-                            if (this.flowPromise) {
+                            if (_this.flowPromise) {
                                 ;
-                                (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.warn("Already called start for flow");
+                                (_this_log = _this.log) === null || _this_log === void 0 ? void 0 : _this_log.warn("Already called start for flow");
                                 return [
                                     2,
-                                    this.flowPromise.promise
+                                    _this.flowPromise.promise
                                 ];
                             }
-                            this.flow = this.hooks.beforeStart.call(this.flow) || this.flow;
-                            if (this.flow.onStart) {
-                                this.hooks.onStart.call(this.flow.onStart);
+                            _this.flow = _this.hooks.beforeStart.call(_this.flow) || _this.flow;
+                            if (_this.flow.onStart) {
+                                _this.hooks.onStart.call(_this.flow.onStart);
                             }
-                            initialState = this.flow.startState;
+                            initialState = _this.flow.startState;
                             if (!initialState) {
                                 return [
                                     2,
                                     Promise.reject(new Error("No 'startState' defined for flow"))
                                 ];
                             }
-                            this.flowPromise = (0, import_p_defer.default)();
-                            this.pushHistory(initialState);
+                            _this.flowPromise = (0, import_p_defer.default)();
+                            _this.pushHistory(initialState);
                             return [
                                 2,
-                                this.flowPromise.promise
+                                _this.flowPromise.promise
                             ];
                         });
-                    }).call(this);
+                    })();
                 }
             },
             {
@@ -6411,7 +6438,7 @@ var Player = function() {
                         throw new Error("No flow definition for: ".concat(stateName, " was found."));
                     }
                     var nextState = this.flow[stateName];
-                    if (!this.flow[stateName] || (typeof nextState === "undefined" ? "undefined" : _type_of(nextState)) !== "object" || !("state_type" in nextState)) {
+                    if (!this.flow[stateName] || typeof nextState !== "object" || !("state_type" in nextState)) {
                         var _this_log;
                         (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.error("Flow doesn't contain any states named: ".concat(stateName));
                         return;
@@ -6472,30 +6499,30 @@ var Player = function() {
             {
                 key: "run",
                 value: function run(startState) {
+                    var _this = this;
                     return _async_to_generator(function() {
-                        var _this, _this_log, startFlow, flow, end, firstItem;
+                        var _this_log, startFlow, flow, end, firstItem;
                         return _ts_generator(this, function(_state) {
                             switch(_state.label){
                                 case 0:
-                                    _this = this;
-                                    if (!Object.prototype.hasOwnProperty.call(this.navigation, startState)) {
+                                    if (!Object.prototype.hasOwnProperty.call(_this.navigation, startState)) {
                                         return [
                                             2,
                                             Promise.reject(new Error("No flow defined for: ".concat(startState)))
                                         ];
                                     }
-                                    startFlow = this.navigation[startState];
-                                    if (startFlow === null || (typeof startFlow === "undefined" ? "undefined" : _type_of(startFlow)) !== "object") {
+                                    startFlow = _this.navigation[startState];
+                                    if (startFlow === null || typeof startFlow !== "object") {
                                         return [
                                             2,
                                             Promise.reject(new Error("Flow: ".concat(startState, " needs to be an object")))
                                         ];
                                     }
-                                    (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.debug("Starting flow: ".concat(startState));
+                                    (_this_log = _this.log) === null || _this_log === void 0 ? void 0 : _this_log.debug("Starting flow: ".concat(startState));
                                     flow = new FlowInstance(startState, startFlow, {
-                                        logger: this.log
+                                        logger: _this.log
                                     });
-                                    this.addNewFlow(flow);
+                                    _this.addNewFlow(flow);
                                     flow.hooks.afterTransition.tap("flow-controller", function(flowInstance) {
                                         var _flowInstance_currentState;
                                         if (((_flowInstance_currentState = flowInstance.currentState) === null || _flowInstance_currentState === void 0 ? void 0 : _flowInstance_currentState.value.state_type) === "FLOW") {
@@ -6515,10 +6542,10 @@ var Player = function() {
                                     ];
                                 case 1:
                                     end = _state.sent();
-                                    this.navStack.pop();
-                                    if (this.navStack.length > 0) {
+                                    _this.navStack.pop();
+                                    if (_this.navStack.length > 0) {
                                         firstItem = 0;
-                                        this.current = this.navStack[firstItem];
+                                        _this.current = _this.navStack[firstItem];
                                     }
                                     return [
                                         2,
@@ -6526,15 +6553,16 @@ var Player = function() {
                                     ];
                             }
                         });
-                    }).call(this);
+                    })();
                 }
             },
             {
                 key: "start",
                 value: function start() {
+                    var _this = this;
                     return _async_to_generator(function() {
                         return _ts_generator(this, function(_state) {
-                            if (!this.navigation.BEGIN) {
+                            if (!_this.navigation.BEGIN) {
                                 return [
                                     2,
                                     Promise.reject(new Error("Must supply a BEGIN state"))
@@ -6542,10 +6570,10 @@ var Player = function() {
                             }
                             return [
                                 2,
-                                this.run(this.navigation.BEGIN)
+                                _this.run(_this.navigation.BEGIN)
                             ];
                         });
-                    }).call(this);
+                    })();
                 }
             }
         ]);
@@ -7336,7 +7364,7 @@ var Player = function() {
                 var nestedPath = _to_consumable_array(path).concat([
                     key
                 ]);
-                if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object") {
+                if (typeof val === "object") {
                     traverseObj(val, nestedPath, pairs);
                 } else {
                     pairs.set(nestedPath, val);
@@ -7377,7 +7405,7 @@ var Player = function() {
             {
                 /** Add match -> value mapping to the registry */ key: "set",
                 value: function set(match, value) {
-                    var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createObjectMatcher(match) : createBasicMatcher(match);
+                    var matcher = typeof match === "object" ? createObjectMatcher(match) : createBasicMatcher(match);
                     this.store.insert({
                         key: match,
                         value: value,
@@ -7804,7 +7832,7 @@ var Player = function() {
                     var parentBinding = resolved.parent();
                     var property = resolved.key();
                     var parentValue = this.get(parentBinding);
-                    var existedBeforeDelete = (typeof parentValue === "undefined" ? "undefined" : _type_of(parentValue)) === "object" && parentValue !== null && Object.prototype.hasOwnProperty.call(parentValue, property);
+                    var existedBeforeDelete = typeof parentValue === "object" && parentValue !== null && Object.prototype.hasOwnProperty.call(parentValue, property);
                     this.getModel().delete(resolved, options);
                     if (existedBeforeDelete && !this.get(resolved)) {
                         this.trash.add(resolved);
@@ -7908,7 +7936,7 @@ var Player = function() {
                     var expressionEvaluator;
                     var handleEval = function(exp) {
                         if (exp) {
-                            if ((typeof exp === "undefined" ? "undefined" : _type_of(exp)) === "object" && "exp" in exp) {
+                            if (typeof exp === "object" && "exp" in exp) {
                                 expressionEvaluator === null || expressionEvaluator === void 0 ? void 0 : expressionEvaluator.evaluate(exp.exp);
                             } else {
                                 expressionEvaluator === null || expressionEvaluator === void 0 ? void 0 : expressionEvaluator.evaluate(exp);
@@ -8001,8 +8029,8 @@ var Player = function() {
         status: "not-started"
     };
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/player.ts
-    var PLAYER_VERSION = true ? "0.15.2" : "unknown";
-    var COMMIT = true ? "6222f07d6fbf274ceb6ecd11a094456524557841" : "unknown";
+    var PLAYER_VERSION = true ? "0.15.3--canary.836.34713" : "unknown";
+    var COMMIT = true ? "8cc25d6931ec8e9cd677e45b807897f220d2aa75" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player(config) {
             var _this = this;
@@ -8172,7 +8200,7 @@ var Player = function() {
                         flow.hooks.beforeTransition.tap("player", function(state, transitionVal) {
                             var computedTransitionVal = state.transitions[transitionVal] ? transitionVal : "*";
                             if (state.onEnd && state.transitions[computedTransitionVal]) {
-                                if (_type_of(state.onEnd) === "object" && "exp" in state.onEnd) {
+                                if (typeof state.onEnd === "object" && "exp" in state.onEnd) {
                                     expressionEvaluator === null || expressionEvaluator === void 0 ? void 0 : expressionEvaluator.evaluate(state.onEnd.exp);
                                 } else {
                                     expressionEvaluator === null || expressionEvaluator === void 0 ? void 0 : expressionEvaluator.evaluate(state.onEnd);
@@ -8331,12 +8359,12 @@ var Player = function() {
             {
                 key: "start",
                 value: function start(payload) {
+                    var _this = this;
                     return _async_to_generator(function() {
-                        var _this, _payload_id, ref, maybeUpdateState, _this_setupFlow, state, start, endProps, _tmp, error, errorState;
+                        var _payload_id, ref, maybeUpdateState, _this_setupFlow, state, start, endProps, _tmp, error, errorState;
                         return _ts_generator(this, function(_state) {
                             switch(_state.label){
                                 case 0:
-                                    _this = this;
                                     ref = Symbol((_payload_id = payload === null || payload === void 0 ? void 0 : payload.id) !== null && _payload_id !== void 0 ? _payload_id : "payload");
                                     maybeUpdateState = function(newState) {
                                         if (_this.state.ref !== ref) {
@@ -8346,7 +8374,7 @@ var Player = function() {
                                         _this.setState(newState);
                                         return newState;
                                     };
-                                    this.setState({
+                                    _this.setState({
                                         status: "not-started",
                                         ref: ref
                                     });
@@ -8358,8 +8386,8 @@ var Player = function() {
                                         ,
                                         4
                                     ]);
-                                    _this_setupFlow = this.setupFlow(payload), state = _this_setupFlow.state, start = _this_setupFlow.start;
-                                    this.setState(_object_spread({
+                                    _this_setupFlow = _this.setupFlow(payload), state = _this_setupFlow.state, start = _this_setupFlow.start;
+                                    _this.setState(_object_spread({
                                         ref: ref
                                     }, state));
                                     start();
@@ -8404,7 +8432,7 @@ var Player = function() {
                                     ];
                             }
                         });
-                    }).call(this);
+                    })();
                 }
             }
         ]);
