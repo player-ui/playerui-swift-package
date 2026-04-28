@@ -74,20 +74,20 @@ var PubSubPlugin = function() {
     var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
     var __getOwnPropNames = Object.getOwnPropertyNames;
     var __hasOwnProp = Object.prototype.hasOwnProperty;
-    var __export = function(target, all) {
+    var __export = function __export(target, all) {
         for(var name in all)__defProp(target, name, {
             get: all[name],
             enumerable: true
         });
     };
-    var __copyProps = function(to, from, except, desc) {
+    var __copyProps = function __copyProps(to, from, except, desc) {
         if (from && (typeof from === "undefined" ? "undefined" : _type_of(from)) === "object" || typeof from === "function") {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
             try {
                 var _loop = function() {
                     var key = _step.value;
                     if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
-                        get: function() {
+                        get: function get() {
                             return from[key];
                         },
                         enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
@@ -111,7 +111,7 @@ var PubSubPlugin = function() {
         }
         return to;
     };
-    var __toCommonJS = function(mod) {
+    var __toCommonJS = function __toCommonJS(mod) {
         return __copyProps(__defProp({}, "__esModule", {
             value: true
         }), mod);
@@ -119,13 +119,13 @@ var PubSubPlugin = function() {
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/pubsub/core/src/index.ts
     var src_exports = {};
     __export(src_exports, {
-        PubSubHandlerPlugin: function() {
+        PubSubHandlerPlugin: function PubSubHandlerPlugin1() {
             return PubSubHandlerPlugin;
         },
-        PubSubPlugin: function() {
+        PubSubPlugin: function PubSubPlugin1() {
             return PubSubPlugin;
         },
-        PubSubPluginSymbol: function() {
+        PubSubPluginSymbol: function PubSubPluginSymbol1() {
             return PubSubPluginSymbol;
         }
     });
@@ -354,10 +354,10 @@ var PubSubPlugin = function() {
     var _PubSubPlugin = /*#__PURE__*/ function() {
         function _PubSubPlugin(config) {
             _class_call_check(this, _PubSubPlugin);
+            var _ref;
             this.name = "pub-sub";
             this.symbol = _PubSubPlugin.Symbol;
-            var _config_expressionName;
-            this.expressionName = (_config_expressionName = config === null || config === void 0 ? void 0 : config.expressionName) !== null && _config_expressionName !== void 0 ? _config_expressionName : "publish";
+            this.expressionName = (_ref = config === null || config === void 0 ? void 0 : config.expressionName) !== null && _ref !== void 0 ? _ref : "publish";
             this.pubsub = pubsub;
         }
         _create_class(_PubSubPlugin, [

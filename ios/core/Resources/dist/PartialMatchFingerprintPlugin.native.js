@@ -27,20 +27,20 @@ var PartialMatchFingerprintPlugin = function() {
     var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
     var __getOwnPropNames = Object.getOwnPropertyNames;
     var __hasOwnProp = Object.prototype.hasOwnProperty;
-    var __export = function(target, all) {
+    var __export = function __export(target, all) {
         for(var name in all)__defProp(target, name, {
             get: all[name],
             enumerable: true
         });
     };
-    var __copyProps = function(to, from, except, desc) {
+    var __copyProps = function __copyProps(to, from, except, desc) {
         if (from && (typeof from === "undefined" ? "undefined" : _type_of(from)) === "object" || typeof from === "function") {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
             try {
                 var _loop = function() {
                     var key = _step.value;
                     if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
-                        get: function() {
+                        get: function get() {
                             return from[key];
                         },
                         enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
@@ -64,7 +64,7 @@ var PartialMatchFingerprintPlugin = function() {
         }
         return to;
     };
-    var __toCommonJS = function(mod) {
+    var __toCommonJS = function __toCommonJS(mod) {
         return __copyProps(__defProp({}, "__esModule", {
             value: true
         }), mod);
@@ -72,7 +72,7 @@ var PartialMatchFingerprintPlugin = function() {
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/partial-match-fingerprint/core/src/index.ts
     var src_exports = {};
     __export(src_exports, {
-        PartialMatchFingerprintPlugin: function() {
+        PartialMatchFingerprintPlugin: function PartialMatchFingerprintPlugin1() {
             return PartialMatchFingerprintPlugin;
         }
     });

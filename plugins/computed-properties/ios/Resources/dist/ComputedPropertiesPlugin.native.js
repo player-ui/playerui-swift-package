@@ -52,20 +52,20 @@ var ComputedPropertiesPlugin = function() {
     var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
     var __getOwnPropNames = Object.getOwnPropertyNames;
     var __hasOwnProp = Object.prototype.hasOwnProperty;
-    var __export = function(target, all) {
+    var __export = function __export(target, all) {
         for(var name in all)__defProp(target, name, {
             get: all[name],
             enumerable: true
         });
     };
-    var __copyProps = function(to, from, except, desc) {
+    var __copyProps = function __copyProps(to, from, except, desc) {
         if (from && (typeof from === "undefined" ? "undefined" : _type_of(from)) === "object" || typeof from === "function") {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
             try {
                 var _loop = function() {
                     var key = _step.value;
                     if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
-                        get: function() {
+                        get: function get() {
                             return from[key];
                         },
                         enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
@@ -89,7 +89,7 @@ var ComputedPropertiesPlugin = function() {
         }
         return to;
     };
-    var __toCommonJS = function(mod) {
+    var __toCommonJS = function __toCommonJS(mod) {
         return __copyProps(__defProp({}, "__esModule", {
             value: true
         }), mod);
@@ -97,7 +97,7 @@ var ComputedPropertiesPlugin = function() {
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/computed-properties/core/src/index.ts
     var src_exports = {};
     __export(src_exports, {
-        ComputedPropertiesPlugin: function() {
+        ComputedPropertiesPlugin: function ComputedPropertiesPlugin1() {
             return ComputedPropertiesPlugin;
         }
     });
@@ -113,7 +113,7 @@ var ComputedPropertiesPlugin = function() {
                     var _this = this;
                     var schemaController;
                     var expressionEvaluator;
-                    var getExpressionType = function(binding) {
+                    var getExpressionType = function getExpressionType(binding) {
                         var dataType = schemaController === null || schemaController === void 0 ? void 0 : schemaController.getType(binding);
                         if ((dataType === null || dataType === void 0 ? void 0 : dataType.type) === "Expression") {
                             return dataType;
@@ -131,6 +131,7 @@ var ComputedPropertiesPlugin = function() {
                             return next === null || next === void 0 ? void 0 : next.get(binding, options);
                         },
                         set: function set(transaction, options, next) {
+                            var _ref;
                             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
                             try {
                                 for(var _iterator = transaction[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
@@ -153,8 +154,7 @@ var ComputedPropertiesPlugin = function() {
                                     }
                                 }
                             }
-                            var _next_set;
-                            return (_next_set = next === null || next === void 0 ? void 0 : next.set(transaction, options)) !== null && _next_set !== void 0 ? _next_set : [];
+                            return (_ref = next === null || next === void 0 ? void 0 : next.set(transaction, options)) !== null && _ref !== void 0 ? _ref : [];
                         },
                         delete: function _delete(binding, options, next) {
                             if (getExpressionType(binding)) {

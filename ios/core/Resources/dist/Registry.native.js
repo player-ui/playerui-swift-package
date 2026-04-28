@@ -88,7 +88,7 @@ var Registry = function() {
     };
     var createObjectMatcher = function createObjectMatcher(partialObj) {
         var pairs = traverseObj(partialObj);
-        var matchFunction = function(searchObj) {
+        var matchFunction = function matchFunction(searchObj) {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
             try {
                 for(var _iterator = Array.from(pairs)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
@@ -119,7 +119,7 @@ var Registry = function() {
     };
     var createBasicMatcher = // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/partial-match-registry/src/index.ts
     function createBasicMatcher(seed) {
-        var matcher = function(match) {
+        var matcher = function matcher(match) {
             return seed === match;
         };
         matcher.count = 1;
@@ -131,27 +131,27 @@ var Registry = function() {
     var __getOwnPropNames = Object.getOwnPropertyNames;
     var __getProtoOf = Object.getPrototypeOf;
     var __hasOwnProp = Object.prototype.hasOwnProperty;
-    var __commonJS = function(cb, mod) {
+    var __commonJS = function __commonJS(cb, mod) {
         return function __require() {
             return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = {
                 exports: {}
             }).exports, mod), mod.exports;
         };
     };
-    var __export = function(target, all) {
+    var __export = function __export(target, all) {
         for(var name in all)__defProp(target, name, {
             get: all[name],
             enumerable: true
         });
     };
-    var __copyProps = function(to, from, except, desc) {
+    var __copyProps = function __copyProps(to, from, except, desc) {
         if (from && (typeof from === "undefined" ? "undefined" : _type_of(from)) === "object" || typeof from === "function") {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
             try {
                 var _loop = function() {
                     var key = _step.value;
                     if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
-                        get: function() {
+                        get: function get() {
                             return from[key];
                         },
                         enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
@@ -175,7 +175,7 @@ var Registry = function() {
         }
         return to;
     };
-    var __toESM = function(mod, isNodeMode, target) {
+    var __toESM = function __toESM(mod, isNodeMode, target) {
         return target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(// If the importer is in node compatibility mode or this is not an ESM
         // file that has been converted to a CommonJS file using a Babel-
         // compatible transform (i.e. "__esModule" has not been set), then set
@@ -185,7 +185,7 @@ var Registry = function() {
             enumerable: true
         }) : target, mod);
     };
-    var __toCommonJS = function(mod) {
+    var __toCommonJS = function __toCommonJS(mod) {
         return __copyProps(__defProp({}, "__esModule", {
             value: true
         }), mod);
@@ -274,10 +274,10 @@ var Registry = function() {
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/partial-match-registry/src/index.ts
     var src_exports = {};
     __export(src_exports, {
-        Registry: function() {
+        Registry: function Registry1() {
             return Registry;
         },
-        createObjectMatcher: function() {
+        createObjectMatcher: function createObjectMatcher1() {
             return createObjectMatcher;
         }
     });
@@ -315,7 +315,7 @@ var Registry = function() {
         }
         return pairs;
     }
-    var createSortedArray = function() {
+    var createSortedArray = function createSortedArray() {
         return new import_sorted_array.default([], function(c) {
             return c.matcher.count;
         });
