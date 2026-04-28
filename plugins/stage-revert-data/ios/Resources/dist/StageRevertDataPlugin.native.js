@@ -118,6 +118,7 @@ function _inherits(subClass, superClass) {
     if (superClass) _set_prototype_of(subClass, superClass);
 }
 function _instanceof(left, right) {
+    "@swc/helpers - instanceof";
     if (right != null && typeof Symbol !== "undefined" && right[Symbol.hasInstance]) {
         return !!right[Symbol.hasInstance](left);
     } else {
@@ -201,12 +202,22 @@ function _object_spread_props(target, source) {
 }
 function _object_without_properties(source, excluded) {
     if (source == null) return {};
-    var target = _object_without_properties_loose(source, excluded);
-    var key, i;
+    var target = {}, sourceKeys, key, i;
+    if (typeof Reflect !== "undefined" && Reflect.ownKeys) {
+        sourceKeys = Reflect.ownKeys(Object(source));
+        for(i = 0; i < sourceKeys.length; i++){
+            key = sourceKeys[i];
+            if (excluded.indexOf(key) >= 0) continue;
+            if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+            target[key] = source[key];
+        }
+        return target;
+    }
+    target = _object_without_properties_loose(source, excluded);
     if (Object.getOwnPropertySymbols) {
-        var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-        for(i = 0; i < sourceSymbolKeys.length; i++){
-            key = sourceSymbolKeys[i];
+        sourceKeys = Object.getOwnPropertySymbols(source);
+        for(i = 0; i < sourceKeys.length; i++){
+            key = sourceKeys[i];
             if (excluded.indexOf(key) >= 0) continue;
             if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
             target[key] = source[key];
@@ -216,12 +227,11 @@ function _object_without_properties(source, excluded) {
 }
 function _object_without_properties_loose(source, excluded) {
     if (source == null) return {};
-    var target = {};
-    var sourceKeys = Object.keys(source);
-    var key, i;
+    var target = {}, sourceKeys = Object.getOwnPropertyNames(source), key, i;
     for(i = 0; i < sourceKeys.length; i++){
         key = sourceKeys[i];
         if (excluded.indexOf(key) >= 0) continue;
+        if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
         target[key] = source[key];
     }
     return target;
@@ -303,9 +313,17 @@ function _ts_generator(thisArg, body) {
         },
         trys: [],
         ops: []
-    }, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
-    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() {
-        return this;
+    }, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype), d = Object.defineProperty;
+    return d(g, "next", {
+        value: verb(0)
+    }), d(g, "throw", {
+        value: verb(1)
+    }), d(g, "return", {
+        value: verb(2)
+    }), typeof Symbol === "function" && d(g, Symbol.iterator, {
+        value: function() {
+            return this;
+        }
     }), g;
     function verb(n) {
         return function(v) {
@@ -432,7 +450,7 @@ var StageRevertDataPlugin = function() {
     };
     var createObjectMatcher = function createObjectMatcher(partialObj) {
         var pairs = traverseObj(partialObj);
-        var matchFunction = function(searchObj) {
+        var matchFunction = function matchFunction(searchObj) {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
             try {
                 for(var _iterator = Array.from(pairs)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
@@ -462,7 +480,7 @@ var StageRevertDataPlugin = function() {
         return matchFunction;
     };
     var createBasicMatcher = function createBasicMatcher(seed) {
-        var matcher = function(match) {
+        var matcher = function matcher(match) {
             return seed === match;
         };
         matcher.count = 1;
@@ -530,21 +548,21 @@ var StageRevertDataPlugin = function() {
             return middleware;
         }
         return {
-            get: function(binding, options) {
+            get: function get(binding, options) {
                 var resolvedOptions = options !== null && options !== void 0 ? options : defaultOptions;
                 if (middleware.get) {
                     return middleware.get(binding, resolvedOptions, next);
                 }
                 return next === null || next === void 0 ? void 0 : next.get(binding, resolvedOptions);
             },
-            set: function(transaction, options) {
+            set: function set(transaction, options) {
                 var resolvedOptions = options !== null && options !== void 0 ? options : defaultOptions;
                 if (middleware.set) {
                     return middleware.set(transaction, resolvedOptions, next);
                 }
                 return next === null || next === void 0 ? void 0 : next.set(transaction, resolvedOptions);
             },
-            delete: function(binding, options) {
+            delete: function _delete(binding, options) {
                 var resolvedOptions = options !== null && options !== void 0 ? options : defaultOptions;
                 if (middleware.delete) {
                     return middleware.delete(binding, resolvedOptions, next);
@@ -568,15 +586,15 @@ var StageRevertDataPlugin = function() {
             return model;
         }
         return {
-            get: function(binding, options) {
+            get: function get(binding, options) {
                 var _createModelWithOptions;
                 return (_createModelWithOptions = createModelWithOptions(options)) === null || _createModelWithOptions === void 0 ? void 0 : _createModelWithOptions.get(binding, options);
             },
-            set: function(transaction, options) {
+            set: function set(transaction, options) {
                 var _createModelWithOptions;
                 return (_createModelWithOptions = createModelWithOptions(options)) === null || _createModelWithOptions === void 0 ? void 0 : _createModelWithOptions.set(transaction, options);
             },
-            delete: function(binding, options) {
+            delete: function _delete(binding, options) {
                 var _createModelWithOptions;
                 return (_createModelWithOptions = createModelWithOptions(options)) === null || _createModelWithOptions === void 0 ? void 0 : _createModelWithOptions.delete(binding, options);
             }
@@ -650,13 +668,13 @@ var StageRevertDataPlugin = function() {
         return ch0 === OCURL_CODE && ch1 === OCURL_CODE;
     };
     var parseExpression = function parseExpression(expr, options) {
-        var _options_strict;
-        var strictMode = (_options_strict = options === null || options === void 0 ? void 0 : options.strict) !== null && _options_strict !== void 0 ? _options_strict : true;
+        var _ref;
+        var strictMode = (_ref = options === null || options === void 0 ? void 0 : options.strict) !== null && _ref !== void 0 ? _ref : true;
         var charAtFunc = expr.charAt;
         var charCodeAtFunc = expr.charCodeAt;
         var length = expr.length;
         var index = 0;
-        var getLocation = function(startChar) {
+        var getLocation = function getLocation(startChar) {
             return {
                 start: {
                     character: startChar
@@ -1423,17 +1441,17 @@ var StageRevertDataPlugin = function() {
         return _object_spread_props(_object_spread({}, resolverOptions), {
             data: {
                 model: resolverOptions.model,
-                formatValue: function(ref, value) {
+                formatValue: function formatValue(ref, value) {
                     if (resolverOptions.formatValue) {
                         return resolverOptions.formatValue(ref, value);
                     }
                     return value;
                 },
-                format: function(bindingLike, value) {
+                format: function format(bindingLike, value) {
                     return resolverOptions.format ? resolverOptions.format(isBinding(bindingLike) ? bindingLike : resolverOptions.parseBinding(bindingLike), value) : value;
                 }
             },
-            evaluate: function(exp) {
+            evaluate: function evaluate(exp) {
                 return resolverOptions.evaluator.evaluate(exp, resolverOptions);
             }
         });
@@ -1501,27 +1519,27 @@ var StageRevertDataPlugin = function() {
     var __getOwnPropNames = Object.getOwnPropertyNames;
     var __getProtoOf = Object.getPrototypeOf;
     var __hasOwnProp = Object.prototype.hasOwnProperty;
-    var __commonJS = function(cb, mod) {
+    var __commonJS = function __commonJS(cb, mod) {
         return function __require() {
             return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = {
                 exports: {}
             }).exports, mod), mod.exports;
         };
     };
-    var __export = function(target, all) {
+    var __export = function __export(target, all) {
         for(var name in all)__defProp(target, name, {
             get: all[name],
             enumerable: true
         });
     };
-    var __copyProps = function(to, from, except, desc) {
+    var __copyProps = function __copyProps(to, from, except, desc) {
         if (from && (typeof from === "undefined" ? "undefined" : _type_of(from)) === "object" || typeof from === "function") {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
             try {
                 var _loop = function() {
                     var key = _step.value;
                     if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
-                        get: function() {
+                        get: function get() {
                             return from[key];
                         },
                         enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
@@ -1545,7 +1563,7 @@ var StageRevertDataPlugin = function() {
         }
         return to;
     };
-    var __toESM = function(mod, isNodeMode, target) {
+    var __toESM = function __toESM(mod, isNodeMode, target) {
         return target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(// If the importer is in node compatibility mode or this is not an ESM
         // file that has been converted to a CommonJS file using a Babel-
         // compatible transform (i.e. "__esModule" has not been set), then set
@@ -1555,7 +1573,7 @@ var StageRevertDataPlugin = function() {
             enumerable: true
         }) : target, mod);
     };
-    var __toCommonJS = function(mod) {
+    var __toCommonJS = function __toCommonJS(mod) {
         return __copyProps(__defProp({}, "__esModule", {
             value: true
         }), mod);
@@ -1657,7 +1675,7 @@ var StageRevertDataPlugin = function() {
             function toError(err) {
                 try {
                     return _instanceof(err, Error) ? err : new Error("Value that is not an instance of Error was thrown: ".concat(err));
-                } catch (e) {
+                } catch (unused) {
                     return new Error("Failed to stringify non-instance of Error that was thrown.This is possibly due to the fact that toString() method of the valuedoesn't return a primitive value.");
                 }
             }
@@ -1958,7 +1976,7 @@ var StageRevertDataPlugin = function() {
     var require_p_defer = __commonJS({
         "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/p-defer@3.0.0/node_modules/p-defer/index.js": function(exports, module) {
             "use strict";
-            var pDefer = function() {
+            var pDefer = function pDefer() {
                 var deferred2 = {};
                 deferred2.promise = new Promise(function(resolve, reject) {
                     deferred2.resolve = resolve;
@@ -2067,7 +2085,7 @@ var StageRevertDataPlugin = function() {
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/stage-revert-data/core/src/index.ts
     var src_exports = {};
     __export(src_exports, {
-        StageRevertDataPlugin: function() {
+        StageRevertDataPlugin: function StageRevertDataPlugin1() {
             return StageRevertDataPlugin;
         }
     });
@@ -2513,7 +2531,7 @@ var StageRevertDataPlugin = function() {
         }
         return pairs;
     }
-    var createSortedArray = function() {
+    var createSortedArray = function createSortedArray() {
         return new import_sorted_array.default([], function(c) {
             return c.matcher.count;
         });
@@ -2609,38 +2627,38 @@ var StageRevertDataPlugin = function() {
     }();
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var __defProp2 = Object.defineProperty;
-    var __export2 = function(target, all) {
+    var __export2 = function __export2(target, all) {
         for(var name in all)__defProp2(target, name, {
             get: all[name],
             enumerable: true
         });
     };
-    var toValue = function(value) {
+    var toValue = function toValue(value) {
         return {
             name: "Value",
             value: value
         };
     };
-    var toExpression = function(value) {
+    var toExpression = function toExpression(value) {
         return {
             name: "Expression",
             value: value
         };
     };
-    var toPath = function(path) {
+    var toPath = function toPath(path) {
         return {
             name: "PathNode",
             path: path
         };
     };
-    var toQuery = function(key, value) {
+    var toQuery = function toQuery(key, value) {
         return {
             name: "Query",
             key: key,
             value: value
         };
     };
-    var toConcatenatedNode = function(values) {
+    var toConcatenatedNode = function toConcatenatedNode(values) {
         if (values.length === 1) {
             return values[0];
         }
@@ -2658,7 +2676,7 @@ var StageRevertDataPlugin = function() {
     var SINGLE_QUOTE = "'";
     var DOUBLE_QUOTE = '"';
     var BACK_TICK = "`";
-    var isIdentifierChar = function(char) {
+    var isIdentifierChar = function isIdentifierChar(char) {
         if (!char) {
             return false;
         }
@@ -2678,10 +2696,10 @@ var StageRevertDataPlugin = function() {
         charCode === 125;
         return !matches;
     };
-    var parse = function(path) {
+    var parse = function parse(path) {
         var index = 1;
         var ch = path.charAt(0);
-        var next = function(expected) {
+        var next = function next(expected) {
             if (expected && ch !== expected) {
                 throw new Error("Expected char: ".concat(expected, " but got: ").concat(ch));
             }
@@ -2689,12 +2707,12 @@ var StageRevertDataPlugin = function() {
             index += 1;
             return ch;
         };
-        var whitespace = function() {
+        var whitespace = function whitespace() {
             while(ch === " "){
                 next();
             }
         };
-        var identifier = function() {
+        var identifier = function identifier() {
             var allowBoolValue = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : false;
             if (!isIdentifierChar(ch)) {
                 return;
@@ -2720,7 +2738,7 @@ var StageRevertDataPlugin = function() {
                 return toValue(value);
             }
         };
-        var expression = function() {
+        var expression = function expression() {
             if (ch === BACK_TICK) {
                 next(BACK_TICK);
                 var exp = ch;
@@ -2736,7 +2754,7 @@ var StageRevertDataPlugin = function() {
                 }
             }
         };
-        var regex = function(match) {
+        var regex = function regex(match) {
             if (!(ch === null || ch === void 0 ? void 0 : ch.match(match))) {
                 return;
             }
@@ -2751,7 +2769,7 @@ var StageRevertDataPlugin = function() {
                 return toValue(value);
             }
         };
-        var nestedPath = function() {
+        var nestedPath = function nestedPath() {
             if (ch === OPEN_CURL) {
                 next(OPEN_CURL);
                 next(OPEN_CURL);
@@ -2761,12 +2779,12 @@ var StageRevertDataPlugin = function() {
                 return modelRef;
             }
         };
-        var simpleSegment = function() {
+        var simpleSegment = function simpleSegment() {
             var allowBoolValue = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : false;
-            var _nestedPath, _ref;
+            var _ref, _nestedPath;
             return (_ref = (_nestedPath = nestedPath()) !== null && _nestedPath !== void 0 ? _nestedPath : expression()) !== null && _ref !== void 0 ? _ref : identifier(allowBoolValue);
         };
-        var segment = function() {
+        var segment = function segment() {
             var segments = [];
             var nextSegment = simpleSegment();
             while(nextSegment !== void 0){
@@ -2778,7 +2796,7 @@ var StageRevertDataPlugin = function() {
             }
             return toConcatenatedNode(segments);
         };
-        var optionallyQuotedSegment = function() {
+        var optionallyQuotedSegment = function optionallyQuotedSegment() {
             var allowBoolValue = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : false;
             whitespace();
             if (ch === SINGLE_QUOTE || ch === DOUBLE_QUOTE) {
@@ -2790,7 +2808,7 @@ var StageRevertDataPlugin = function() {
             }
             return simpleSegment(allowBoolValue);
         };
-        var equals = function() {
+        var equals = function equals() {
             if (ch !== EQUALS) {
                 return false;
             }
@@ -2799,7 +2817,7 @@ var StageRevertDataPlugin = function() {
             }
             return true;
         };
-        var parseBracket = function() {
+        var parseBracket = function parseBracket() {
             if (ch === OPEN_BRACKET) {
                 next(OPEN_BRACKET);
                 whitespace();
@@ -2821,7 +2839,7 @@ var StageRevertDataPlugin = function() {
                 return value;
             }
         };
-        var parseSegmentAndBrackets = function() {
+        var parseSegmentAndBrackets = function parseSegmentAndBrackets() {
             var parsed = [];
             var firstSegment = segment();
             if (firstSegment) {
@@ -2838,7 +2856,7 @@ var StageRevertDataPlugin = function() {
             }
             return parsed;
         };
-        var parsePath = function() {
+        var parsePath = function parsePath() {
             var parts = [];
             var nextSegment = parseSegmentAndBrackets();
             while(nextSegment !== void 0){
@@ -2949,6 +2967,7 @@ var StageRevertDataPlugin = function() {
         return _BindingInstance;
     }();
     function resolveBindingAST(bindingPathNode, options, hooks) {
+        var _context_updates;
         var context = {
             updates: {},
             path: []
@@ -2988,8 +3007,8 @@ var StageRevertDataPlugin = function() {
             }
         }
         function resolveNode(_node) {
-            var _hooks_beforeResolveNode_call;
-            var resolvedNode = (_hooks_beforeResolveNode_call = hooks === null || hooks === void 0 ? void 0 : hooks.beforeResolveNode.call(_node, _object_spread({}, context, options))) !== null && _hooks_beforeResolveNode_call !== void 0 ? _hooks_beforeResolveNode_call : _node;
+            var _ref;
+            var resolvedNode = (_ref = hooks === null || hooks === void 0 ? void 0 : hooks.beforeResolveNode.call(_node, _object_spread({}, context, options))) !== null && _ref !== void 0 ? _ref : _node;
             switch(resolvedNode.name){
                 case "Expression":
                 case "PathNode":
@@ -3025,7 +3044,6 @@ var StageRevertDataPlugin = function() {
             }
         }
         bindingPathNode.path.forEach(resolveNode);
-        var _context_updates;
         return {
             path: context.path,
             updates: Object.keys((_context_updates = context.updates) !== null && _context_updates !== void 0 ? _context_updates : {}).length > 0 ? context.updates : void 0
@@ -3034,13 +3052,13 @@ var StageRevertDataPlugin = function() {
     var BINDING_BRACKETS_REGEX = /[\s()*=`{}'"[\]]/;
     var LAZY_BINDING_REGEX = /^[^.]+(\..+)*$/;
     var DEFAULT_OPTIONS = {
-        get: function() {
+        get: function get() {
             throw new Error("Not Implemented");
         },
-        set: function() {
+        set: function set() {
             throw new Error("Not Implemented");
         },
-        evaluate: function() {
+        evaluate: function evaluate() {
             throw new Error("Not Implemented");
         }
     };
@@ -3063,18 +3081,18 @@ var StageRevertDataPlugin = function() {
      * representation of that path.
      */ key: "normalizePath",
                 value: function normalizePath(path, resolveOptions) {
+                    var _this_parseCache_path;
                     if (!BINDING_BRACKETS_REGEX.test(path) && LAZY_BINDING_REGEX.test(path) && this.hooks.skipOptimization.call(path) !== true) {
                         return {
                             path: path.split("."),
                             updates: void 0
                         };
                     }
-                    var _this_parseCache_path;
                     var ast = (_this_parseCache_path = this.parseCache[path]) !== null && _this_parseCache_path !== void 0 ? _this_parseCache_path : parse(path);
                     this.parseCache[path] = ast;
                     if ((typeof ast === "undefined" ? "undefined" : _type_of(ast)) !== "object" || !(ast === null || ast === void 0 ? void 0 : ast.status)) {
-                        var _ast_error;
-                        throw new TypeError('Cannot normalize path "'.concat(path, '": ').concat((_ast_error = ast === null || ast === void 0 ? void 0 : ast.error) !== null && _ast_error !== void 0 ? _ast_error : "Unknown Error."));
+                        var _ref;
+                        throw new TypeError('Cannot normalize path "'.concat(path, '": ').concat((_ref = ast === null || ast === void 0 ? void 0 : ast.error) !== null && _ref !== void 0 ? _ref : "Unknown Error."));
                     }
                     try {
                         return resolveBindingAST(ast.path, resolveOptions, this.hooks);
@@ -3107,14 +3125,14 @@ var StageRevertDataPlugin = function() {
                     var updates = {};
                     var joined = Array.isArray(rawBinding) ? rawBinding.join(".") : String(rawBinding);
                     var normalizeConfig = {
-                        getValue: function(path) {
+                        getValue: function getValue(path) {
                             var normalized2 = _this.normalizePath(path.join("."), normalizeConfig);
                             return options.get(_this.getBindingForNormalizedResult(normalized2));
                         },
-                        evaluate: function(exp) {
+                        evaluate: function evaluate(exp) {
                             return options.evaluate(exp);
                         },
-                        convertToPath: function(path) {
+                        convertToPath: function convertToPath(path) {
                             if (path === void 0) {
                                 throw new Error("Attempted to convert undefined value to binding path");
                             }
@@ -3179,9 +3197,9 @@ var StageRevertDataPlugin = function() {
                 /** Grab all of the bindings that this depended on */ key: "getDependencies",
                 value: function getDependencies(name) {
                     if (name !== void 0) {
+                        var _ref;
                         var _this_namedDependencySets_name, _this_namedDependencySets;
-                        var _this_namedDependencySets_name_readDeps;
-                        return (_this_namedDependencySets_name_readDeps = (_this_namedDependencySets = this.namedDependencySets) === null || _this_namedDependencySets === void 0 ? void 0 : (_this_namedDependencySets_name = _this_namedDependencySets[name]) === null || _this_namedDependencySets_name === void 0 ? void 0 : _this_namedDependencySets_name.readDeps) !== null && _this_namedDependencySets_name_readDeps !== void 0 ? _this_namedDependencySets_name_readDeps : /* @__PURE__ */ new Set();
+                        return (_ref = (_this_namedDependencySets = this.namedDependencySets) === null || _this_namedDependencySets === void 0 ? void 0 : (_this_namedDependencySets_name = _this_namedDependencySets[name]) === null || _this_namedDependencySets_name === void 0 ? void 0 : _this_namedDependencySets_name.readDeps) !== null && _ref !== void 0 ? _ref : /* @__PURE__ */ new Set();
                     }
                     return this.readDeps;
                 }
@@ -3203,9 +3221,9 @@ var StageRevertDataPlugin = function() {
                 /** Grab all of the bindings this wrote to */ key: "getModified",
                 value: function getModified(name) {
                     if (name !== void 0) {
+                        var _ref;
                         var _this_namedDependencySets_name, _this_namedDependencySets;
-                        var _this_namedDependencySets_name_writeDeps;
-                        return (_this_namedDependencySets_name_writeDeps = (_this_namedDependencySets = this.namedDependencySets) === null || _this_namedDependencySets === void 0 ? void 0 : (_this_namedDependencySets_name = _this_namedDependencySets[name]) === null || _this_namedDependencySets_name === void 0 ? void 0 : _this_namedDependencySets_name.writeDeps) !== null && _this_namedDependencySets_name_writeDeps !== void 0 ? _this_namedDependencySets_name_writeDeps : /* @__PURE__ */ new Set();
+                        return (_ref = (_this_namedDependencySets = this.namedDependencySets) === null || _this_namedDependencySets === void 0 ? void 0 : (_this_namedDependencySets_name = _this_namedDependencySets[name]) === null || _this_namedDependencySets_name === void 0 ? void 0 : _this_namedDependencySets_name.writeDeps) !== null && _ref !== void 0 ? _ref : /* @__PURE__ */ new Set();
                     }
                     return this.writeDeps;
                 }
@@ -3527,19 +3545,19 @@ var StageRevertDataPlugin = function() {
     var thisStr = "this";
     var evaluator_functions_exports = {};
     __export2(evaluator_functions_exports, {
-        conditional: function() {
+        conditional: function conditional1() {
             return conditional;
         },
-        deleteDataVal: function() {
+        deleteDataVal: function deleteDataVal1() {
             return deleteDataVal;
         },
-        getDataVal: function() {
+        getDataVal: function getDataVal1() {
             return getDataVal;
         },
-        setDataVal: function() {
+        setDataVal: function setDataVal1() {
             return setDataVal;
         },
-        waitFor: function() {
+        waitFor: function waitFor1() {
             return waitFor;
         }
     });
@@ -3551,7 +3569,7 @@ var StageRevertDataPlugin = function() {
         };
         return promise;
     }
-    var setDataVal = function(_context, binding, value) {
+    var setDataVal = function setDataVal(_context, binding, value) {
         _context.model.set([
             [
                 binding,
@@ -3559,13 +3577,13 @@ var StageRevertDataPlugin = function() {
             ]
         ]);
     };
-    var getDataVal = function(_context, binding) {
+    var getDataVal = function getDataVal(_context, binding) {
         return _context.model.get(binding);
     };
-    var deleteDataVal = function(_context, binding) {
+    var deleteDataVal = function deleteDataVal(_context, binding) {
         return _context.model.delete(binding);
     };
-    var conditional = function(ctx, condition, ifTrue, ifFalse) {
+    var conditional = function conditional(ctx, condition, ifTrue, ifFalse) {
         var testResult = ctx.evaluate(condition);
         if (isAwaitable(testResult)) {
             return testResult.awaitableThen(function(resolvedTest) {
@@ -3587,14 +3605,14 @@ var StageRevertDataPlugin = function() {
         return null;
     };
     conditional.resolveParams = false;
-    var waitFor = function(ctx, promise) {
+    var waitFor = function waitFor(ctx, promise) {
         return makeAwaitable(promise);
     };
-    var andandOperator = function(ctx, a, b, async) {
+    var andandOperator = function andandOperator(ctx, a, b, async) {
         return LogicalOperators.and(ctx, a, b, async);
     };
     andandOperator.resolveParams = false;
-    var ororOperator = function(ctx, a, b, async) {
+    var ororOperator = function ororOperator(ctx, a, b, async) {
         return LogicalOperators.or(ctx, a, b, async);
     };
     ororOperator.resolveParams = false;
@@ -3720,7 +3738,7 @@ var StageRevertDataPlugin = function() {
         }
     };
     var LogicalOperators = {
-        and: function(ctx, leftNode, rightNode, async) {
+        and: function and(ctx, leftNode, rightNode, async) {
             var leftResult = ctx.evaluate(leftNode);
             if (async && isAwaitable(leftResult)) {
                 return leftResult.awaitableThen(function(awaitedLeft) {
@@ -3731,7 +3749,7 @@ var StageRevertDataPlugin = function() {
             }
             return leftResult && ctx.evaluate(rightNode);
         },
-        or: function(ctx, leftNode, rightNode, async) {
+        or: function or(ctx, leftNode, rightNode, async) {
             var leftResult = ctx.evaluate(leftNode);
             if (async && isAwaitable(leftResult)) {
                 return leftResult.awaitableThen(function(awaitedLeft) {
@@ -3769,10 +3787,10 @@ var StageRevertDataPlugin = function() {
                 ]))
             };
             this.defaultHookOptions = _object_spread_props(_object_spread({}, defaultOptions), {
-                evaluate: function(expr) {
+                evaluate: function evaluate(expr) {
                     return _this.evaluate(expr, _this.defaultHookOptions);
                 },
-                resolveNode: function(node) {
+                resolveNode: function resolveNode(node) {
                     return _this._execAST(node, _this.defaultHookOptions);
                 }
             });
@@ -3792,12 +3810,12 @@ var StageRevertDataPlugin = function() {
                 key: "evaluate",
                 value: function evaluate(expr, options) {
                     var _this = this;
+                    var _this_hooks_beforeEvaluate_call;
                     var resolvedOpts = this.hooks.resolveOptions.call(_object_spread_props(_object_spread({}, this.defaultHookOptions, options), {
-                        resolveNode: function(node) {
+                        resolveNode: function resolveNode(node) {
                             return _this._execAST(node, resolvedOpts);
                         }
                     }));
-                    var _this_hooks_beforeEvaluate_call;
                     var expression = (_this_hooks_beforeEvaluate_call = this.hooks.beforeEvaluate.call(expr, resolvedOpts)) !== null && _this_hooks_beforeEvaluate_call !== void 0 ? _this_hooks_beforeEvaluate_call : expr;
                     while(isObjectExpression(expression)){
                         expression = expression.value;
@@ -3921,11 +3939,11 @@ var StageRevertDataPlugin = function() {
                 key: "_resolveNode",
                 value: function _resolveNode(_currentValue, node, options) {
                     var _this = this;
-                    var resolveNode = options.resolveNode, model = options.model;
                     var _options_async;
+                    var resolveNode = options.resolveNode, model = options.model;
                     var isAsync = (_options_async = options.async) !== null && _options_async !== void 0 ? _options_async : false;
                     var expressionContext = _object_spread_props(_object_spread({}, options), {
-                        evaluate: function(expr) {
+                        evaluate: function evaluate(expr) {
                             return _this.evaluate(expr, options);
                         }
                     });
@@ -4259,7 +4277,7 @@ var StageRevertDataPlugin = function() {
         ]);
         return ProxyLogger;
     }();
-    var identify = function(val) {
+    var identify = function identify(val) {
         return val;
     };
     var SchemaController = /*#__PURE__*/ function() {
@@ -4347,6 +4365,7 @@ var StageRevertDataPlugin = function() {
             {
                 key: "getApparentType",
                 value: function getApparentType(binding) {
+                    var _schemaType_validation, _baseType_validation;
                     var schemaType = this.getType(binding);
                     if (schemaType === void 0) {
                         return void 0;
@@ -4355,7 +4374,6 @@ var StageRevertDataPlugin = function() {
                     if (baseType === void 0) {
                         return schemaType;
                     }
-                    var _schemaType_validation, _baseType_validation;
                     return _object_spread_props(_object_spread({}, baseType, schemaType), {
                         validation: _to_consumable_array((_schemaType_validation = schemaType.validation) !== null && _schemaType_validation !== void 0 ? _schemaType_validation : []).concat(_to_consumable_array((_baseType_validation = baseType.validation) !== null && _baseType_validation !== void 0 ? _baseType_validation : []))
                     });
@@ -4504,10 +4522,10 @@ var StageRevertDataPlugin = function() {
             {
                 key: "get",
                 value: function get(binding, options, next) {
+                    var _ref;
                     var _this_shouldIncludeInvalid, _this;
                     var val = next === null || next === void 0 ? void 0 : next.get(binding, options);
-                    var _this_shouldIncludeInvalid1;
-                    if ((_this_shouldIncludeInvalid1 = (_this_shouldIncludeInvalid = (_this = this).shouldIncludeInvalid) === null || _this_shouldIncludeInvalid === void 0 ? void 0 : _this_shouldIncludeInvalid.call(_this, options)) !== null && _this_shouldIncludeInvalid1 !== void 0 ? _this_shouldIncludeInvalid1 : (options === null || options === void 0 ? void 0 : options.includeInvalid) === true) {
+                    if ((_ref = (_this_shouldIncludeInvalid = (_this = this).shouldIncludeInvalid) === null || _this_shouldIncludeInvalid === void 0 ? void 0 : _this_shouldIncludeInvalid.call(_this, options)) !== null && _ref !== void 0 ? _ref : (options === null || options === void 0 ? void 0 : options.includeInvalid) === true) {
                         this.shadowModelPaths.forEach(function(shadowValue, shadowBinding) {
                             if (shadowBinding === binding) {
                                 val = shadowValue;
@@ -4592,11 +4610,12 @@ var StageRevertDataPlugin = function() {
                         templateDepth: 0
                     };
                     var _this = this;
+                    var _this_hooks_onCreateASTNode_call;
                     var parsedNode = this.hooks.parseNode.call(obj, type, options);
                     if (parsedNode || parsedNode === null) {
                         return parsedNode;
                     }
-                    var parseLocalObject = function(currentValue, objToParse) {
+                    var parseLocalObject = function parseLocalObject1(currentValue, objToParse) {
                         var path = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : [];
                         if ((typeof objToParse === "undefined" ? "undefined" : _type_of(objToParse)) !== "object" || objToParse === null) {
                             return {
@@ -4666,30 +4685,29 @@ var StageRevertDataPlugin = function() {
                             child.value.parent = parent;
                         });
                     }
-                    var _this_hooks_onCreateASTNode_call;
                     return (_this_hooks_onCreateASTNode_call = this.hooks.onCreateASTNode.call(baseAst, obj)) !== null && _this_hooks_onCreateASTNode_call !== void 0 ? _this_hooks_onCreateASTNode_call : null;
                 }
             }
         ]);
         return Parser;
     }();
-    var withContext = function(model) {
+    var withContext = function withContext(model) {
         return {
-            get: function(binding, options) {
+            get: function get(binding, options) {
                 return model.get(binding, _object_spread({
                     context: {
                         model: model
                     }
                 }, options));
             },
-            set: function(transaction, options) {
+            set: function set(transaction, options) {
                 return model.set(transaction, _object_spread({
                     context: {
                         model: model
                     }
                 }, options));
             },
-            delete: function(binding, options) {
+            delete: function _delete(binding, options) {
                 return model.delete(binding, _object_spread({
                     context: {
                         model: model
@@ -4728,16 +4746,16 @@ var StageRevertDataPlugin = function() {
             {
                 key: "update",
                 value: function update(dataChanges, nodeChanges) {
+                    var _ref;
                     this.hooks.beforeUpdate.call(dataChanges);
                     var resolveCache = /* @__PURE__ */ new Map();
                     this.idCache.clear();
                     var prevASTMap = new Map(this.ASTMap);
                     this.ASTMap.clear();
                     var realNodeChanges = /* @__PURE__ */ new Set();
-                    var _nodeChanges_values;
                     var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
                     try {
-                        for(var _iterator = ((_nodeChanges_values = nodeChanges === null || nodeChanges === void 0 ? void 0 : nodeChanges.values()) !== null && _nodeChanges_values !== void 0 ? _nodeChanges_values : [])[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                        for(var _iterator = ((_ref = nodeChanges === null || nodeChanges === void 0 ? void 0 : nodeChanges.values()) !== null && _ref !== void 0 ? _ref : [])[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
                             var node = _step.value;
                             var current = node;
                             while(current){
@@ -4820,6 +4838,7 @@ var StageRevertDataPlugin = function() {
                 key: "computeTree",
                 value: function computeTree(node, rawParent, dataChanges, cacheUpdate, options, partiallyResolvedParent, prevASTMap, nodeChanges) {
                     var _this = this;
+                    var _this_hooks_beforeResolve_call;
                     var dependencyModel = new DependencyModel(options.data.model);
                     dependencyModel.trackSubset("core");
                     var depModelWithParser = withContext(withParser(dependencyModel, this.options.parseBinding));
@@ -4827,7 +4846,7 @@ var StageRevertDataPlugin = function() {
                         data: _object_spread_props(_object_spread({}, options.data), {
                             model: depModelWithParser
                         }),
-                        evaluate: function(exp) {
+                        evaluate: function evaluate(exp) {
                             return _this.options.evaluator.evaluate(exp, {
                                 model: depModelWithParser
                             });
@@ -4843,14 +4862,14 @@ var StageRevertDataPlugin = function() {
                         var update2 = _object_spread_props(_object_spread({}, previousResult), {
                             updated: false
                         });
-                        var repopulateASTMapFromCache = function(resolvedNode, AST, ASTParent) {
+                        var repopulateASTMapFromCache = function repopulateASTMapFromCache1(resolvedNode, AST, ASTParent) {
                             var resolvedASTLocal = resolvedNode.node;
                             _this.ASTMap.set(resolvedASTLocal, AST);
                             var resolvedUpdate = _object_spread_props(_object_spread({}, resolvedNode), {
                                 updated: false
                             });
                             cacheUpdate.set(AST, resolvedUpdate);
-                            var handleChildNode = function(childNode) {
+                            var handleChildNode = function handleChildNode(childNode) {
                                 var _prevASTMap_get;
                                 var originalChildNode = (_prevASTMap_get = prevASTMap.get(childNode)) !== null && _prevASTMap_get !== void 0 ? _prevASTMap_get : childNode;
                                 var previousChildResult = _this.getPreviousResult(originalChildNode);
@@ -4875,7 +4894,6 @@ var StageRevertDataPlugin = function() {
                     var clonedNode = _object_spread_props(_object_spread({}, this.cloneNode(node)), {
                         parent: partiallyResolvedParent
                     });
-                    var _this_hooks_beforeResolve_call;
                     var resolvedAST = (_this_hooks_beforeResolve_call = this.hooks.beforeResolve.call(clonedNode, resolveOptions)) !== null && _this_hooks_beforeResolve_call !== void 0 ? _this_hooks_beforeResolve_call : {
                         type: "empty"
                     };
@@ -4935,7 +4953,7 @@ var StageRevertDataPlugin = function() {
                         resolved = previousResult === null || previousResult === void 0 ? void 0 : previousResult.value;
                     }
                     resolved = this.hooks.afterResolve.call(resolved, resolvedAST, _object_spread_props(_object_spread({}, resolveOptions), {
-                        getDependencies: function(scope) {
+                        getDependencies: function getDependencies(scope) {
                             return dependencyModel.getDependencies(scope);
                         }
                     }));
@@ -5245,7 +5263,7 @@ var StageRevertDataPlugin = function() {
         ]);
         return TemplatePlugin;
     }();
-    var createPatternMatcher = function(start, end) {
+    var createPatternMatcher = function createPatternMatcher(start, end) {
         return function(testStr) {
             var startLocation = testStr.indexOf(start);
             if (startLocation === -1) {
@@ -5285,18 +5303,18 @@ var StageRevertDataPlugin = function() {
         });
         return newNode;
     }
-    var findBasePath = function(node, resolver) {
+    var findBasePath = function findBasePath1(node, resolver) {
         var parentNode = node.parent;
         if (!parentNode) {
             return [];
         }
         if ("children" in parentNode) {
+            var _ref;
             var _parentNode_children_find, _parentNode_children;
             var original = resolver.getSourceNode(node);
-            var _parentNode_children_find_path;
-            return (_parentNode_children_find_path = (_parentNode_children = parentNode.children) === null || _parentNode_children === void 0 ? void 0 : (_parentNode_children_find = _parentNode_children.find(function(child) {
+            return (_ref = (_parentNode_children = parentNode.children) === null || _parentNode_children === void 0 ? void 0 : (_parentNode_children_find = _parentNode_children.find(function(child) {
                 return child.value === original;
-            })) === null || _parentNode_children_find === void 0 ? void 0 : _parentNode_children_find.path) !== null && _parentNode_children_find_path !== void 0 ? _parentNode_children_find_path : [];
+            })) === null || _parentNode_children_find === void 0 ? void 0 : _parentNode_children_find.path) !== null && _ref !== void 0 ? _ref : [];
         }
         if (parentNode.type !== "multi-node") {
             return [];
@@ -5321,9 +5339,9 @@ var StageRevertDataPlugin = function() {
                             var _node_parent, _node_parent_parent, _node_parent1, _node_parent_parent1, _node_parent2, _node_parent_parent_value;
                             var propsToSkip;
                             if (node.type === "asset" || node.type === "view") {
+                                var _ref;
                                 var _node_plugins_stringResolver, _node_plugins, _node_value;
-                                var _node_plugins_stringResolver_propertiesToSkip;
-                                propsToSkip = new Set((_node_plugins_stringResolver_propertiesToSkip = (_node_plugins = node.plugins) === null || _node_plugins === void 0 ? void 0 : (_node_plugins_stringResolver = _node_plugins.stringResolver) === null || _node_plugins_stringResolver === void 0 ? void 0 : _node_plugins_stringResolver.propertiesToSkip) !== null && _node_plugins_stringResolver_propertiesToSkip !== void 0 ? _node_plugins_stringResolver_propertiesToSkip : [
+                                propsToSkip = new Set((_ref = (_node_plugins = node.plugins) === null || _node_plugins === void 0 ? void 0 : (_node_plugins_stringResolver = _node_plugins.stringResolver) === null || _node_plugins_stringResolver === void 0 ? void 0 : _node_plugins_stringResolver.propertiesToSkip) !== null && _ref !== void 0 ? _ref : [
                                     "exp"
                                 ]);
                                 if ((_node_value = node.value) === null || _node_value === void 0 ? void 0 : _node_value.id) {
@@ -5744,11 +5762,11 @@ var StageRevertDataPlugin = function() {
                     this.stateStore.clear();
                     view.hooks.resolver.tap("asset-transform", function(resolver) {
                         var lastUpdatedNode;
-                        var updateState = function(node) {
+                        var updateState = function updateState(node) {
                             lastUpdatedNode = node;
                             view.update(/* @__PURE__ */ new Set());
                         };
-                        var getStore = function(node, stepKey) {
+                        var getStore = function getStore(node, stepKey) {
                             var store;
                             var countKey = stepKey === _this.resolveSymbol ? _this.resolveCountSymbol : _this.beforeResolveCountSymbol;
                             var storedState = _this.stateStore.get(node);
@@ -5762,10 +5780,10 @@ var StageRevertDataPlugin = function() {
                                 _this.stateStore.set(node, store);
                             }
                             return {
-                                useSharedState: function(key) {
+                                useSharedState: function useSharedState(key) {
                                     return store.useSharedState(key);
                                 },
-                                useLocalState: function(initialState) {
+                                useLocalState: function useLocalState(initialState) {
                                     return store.getLocalStateFunction(stepKey, countKey)(initialState);
                                 }
                             };
@@ -6127,7 +6145,7 @@ var StageRevertDataPlugin = function() {
                             return options;
                         }
                         tracked.delete(node);
-                        var track = function(binding) {
+                        var track = function track(binding) {
                             var _this_options_callbacks_onAdd, _this_options_callbacks;
                             var parsed = isBinding(binding) ? binding : _this.options.parseBinding(binding);
                             if (tracked.has(node)) {
@@ -6153,7 +6171,7 @@ var StageRevertDataPlugin = function() {
                         };
                         return _object_spread_props(_object_spread({}, options), {
                             validation: _object_spread_props(_object_spread({}, options.validation), {
-                                get: function(binding, getOptions) {
+                                get: function get(binding, getOptions) {
                                     var _options_validation__getValidationForBinding, _options_validation;
                                     if (getOptions === null || getOptions === void 0 ? void 0 : getOptions.track) {
                                         track(binding);
@@ -6165,14 +6183,14 @@ var StageRevertDataPlugin = function() {
                                     return firstFieldEOW;
                                 },
                                 getValidationsForBinding: function getValidationsForBinding(binding, getOptions) {
+                                    var _ref;
                                     var _options_validation__getValidationForBinding, _options_validation;
                                     if (getOptions === null || getOptions === void 0 ? void 0 : getOptions.track) {
                                         track(binding);
                                     }
-                                    var _options_validation__getValidationForBinding_getAll;
-                                    return (_options_validation__getValidationForBinding_getAll = (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : (_options_validation__getValidationForBinding = _options_validation._getValidationForBinding(binding)) === null || _options_validation__getValidationForBinding === void 0 ? void 0 : _options_validation__getValidationForBinding.getAll(getOptions)) !== null && _options_validation__getValidationForBinding_getAll !== void 0 ? _options_validation__getValidationForBinding_getAll : [];
+                                    return (_ref = (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : (_options_validation__getValidationForBinding = _options_validation._getValidationForBinding(binding)) === null || _options_validation__getValidationForBinding === void 0 ? void 0 : _options_validation__getValidationForBinding.getAll(getOptions)) !== null && _ref !== void 0 ? _ref : [];
                                 },
-                                getChildren: function(type) {
+                                getChildren: function getChildren(type) {
                                     var _lastComputedBindingTree_get;
                                     var validations = new Array();
                                     (_lastComputedBindingTree_get = lastComputedBindingTree.get(node)) === null || _lastComputedBindingTree_get === void 0 ? void 0 : _lastComputedBindingTree_get.forEach(function(binding) {
@@ -6184,7 +6202,7 @@ var StageRevertDataPlugin = function() {
                                     });
                                     return validations;
                                 },
-                                getValidationsForSection: function() {
+                                getValidationsForSection: function getValidationsForSection() {
                                     var _lastSectionBindingTree_get;
                                     var validations = new Array();
                                     (_lastSectionBindingTree_get = lastSectionBindingTree.get(node)) === null || _lastSectionBindingTree_get === void 0 ? void 0 : _lastSectionBindingTree_get.forEach(function(binding) {
@@ -6196,7 +6214,7 @@ var StageRevertDataPlugin = function() {
                                     });
                                     return validations;
                                 },
-                                register: function(registerOptions) {
+                                register: function register(registerOptions) {
                                     if ((registerOptions === null || registerOptions === void 0 ? void 0 : registerOptions.type) === "section") {
                                         if (!sections.has(node)) {
                                             sections.set(node, /* @__PURE__ */ new Set());
@@ -6341,10 +6359,10 @@ var StageRevertDataPlugin = function() {
                 value: function runApplicableValidations(runner, canDismiss, phase) {
                     var _this = this;
                     this.applicableValidations = this.applicableValidations.map(function(originalValue) {
+                        var _originalValue_value_blocking, _response_message, _obj_value_displayTarget;
                         if (originalValue.state === "dismissed") {
                             return originalValue;
                         }
-                        var _originalValue_value_blocking;
                         var blocking = (_originalValue_value_blocking = originalValue.value.blocking) !== null && _originalValue_value_blocking !== void 0 ? _originalValue_value_blocking : originalValue.value.severity === "warning" && "once" || true;
                         var obj = (0, import_timm9.setIn)(originalValue, [
                             "value",
@@ -6366,7 +6384,6 @@ var StageRevertDataPlugin = function() {
                             }
                         }
                         var response = runner(obj.value);
-                        var _response_message, _obj_value_displayTarget;
                         var newState = {
                             type: obj.type,
                             value: obj.value,
@@ -6451,14 +6468,14 @@ var StageRevertDataPlugin = function() {
                     var _this = this;
                     return [
                         {
-                            set: function(transaction, options, next) {
-                                var _next_set;
-                                return (_next_set = next === null || next === void 0 ? void 0 : next.set(transaction, options)) !== null && _next_set !== void 0 ? _next_set : [];
+                            set: function set(transaction, options, next) {
+                                var _ref;
+                                return (_ref = next === null || next === void 0 ? void 0 : next.set(transaction, options)) !== null && _ref !== void 0 ? _ref : [];
                             },
-                            get: function(binding, options, next) {
+                            get: function get(binding, options, next) {
                                 return next === null || next === void 0 ? void 0 : next.get(binding, options);
                             },
-                            delete: function(binding, options, next) {
+                            delete: function _delete(binding, options, next) {
                                 _this.validations = removeBindingAndChildrenFromMap(_this.validations, binding);
                                 return next === null || next === void 0 ? void 0 : next.delete(binding, options);
                             }
@@ -6521,11 +6538,11 @@ var StageRevertDataPlugin = function() {
                         {
                             source: VIEW_VALIDATION_PROVIDER_NAME,
                             provider: {
-                                getValidationsForBinding: function(binding) {
+                                getValidationsForBinding: function getValidationsForBinding(binding) {
                                     var _this_viewValidationProvider_getValidationsForBinding, _this_viewValidationProvider;
                                     return (_this_viewValidationProvider = _this.viewValidationProvider) === null || _this_viewValidationProvider === void 0 ? void 0 : (_this_viewValidationProvider_getValidationsForBinding = _this_viewValidationProvider.getValidationsForBinding) === null || _this_viewValidationProvider_getValidationsForBinding === void 0 ? void 0 : _this_viewValidationProvider_getValidationsForBinding.call(_this_viewValidationProvider, binding);
                                 },
-                                getValidationsForView: function() {
+                                getValidationsForView: function getValidationsForView() {
                                     var _this_viewValidationProvider_getValidationsForView, _this_viewValidationProvider;
                                     return (_this_viewValidationProvider = _this.viewValidationProvider) === null || _this_viewValidationProvider === void 0 ? void 0 : (_this_viewValidationProvider_getValidationsForView = _this_viewValidationProvider.getValidationsForView) === null || _this_viewValidationProvider_getValidationsForView === void 0 ? void 0 : _this_viewValidationProvider_getValidationsForView.call(_this_viewValidationProvider);
                                 }
@@ -6552,7 +6569,7 @@ var StageRevertDataPlugin = function() {
                     }
                     var bindingTrackerPlugin = new ValidationBindingTrackerViewPlugin(_object_spread_props(_object_spread({}, this.options), {
                         callbacks: {
-                            onAdd: function(binding) {
+                            onAdd: function onAdd(binding) {
                                 if (!_this.options || _this.getValidationForBinding(binding) !== void 0) {
                                     return;
                                 }
@@ -6596,11 +6613,11 @@ var StageRevertDataPlugin = function() {
                         var _this_options;
                         var possibleValidations = this.getValidationProviders().reduce(function(vals, provider) {
                             var _vals;
+                            var _ref;
                             var _provider_provider_getValidationsForBinding, _provider_provider_getValidationsForBinding1, _provider_provider;
-                            var _provider_provider_getValidationsForBinding_map;
-                            (_vals = vals).push.apply(_vals, _to_consumable_array((_provider_provider_getValidationsForBinding_map = (_provider_provider_getValidationsForBinding1 = (_provider_provider = provider.provider).getValidationsForBinding) === null || _provider_provider_getValidationsForBinding1 === void 0 ? void 0 : (_provider_provider_getValidationsForBinding = _provider_provider_getValidationsForBinding1.call(_provider_provider, binding)) === null || _provider_provider_getValidationsForBinding === void 0 ? void 0 : _provider_provider_getValidationsForBinding.map(function(valObj) {
+                            (_vals = vals).push.apply(_vals, _to_consumable_array((_ref = (_provider_provider_getValidationsForBinding1 = (_provider_provider = provider.provider).getValidationsForBinding) === null || _provider_provider_getValidationsForBinding1 === void 0 ? void 0 : (_provider_provider_getValidationsForBinding = _provider_provider_getValidationsForBinding1.call(_provider_provider, binding)) === null || _provider_provider_getValidationsForBinding === void 0 ? void 0 : _provider_provider_getValidationsForBinding.map(function(valObj) {
                                 return _object_spread_props(_object_spread({}, valObj), _define_property({}, VALIDATION_PROVIDER_NAME_SYMBOL, provider.source));
-                            })) !== null && _provider_provider_getValidationsForBinding_map !== void 0 ? _provider_provider_getValidationsForBinding_map : []));
+                            })) !== null && _ref !== void 0 ? _ref : []));
                             return vals;
                         }, []);
                         if (possibleValidations.length === 0) {
@@ -6641,10 +6658,10 @@ var StageRevertDataPlugin = function() {
                 key: "validationRunner",
                 value: function validationRunner(validationObj, binding) {
                     var context = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : this.options;
+                    var _validationObj_handler;
                     if (!context) {
                         throw new Error("No context provided to validation runner");
                     }
-                    var _validationObj_handler;
                     var handler = (_validationObj_handler = validationObj.handler) !== null && _validationObj_handler !== void 0 ? _validationObj_handler : this.getValidator(validationObj.type);
                     var weakBindings = /* @__PURE__ */ new Set();
                     var model = {
@@ -6658,7 +6675,7 @@ var StageRevertDataPlugin = function() {
                         delete: context.model.delete
                     };
                     var result = handler === null || handler === void 0 ? void 0 : handler(_object_spread_props(_object_spread({}, context), {
-                        evaluate: function(exp) {
+                        evaluate: function evaluate(exp) {
                             var options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {
                                 model: model
                             };
@@ -6696,7 +6713,7 @@ var StageRevertDataPlugin = function() {
                     var _this = this;
                     var isNavigationTrigger = trigger === "navigation";
                     var lastActiveBindings = this.activeBindings;
-                    var updateValidations = function(dismissValidations) {
+                    var updateValidations = function updateValidations(dismissValidations) {
                         _this.getBindings().forEach(function(binding) {
                             var _this_validations_get;
                             (_this_validations_get = _this.validations.get(binding)) === null || _this_validations_get === void 0 ? void 0 : _this_validations_get.update(trigger, dismissValidations, function(obj) {
@@ -6741,9 +6758,9 @@ var StageRevertDataPlugin = function() {
             {
                 key: "getBindings",
                 value: function getBindings() {
+                    var _ref;
                     var _this_tracker;
-                    var _this_tracker_getBindings;
-                    return (_this_tracker_getBindings = (_this_tracker = this.tracker) === null || _this_tracker === void 0 ? void 0 : _this_tracker.getBindings()) !== null && _this_tracker_getBindings !== void 0 ? _this_tracker_getBindings : /* @__PURE__ */ new Set();
+                    return (_ref = (_this_tracker = this.tracker) === null || _this_tracker === void 0 ? void 0 : _this_tracker.getBindings()) !== null && _ref !== void 0 ? _ref : /* @__PURE__ */ new Set();
                 }
             },
             {
@@ -6792,10 +6809,10 @@ var StageRevertDataPlugin = function() {
                 value: function forView(parser) {
                     var _this = this;
                     return {
-                        _getValidationForBinding: function(binding) {
+                        _getValidationForBinding: function _getValidationForBinding(binding) {
                             return _this.getValidationForBinding(isBinding(binding) ? binding : parser(binding));
                         },
-                        getAll: function() {
+                        getAll: function getAll() {
                             var bindings = _this.getBindings();
                             if (bindings.size === 0) {
                                 return void 0;
@@ -6822,13 +6839,13 @@ var StageRevertDataPlugin = function() {
                         getValidationsForSection: function getValidationsForSection() {
                             throw new Error("Error rollup should be provided by the view plugin");
                         },
-                        track: function() {
+                        track: function track() {
                             throw new Error("Tracking should be provided by the view plugin");
                         },
-                        register: function() {
+                        register: function register() {
                             throw new Error("Section functionality should be provided by the view plugin");
                         },
-                        type: function(binding) {
+                        type: function type(binding) {
                             return _this.schema.getType(isBinding(binding) ? binding : parser(binding));
                         }
                     };
@@ -6837,9 +6854,9 @@ var StageRevertDataPlugin = function() {
         ]);
         return ValidationController;
     }();
-    var mergeSets = function(setA, setB) {
-        var _setA_values, _setB_values;
-        return /* @__PURE__ */ new Set(_to_consumable_array((_setA_values = setA === null || setA === void 0 ? void 0 : setA.values()) !== null && _setA_values !== void 0 ? _setA_values : []).concat(_to_consumable_array((_setB_values = setB === null || setB === void 0 ? void 0 : setB.values()) !== null && _setB_values !== void 0 ? _setB_values : [])));
+    var mergeSets = function mergeSets(setA, setB) {
+        var _ref, _ref1;
+        return /* @__PURE__ */ new Set(_to_consumable_array((_ref = setA === null || setA === void 0 ? void 0 : setA.values()) !== null && _ref !== void 0 ? _ref : []).concat(_to_consumable_array((_ref1 = setB === null || setB === void 0 ? void 0 : setB.values()) !== null && _ref1 !== void 0 ? _ref1 : [])));
     };
     var ViewController = /*#__PURE__*/ function() {
         function ViewController(initialViews, options) {
@@ -6866,7 +6883,7 @@ var StageRevertDataPlugin = function() {
                     }
                 });
             });
-            var update = function(updates) {
+            var update = function update(updates) {
                 var silent = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : false;
                 if (_this1.currentView) {
                     if (_this1.optimizeUpdates) {
@@ -6877,10 +6894,10 @@ var StageRevertDataPlugin = function() {
                 }
             };
             options.model.hooks.onUpdate.tap("viewController", function(updates, updateOptions) {
-                var _updateOptions_silent;
+                var _ref;
                 update(new Set(updates.map(function(t2) {
                     return t2.binding;
-                })), (_updateOptions_silent = updateOptions === null || updateOptions === void 0 ? void 0 : updateOptions.silent) !== null && _updateOptions_silent !== void 0 ? _updateOptions_silent : false);
+                })), (_ref = updateOptions === null || updateOptions === void 0 ? void 0 : updateOptions.silent) !== null && _ref !== void 0 ? _ref : false);
             });
             options.model.hooks.onDelete.tap("viewController", function(binding) {
                 var parentBinding = binding.parent();
@@ -6915,8 +6932,8 @@ var StageRevertDataPlugin = function() {
                     if (!this.pendingUpdate.scheduled && !silent) {
                         this.pendingUpdate.scheduled = true;
                         (0, import_queue_microtask2.default)(function() {
-                            var _this_currentView;
                             var _this_pendingUpdate;
+                            var _this_currentView;
                             var _ref = (_this_pendingUpdate = _this.pendingUpdate) !== null && _this_pendingUpdate !== void 0 ? _this_pendingUpdate : {}, changedBindings = _ref.changedBindings, changedNodes = _ref.changedNodes;
                             _this.pendingUpdate = void 0;
                             (_this_currentView = _this.currentView) === null || _this_currentView === void 0 ? void 0 : _this_currentView.update(changedBindings, changedNodes);
@@ -7241,10 +7258,10 @@ var StageRevertDataPlugin = function() {
             {
                 key: "getConstants",
                 value: function getConstants(key, namespace, fallback) {
+                    var _ref, _ref1;
                     var _this_tempStore_get, _this_store_get;
                     var path = new BindingInstance(key);
-                    var _this_tempStore_get_get, _ref;
-                    return (_ref = (_this_tempStore_get_get = (_this_tempStore_get = this.tempStore.get(namespace)) === null || _this_tempStore_get === void 0 ? void 0 : _this_tempStore_get.get(path)) !== null && _this_tempStore_get_get !== void 0 ? _this_tempStore_get_get : (_this_store_get = this.store.get(namespace)) === null || _this_store_get === void 0 ? void 0 : _this_store_get.get(path)) !== null && _ref !== void 0 ? _ref : fallback;
+                    return (_ref = (_ref1 = (_this_tempStore_get = this.tempStore.get(namespace)) === null || _this_tempStore_get === void 0 ? void 0 : _this_tempStore_get.get(path)) !== null && _ref1 !== void 0 ? _ref1 : (_this_store_get = this.store.get(namespace)) === null || _this_store_get === void 0 ? void 0 : _this_store_get.get(path)) !== null && _ref !== void 0 ? _ref : fallback;
                 }
             },
             {
@@ -7285,7 +7302,7 @@ var StageRevertDataPlugin = function() {
                 value: function apply(player) {
                     var _this = this;
                     var expressionEvaluator;
-                    var handleEval = function(exp) {
+                    var handleEval = function handleEval(exp) {
                         if (exp) {
                             if ((typeof exp === "undefined" ? "undefined" : _type_of(exp)) === "object" && "exp" in exp) {
                                 expressionEvaluator === null || expressionEvaluator === void 0 ? void 0 : expressionEvaluator.evaluate(exp.exp);
@@ -7306,7 +7323,7 @@ var StageRevertDataPlugin = function() {
                                 return handleEval(exp);
                             });
                             flow.hooks.resolveTransitionNode.intercept({
-                                call: function(nextState) {
+                                call: function call(nextState) {
                                     if (nextState === null || nextState === void 0 ? void 0 : nextState.onStart) {
                                         handleEval(nextState.onStart);
                                     }
@@ -7319,13 +7336,13 @@ var StageRevertDataPlugin = function() {
         ]);
         return FlowExpPlugin;
     }();
-    var createFormatFunction = function(schema) {
-        var handler = function(ctx, value, formatName) {
+    var createFormatFunction = function createFormatFunction(schema) {
+        var handler = function handler(ctx, value, formatName) {
+            var _ref;
             var _schema_getFormatterForType;
-            var _schema_getFormatterForType_format;
-            return (_schema_getFormatterForType_format = (_schema_getFormatterForType = schema.getFormatterForType({
+            return (_ref = (_schema_getFormatterForType = schema.getFormatterForType({
                 type: formatName
-            })) === null || _schema_getFormatterForType === void 0 ? void 0 : _schema_getFormatterForType.format(value)) !== null && _schema_getFormatterForType_format !== void 0 ? _schema_getFormatterForType_format : value;
+            })) === null || _schema_getFormatterForType === void 0 ? void 0 : _schema_getFormatterForType.format(value)) !== null && _ref !== void 0 ? _ref : value;
         };
         return handler;
     };
@@ -7377,8 +7394,8 @@ var StageRevertDataPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "0.15.2" : "unknown";
-    var COMMIT = true ? "6222f07d6fbf274ceb6ecd11a094456524557841" : "unknown";
+    var PLAYER_VERSION = true ? "0.15.3-next.3" : "unknown";
+    var COMMIT = true ? "cb16b1ace66f981c339d3d2dd56950208ef405f8" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
@@ -7493,13 +7510,13 @@ var StageRevertDataPlugin = function() {
                     var expressionEvaluator;
                     var dataController;
                     var pathResolver = new BindingParser({
-                        get: function(binding) {
+                        get: function get(binding) {
                             return dataController.get(binding);
                         },
-                        set: function(transaction) {
+                        set: function set(transaction) {
                             return dataController.set(transaction);
                         },
-                        evaluate: function(expression) {
+                        evaluate: function evaluate(expression) {
                             return expressionEvaluator.evaluate(expression);
                         }
                     });
@@ -7643,23 +7660,23 @@ var StageRevertDataPlugin = function() {
                         transition: flowController.transition,
                         model: dataController,
                         utils: {
-                            findPlugin: function(pluginSymbol) {
+                            findPlugin: function findPlugin(pluginSymbol) {
                                 return _this.findPlugin(pluginSymbol);
                             }
                         },
                         logger: this.logger,
                         flowController: flowController,
                         schema: schema,
-                        format: function(binding, value) {
+                        format: function format(binding, value) {
                             var formatter = schema.getFormatter(binding);
                             return (formatter === null || formatter === void 0 ? void 0 : formatter.format) ? formatter.format(value) : value;
                         },
-                        formatValue: function(ref, value) {
+                        formatValue: function formatValue(ref, value) {
                             var formatter = schema.getFormatterForType(ref);
                             return (formatter === null || formatter === void 0 ? void 0 : formatter.format) ? formatter.format(value) : value;
                         },
                         validation: _object_spread_props(_object_spread({}, validationController.forView(parseBinding)), {
-                            type: function(b) {
+                            type: function type(b) {
                                 return schema.getType(parseBinding(b));
                             }
                         }),
@@ -7671,7 +7688,7 @@ var StageRevertDataPlugin = function() {
                     });
                     this.hooks.viewController.call(viewController);
                     return {
-                        start: function() {
+                        start: function start() {
                             flowController.start().then(function(endState) {
                                 var flowResult = {
                                     endState: resolveStrings(endState, false),
@@ -7708,13 +7725,13 @@ var StageRevertDataPlugin = function() {
                 key: "start",
                 value: function start(payload) {
                     return _async_to_generator(function() {
-                        var _this, _payload_id, ref, maybeUpdateState, _this_setupFlow, state, start, endProps, _tmp, error, errorState;
+                        var _this, _ref, ref, maybeUpdateState, _this_setupFlow, state, start, endProps, _tmp, error, errorState;
                         return _ts_generator(this, function(_state) {
                             switch(_state.label){
                                 case 0:
                                     _this = this;
-                                    ref = Symbol((_payload_id = payload === null || payload === void 0 ? void 0 : payload.id) !== null && _payload_id !== void 0 ? _payload_id : "payload");
-                                    maybeUpdateState = function(newState) {
+                                    ref = Symbol((_ref = payload === null || payload === void 0 ? void 0 : payload.id) !== null && _ref !== void 0 ? _ref : "payload");
+                                    maybeUpdateState = function maybeUpdateState(newState) {
                                         if (_this.state.ref !== ref) {
                                             _this.logger.warn("Received update for a flow that's not the current one");
                                             return newState;
@@ -7811,7 +7828,7 @@ var StageRevertDataPlugin = function() {
                             severity: "error"
                         };
                     }, {
-                        shouldIncludeInvalid: function() {
+                        shouldIncludeInvalid: function shouldIncludeInvalid() {
                             return true;
                         }
                     });
@@ -7840,7 +7857,7 @@ var StageRevertDataPlugin = function() {
                     });
                     player.hooks.viewController.tap(this.name, function(vc) {
                         vc.hooks.resolveView.intercept({
-                            call: function(view, id, state) {
+                            call: function call(view, id, state) {
                                 var _state_attributes, _state_attributes1;
                                 stageData = state === null || state === void 0 ? void 0 : (_state_attributes = state.attributes) === null || _state_attributes === void 0 ? void 0 : _state_attributes.stageData;
                                 commitTransitions = state === null || state === void 0 ? void 0 : (_state_attributes1 = state.attributes) === null || _state_attributes1 === void 0 ? void 0 : _state_attributes1.commitTransitions;
