@@ -1521,6 +1521,412 @@ var CommonExpressionsPlugin = function() {
         });
         return batchTxn;
     };
+    var pointerToBinding = function pointerToBinding(pointer) {
+        if (!pointer || pointer === "/") return "";
+        var absolute = pointer.startsWith("/");
+        var raw = absolute ? pointer.slice(1) : pointer;
+        var segments = raw.split("/").map(decodeSegment);
+        var out = "";
+        for(var i = 0; i < segments.length; i++){
+            var seg = segments[i];
+            if (NUMERIC_SEGMENT.test(seg)) {
+                out += "[".concat(seg, "]");
+            } else {
+                out += i === 0 ? seg : ".".concat(seg);
+            }
+        }
+        return out;
+    };
+    var bindingToSegments = function bindingToSegments(binding) {
+        if (!binding) return [];
+        var segments = [];
+        var parts = binding.split(".");
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = parts[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                var part = _step.value;
+                var match = part.match(/^([^[]+)((?:\[\d+\])*)$/);
+                if (!match) {
+                    segments.push(part);
+                    continue;
+                }
+                var _match = _sliced_to_array(match, 3), name = _match[1], arrays = _match[2];
+                if (name) segments.push(name);
+                if (arrays) {
+                    var _segments;
+                    var _arrays_match;
+                    var arrayMatches = (_arrays_match = arrays.match(/\[\d+\]/g)) !== null && _arrays_match !== void 0 ? _arrays_match : [];
+                    (_segments = segments).push.apply(_segments, _to_consumable_array(arrayMatches));
+                }
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+        return segments;
+    };
+    var interpolatePointers = function interpolatePointers(input) {
+        return input.replace(/\$\{([^}]+)\}/g, function(_, pointer) {
+            return "{{".concat(pointerToBinding(pointer), "}}");
+        });
+    };
+    var translateFunctionCall = function translateFunctionCall(call, logger) {
+        if (call.call === "formatString") {
+            var _call_args;
+            var value = (_call_args = call.args) === null || _call_args === void 0 ? void 0 : _call_args.value;
+            if (typeof value === "string") return interpolatePointers(value);
+            logger === null || logger === void 0 ? void 0 : logger.warn("[a2ui] formatString received non-string 'value' arg; emitting expression form");
+        }
+        var argList = renderArgList(call.args);
+        if (call.call === "formatString") {
+            return "@[formatString(".concat(argList, ")]@");
+        }
+        return "@[".concat(call.call, "(").concat(argList, ")]@");
+    };
+    var renderArgList = function renderArgList(args) {
+        if (!args) return "";
+        return Object.values(args).map(renderArg).join(", ");
+    };
+    var newBuilder = function newBuilder() {
+        return {
+            schema: {
+                ROOT: {}
+            },
+            knownTypes: /* @__PURE__ */ new Set([
+                "ROOT"
+            ])
+        };
+    };
+    var findBoundPath = function findBoundPath(component, logger) {
+        var lookupProp = INPUT_BINDING_PROPS[component.component];
+        if (lookupProp) {
+            var prop = component[lookupProp];
+            if (isPathRef(prop)) return prop.path;
+        }
+        var pathRefs = collectPathRefs(component);
+        if (pathRefs.length === 1) return pathRefs[0];
+        if (pathRefs.length > 1) {
+            logger === null || logger === void 0 ? void 0 : logger.warn("[a2ui] Component '".concat(component.id, "' (").concat(component.component, ") has checks but multiple {path} refs; skipping schema synthesis for this component"));
+        } else {
+            logger === null || logger === void 0 ? void 0 : logger.warn("[a2ui] Component '".concat(component.id, "' (").concat(component.component, ") has checks but no bound path could be determined; skipping"));
+        }
+        return void 0;
+    };
+    var collectPathRefs = function collectPathRefs(component) {
+        var found = [];
+        var walk = function walk1(v) {
+            if (!v || (typeof v === "undefined" ? "undefined" : _type_of(v)) !== "object") return;
+            if (Array.isArray(v)) {
+                v.forEach(walk);
+                return;
+            }
+            if (isPathRef(v)) {
+                found.push(v.path);
+                return;
+            }
+            Object.values(v).forEach(walk);
+        };
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = Object.entries(component)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                var _step_value = _sliced_to_array(_step.value, 2), k = _step_value[0], v = _step_value[1];
+                if (k === "id" || k === "component" || k === "checks" || k === "action") {
+                    continue;
+                }
+                walk(v);
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+        return found;
+    };
+    var translateCheck = function translateCheck(check, logger) {
+        var _check_args;
+        var type = CHECK_TO_VALIDATOR[check.call];
+        if (!type) {
+            logger === null || logger === void 0 ? void 0 : logger.warn("[a2ui] Unknown validation check '".concat(check.call, "'; dropping"));
+            return void 0;
+        }
+        var ref = {
+            type: type,
+            severity: "error"
+        };
+        if (check.message) ref.message = check.message;
+        if (check.call === "regex" && ((_check_args = check.args) === null || _check_args === void 0 ? void 0 : _check_args.pattern)) {
+            ref.regex = unwrapLiteral(check.args.pattern);
+        }
+        if (check.call === "length") {
+            var _check_args1, _check_args2;
+            if (((_check_args1 = check.args) === null || _check_args1 === void 0 ? void 0 : _check_args1.min) !== void 0) ref.min = unwrapLiteral(check.args.min);
+            if (((_check_args2 = check.args) === null || _check_args2 === void 0 ? void 0 : _check_args2.max) !== void 0) ref.max = unwrapLiteral(check.args.max);
+        }
+        return ref;
+    };
+    var unwrapLiteral = function unwrapLiteral(value) {
+        if (typeof value === "string" || typeof value === "number" || typeof value === "boolean" || value === null) {
+            return value;
+        }
+        return value;
+    };
+    var installAtPath = function installAtPath(builder, binding, leafType, validations, logger) {
+        var segments = bindingToSegments(binding).filter(function(s) {
+            return !s.startsWith("[");
+        });
+        if (segments.length === 0) {
+            logger === null || logger === void 0 ? void 0 : logger.warn("[a2ui] Cannot install schema validation at empty path; skipping");
+            return;
+        }
+        var currentNode = builder.schema.ROOT;
+        var ownerPath = [];
+        for(var i = 0; i < segments.length - 1; i++){
+            var seg = segments[i];
+            ownerPath.push(seg);
+            var typeName = "".concat(TYPE_PREFIX).concat(ownerPath.join("_"));
+            var existing = currentNode[seg];
+            if (!existing) {
+                currentNode[seg] = {
+                    type: typeName
+                };
+            } else if (existing.type !== typeName) {}
+            var ref = currentNode[seg].type;
+            if (!builder.schema[ref]) {
+                builder.schema[ref] = {};
+                builder.knownTypes.add(ref);
+            }
+            currentNode = builder.schema[ref];
+        }
+        var leafSeg = segments[segments.length - 1];
+        var existingLeaf = currentNode[leafSeg];
+        if (existingLeaf) {
+            var _existingLeaf_validation;
+            var merged = _object_spread_props(_object_spread({}, existingLeaf), {
+                type: pickLeafType(existingLeaf.type, leafType),
+                validation: _to_consumable_array((_existingLeaf_validation = existingLeaf.validation) !== null && _existingLeaf_validation !== void 0 ? _existingLeaf_validation : []).concat(_to_consumable_array(validations))
+            });
+            currentNode[leafSeg] = merged;
+        } else {
+            currentNode[leafSeg] = {
+                type: leafType,
+                validation: validations
+            };
+        }
+    };
+    var pickLeafType = function pickLeafType(existing, incoming) {
+        if (incoming !== "string") return incoming;
+        return existing;
+    };
+    var defaultLeafType = function defaultLeafType(component, checks) {
+        if (component.component === "CheckBox") return "boolean";
+        if (checks.some(function(c) {
+            return c.call === "numeric";
+        })) return "number";
+        return "string";
+    };
+    var synthesizeSchema = function synthesizeSchema(components, logger) {
+        var builder = newBuilder();
+        var found = false;
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = components[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                var component = _step.value;
+                if (!component.checks || component.checks.length === 0) continue;
+                var pointer = findBoundPath(component, logger);
+                if (!pointer) continue;
+                var binding = pointerToBinding(pointer);
+                if (!binding) continue;
+                var validations = component.checks.map(function(c) {
+                    return translateCheck(c, logger);
+                }).filter(function(v) {
+                    return v !== void 0;
+                });
+                if (validations.length === 0) continue;
+                installAtPath(builder, binding, defaultLeafType(component, component.checks), validations, logger);
+                found = true;
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+        return found ? builder.schema : void 0;
+    };
+    var resolveAndInline = function resolveAndInline(id, ctx, templateScope) {
+        var component = ctx.byId.get(id);
+        if (!component) {
+            throw new Error("[a2ui] Component reference '".concat(id, "' could not be resolved in the snapshot."));
+        }
+        return inlineComponent(component, ctx, templateScope);
+    };
+    var wrapInlined = function wrapInlined(asset) {
+        return {
+            asset: asset
+        };
+    };
+    var scopedBinding = function scopedBinding(pointer, scope) {
+        if (!pointer || pointer === "/") return scope !== null && scope !== void 0 ? scope : "";
+        if (pointer.startsWith("/")) return pointerToBinding(pointer);
+        if (!scope) return pointerToBinding(pointer);
+        var relative = pointerToBinding(pointer);
+        return relative ? "".concat(scope, "._index_.").concat(relative) : "".concat(scope, "._index_");
+    };
+    var scopedPointer = function scopedPointer(pointer, scope) {
+        if (pointer.startsWith("/")) return pointer;
+        return "/".concat(scope, "/_index_/").concat(pointer);
+    };
+    var translateAction = function translateAction(action, ctx) {
+        if ("event" in action) {
+            var _action_event = action.event, name = _action_event.name, context = _action_event.context;
+            ctx.eventNames.add(name);
+            var result = {
+                value: name
+            };
+            if (context && Object.keys(context).length > 0) {
+                result.exp = buildContextWriteExpressions(context);
+            }
+            return result;
+        }
+        return {
+            exp: translateFunctionCall(action.functionCall, ctx.logger)
+        };
+    };
+    var buildContextWriteExpressions = function buildContextWriteExpressions(context) {
+        return Object.entries(context).map(function(param) {
+            var _param = _sliced_to_array(param, 2), key = _param[0], value = _param[1];
+            var lhs = "{{".concat(A2UI_EVENT_CONTEXT_NAMESPACE, ".").concat(key, "}}");
+            return "".concat(lhs, " = ").concat(renderRhs(value));
+        });
+    };
+    var buildNavigation = function buildNavigation(surfaceId, eventNames) {
+        var view = {
+            state_type: "VIEW",
+            ref: surfaceId,
+            transitions: {
+                "*": "END_Done"
+            }
+        };
+        var endStates = {
+            END_Done: {
+                state_type: "END",
+                outcome: "done"
+            }
+        };
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = eventNames[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                var name = _step.value;
+                var endName = "END_".concat(name);
+                view.transitions[name] = endName;
+                endStates[endName] = {
+                    state_type: "END",
+                    outcome: name
+                };
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+        var flow = _object_spread({
+            startState: "VIEW_1",
+            VIEW_1: view
+        }, endStates);
+        return {
+            BEGIN: "FLOW_1",
+            FLOW_1: flow
+        };
+    };
+    var adaptA2UIToFlow = function adaptA2UIToFlow(snapshot, logger) {
+        var _snapshot_data;
+        if (!snapshot || !Array.isArray(snapshot.components)) {
+            throw new Error("[a2ui] snapshot.components must be an array");
+        }
+        var byId = /* @__PURE__ */ new Map();
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = snapshot.components[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                var component = _step.value;
+                if (!(component === null || component === void 0 ? void 0 : component.id)) {
+                    throw new Error("[a2ui] every component must have an id");
+                }
+                byId.set(component.id, component);
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+        var root = byId.get("root");
+        if (!root) {
+            throw new Error("[a2ui] snapshot must contain a component with id 'root'");
+        }
+        var ctx = {
+            byId: byId,
+            inProgress: /* @__PURE__ */ new Set(),
+            eventNames: /* @__PURE__ */ new Set(),
+            logger: logger
+        };
+        var rootAsset = inlineComponent(root, ctx);
+        rootAsset.id = snapshot.surfaceId;
+        var schema = synthesizeSchema(snapshot.components, logger);
+        var flow = {
+            id: snapshot.surfaceId,
+            views: [
+                rootAsset
+            ],
+            data: (_snapshot_data = snapshot.data) !== null && _snapshot_data !== void 0 ? _snapshot_data : {},
+            navigation: buildNavigation(snapshot.surfaceId, ctx.eventNames)
+        };
+        if (schema) flow.schema = schema;
+        return flow;
+    };
     var toNum = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/common-expressions/core/src/expressions/toNum.ts
     function toNum(val, coerceTo0) {
         if (typeof val === "number") {
@@ -1763,7 +2169,7 @@ var CommonExpressionsPlugin = function() {
                 }
                 return out;
             }
-            function isObject(o) {
+            function isObject2(o) {
                 return o != null && (typeof o === "undefined" ? "undefined" : _type_of(o)) === "object";
             }
             function addLast2(array, val) {
@@ -1836,7 +2242,7 @@ var CommonExpressionsPlugin = function() {
                 if (idx === path.length - 1) {
                     newValue = val;
                 } else {
-                    var nestedObj = isObject(obj) && isObject(obj[key]) ? obj[key] : typeof path[idx + 1] === "number" ? [] : {};
+                    var nestedObj = isObject2(obj) && isObject2(obj[key]) ? obj[key] : typeof path[idx + 1] === "number" ? [] : {};
                     newValue = doSetIn(nestedObj, path, val, idx + 1);
                 }
                 return set2(obj, key, newValue);
@@ -1966,7 +2372,7 @@ var CommonExpressionsPlugin = function() {
                         var key = keys[j];
                         if (fAddDefaults && out[key] !== void 0) continue;
                         var nextVal = obj[key];
-                        if (fDeep && isObject(out[key]) && isObject(nextVal)) {
+                        if (fDeep && isObject2(out[key]) && isObject2(nextVal)) {
                             nextVal = doMerge(fAddDefaults, fDeep, out[key], nextVal);
                         }
                         if (nextVal === void 0 || nextVal === out[key]) continue;
@@ -7517,8 +7923,234 @@ var CommonExpressionsPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "0.15.3" : "unknown";
-    var COMMIT = true ? "635ec38f97e5afa4d5f7ff4ddd3e4f7a6fbe0988" : "unknown";
+    var A2UI_EVENT_CONTEXT_NAMESPACE = "agent.event.context";
+    var NUMERIC_SEGMENT = /^(0|[1-9]\d*)$/;
+    var decodeSegment = function decodeSegment(segment) {
+        return segment.replace(/~1/g, "/").replace(/~0/g, "~");
+    };
+    var isObject = function isObject(v) {
+        return (typeof v === "undefined" ? "undefined" : _type_of(v)) === "object" && v !== null && !Array.isArray(v);
+    };
+    var isPathRef = function isPathRef(v) {
+        return isObject(v) && typeof v.path === "string" && Object.keys(v).length === 1;
+    };
+    var isFunctionCall = function isFunctionCall(v) {
+        return isObject(v) && typeof v.call === "string";
+    };
+    function renderArg(value) {
+        if (value === null) return "null";
+        if (value === void 0) return "null";
+        if (typeof value === "boolean") return String(value);
+        if (typeof value === "number") return String(value);
+        if (typeof value === "string") return JSON.stringify(value);
+        if (Array.isArray(value)) {
+            return "[".concat(value.map(renderArg).join(", "), "]");
+        }
+        if (isPathRef(value)) {
+            return "{{".concat(pointerToBinding(value.path), "}}");
+        }
+        if (isFunctionCall(value)) {
+            var inner = translateFunctionCall(value);
+            return inner.replace(/^@\[/, "").replace(/\]@$/, "");
+        }
+        return JSON.stringify(value);
+    }
+    var INPUT_BINDING_PROPS = {
+        TextField: "text",
+        CheckBox: "checked",
+        DateTimeInput: "value",
+        ChoicePicker: "value",
+        Slider: "value"
+    };
+    var CHECK_TO_VALIDATOR = {
+        required: "required",
+        regex: "regex",
+        email: "email",
+        length: "length",
+        numeric: "numeric"
+    };
+    var TYPE_PREFIX = "T_";
+    var STRUCTURAL_KEYS = /* @__PURE__ */ new Set([
+        "id",
+        "component",
+        "child",
+        "children",
+        "checks",
+        "action"
+    ]);
+    function inlineComponent(component, ctx, templateScope) {
+        if (ctx.inProgress.has(component.id)) {
+            throw new Error("[a2ui] Component cycle detected at id '".concat(component.id, "'. A2UI requires the component graph to be a tree."));
+        }
+        ctx.inProgress.add(component.id);
+        var asset = {
+            id: component.id,
+            type: component.component
+        };
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = Object.entries(component)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                var _step_value = _sliced_to_array(_step.value, 2), key = _step_value[0], value = _step_value[1];
+                if (STRUCTURAL_KEYS.has(key)) continue;
+                asset[key] = translatePropValue(value, templateScope, ctx, key);
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+        if (typeof component.child === "string") {
+            var childId = component.child;
+            asset.child = wrapInlined(resolveAndInline(childId, ctx, templateScope));
+        }
+        if (component.children) {
+            if (Array.isArray(component.children)) {
+                asset.children = component.children.map(function(id) {
+                    return wrapInlined(resolveAndInline(id, ctx, templateScope));
+                });
+            } else {
+                var _component_children = component.children, path = _component_children.path, componentId = _component_children.componentId;
+                var data = scopedBinding(path, templateScope);
+                var templateComponent = ctx.byId.get(componentId);
+                if (!templateComponent) {
+                    throw new Error("[a2ui] Templated children reference unknown componentId '".concat(componentId, "' on component '").concat(component.id, "'."));
+                }
+                var templated = inlineComponent(_object_spread_props(_object_spread({}, templateComponent), {
+                    id: "".concat(templateComponent.id, "-_index_")
+                }), ctx, data);
+                asset.template = [
+                    {
+                        data: data,
+                        output: "children",
+                        value: {
+                            asset: templated
+                        }
+                    }
+                ];
+            }
+        }
+        if (component.action) {
+            Object.assign(asset, translateAction(component.action, ctx));
+        }
+        ctx.inProgress.delete(component.id);
+        return asset;
+    }
+    var CHILD_KEY_RE = /(?:^|[a-z])Child$|^child$/;
+    var CHILDREN_KEY_RE = /(?:^|[a-z])Children$|^children$/;
+    function translatePropValue(value, templateScope, ctx, parentKey) {
+        if (value === null || value === void 0) return value;
+        if (parentKey && CHILD_KEY_RE.test(parentKey) && typeof value === "string") {
+            return wrapInlined(resolveAndInline(value, ctx, templateScope));
+        }
+        if (parentKey && CHILDREN_KEY_RE.test(parentKey)) {
+            if (Array.isArray(value) && value.every(function(v) {
+                return typeof v === "string";
+            })) {
+                return value.map(function(id) {
+                    return wrapInlined(resolveAndInline(id, ctx, templateScope));
+                });
+            }
+            if ((typeof value === "undefined" ? "undefined" : _type_of(value)) === "object" && value !== null && !Array.isArray(value) && "componentId" in value) {
+                var _ctx_logger;
+                (_ctx_logger = ctx.logger) === null || _ctx_logger === void 0 ? void 0 : _ctx_logger.warn("[a2ui] Templated children are only supported at top-level 'children'; '".concat(parentKey, "' will be left unresolved."));
+            }
+        }
+        if ((typeof value === "undefined" ? "undefined" : _type_of(value)) !== "object") return value;
+        if (Array.isArray(value)) {
+            return value.map(function(v) {
+                return translatePropValue(v, templateScope, ctx, void 0);
+            });
+        }
+        if (isPathRef(value)) {
+            return scopedBinding(value.path, templateScope);
+        }
+        if (isFunctionCall(value)) {
+            if (templateScope) {
+                return translateFunctionCall(rewritePathsInCall(value, templateScope), ctx.logger);
+            }
+            return translateFunctionCall(value, ctx.logger);
+        }
+        var out = {};
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = Object.entries(value)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                var _step_value = _sliced_to_array(_step.value, 2), k = _step_value[0], v = _step_value[1];
+                out[k] = translatePropValue(v, templateScope, ctx, k);
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+        return out;
+    }
+    function rewritePathsInCall(value, scope) {
+        if (!value || (typeof value === "undefined" ? "undefined" : _type_of(value)) !== "object") return value;
+        if (Array.isArray(value)) {
+            return value.map(function(v) {
+                return rewritePathsInCall(v, scope);
+            });
+        }
+        if (isPathRef(value)) {
+            return {
+                path: scopedPointer(value.path, scope)
+            };
+        }
+        if (isFunctionCall(value)) {
+            return _object_spread_props(_object_spread({}, value), {
+                args: value.args ? Object.fromEntries(Object.entries(value.args).map(function(param) {
+                    var _param = _sliced_to_array(param, 2), k = _param[0], v = _param[1];
+                    return [
+                        k,
+                        rewritePathsInCall(v, scope)
+                    ];
+                })) : value.args
+            });
+        }
+        return Object.fromEntries(Object.entries(value).map(function(param) {
+            var _param = _sliced_to_array(param, 2), k = _param[0], v = _param[1];
+            return [
+                k,
+                rewritePathsInCall(v, scope)
+            ];
+        }));
+    }
+    function renderRhs(value) {
+        if (value === null || value === void 0) return "null";
+        if (typeof value === "boolean") return String(value);
+        if (typeof value === "number") return String(value);
+        if (typeof value === "string") return JSON.stringify(value);
+        if (Array.isArray(value)) {
+            return "[".concat(value.map(renderRhs).join(", "), "]");
+        }
+        if (isPathRef(value)) {
+            return "{{".concat(pointerToBinding(value.path), "}}");
+        }
+        if (isFunctionCall(value)) {
+            return translateFunctionCall(value).replace(/^@\[/, "").replace(/\]@$/, "");
+        }
+        return JSON.stringify(value);
+    }
+    var PLAYER_VERSION = true ? "0.16.0--canary.866.36538" : "unknown";
+    var COMMIT = true ? "0186f1bd04fda238cbc62b8d293c8048ab26efc2" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
@@ -7846,14 +8478,15 @@ var CommonExpressionsPlugin = function() {
             },
             {
                 key: "start",
-                value: function start(payload) {
+                value: function start(payload, options) {
                     return _async_to_generator(function() {
-                        var _this, _ref, ref, maybeUpdateState, _this_setupFlow, state, start, endProps, _tmp, error, errorState;
+                        var _this, _ref, flow, ref, maybeUpdateState, _this_setupFlow, state, start, endProps, _tmp, error, errorState;
                         return _ts_generator(this, function(_state) {
                             switch(_state.label){
                                 case 0:
                                     _this = this;
-                                    ref = Symbol((_ref = payload === null || payload === void 0 ? void 0 : payload.id) !== null && _ref !== void 0 ? _ref : "payload");
+                                    flow = (options === null || options === void 0 ? void 0 : options.format) === "a2ui" ? adaptA2UIToFlow(payload, this.logger) : payload;
+                                    ref = Symbol((_ref = flow === null || flow === void 0 ? void 0 : flow.id) !== null && _ref !== void 0 ? _ref : "payload");
                                     maybeUpdateState = function maybeUpdateState(newState) {
                                         if (_this.state.ref !== ref) {
                                             _this.logger.warn("Received update for a flow that's not the current one");
@@ -7874,7 +8507,7 @@ var CommonExpressionsPlugin = function() {
                                         ,
                                         4
                                     ]);
-                                    _this_setupFlow = this.setupFlow(payload), state = _this_setupFlow.state, start = _this_setupFlow.start;
+                                    _this_setupFlow = this.setupFlow(flow), state = _this_setupFlow.state, start = _this_setupFlow.start;
                                     this.setState(_object_spread({
                                         ref: ref
                                     }, state));
@@ -7909,7 +8542,7 @@ var CommonExpressionsPlugin = function() {
                                     errorState = {
                                         status: "error",
                                         ref: ref,
-                                        flow: payload,
+                                        flow: flow,
                                         error: error
                                     };
                                     maybeUpdateState(errorState);
