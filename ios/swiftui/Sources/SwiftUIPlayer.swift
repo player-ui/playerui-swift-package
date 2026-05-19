@@ -110,27 +110,23 @@ public struct SwiftUIPlayer: View, HeadlessPlayer {
             autoreleasepool {
                 if let ctx = player?.context {
                     ctx.exceptionHandler = nil
-                    ctx.setObject(nil, forKeyedSubscript: "player" as NSString)
                     ctx.setObject(nil, forKeyedSubscript: "setTimeout" as NSString)
                     JSGarbageCollect(ctx.jsGlobalContextRef)
                 }
+                // Break plugin → JSContext/JSValue references
                 partialMatchPlugin.pluginRef = nil
                 partialMatchPlugin.context = nil
+                // Release the JS player instance and all hook JSValues
                 player = nil
                 hooks = nil
                 flow = nil
+                // Release InProgressState which holds PlayerControllers (JSValues)
                 state = nil
             }
             DispatchQueue.main.async { [weak self] in
                 self?.result = nil 
              }
             registry.resetView()
-        }
-
-        /// Clear the exceptionHandler of the context to remove reference to the logger
-        /// should be called when ManagedPlayer gets tore down
-        public func clearExceptionHandler() {
-            player?.context.exceptionHandler = nil
         }
 
         /// Returns `player` but asserts that it is not nil. Used from methods that should not be called
@@ -176,7 +172,7 @@ public struct SwiftUIPlayer: View, HeadlessPlayer {
             do {
                 try registry.decode(value: value)
             } catch {
-                (state as? InProgressState)?.fail(PlayerError.unknownResponse(error))
+                (state as? InProgressState)?.controllers?.error.captureError(error: error)
             }
         }
     }
@@ -297,6 +293,9 @@ public struct SwiftUIPlayerHooks: CoreHooks {
     /// Fired when the DataController changes
     public var dataController: Hook<DataController>
 
+    /// Fired when the ErrorController changes
+    public var errorController: Hook<ErrorController>
+
     /// Fired when the state changes
     public var state: Hook<BaseFlowState>
 
@@ -314,6 +313,7 @@ public struct SwiftUIPlayerHooks: CoreHooks {
         flowController = Hook<FlowController>(baseValue: player, name: "flowController")
         viewController = Hook<ViewController>(baseValue: player, name: "viewController")
         dataController = Hook<DataController>(baseValue: player, name: "dataController")
+        errorController = Hook<ErrorController>(baseValue: player, name: "errorController")
         state = Hook<BaseFlowState>(baseValue: player, name: "state")
         view = SyncWaterfallHook<AnyView>()
         transition = SyncBailHook<Void, PlayerViewTransition>()

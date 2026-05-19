@@ -118,7 +118,6 @@ function _inherits(subClass, superClass) {
     if (superClass) _set_prototype_of(subClass, superClass);
 }
 function _instanceof(left, right) {
-    "@swc/helpers - instanceof";
     if (right != null && typeof Symbol !== "undefined" && right[Symbol.hasInstance]) {
         return !!right[Symbol.hasInstance](left);
     } else {
@@ -202,22 +201,12 @@ function _object_spread_props(target, source) {
 }
 function _object_without_properties(source, excluded) {
     if (source == null) return {};
-    var target = {}, sourceKeys, key, i;
-    if (typeof Reflect !== "undefined" && Reflect.ownKeys) {
-        sourceKeys = Reflect.ownKeys(Object(source));
-        for(i = 0; i < sourceKeys.length; i++){
-            key = sourceKeys[i];
-            if (excluded.indexOf(key) >= 0) continue;
-            if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-            target[key] = source[key];
-        }
-        return target;
-    }
-    target = _object_without_properties_loose(source, excluded);
+    var target = _object_without_properties_loose(source, excluded);
+    var key, i;
     if (Object.getOwnPropertySymbols) {
-        sourceKeys = Object.getOwnPropertySymbols(source);
-        for(i = 0; i < sourceKeys.length; i++){
-            key = sourceKeys[i];
+        var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+        for(i = 0; i < sourceSymbolKeys.length; i++){
+            key = sourceSymbolKeys[i];
             if (excluded.indexOf(key) >= 0) continue;
             if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
             target[key] = source[key];
@@ -227,11 +216,12 @@ function _object_without_properties(source, excluded) {
 }
 function _object_without_properties_loose(source, excluded) {
     if (source == null) return {};
-    var target = {}, sourceKeys = Object.getOwnPropertyNames(source), key, i;
+    var target = {};
+    var sourceKeys = Object.keys(source);
+    var key, i;
     for(i = 0; i < sourceKeys.length; i++){
         key = sourceKeys[i];
         if (excluded.indexOf(key) >= 0) continue;
-        if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
         target[key] = source[key];
     }
     return target;
@@ -313,17 +303,9 @@ function _ts_generator(thisArg, body) {
         },
         trys: [],
         ops: []
-    }, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype), d = Object.defineProperty;
-    return d(g, "next", {
-        value: verb(0)
-    }), d(g, "throw", {
-        value: verb(1)
-    }), d(g, "return", {
-        value: verb(2)
-    }), typeof Symbol === "function" && d(g, Symbol.iterator, {
-        value: function() {
-            return this;
-        }
+    }, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
+    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() {
+        return this;
     }), g;
     function verb(n) {
         return function(v) {
@@ -404,6 +386,23 @@ function _ts_generator(thisArg, body) {
     }
 }
 var ReferenceAssetsPlugin = function() {
+    var createNewSortInstance = function createNewSortInstance(opts) {
+        var comparer = castComparer(opts.comparer);
+        return function(arrayToSort) {
+            var ctx = Array.isArray(arrayToSort) && !opts.inPlaceSorting ? arrayToSort.slice() : arrayToSort;
+            return {
+                asc: function asc(sortBy) {
+                    return sortArray(1, ctx, sortBy, comparer);
+                },
+                desc: function desc(sortBy) {
+                    return sortArray(-1, ctx, sortBy, comparer);
+                },
+                by: function by(sortBy) {
+                    return sortArray(1, ctx, sortBy, comparer);
+                }
+            };
+        };
+    };
     var dlv_es_default = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/dlv@1.1.3/node_modules/dlv/dist/dlv.es.js
     function dlv_es_default(t2, e, l, n, r) {
         for(e = e.split ? e.split(".") : e, n = 0; n < e.length; n++)t2 = t2 ? t2[e[n]] : r;
@@ -411,7 +410,7 @@ var ReferenceAssetsPlugin = function() {
     };
     var createObjectMatcher = function createObjectMatcher(partialObj) {
         var pairs = traverseObj(partialObj);
-        var matchFunction = function matchFunction(searchObj) {
+        var matchFunction = function(searchObj) {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
             try {
                 for(var _iterator = Array.from(pairs)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
@@ -441,7 +440,7 @@ var ReferenceAssetsPlugin = function() {
         return matchFunction;
     };
     var createBasicMatcher = function createBasicMatcher(seed) {
-        var matcher = function matcher(match) {
+        var matcher = function(match) {
             return seed === match;
         };
         matcher.count = 1;
@@ -640,21 +639,21 @@ var ReferenceAssetsPlugin = function() {
             return middleware;
         }
         return {
-            get: function get(binding, options) {
+            get: function(binding, options) {
                 var resolvedOptions = options !== null && options !== void 0 ? options : defaultOptions;
                 if (middleware.get) {
                     return middleware.get(binding, resolvedOptions, next);
                 }
                 return next === null || next === void 0 ? void 0 : next.get(binding, resolvedOptions);
             },
-            set: function set(transaction, options) {
+            set: function(transaction, options) {
                 var resolvedOptions = options !== null && options !== void 0 ? options : defaultOptions;
                 if (middleware.set) {
                     return middleware.set(transaction, resolvedOptions, next);
                 }
                 return next === null || next === void 0 ? void 0 : next.set(transaction, resolvedOptions);
             },
-            delete: function _delete(binding, options) {
+            delete: function(binding, options) {
                 var resolvedOptions = options !== null && options !== void 0 ? options : defaultOptions;
                 if (middleware.delete) {
                     return middleware.delete(binding, resolvedOptions, next);
@@ -678,15 +677,15 @@ var ReferenceAssetsPlugin = function() {
             return model;
         }
         return {
-            get: function get(binding, options) {
+            get: function(binding, options) {
                 var _createModelWithOptions;
                 return (_createModelWithOptions = createModelWithOptions(options)) === null || _createModelWithOptions === void 0 ? void 0 : _createModelWithOptions.get(binding, options);
             },
-            set: function set(transaction, options) {
+            set: function(transaction, options) {
                 var _createModelWithOptions;
                 return (_createModelWithOptions = createModelWithOptions(options)) === null || _createModelWithOptions === void 0 ? void 0 : _createModelWithOptions.set(transaction, options);
             },
-            delete: function _delete(binding, options) {
+            delete: function(binding, options) {
                 var _createModelWithOptions;
                 return (_createModelWithOptions = createModelWithOptions(options)) === null || _createModelWithOptions === void 0 ? void 0 : _createModelWithOptions.delete(binding, options);
             }
@@ -760,13 +759,13 @@ var ReferenceAssetsPlugin = function() {
         return ch0 === OCURL_CODE && ch1 === OCURL_CODE;
     };
     var parseExpression = function parseExpression(expr, options) {
-        var _ref;
-        var strictMode = (_ref = options === null || options === void 0 ? void 0 : options.strict) !== null && _ref !== void 0 ? _ref : true;
+        var _options_strict;
+        var strictMode = (_options_strict = options === null || options === void 0 ? void 0 : options.strict) !== null && _options_strict !== void 0 ? _options_strict : true;
         var charAtFunc = expr.charAt;
         var charCodeAtFunc = expr.charCodeAt;
-        var length = expr.length;
+        var length3 = expr.length;
         var index = 0;
-        var getLocation = function getLocation(startChar) {
+        var getLocation = function(startChar) {
             return {
                 start: {
                     character: startChar
@@ -791,7 +790,7 @@ var ReferenceAssetsPlugin = function() {
             var chCode;
             var startCharIndex = index;
             ++index;
-            while(index < length){
+            while(index < length3){
                 gobbleSpaces();
                 chCode = exprICode(index);
                 if (chCode === CCURL_CODE) {
@@ -852,7 +851,7 @@ var ReferenceAssetsPlugin = function() {
             var test = gobbleBinaryExpression();
             gobbleSpaces();
             var startCharIndex = index;
-            if (index < length && exprICode(index) === QUMARK_CODE) {
+            if (index < length3 && exprICode(index) === QUMARK_CODE) {
                 index++;
                 var consequent = gobbleExpression();
                 if (!consequent) {
@@ -1030,7 +1029,7 @@ var ReferenceAssetsPlugin = function() {
             var str = "";
             var closed = false;
             var startCharIndex = index;
-            while(index < length){
+            while(index < length3){
                 var ch = exprI(index++);
                 if (ch === quote) {
                     closed = true;
@@ -1080,7 +1079,7 @@ var ReferenceAssetsPlugin = function() {
             var openBraceCount = 1;
             var startCharIndex = index;
             index += 2;
-            while(index < length){
+            while(index < length3){
                 var ch = exprI(index++);
                 if (ch === "}" && exprICode(index) === CCURL_CODE) {
                     index++;
@@ -1116,7 +1115,7 @@ var ReferenceAssetsPlugin = function() {
             } else {
                 throwError("Unexpected ".concat(exprI(index)), index);
             }
-            while(index < length){
+            while(index < length3){
                 ch = exprICode(index);
                 if (isIdentifierPart(ch)) {
                     index++;
@@ -1152,7 +1151,7 @@ var ReferenceAssetsPlugin = function() {
             var args = [];
             var charIndex;
             var node;
-            while(index < length){
+            while(index < length3){
                 gobbleSpaces();
                 charIndex = exprICode(index);
                 if (charIndex === termination) {
@@ -1243,7 +1242,7 @@ var ReferenceAssetsPlugin = function() {
         }
         var nodes = [];
         try {
-            while(index < length){
+            while(index < length3){
                 var chIndex = exprICode(index);
                 if (chIndex === SEMCOL_CODE || chIndex === COMMA_CODE) {
                     index++;
@@ -1252,7 +1251,7 @@ var ReferenceAssetsPlugin = function() {
                 var node = gobbleExpression();
                 if (node) {
                     nodes.push(node);
-                } else if (strictMode && index < length) {
+                } else if (strictMode && index < length3) {
                     throwError('Unexpected "'.concat(exprI(index), '"'), index);
                 }
             }
@@ -1291,6 +1290,14 @@ var ReferenceAssetsPlugin = function() {
     var collateAwaitable = function collateAwaitable(promises) {
         var result = Promise.all(promises);
         return makeAwaitable(result);
+    };
+    var withoutContext = function withoutContext(fn) {
+        return function(_context) {
+            for(var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++){
+                args[_key - 1] = arguments[_key];
+            }
+            return fn.apply(void 0, _to_consumable_array(args));
+        };
     };
     var isObjectExpression = function isObjectExpression(expr) {
         if (isExpressionNode(expr)) {
@@ -1533,29 +1540,20 @@ var ReferenceAssetsPlugin = function() {
         return _object_spread_props(_object_spread({}, resolverOptions), {
             data: {
                 model: resolverOptions.model,
-                formatValue: function formatValue(ref, value) {
+                formatValue: function(ref, value) {
                     if (resolverOptions.formatValue) {
                         return resolverOptions.formatValue(ref, value);
                     }
                     return value;
                 },
-                format: function format(bindingLike, value) {
+                format: function(bindingLike, value) {
                     return resolverOptions.format ? resolverOptions.format(isBinding(bindingLike) ? bindingLike : resolverOptions.parseBinding(bindingLike), value) : value;
                 }
             },
-            evaluate: function evaluate(exp) {
+            evaluate: function(exp) {
                 return resolverOptions.evaluator.evaluate(exp, resolverOptions);
             }
         });
-    };
-    var hasSomethingToResolve = function hasSomethingToResolve(str) {
-        return bindingResolveLookup(str) || expressionResolveLookup(str);
-    };
-    var resolveString = function resolveString(str, resolveOptions) {
-        return hasSomethingToResolve(str) ? resolveDataRefs(str, {
-            model: resolveOptions.data.model,
-            evaluate: resolveOptions.evaluate
-        }) : str;
     };
     var replaceParams = function replaceParams(message, params) {
         return message.slice().replace(ANY_CHAR_REGEX, function(keyExpr) {
@@ -1605,33 +1603,71 @@ var ReferenceAssetsPlugin = function() {
         });
         return batchTxn;
     };
+    var hasSomethingToResolve = function hasSomethingToResolve(str) {
+        return bindingResolveLookup(str) || expressionResolveLookup(str);
+    };
+    var resolveString = function resolveString(str, resolveOptions) {
+        return hasSomethingToResolve(str) ? resolveDataRefs(str, {
+            model: resolveOptions.data.model,
+            evaluate: resolveOptions.evaluate
+        }) : str;
+    };
+    var skipNullish = function skipNullish(validationFn) {
+        return function(context, value, options) {
+            if (value === null || value === void 0) {
+                return;
+            }
+            return validationFn(context, value, options);
+        };
+    };
+    var toNum = function toNum(val, coerceTo0) {
+        if (typeof val === "number") {
+            return val;
+        }
+        if (typeof val === "string" && val.length > 0) {
+            var newVal = val.trim();
+            newVal = newVal.replace(/,/g, "");
+            newVal = newVal.replace(/[¥£$€]/, "");
+            var nVal = Number(newVal);
+            return newVal.match(/^0[xbo]/i) || isNaN(nVal) ? void 0 : nVal;
+        }
+        return coerceTo0 ? 0 : void 0;
+    };
+    var ifString = function ifString(fn) {
+        return function(arg) {
+            if (typeof arg === "string") {
+                return fn(arg);
+            }
+            return arg;
+        };
+    };
     var __create = Object.create;
     var __defProp = Object.defineProperty;
     var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
     var __getOwnPropNames = Object.getOwnPropertyNames;
     var __getProtoOf = Object.getPrototypeOf;
     var __hasOwnProp = Object.prototype.hasOwnProperty;
-    var __commonJS = function __commonJS(cb, mod) {
+    var __commonJS = function(cb, mod) {
         return function __require() {
             return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = {
                 exports: {}
             }).exports, mod), mod.exports;
         };
     };
-    var __export = function __export(target, all) {
+    var __export = function(target, all) {
         for(var name in all)__defProp(target, name, {
             get: all[name],
             enumerable: true
         });
     };
-    var __copyProps = function __copyProps(to, from, except, desc) {
+    var __copyProps = function(to, from, except, desc) {
         if (from && (typeof from === "undefined" ? "undefined" : _type_of(from)) === "object" || typeof from === "function") {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
             try {
                 var _loop = function() {
                     var key = _step.value;
                     if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
-                        get: function get() {
+                        get: function() {
                             return from[key];
                         },
                         enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
@@ -1655,7 +1691,7 @@ var ReferenceAssetsPlugin = function() {
         }
         return to;
     };
-    var __toESM = function __toESM(mod, isNodeMode, target) {
+    var __toESM = function(mod, isNodeMode, target) {
         return target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(// If the importer is in node compatibility mode or this is not an ESM
         // file that has been converted to a CommonJS file using a Babel-
         // compatible transform (i.e. "__esModule" has not been set), then set
@@ -1665,92 +1701,11 @@ var ReferenceAssetsPlugin = function() {
             enumerable: true
         }) : target, mod);
     };
-    var __toCommonJS = function __toCommonJS(mod) {
+    var __toCommonJS = function(mod) {
         return __copyProps(__defProp({}, "__esModule", {
             value: true
         }), mod);
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js
-    var require_sorted_array = __commonJS({
-        "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js": function(exports, module) {
-            "use strict";
-            var SortedArray2 = function() {
-                var SortedArray3 = defclass({
-                    constructor: function constructor(array, compare) {
-                        this.array = [];
-                        this.compare = compare || compareDefault;
-                        var length = array.length, index = 0;
-                        while(index < length)this.insert(array[index++]);
-                    },
-                    insert: function insert(element) {
-                        var array = this.array, compare = this.compare, high = array.length - 1, low = 0, pos = -1, index, ordering;
-                        while(high >= low){
-                            index = (high + low) / 2 >>> 0;
-                            ordering = compare(array[index], element);
-                            if (ordering < 0) low = index + 1;
-                            else if (ordering > 0) high = index - 1;
-                            else {
-                                pos = index;
-                                break;
-                            }
-                            ;
-                        }
-                        if (pos === -1) {
-                            pos = high;
-                        }
-                        pos++;
-                        high = array.length - 1;
-                        while(pos < high && compare(element, array[pos]) === 0){
-                            pos++;
-                        }
-                        index = array.length;
-                        array.push(element);
-                        while(index > pos){
-                            array[index] = array[--index];
-                        }
-                        array[pos] = element;
-                        return this;
-                    },
-                    search: function search(element) {
-                        var array = this.array, compare = this.compare, high = array.length - 1, low = 0, index, ordering;
-                        while(high >= low){
-                            index = (high + low) / 2 >>> 0;
-                            ordering = compare(array[index], element);
-                            if (ordering < 0) low = index + 1;
-                            else if (ordering > 0) high = index - 1;
-                            else return index;
-                        }
-                        return -1;
-                    },
-                    remove: function remove(element) {
-                        var index = this.search(element);
-                        if (index >= 0) this.array.splice(index, 1);
-                        return this;
-                    }
-                });
-                SortedArray3.comparing = function(property, array) {
-                    return new SortedArray3(array, function(a, b) {
-                        return compareDefault(a[property], b[property]);
-                    });
-                };
-                return SortedArray3;
-                function defclass(prototype) {
-                    var constructor = prototype.constructor;
-                    constructor.prototype = prototype;
-                    return constructor;
-                }
-                function compareDefault(a, b) {
-                    if (a < b) return -1;
-                    else if (a > b) return 1;
-                    else return 0;
-                }
-            }();
-            if ((typeof module === "undefined" ? "undefined" : _type_of(module)) === "object") module.exports = SortedArray2;
-            if (typeof define === "function" && define.amd) define(function() {
-                return SortedArray2;
-            });
-        }
-    });
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/ts-nested-error@1.2.1/node_modules/ts-nested-error/build/nested-error.js
     var require_nested_error = __commonJS({
         "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/ts-nested-error@1.2.1/node_modules/ts-nested-error/build/nested-error.js": function(exports) {
@@ -1848,7 +1803,7 @@ var ReferenceAssetsPlugin = function() {
             function toError(err) {
                 try {
                     return _instanceof(err, Error) ? err : new Error("Value that is not an instance of Error was thrown: ".concat(err));
-                } catch (unused) {
+                } catch (e) {
                     return new Error("Failed to stringify non-instance of Error that was thrown.This is possibly due to the fact that toString() method of the valuedoesn't return a primitive value.");
                 }
             }
@@ -2149,7 +2104,7 @@ var ReferenceAssetsPlugin = function() {
     var require_p_defer = __commonJS({
         "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/p-defer@3.0.0/node_modules/p-defer/index.js": function(exports, module) {
             "use strict";
-            var pDefer = function pDefer() {
+            var pDefer = function() {
                 var deferred2 = {};
                 deferred2.promise = new Promise(function(resolve, reject) {
                     deferred2.resolve = resolve;
@@ -2177,39 +2132,39 @@ var ReferenceAssetsPlugin = function() {
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/index.ts
     var src_exports = {};
     __export(src_exports, {
-        ReferenceAssetsPlugin: function ReferenceAssetsPlugin1() {
+        ReferenceAssetsPlugin: function() {
             return ReferenceAssetsPlugin;
         },
-        actionTransform: function actionTransform1() {
+        actionTransform: function() {
             return actionTransform;
         },
-        chatMessageTransform: function chatMessageTransform1() {
+        chatMessageTransform: function() {
             return chatMessageTransform;
         },
-        choiceTransform: function choiceTransform1() {
+        choiceTransform: function() {
             return choiceTransform;
         },
-        expPropTransform: function expPropTransform1() {
+        expPropTransform: function() {
             return expPropTransform;
         },
-        imageTransform: function imageTransform1() {
+        imageTransform: function() {
             return imageTransform;
         },
-        infoTransform: function infoTransform1() {
+        infoTransform: function() {
             return infoTransform;
         },
-        inputTransform: function inputTransform1() {
+        inputTransform: function() {
             return inputTransform;
         },
-        isBackAction: function isBackAction1() {
+        isBackAction: function() {
             return isBackAction;
         },
-        transform: function transform() {
+        transform: function() {
             return transform2;
         }
     });
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/input/transform.ts
-    var inputTransform = function inputTransform(asset, options) {
+    var inputTransform = function(asset, options) {
         var _options_validation, _options_validation1;
         return _object_spread_props(_object_spread({}, asset), {
             format: function format(val) {
@@ -2241,8 +2196,102 @@ var ReferenceAssetsPlugin = function() {
             dataType: asset.binding === void 0 ? void 0 : (_options_validation1 = options.validation) === null || _options_validation1 === void 0 ? void 0 : _options_validation1.type(asset.binding)
         });
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
-    var import_sorted_array = __toESM(require_sorted_array(), 1);
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/fast-sort@3.4.1/node_modules/fast-sort/dist/sort.mjs
+    var castComparer = function castComparer(comparer) {
+        return function(a, b, order) {
+            return comparer(a, b, order) * order;
+        };
+    };
+    var throwInvalidConfigErrorIfTrue = function throwInvalidConfigErrorIfTrue(condition, context) {
+        if (condition) throw Error("Invalid sort config: " + context);
+    };
+    var unpackObjectSorter = function unpackObjectSorter(sortByObj) {
+        var _a = sortByObj || {}, asc = _a.asc, desc = _a.desc;
+        var order = asc ? 1 : -1;
+        var sortBy = asc || desc;
+        throwInvalidConfigErrorIfTrue(!sortBy, "Expected `asc` or `desc` property");
+        throwInvalidConfigErrorIfTrue(asc && desc, "Ambiguous object with `asc` and `desc` config properties");
+        var comparer = sortByObj.comparer && castComparer(sortByObj.comparer);
+        return {
+            order: order,
+            sortBy: sortBy,
+            comparer: comparer
+        };
+    };
+    var multiPropertySorterProvider = function multiPropertySorterProvider(defaultComparer2) {
+        return function multiPropertySorter(sortBy, sortByArr, depth, order, comparer, a, b) {
+            var valA;
+            var valB;
+            if (typeof sortBy === "string") {
+                valA = a[sortBy];
+                valB = b[sortBy];
+            } else if (typeof sortBy === "function") {
+                valA = sortBy(a);
+                valB = sortBy(b);
+            } else {
+                var objectSorterConfig = unpackObjectSorter(sortBy);
+                return multiPropertySorter(objectSorterConfig.sortBy, sortByArr, depth, objectSorterConfig.order, objectSorterConfig.comparer || defaultComparer2, a, b);
+            }
+            var equality = comparer(valA, valB, order);
+            if ((equality === 0 || valA == null && valB == null) && sortByArr.length > depth) {
+                return multiPropertySorter(sortByArr[depth], sortByArr, depth + 1, order, comparer, a, b);
+            }
+            return equality;
+        };
+    };
+    function getSortStrategy(sortBy, comparer, order) {
+        if (sortBy === void 0 || sortBy === true) {
+            return function(a, b) {
+                return comparer(a, b, order);
+            };
+        }
+        if (typeof sortBy === "string") {
+            throwInvalidConfigErrorIfTrue(sortBy.includes("."), "String syntax not allowed for nested properties.");
+            return function(a, b) {
+                return comparer(a[sortBy], b[sortBy], order);
+            };
+        }
+        if (typeof sortBy === "function") {
+            return function(a, b) {
+                return comparer(sortBy(a), sortBy(b), order);
+            };
+        }
+        if (Array.isArray(sortBy)) {
+            var multiPropSorter_1 = multiPropertySorterProvider(comparer);
+            return function(a, b) {
+                return multiPropSorter_1(sortBy[0], sortBy, 1, order, comparer, a, b);
+            };
+        }
+        var objectSorterConfig = unpackObjectSorter(sortBy);
+        return getSortStrategy(objectSorterConfig.sortBy, objectSorterConfig.comparer || comparer, objectSorterConfig.order);
+    }
+    var sortArray = function sortArray(order, ctx, sortBy, comparer) {
+        var _a;
+        if (!Array.isArray(ctx)) {
+            return ctx;
+        }
+        if (Array.isArray(sortBy) && sortBy.length < 2) {
+            _a = sortBy, sortBy = _a[0];
+        }
+        return ctx.sort(getSortStrategy(sortBy, comparer, order));
+    };
+    var defaultComparer = function defaultComparer(a, b, order) {
+        if (a == null) return order;
+        if (b == null) return -order;
+        if ((typeof a === "undefined" ? "undefined" : _type_of(a)) !== (typeof b === "undefined" ? "undefined" : _type_of(b))) {
+            return (typeof a === "undefined" ? "undefined" : _type_of(a)) < (typeof b === "undefined" ? "undefined" : _type_of(b)) ? -1 : 1;
+        }
+        if (a < b) return -1;
+        if (a > b) return 1;
+        return 0;
+    };
+    var sort = createNewSortInstance({
+        comparer: defaultComparer
+    });
+    var inPlaceSort = createNewSortInstance({
+        comparer: defaultComparer,
+        inPlaceSorting: true
+    });
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
     function traverseObj(object) {
         var path = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [], pairs = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : /* @__PURE__ */ new Map();
@@ -2254,7 +2303,7 @@ var ReferenceAssetsPlugin = function() {
                 var nestedPath = _to_consumable_array(path).concat([
                     key
                 ]);
-                if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object") {
+                if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object" && val !== null) {
                     traverseObj(val, nestedPath, pairs);
                 } else {
                     pairs.set(nestedPath, val);
@@ -2276,16 +2325,12 @@ var ReferenceAssetsPlugin = function() {
         }
         return pairs;
     }
-    var createSortedArray = function createSortedArray() {
-        return new import_sorted_array.default([], function(c) {
-            return c.matcher.count;
-        });
-    };
     var Registry = /*#__PURE__*/ function() {
-        function Registry(initialSet) {
+        function Registry(initialSet, logger) {
             var _this = this;
             _class_call_check(this, Registry);
-            this.store = createSortedArray();
+            this.store = [];
+            this.logger = logger;
             initialSet === null || initialSet === void 0 ? void 0 : initialSet.forEach(function(param) {
                 var _param = _sliced_to_array(param, 2), match = _param[0], value = _param[1];
                 _this.set(match, value);
@@ -2293,22 +2338,50 @@ var ReferenceAssetsPlugin = function() {
         }
         _create_class(Registry, [
             {
-                /** Add match -> value mapping to the registry */ key: "set",
+                /**
+     * Add match -> value mapping to the registry
+     *
+     * If an entry with the same specificity and matching key already exists, it will be replaced
+     * and a debug log will be emitted (if a logger is configured).
+     *
+     * @param match - The key to match against (can be a primitive or object)
+     * @param value - The value to associate with this key
+     */ key: "set",
                 value: function set(match, value) {
                     var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createObjectMatcher(match) : createBasicMatcher(match);
-                    this.store.insert({
+                    var existingIndex = this.store.findIndex(function(entry) {
+                        return entry.matcher(match) && matcher(entry.key);
+                    });
+                    if (existingIndex !== -1) {
+                        var _this_logger_debug, _this_logger;
+                        this.store.splice(existingIndex, 1);
+                        (_this_logger = this.logger) === null || _this_logger === void 0 ? void 0 : (_this_logger_debug = _this_logger.debug) === null || _this_logger_debug === void 0 ? void 0 : _this_logger_debug.call(_this_logger, "Registry: Replacing existing entry for key ", match);
+                    }
+                    this.store.push({
                         key: match,
                         value: value,
                         matcher: matcher
                     });
+                    this.store = sort(this.store).desc(function(entry) {
+                        return entry.matcher.count;
+                    });
                 }
             },
             {
-                /** Fetch the best match in the registry */ key: "get",
+                /**
+     * Fetch the best match in the registry
+     *
+     * Searches for the most specific entry that matches the given query.
+     * The registry is sorted by specificity (matcher.count) in descending order,
+     * so we iterate forward to find the highest specificity match first.
+     *
+     * @param query - The query object to match against registered keys
+     * @returns The value associated with the best matching key, or undefined if no match found
+     */ key: "get",
                 value: function get(query) {
                     var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
                     try {
-                        for(var _iterator = this.store.array[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                        for(var _iterator = this.store[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
                             var entry = _step.value;
                             if (entry.matcher(query)) {
                                 return entry.value;
@@ -2328,6 +2401,7 @@ var ReferenceAssetsPlugin = function() {
                             }
                         }
                     }
+                    return void 0;
                 }
             },
             {
@@ -2335,7 +2409,7 @@ var ReferenceAssetsPlugin = function() {
                 value: function forEach(callbackfn) {
                     var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
                     try {
-                        for(var _iterator = this.store.array[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                        for(var _iterator = this.store[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
                             var entry = _step.value;
                             callbackfn(entry);
                         }
@@ -2358,13 +2432,13 @@ var ReferenceAssetsPlugin = function() {
             {
                 /** Reset the items in the registry */ key: "clear",
                 value: function clear() {
-                    this.store = createSortedArray();
+                    this.store = [];
                 }
             },
             {
                 /** Check if the registry is empty*/ key: "isRegistryEmpty",
                 value: function isRegistryEmpty() {
-                    return this.store.array.length === 0;
+                    return this.store.length === 0;
                 }
             }
         ]);
@@ -2392,7 +2466,7 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return AssetTransformPlugin;
     }();
-    var transform = function transform(action, options) {
+    var transform = function(action, options) {
         return _object_spread_props(_object_spread({}, action), {
             run: function run() {
                 if (action.exp) {
@@ -2408,7 +2482,7 @@ var ReferenceAssetsPlugin = function() {
             }
         });
     };
-    var backIconTransform = function backIconTransform(action) {
+    var backIconTransform = function(action) {
         var _action_metaData;
         if (isBackAction(action) && (action === null || action === void 0 ? void 0 : (_action_metaData = action.metaData) === null || _action_metaData === void 0 ? void 0 : _action_metaData.role) === void 0) {
             return _object_spread_props(_object_spread({}, action), {
@@ -2419,17 +2493,17 @@ var ReferenceAssetsPlugin = function() {
         }
         return action;
     };
-    var expPropTransform = function expPropTransform(asset) {
-        var _ref;
+    var expPropTransform = function(asset) {
         var _asset_plugins_stringResolver, _asset_plugins, _asset_plugins1, _asset_plugins_stringResolver1, _asset_plugins2;
         var skipArray = (_asset_plugins = asset.plugins) === null || _asset_plugins === void 0 ? void 0 : (_asset_plugins_stringResolver = _asset_plugins.stringResolver) === null || _asset_plugins_stringResolver === void 0 ? void 0 : _asset_plugins_stringResolver.propertiesToSkip;
         if (skipArray && skipArray.indexOf("exp") > 1) {
             return asset;
         }
+        var _asset_plugins_stringResolver_propertiesToSkip;
         return _object_spread_props(_object_spread({}, asset), {
             plugins: _object_spread_props(_object_spread({}, asset.plugins), {
                 stringResolver: _object_spread_props(_object_spread({}, asset === null || asset === void 0 ? void 0 : (_asset_plugins1 = asset.plugins) === null || _asset_plugins1 === void 0 ? void 0 : _asset_plugins1.stringResolver), {
-                    propertiesToSkip: _to_consumable_array((_ref = (_asset_plugins2 = asset.plugins) === null || _asset_plugins2 === void 0 ? void 0 : (_asset_plugins_stringResolver1 = _asset_plugins2.stringResolver) === null || _asset_plugins_stringResolver1 === void 0 ? void 0 : _asset_plugins_stringResolver1.propertiesToSkip) !== null && _ref !== void 0 ? _ref : []).concat([
+                    propertiesToSkip: _to_consumable_array((_asset_plugins_stringResolver_propertiesToSkip = (_asset_plugins2 = asset.plugins) === null || _asset_plugins2 === void 0 ? void 0 : (_asset_plugins_stringResolver1 = _asset_plugins2.stringResolver) === null || _asset_plugins_stringResolver1 === void 0 ? void 0 : _asset_plugins_stringResolver1.propertiesToSkip) !== null && _asset_plugins_stringResolver_propertiesToSkip !== void 0 ? _asset_plugins_stringResolver_propertiesToSkip : []).concat([
                         "exp"
                     ])
                 })
@@ -2438,7 +2512,7 @@ var ReferenceAssetsPlugin = function() {
     };
     var actionTransform = compose(transform, backIconTransform, composeBefore(expPropTransform));
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/info/transform.ts
-    var infoTransform = function infoTransform(infoAsset) {
+    var infoTransform = function(infoAsset) {
         var actions = infoAsset === null || infoAsset === void 0 ? void 0 : infoAsset.actions;
         var segmentedActions = actions === null || actions === void 0 ? void 0 : actions.reduce(function(segmentedActionsArray, action) {
             segmentedActionsArray[isBackAction(action.asset) ? "prev" : "next"].push(action);
@@ -2452,13 +2526,13 @@ var ReferenceAssetsPlugin = function() {
         });
     };
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/image/transform.ts
-    var getImageAlt = function getImageAlt(props) {
+    var getImageAlt = function(props) {
         var metaData = props.metaData, placeholder = props.placeholder;
         if (metaData.accessibility) return metaData.accessibility;
         if (placeholder) return placeholder;
         return "Image";
     };
-    var imageTransform = function imageTransform(props) {
+    var imageTransform = function(props) {
         var altText = getImageAlt(props);
         var newImage = _object_spread_props(_object_spread({}, props), {
             altText: altText
@@ -2466,7 +2540,7 @@ var ReferenceAssetsPlugin = function() {
         return newImage;
     };
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/choice/transform.ts
-    var choiceTransform = function choiceTransform(asset, options) {
+    var choiceTransform = function(asset, options) {
         var _options_validation, _options_validation1;
         var items = asset.items, binding = asset.binding, rest = _object_without_properties(asset, [
             "items",
@@ -2476,7 +2550,7 @@ var ReferenceAssetsPlugin = function() {
         var currentValue = assetHasBinding ? options.data.model.get(binding, {
             includeInvalid: true
         }) : void 0;
-        var resetValue = function resetValue() {
+        var resetValue = function() {
             if (assetHasBinding) {
                 return options.data.model.set([
                     [
@@ -2992,47 +3066,47 @@ var ReferenceAssetsPlugin = function() {
     }
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_timm5 = __toESM(require_timm(), 1);
+    var import_p_defer = __toESM(require_p_defer(), 1);
     var import_timm6 = __toESM(require_timm(), 1);
+    var import_queue_microtask = __toESM(require_queue_microtask(), 1);
     var import_timm7 = __toESM(require_timm(), 1);
     var import_timm8 = __toESM(require_timm(), 1);
-    var import_p_defer = __toESM(require_p_defer(), 1);
-    var import_queue_microtask = __toESM(require_queue_microtask(), 1);
-    var import_p_defer2 = __toESM(require_p_defer(), 1);
     var import_timm9 = __toESM(require_timm(), 1);
+    var import_p_defer2 = __toESM(require_p_defer(), 1);
     var import_queue_microtask2 = __toESM(require_queue_microtask(), 1);
     var __defProp2 = Object.defineProperty;
-    var __export2 = function __export2(target, all) {
+    var __export2 = function(target, all) {
         for(var name in all)__defProp2(target, name, {
             get: all[name],
             enumerable: true
         });
     };
-    var toValue = function toValue(value) {
+    var toValue = function(value) {
         return {
             name: "Value",
             value: value
         };
     };
-    var toExpression = function toExpression(value) {
+    var toExpression = function(value) {
         return {
             name: "Expression",
             value: value
         };
     };
-    var toPath = function toPath(path) {
+    var toPath = function(path) {
         return {
             name: "PathNode",
             path: path
         };
     };
-    var toQuery = function toQuery(key, value) {
+    var toQuery = function(key, value) {
         return {
             name: "Query",
             key: key,
             value: value
         };
     };
-    var toConcatenatedNode = function toConcatenatedNode(values) {
+    var toConcatenatedNode = function(values) {
         if (values.length === 1) {
             return values[0];
         }
@@ -3050,7 +3124,7 @@ var ReferenceAssetsPlugin = function() {
     var SINGLE_QUOTE = "'";
     var DOUBLE_QUOTE = '"';
     var BACK_TICK = "`";
-    var isIdentifierChar = function isIdentifierChar(char) {
+    var isIdentifierChar = function(char) {
         if (!char) {
             return false;
         }
@@ -3070,10 +3144,10 @@ var ReferenceAssetsPlugin = function() {
         charCode === 125;
         return !matches;
     };
-    var parse = function parse(path) {
+    var parse = function(path) {
         var index = 1;
         var ch = path.charAt(0);
-        var next = function next(expected) {
+        var next = function(expected) {
             if (expected && ch !== expected) {
                 throw new Error("Expected char: ".concat(expected, " but got: ").concat(ch));
             }
@@ -3081,12 +3155,12 @@ var ReferenceAssetsPlugin = function() {
             index += 1;
             return ch;
         };
-        var whitespace = function whitespace() {
+        var whitespace = function() {
             while(ch === " "){
                 next();
             }
         };
-        var identifier = function identifier() {
+        var identifier = function() {
             var allowBoolValue = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : false;
             if (!isIdentifierChar(ch)) {
                 return;
@@ -3112,7 +3186,7 @@ var ReferenceAssetsPlugin = function() {
                 return toValue(value);
             }
         };
-        var expression = function expression() {
+        var expression2 = function() {
             if (ch === BACK_TICK) {
                 next(BACK_TICK);
                 var exp = ch;
@@ -3128,7 +3202,7 @@ var ReferenceAssetsPlugin = function() {
                 }
             }
         };
-        var regex = function regex(match) {
+        var regex2 = function(match) {
             if (!(ch === null || ch === void 0 ? void 0 : ch.match(match))) {
                 return;
             }
@@ -3143,7 +3217,7 @@ var ReferenceAssetsPlugin = function() {
                 return toValue(value);
             }
         };
-        var nestedPath = function nestedPath() {
+        var nestedPath = function() {
             if (ch === OPEN_CURL) {
                 next(OPEN_CURL);
                 next(OPEN_CURL);
@@ -3153,12 +3227,12 @@ var ReferenceAssetsPlugin = function() {
                 return modelRef;
             }
         };
-        var simpleSegment = function simpleSegment() {
+        var simpleSegment = function() {
             var allowBoolValue = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : false;
-            var _ref, _nestedPath;
-            return (_ref = (_nestedPath = nestedPath()) !== null && _nestedPath !== void 0 ? _nestedPath : expression()) !== null && _ref !== void 0 ? _ref : identifier(allowBoolValue);
+            var _nestedPath, _ref;
+            return (_ref = (_nestedPath = nestedPath()) !== null && _nestedPath !== void 0 ? _nestedPath : expression2()) !== null && _ref !== void 0 ? _ref : identifier(allowBoolValue);
         };
-        var segment = function segment() {
+        var segment = function() {
             var segments = [];
             var nextSegment = simpleSegment();
             while(nextSegment !== void 0){
@@ -3170,19 +3244,19 @@ var ReferenceAssetsPlugin = function() {
             }
             return toConcatenatedNode(segments);
         };
-        var optionallyQuotedSegment = function optionallyQuotedSegment() {
+        var optionallyQuotedSegment = function() {
             var allowBoolValue = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : false;
             whitespace();
             if (ch === SINGLE_QUOTE || ch === DOUBLE_QUOTE) {
                 var singleQuote = ch === SINGLE_QUOTE;
                 next(singleQuote ? SINGLE_QUOTE : DOUBLE_QUOTE);
-                var id = regex(/[^'"]+/);
+                var id = regex2(/[^'"]+/);
                 next(singleQuote ? SINGLE_QUOTE : DOUBLE_QUOTE);
                 return id;
             }
             return simpleSegment(allowBoolValue);
         };
-        var equals = function equals() {
+        var equals = function() {
             if (ch !== EQUALS) {
                 return false;
             }
@@ -3191,7 +3265,7 @@ var ReferenceAssetsPlugin = function() {
             }
             return true;
         };
-        var parseBracket = function parseBracket() {
+        var parseBracket = function() {
             if (ch === OPEN_BRACKET) {
                 next(OPEN_BRACKET);
                 whitespace();
@@ -3213,7 +3287,7 @@ var ReferenceAssetsPlugin = function() {
                 return value;
             }
         };
-        var parseSegmentAndBrackets = function parseSegmentAndBrackets() {
+        var parseSegmentAndBrackets = function() {
             var parsed = [];
             var firstSegment = segment();
             if (firstSegment) {
@@ -3230,7 +3304,7 @@ var ReferenceAssetsPlugin = function() {
             }
             return parsed;
         };
-        var parsePath = function parsePath() {
+        var parsePath = function() {
             var parts = [];
             var nextSegment = parseSegmentAndBrackets();
             while(nextSegment !== void 0){
@@ -3266,8 +3340,8 @@ var ReferenceAssetsPlugin = function() {
                 return new _BindingInstance(rawBinding);
             };
             _class_call_check(this, _BindingInstance);
-            var split = Array.isArray(raw) ? raw : raw.split(".");
-            this.split = split.map(function(segment) {
+            var split2 = Array.isArray(raw) ? raw : raw.split(".");
+            this.split = split2.map(function(segment) {
                 if (typeof segment === "number") {
                     return segment;
                 }
@@ -3341,7 +3415,6 @@ var ReferenceAssetsPlugin = function() {
         return _BindingInstance;
     }();
     function resolveBindingAST(bindingPathNode, options, hooks) {
-        var _context_updates;
         var context = {
             updates: {},
             path: []
@@ -3381,8 +3454,8 @@ var ReferenceAssetsPlugin = function() {
             }
         }
         function resolveNode(_node) {
-            var _ref;
-            var resolvedNode = (_ref = hooks === null || hooks === void 0 ? void 0 : hooks.beforeResolveNode.call(_node, _object_spread({}, context, options))) !== null && _ref !== void 0 ? _ref : _node;
+            var _hooks_beforeResolveNode_call;
+            var resolvedNode = (_hooks_beforeResolveNode_call = hooks === null || hooks === void 0 ? void 0 : hooks.beforeResolveNode.call(_node, _object_spread({}, context, options))) !== null && _hooks_beforeResolveNode_call !== void 0 ? _hooks_beforeResolveNode_call : _node;
             switch(resolvedNode.name){
                 case "Expression":
                 case "PathNode":
@@ -3418,6 +3491,7 @@ var ReferenceAssetsPlugin = function() {
             }
         }
         bindingPathNode.path.forEach(resolveNode);
+        var _context_updates;
         return {
             path: context.path,
             updates: Object.keys((_context_updates = context.updates) !== null && _context_updates !== void 0 ? _context_updates : {}).length > 0 ? context.updates : void 0
@@ -3426,13 +3500,13 @@ var ReferenceAssetsPlugin = function() {
     var BINDING_BRACKETS_REGEX = /[\s()*=`{}'"[\]]/;
     var LAZY_BINDING_REGEX = /^[^.]+(\..+)*$/;
     var DEFAULT_OPTIONS = {
-        get: function get() {
+        get: function() {
             throw new Error("Not Implemented");
         },
-        set: function set() {
+        set: function() {
             throw new Error("Not Implemented");
         },
-        evaluate: function evaluate() {
+        evaluate: function() {
             throw new Error("Not Implemented");
         }
     };
@@ -3455,18 +3529,18 @@ var ReferenceAssetsPlugin = function() {
      * representation of that path.
      */ key: "normalizePath",
                 value: function normalizePath(path, resolveOptions) {
-                    var _this_parseCache_path;
                     if (!BINDING_BRACKETS_REGEX.test(path) && LAZY_BINDING_REGEX.test(path) && this.hooks.skipOptimization.call(path) !== true) {
                         return {
                             path: path.split("."),
                             updates: void 0
                         };
                     }
+                    var _this_parseCache_path;
                     var ast = (_this_parseCache_path = this.parseCache[path]) !== null && _this_parseCache_path !== void 0 ? _this_parseCache_path : parse(path);
                     this.parseCache[path] = ast;
                     if ((typeof ast === "undefined" ? "undefined" : _type_of(ast)) !== "object" || !(ast === null || ast === void 0 ? void 0 : ast.status)) {
-                        var _ref;
-                        throw new TypeError('Cannot normalize path "'.concat(path, '": ').concat((_ref = ast === null || ast === void 0 ? void 0 : ast.error) !== null && _ref !== void 0 ? _ref : "Unknown Error."));
+                        var _ast_error;
+                        throw new TypeError('Cannot normalize path "'.concat(path, '": ').concat((_ast_error = ast === null || ast === void 0 ? void 0 : ast.error) !== null && _ast_error !== void 0 ? _ast_error : "Unknown Error."));
                     }
                     try {
                         return resolveBindingAST(ast.path, resolveOptions, this.hooks);
@@ -3499,14 +3573,14 @@ var ReferenceAssetsPlugin = function() {
                     var updates = {};
                     var joined = Array.isArray(rawBinding) ? rawBinding.join(".") : String(rawBinding);
                     var normalizeConfig = {
-                        getValue: function getValue(path) {
+                        getValue: function(path) {
                             var normalized2 = _this.normalizePath(path.join("."), normalizeConfig);
                             return options.get(_this.getBindingForNormalizedResult(normalized2));
                         },
-                        evaluate: function evaluate(exp) {
+                        evaluate: function(exp) {
                             return options.evaluate(exp);
                         },
-                        convertToPath: function convertToPath(path) {
+                        convertToPath: function(path) {
                             if (path === void 0) {
                                 throw new Error("Attempted to convert undefined value to binding path");
                             }
@@ -3571,9 +3645,9 @@ var ReferenceAssetsPlugin = function() {
                 /** Grab all of the bindings that this depended on */ key: "getDependencies",
                 value: function getDependencies(name) {
                     if (name !== void 0) {
-                        var _ref;
                         var _this_namedDependencySets_name, _this_namedDependencySets;
-                        return (_ref = (_this_namedDependencySets = this.namedDependencySets) === null || _this_namedDependencySets === void 0 ? void 0 : (_this_namedDependencySets_name = _this_namedDependencySets[name]) === null || _this_namedDependencySets_name === void 0 ? void 0 : _this_namedDependencySets_name.readDeps) !== null && _ref !== void 0 ? _ref : /* @__PURE__ */ new Set();
+                        var _this_namedDependencySets_name_readDeps;
+                        return (_this_namedDependencySets_name_readDeps = (_this_namedDependencySets = this.namedDependencySets) === null || _this_namedDependencySets === void 0 ? void 0 : (_this_namedDependencySets_name = _this_namedDependencySets[name]) === null || _this_namedDependencySets_name === void 0 ? void 0 : _this_namedDependencySets_name.readDeps) !== null && _this_namedDependencySets_name_readDeps !== void 0 ? _this_namedDependencySets_name_readDeps : /* @__PURE__ */ new Set();
                     }
                     return this.readDeps;
                 }
@@ -3595,9 +3669,9 @@ var ReferenceAssetsPlugin = function() {
                 /** Grab all of the bindings this wrote to */ key: "getModified",
                 value: function getModified(name) {
                     if (name !== void 0) {
-                        var _ref;
                         var _this_namedDependencySets_name, _this_namedDependencySets;
-                        return (_ref = (_this_namedDependencySets = this.namedDependencySets) === null || _this_namedDependencySets === void 0 ? void 0 : (_this_namedDependencySets_name = _this_namedDependencySets[name]) === null || _this_namedDependencySets_name === void 0 ? void 0 : _this_namedDependencySets_name.writeDeps) !== null && _ref !== void 0 ? _ref : /* @__PURE__ */ new Set();
+                        var _this_namedDependencySets_name_writeDeps;
+                        return (_this_namedDependencySets_name_writeDeps = (_this_namedDependencySets = this.namedDependencySets) === null || _this_namedDependencySets === void 0 ? void 0 : (_this_namedDependencySets_name = _this_namedDependencySets[name]) === null || _this_namedDependencySets_name === void 0 ? void 0 : _this_namedDependencySets_name.writeDeps) !== null && _this_namedDependencySets_name_writeDeps !== void 0 ? _this_namedDependencySets_name_writeDeps : /* @__PURE__ */ new Set();
                     }
                     return this.writeDeps;
                 }
@@ -3919,19 +3993,19 @@ var ReferenceAssetsPlugin = function() {
     var thisStr = "this";
     var evaluator_functions_exports = {};
     __export2(evaluator_functions_exports, {
-        conditional: function conditional1() {
+        conditional: function() {
             return conditional;
         },
-        deleteDataVal: function deleteDataVal1() {
+        deleteDataVal: function() {
             return deleteDataVal;
         },
-        getDataVal: function getDataVal1() {
+        getDataVal: function() {
             return getDataVal;
         },
-        setDataVal: function setDataVal1() {
+        setDataVal: function() {
             return setDataVal;
         },
-        waitFor: function waitFor1() {
+        waitFor: function() {
             return waitFor;
         }
     });
@@ -3943,7 +4017,7 @@ var ReferenceAssetsPlugin = function() {
         };
         return promise;
     }
-    var setDataVal = function setDataVal(_context, binding, value) {
+    var setDataVal = function(_context, binding, value) {
         _context.model.set([
             [
                 binding,
@@ -3951,13 +4025,13 @@ var ReferenceAssetsPlugin = function() {
             ]
         ]);
     };
-    var getDataVal = function getDataVal(_context, binding) {
+    var getDataVal = function(_context, binding) {
         return _context.model.get(binding);
     };
-    var deleteDataVal = function deleteDataVal(_context, binding) {
+    var deleteDataVal = function(_context, binding) {
         return _context.model.delete(binding);
     };
-    var conditional = function conditional(ctx, condition, ifTrue, ifFalse) {
+    var conditional = function(ctx, condition, ifTrue, ifFalse) {
         var testResult = ctx.evaluate(condition);
         if (isAwaitable(testResult)) {
             return testResult.awaitableThen(function(resolvedTest) {
@@ -3979,14 +4053,14 @@ var ReferenceAssetsPlugin = function() {
         return null;
     };
     conditional.resolveParams = false;
-    var waitFor = function waitFor(ctx, promise) {
+    var waitFor = function(ctx, promise) {
         return makeAwaitable(promise);
     };
-    var andandOperator = function andandOperator(ctx, a, b, async) {
+    var andandOperator = function(ctx, a, b, async) {
         return LogicalOperators.and(ctx, a, b, async);
     };
     andandOperator.resolveParams = false;
-    var ororOperator = function ororOperator(ctx, a, b, async) {
+    var ororOperator = function(ctx, a, b, async) {
         return LogicalOperators.or(ctx, a, b, async);
     };
     ororOperator.resolveParams = false;
@@ -4112,7 +4186,7 @@ var ReferenceAssetsPlugin = function() {
         }
     };
     var LogicalOperators = {
-        and: function and(ctx, leftNode, rightNode, async) {
+        and: function(ctx, leftNode, rightNode, async) {
             var leftResult = ctx.evaluate(leftNode);
             if (async && isAwaitable(leftResult)) {
                 return leftResult.awaitableThen(function(awaitedLeft) {
@@ -4123,7 +4197,7 @@ var ReferenceAssetsPlugin = function() {
             }
             return leftResult && ctx.evaluate(rightNode);
         },
-        or: function or(ctx, leftNode, rightNode, async) {
+        or: function(ctx, leftNode, rightNode, async) {
             var leftResult = ctx.evaluate(leftNode);
             if (async && isAwaitable(leftResult)) {
                 return leftResult.awaitableThen(function(awaitedLeft) {
@@ -4161,10 +4235,10 @@ var ReferenceAssetsPlugin = function() {
                 ]))
             };
             this.defaultHookOptions = _object_spread_props(_object_spread({}, defaultOptions), {
-                evaluate: function evaluate(expr) {
+                evaluate: function(expr) {
                     return _this.evaluate(expr, _this.defaultHookOptions);
                 },
-                resolveNode: function resolveNode(node) {
+                resolveNode: function(node) {
                     return _this._execAST(node, _this.defaultHookOptions);
                 }
             });
@@ -4184,28 +4258,28 @@ var ReferenceAssetsPlugin = function() {
                 key: "evaluate",
                 value: function evaluate(expr, options) {
                     var _this = this;
-                    var _this_hooks_beforeEvaluate_call;
                     var resolvedOpts = this.hooks.resolveOptions.call(_object_spread_props(_object_spread({}, this.defaultHookOptions, options), {
-                        resolveNode: function resolveNode(node) {
+                        resolveNode: function(node) {
                             return _this._execAST(node, resolvedOpts);
                         }
                     }));
-                    var expression = (_this_hooks_beforeEvaluate_call = this.hooks.beforeEvaluate.call(expr, resolvedOpts)) !== null && _this_hooks_beforeEvaluate_call !== void 0 ? _this_hooks_beforeEvaluate_call : expr;
-                    while(isObjectExpression(expression)){
-                        expression = expression.value;
+                    var _this_hooks_beforeEvaluate_call;
+                    var expression2 = (_this_hooks_beforeEvaluate_call = this.hooks.beforeEvaluate.call(expr, resolvedOpts)) !== null && _this_hooks_beforeEvaluate_call !== void 0 ? _this_hooks_beforeEvaluate_call : expr;
+                    while(isObjectExpression(expression2)){
+                        expression2 = expression2.value;
                     }
-                    if (typeof expression === "number" || typeof expression === "boolean" || expression === void 0 || expression === null) {
-                        return expression;
+                    if (typeof expression2 === "number" || typeof expression2 === "boolean" || expression2 === void 0 || expression2 === null) {
+                        return expression2;
                     }
-                    if (isExpressionNode(expression)) {
-                        return this._execAST(expression, resolvedOpts);
+                    if (isExpressionNode(expression2)) {
+                        return this._execAST(expression2, resolvedOpts);
                     }
-                    if (Array.isArray(expression)) {
-                        return expression.reduce(function(_nothing, exp) {
+                    if (Array.isArray(expression2)) {
+                        return expression2.reduce(function(_nothing, exp) {
                             return _this.evaluate(exp, options);
                         }, null);
                     }
-                    return this._execString(String(expression), resolvedOpts);
+                    return this._execString(String(expression2), resolvedOpts);
                 }
             },
             {
@@ -4313,11 +4387,11 @@ var ReferenceAssetsPlugin = function() {
                 key: "_resolveNode",
                 value: function _resolveNode(_currentValue, node, options) {
                     var _this = this;
-                    var _options_async;
                     var resolveNode = options.resolveNode, model = options.model;
+                    var _options_async;
                     var isAsync = (_options_async = options.async) !== null && _options_async !== void 0 ? _options_async : false;
                     var expressionContext = _object_spread_props(_object_spread({}, options), {
-                        evaluate: function evaluate(expr) {
+                        evaluate: function(expr) {
                             return _this.evaluate(expr, options);
                         }
                     });
@@ -4651,7 +4725,7 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return ProxyLogger;
     }();
-    var identify = function identify(val) {
+    var identify = function(val) {
         return val;
     };
     var SchemaController = /*#__PURE__*/ function() {
@@ -4739,7 +4813,6 @@ var ReferenceAssetsPlugin = function() {
             {
                 key: "getApparentType",
                 value: function getApparentType(binding) {
-                    var _schemaType_validation, _baseType_validation;
                     var schemaType = this.getType(binding);
                     if (schemaType === void 0) {
                         return void 0;
@@ -4748,6 +4821,7 @@ var ReferenceAssetsPlugin = function() {
                     if (baseType === void 0) {
                         return schemaType;
                     }
+                    var _schemaType_validation, _baseType_validation;
                     return _object_spread_props(_object_spread({}, baseType, schemaType), {
                         validation: _to_consumable_array((_schemaType_validation = schemaType.validation) !== null && _schemaType_validation !== void 0 ? _schemaType_validation : []).concat(_to_consumable_array((_baseType_validation = baseType.validation) !== null && _baseType_validation !== void 0 ? _baseType_validation : []))
                     });
@@ -4896,10 +4970,10 @@ var ReferenceAssetsPlugin = function() {
             {
                 key: "get",
                 value: function get(binding, options, next) {
-                    var _ref;
                     var _this_shouldIncludeInvalid, _this;
                     var val = next === null || next === void 0 ? void 0 : next.get(binding, options);
-                    if ((_ref = (_this_shouldIncludeInvalid = (_this = this).shouldIncludeInvalid) === null || _this_shouldIncludeInvalid === void 0 ? void 0 : _this_shouldIncludeInvalid.call(_this, options)) !== null && _ref !== void 0 ? _ref : (options === null || options === void 0 ? void 0 : options.includeInvalid) === true) {
+                    var _this_shouldIncludeInvalid1;
+                    if ((_this_shouldIncludeInvalid1 = (_this_shouldIncludeInvalid = (_this = this).shouldIncludeInvalid) === null || _this_shouldIncludeInvalid === void 0 ? void 0 : _this_shouldIncludeInvalid.call(_this, options)) !== null && _this_shouldIncludeInvalid1 !== void 0 ? _this_shouldIncludeInvalid1 : (options === null || options === void 0 ? void 0 : options.includeInvalid) === true) {
                         this.shadowModelPaths.forEach(function(shadowValue, shadowBinding) {
                             if (shadowBinding === binding) {
                                 val = shadowValue;
@@ -4997,12 +5071,11 @@ var ReferenceAssetsPlugin = function() {
                         templateDepth: 0
                     };
                     var _this = this;
-                    var _this_hooks_onCreateASTNode_call;
                     var parsedNode = this.hooks.parseNode.call(obj, type, options);
                     if (parsedNode || parsedNode === null) {
                         return parsedNode;
                     }
-                    var parseLocalObject = function parseLocalObject1(currentValue, objToParse) {
+                    var parseLocalObject = function(currentValue, objToParse) {
                         var path = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : [];
                         if ((typeof objToParse === "undefined" ? "undefined" : _type_of(objToParse)) !== "object" || objToParse === null) {
                             return {
@@ -5072,29 +5145,1932 @@ var ReferenceAssetsPlugin = function() {
                             child.value.parent = parent;
                         });
                     }
+                    var _this_hooks_onCreateASTNode_call;
                     return (_this_hooks_onCreateASTNode_call = this.hooks.onCreateASTNode.call(baseAst, obj)) !== null && _this_hooks_onCreateASTNode_call !== void 0 ? _this_hooks_onCreateASTNode_call : null;
                 }
             }
         ]);
         return Parser;
     }();
-    var withContext = function withContext(model) {
+    var FlowInstance = /*#__PURE__*/ function() {
+        function FlowInstance(id, flow, options) {
+            var _this = this;
+            _class_call_check(this, FlowInstance);
+            this.isTransitioning = false;
+            this.hooks = {
+                beforeStart: new SyncBailHook(),
+                onStart: new SyncHook(),
+                onEnd: new SyncHook(),
+                skipTransition: new SyncBailHook(),
+                beforeTransition: new SyncWaterfallHook(),
+                resolveTransitionNode: new SyncWaterfallHook(),
+                transition: new SyncHook(),
+                afterTransition: new SyncHook()
+            };
+            this.id = id;
+            this.flow = flow;
+            this.log = options === null || options === void 0 ? void 0 : options.logger;
+            this.history = [];
+            this.hooks.transition.tap("startPromise", function(_oldState, nextState) {
+                return _async_to_generator(function() {
+                    var newState;
+                    return _ts_generator(this, function(_state) {
+                        newState = nextState.value;
+                        if (this.flowPromise && newState.state_type === "END") {
+                            this.flowPromise.resolve(newState);
+                        }
+                        return [
+                            2
+                        ];
+                    });
+                }).call(_this);
+            });
+        }
+        _create_class(FlowInstance, [
+            {
+                key: "start",
+                value: /** Start the state machine */ function start() {
+                    return _async_to_generator(function() {
+                        var _this_log, initialState;
+                        return _ts_generator(this, function(_state) {
+                            if (this.flowPromise) {
+                                ;
+                                (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.warn("Already called start for flow");
+                                return [
+                                    2,
+                                    this.flowPromise.promise
+                                ];
+                            }
+                            this.flow = this.hooks.beforeStart.call(this.flow) || this.flow;
+                            if (this.flow.onStart) {
+                                this.hooks.onStart.call(this.flow.onStart);
+                            }
+                            initialState = this.flow.startState;
+                            if (!initialState) {
+                                return [
+                                    2,
+                                    Promise.reject(new Error("No 'startState' defined for flow"))
+                                ];
+                            }
+                            this.flowPromise = (0, import_p_defer.default)();
+                            this.pushHistory(initialState);
+                            return [
+                                2,
+                                this.flowPromise.promise
+                            ];
+                        });
+                    }).call(this);
+                }
+            },
+            {
+                /**
+     * Get the flow-level error transitions map
+     */ key: "getFlowErrorTransitions",
+                value: function getFlowErrorTransitions() {
+                    return this.flow.errorTransitions;
+                }
+            },
+            {
+                /**
+     * Helper to lookup a key in a map with wildcard fallback
+     */ key: "lookupInMap",
+                value: function lookupInMap(map, key) {
+                    if (!map) return void 0;
+                    return map[key] || map["*"];
+                }
+            },
+            {
+                /** Check if the flow has a transition for the given error type in its current state. */ key: "getErrorTransitionState",
+                value: function getErrorTransitionState(errorType) {
+                    var _this_currentState;
+                    if (((_this_currentState = this.currentState) === null || _this_currentState === void 0 ? void 0 : _this_currentState.value.state_type) === "END") {
+                        var _this_log;
+                        (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.warn("Cannot error transition from END state");
+                        return void 0;
+                    }
+                    if (this.currentState) {
+                        var nodeState = this.lookupInMap(this.currentState.value.errorTransitions, errorType);
+                        if (nodeState) {
+                            if (!Object.prototype.hasOwnProperty.call(this.flow, nodeState)) {
+                                var _this_log1;
+                                (_this_log1 = this.log) === null || _this_log1 === void 0 ? void 0 : _this_log1.debug('Node-level errorTransition references non-existent state "'.concat(nodeState, '", trying flow-level fallback'));
+                            } else {
+                                var _this_log2;
+                                (_this_log2 = this.log) === null || _this_log2 === void 0 ? void 0 : _this_log2.debug("Error transition (node-level) from ".concat(this.currentState.name, " to ").concat(nodeState, " using ").concat(errorType));
+                                return nodeState;
+                            }
+                        }
+                    }
+                    var flowState = this.lookupInMap(this.flow.errorTransitions, errorType);
+                    if (flowState) {
+                        if (!Object.prototype.hasOwnProperty.call(this.flow, flowState)) {
+                            var _this_log3;
+                            (_this_log3 = this.log) === null || _this_log3 === void 0 ? void 0 : _this_log3.debug('Flow-level errorTransition references non-existent state "'.concat(flowState, '"'));
+                        } else {
+                            var _this_log4;
+                            (_this_log4 = this.log) === null || _this_log4 === void 0 ? void 0 : _this_log4.debug("Error transition (flow-level) to ".concat(flowState, " using ").concat(errorType).concat(this.currentState ? " from ".concat(this.currentState.name) : ""));
+                            return flowState;
+                        }
+                    }
+                    return void 0;
+                }
+            },
+            {
+                /**
+     * Navigate using errorTransitions map.
+     * Tries node-level first, then falls back to flow-level.
+     * Bypasses validation hooks and expression resolution.
+     * @throws Error if errorTransitions references a non-existent state
+     */ key: "errorTransition",
+                value: function errorTransition(errorType) {
+                    var transitionState = this.getErrorTransitionState(errorType);
+                    if (transitionState === void 0) {
+                        var _this_log;
+                        (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.warn("No errorTransition found for ".concat(errorType, " (checked node and flow level)"));
+                        return;
+                    }
+                    this.pushHistory(transitionState);
+                }
+            },
+            {
+                key: "transition",
+                value: function transition(transitionValue, options) {
+                    var _this_currentState, _this_log;
+                    if (this.isTransitioning) {
+                        var _this_currentState1;
+                        throw new Error("Transitioning while ongoing transition from ".concat((_this_currentState1 = this.currentState) === null || _this_currentState1 === void 0 ? void 0 : _this_currentState1.name, " is in progress is not supported"));
+                    }
+                    if (((_this_currentState = this.currentState) === null || _this_currentState === void 0 ? void 0 : _this_currentState.value.state_type) === "END") {
+                        var _this_log1;
+                        (_this_log1 = this.log) === null || _this_log1 === void 0 ? void 0 : _this_log1.warn("Skipping transition using ".concat(transitionValue, ". Already at END state"));
+                        return;
+                    }
+                    if (this.currentState === void 0) {
+                        throw new Error("Cannot transition when there's no current state");
+                    }
+                    var currentState = this.currentState.value;
+                    if (options === null || options === void 0 ? void 0 : options.force) {
+                        var _this_log2;
+                        (_this_log2 = this.log) === null || _this_log2 === void 0 ? void 0 : _this_log2.debug("Forced transition. Skipping validation checks");
+                    } else {
+                        var skipTransition = this.hooks.skipTransition.call(this.currentState);
+                        if (skipTransition) {
+                            var _this_log3;
+                            (_this_log3 = this.log) === null || _this_log3 === void 0 ? void 0 : _this_log3.debug("Skipping transition from ".concat(this.currentState.name, " b/c hook told us to"));
+                            return;
+                        }
+                    }
+                    var state = this.hooks.beforeTransition.call(currentState, transitionValue);
+                    if (!("transitions" in state)) {
+                        throw new Error("No transitions defined for ".concat(this.currentState.value));
+                    }
+                    var transitions = state.transitions;
+                    var nextState = transitions[transitionValue] || transitions["*"];
+                    if (nextState === void 0) {
+                        var _this_log4;
+                        (_this_log4 = this.log) === null || _this_log4 === void 0 ? void 0 : _this_log4.warn("No transition from ".concat(this.currentState.name, " using ").concat(transitionValue, " or *"));
+                        return;
+                    }
+                    (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.debug("Transitioning from ".concat(this.currentState.name, " to ").concat(nextState, " using ").concat(transitionValue, " "));
+                    return this.pushHistory(nextState, options);
+                }
+            },
+            {
+                key: "pushHistory",
+                value: function pushHistory(stateName, options) {
+                    if (!Object.prototype.hasOwnProperty.call(this.flow, stateName)) {
+                        throw new Error("No flow definition for: ".concat(stateName, " was found."));
+                    }
+                    var nextState = this.flow[stateName];
+                    if (!this.flow[stateName] || (typeof nextState === "undefined" ? "undefined" : _type_of(nextState)) !== "object" || !("state_type" in nextState)) {
+                        var _this_log;
+                        (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.error("Flow doesn't contain any states named: ".concat(stateName));
+                        return;
+                    }
+                    var prevState = this.currentState;
+                    this.isTransitioning = true;
+                    nextState = this.hooks.resolveTransitionNode.call(nextState);
+                    var newCurrentState = {
+                        name: stateName,
+                        value: nextState
+                    };
+                    this.currentState = newCurrentState;
+                    this.history.push(stateName);
+                    if (newCurrentState.value.state_type === "END" && this.flow.onEnd) {
+                        this.hooks.onEnd.call(this.flow.onEnd);
+                    }
+                    this.hooks.transition.call(prevState, _object_spread({}, newCurrentState));
+                    this.isTransitioning = false;
+                    this.hooks.afterTransition.call(this);
+                }
+            }
+        ]);
+        return FlowInstance;
+    }();
+    var FlowController = /*#__PURE__*/ function() {
+        function FlowController(navigation, options) {
+            _class_call_check(this, FlowController);
+            this.hooks = {
+                flow: new SyncHook()
+            };
+            this.navigation = navigation;
+            this.navStack = [];
+            this.log = options === null || options === void 0 ? void 0 : options.logger;
+            this.start = this.start.bind(this);
+            this.run = this.run.bind(this);
+            this.transition = this.transition.bind(this);
+            this.addNewFlow = this.addNewFlow.bind(this);
+        }
+        _create_class(FlowController, [
+            {
+                /** Navigate to another state in the state-machine */ key: "transition",
+                value: function transition(stateTransition, options) {
+                    if (this.current === void 0) {
+                        throw new Error("Not currently in a flow. Cannot transition.");
+                    }
+                    this.current.transition(stateTransition, options);
+                }
+            },
+            {
+                key: "addNewFlow",
+                value: function addNewFlow(flow) {
+                    this.navStack.push(flow);
+                    this.current = flow;
+                    this.hooks.flow.call(flow);
+                }
+            },
+            {
+                key: "run",
+                value: function run(startState) {
+                    return _async_to_generator(function() {
+                        var _this, _this_log, startFlow, flow, end, firstItem;
+                        return _ts_generator(this, function(_state) {
+                            switch(_state.label){
+                                case 0:
+                                    _this = this;
+                                    if (!Object.prototype.hasOwnProperty.call(this.navigation, startState)) {
+                                        return [
+                                            2,
+                                            Promise.reject(new Error("No flow defined for: ".concat(startState)))
+                                        ];
+                                    }
+                                    startFlow = this.navigation[startState];
+                                    if (startFlow === null || (typeof startFlow === "undefined" ? "undefined" : _type_of(startFlow)) !== "object") {
+                                        return [
+                                            2,
+                                            Promise.reject(new Error("Flow: ".concat(startState, " needs to be an object")))
+                                        ];
+                                    }
+                                    (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.debug("Starting flow: ".concat(startState));
+                                    flow = new FlowInstance(startState, startFlow, {
+                                        logger: this.log
+                                    });
+                                    this.addNewFlow(flow);
+                                    flow.hooks.afterTransition.tap("flow-controller", function(flowInstance) {
+                                        var _flowInstance_currentState;
+                                        if (((_flowInstance_currentState = flowInstance.currentState) === null || _flowInstance_currentState === void 0 ? void 0 : _flowInstance_currentState.value.state_type) === "FLOW") {
+                                            var _flowInstance_currentState1, _this_log;
+                                            var subflowId = (_flowInstance_currentState1 = flowInstance.currentState) === null || _flowInstance_currentState1 === void 0 ? void 0 : _flowInstance_currentState1.value.ref;
+                                            (_this_log = _this.log) === null || _this_log === void 0 ? void 0 : _this_log.debug("Loading subflow ".concat(subflowId));
+                                            _this.run(subflowId).then(function(subFlowEndState) {
+                                                var _this_log;
+                                                (_this_log = _this.log) === null || _this_log === void 0 ? void 0 : _this_log.debug("Subflow ended. Using outcome: ".concat(subFlowEndState.outcome));
+                                                flowInstance.transition(subFlowEndState === null || subFlowEndState === void 0 ? void 0 : subFlowEndState.outcome);
+                                            });
+                                        }
+                                    });
+                                    return [
+                                        4,
+                                        flow.start()
+                                    ];
+                                case 1:
+                                    end = _state.sent();
+                                    this.navStack.pop();
+                                    if (this.navStack.length > 0) {
+                                        firstItem = 0;
+                                        this.current = this.navStack[firstItem];
+                                    }
+                                    return [
+                                        2,
+                                        end
+                                    ];
+                            }
+                        });
+                    }).call(this);
+                }
+            },
+            {
+                key: "start",
+                value: function start() {
+                    return _async_to_generator(function() {
+                        return _ts_generator(this, function(_state) {
+                            if (!this.navigation.BEGIN) {
+                                return [
+                                    2,
+                                    Promise.reject(new Error("Must supply a BEGIN state"))
+                                ];
+                            }
+                            return [
+                                2,
+                                this.run(this.navigation.BEGIN)
+                            ];
+                        });
+                    }).call(this);
+                }
+            }
+        ]);
+        return FlowController;
+    }();
+    var ANY_CHAR_REGEX = /%([a-zA-Z]+)/g;
+    var CONTEXT = "validation-binding-tracker";
+    var ValidationBindingTrackerViewPlugin = /*#__PURE__*/ function() {
+        function ValidationBindingTrackerViewPlugin(options) {
+            _class_call_check(this, ValidationBindingTrackerViewPlugin);
+            this.trackedBindings = /* @__PURE__ */ new Set();
+            this.options = options;
+        }
+        _create_class(ValidationBindingTrackerViewPlugin, [
+            {
+                /** Fetch the tracked bindings in the current view */ key: "getBindings",
+                value: function getBindings() {
+                    return this.trackedBindings;
+                }
+            },
+            {
+                /** Add a binding to the tracked set */ key: "trackBinding",
+                value: function trackBinding(binding) {
+                    var _this_options_callbacks_onAdd, _this_options_callbacks;
+                    if (this.trackedBindings.has(binding)) {
+                        return;
+                    }
+                    this.trackedBindings.add(binding);
+                    (_this_options_callbacks = this.options.callbacks) === null || _this_options_callbacks === void 0 ? void 0 : (_this_options_callbacks_onAdd = _this_options_callbacks.onAdd) === null || _this_options_callbacks_onAdd === void 0 ? void 0 : _this_options_callbacks_onAdd.call(_this_options_callbacks, binding);
+                }
+            },
+            {
+                /** Attach hooks to the given resolver */ key: "applyResolver",
+                value: function applyResolver(resolver) {
+                    var _this = this;
+                    this.trackedBindings.clear();
+                    var tracked = /* @__PURE__ */ new Map();
+                    var sections = /* @__PURE__ */ new Map();
+                    var lastViewUpdateChangeSet;
+                    var lastComputedBindingTree = /* @__PURE__ */ new Map();
+                    var currentBindingTree = /* @__PURE__ */ new Map();
+                    var lastSectionBindingTree = /* @__PURE__ */ new Map();
+                    var resolvedNodeMap = /* @__PURE__ */ new Map();
+                    resolver.hooks.beforeUpdate.tap(CONTEXT, function(changes) {
+                        lastViewUpdateChangeSet = changes;
+                    });
+                    resolver.hooks.skipResolve.tap(CONTEXT, function(shouldSkip, node) {
+                        var trackedBindingsForNode = lastComputedBindingTree.get(node);
+                        if (!shouldSkip || !lastViewUpdateChangeSet || !trackedBindingsForNode) {
+                            return shouldSkip;
+                        }
+                        var intersection = new Set(_to_consumable_array(lastViewUpdateChangeSet).filter(function(b) {
+                            return trackedBindingsForNode.has(b);
+                        }));
+                        return intersection.size === 0;
+                    });
+                    resolver.hooks.resolveOptions.tap(CONTEXT, function(options, node) {
+                        if (options.validation === void 0) {
+                            return options;
+                        }
+                        tracked.delete(node);
+                        var track = function(binding) {
+                            var _this_options_callbacks_onAdd, _this_options_callbacks;
+                            var parsed = isBinding(binding) ? binding : _this.options.parseBinding(binding);
+                            if (tracked.has(node)) {
+                                var _tracked_get;
+                                (_tracked_get = tracked.get(node)) === null || _tracked_get === void 0 ? void 0 : _tracked_get.add(parsed);
+                            } else {
+                                tracked.set(node, /* @__PURE__ */ new Set([
+                                    parsed
+                                ]));
+                            }
+                            var parent = node.parent;
+                            while(parent){
+                                if (sections.has(parent)) {
+                                    var _sections_get;
+                                    (_sections_get = sections.get(parent)) === null || _sections_get === void 0 ? void 0 : _sections_get.add(node);
+                                    break;
+                                } else {
+                                    parent = parent.parent;
+                                }
+                            }
+                            _this.trackedBindings.add(parsed);
+                            (_this_options_callbacks = _this.options.callbacks) === null || _this_options_callbacks === void 0 ? void 0 : (_this_options_callbacks_onAdd = _this_options_callbacks.onAdd) === null || _this_options_callbacks_onAdd === void 0 ? void 0 : _this_options_callbacks_onAdd.call(_this_options_callbacks, parsed);
+                        };
+                        return _object_spread_props(_object_spread({}, options), {
+                            validation: _object_spread_props(_object_spread({}, options.validation), {
+                                get: function(binding, getOptions) {
+                                    var _options_validation__getValidationForBinding, _options_validation;
+                                    if (getOptions === null || getOptions === void 0 ? void 0 : getOptions.track) {
+                                        track(binding);
+                                    }
+                                    var eows = (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : (_options_validation__getValidationForBinding = _options_validation._getValidationForBinding(binding)) === null || _options_validation__getValidationForBinding === void 0 ? void 0 : _options_validation__getValidationForBinding.getAll(getOptions);
+                                    var firstFieldEOW = eows === null || eows === void 0 ? void 0 : eows.find(function(eow) {
+                                        return eow.displayTarget === "field" || eow.displayTarget === void 0;
+                                    });
+                                    return firstFieldEOW;
+                                },
+                                getValidationsForBinding: function getValidationsForBinding(binding, getOptions) {
+                                    var _options_validation__getValidationForBinding, _options_validation;
+                                    if (getOptions === null || getOptions === void 0 ? void 0 : getOptions.track) {
+                                        track(binding);
+                                    }
+                                    var _options_validation__getValidationForBinding_getAll;
+                                    return (_options_validation__getValidationForBinding_getAll = (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : (_options_validation__getValidationForBinding = _options_validation._getValidationForBinding(binding)) === null || _options_validation__getValidationForBinding === void 0 ? void 0 : _options_validation__getValidationForBinding.getAll(getOptions)) !== null && _options_validation__getValidationForBinding_getAll !== void 0 ? _options_validation__getValidationForBinding_getAll : [];
+                                },
+                                getChildren: function(type) {
+                                    var _lastComputedBindingTree_get;
+                                    var validations = new Array();
+                                    (_lastComputedBindingTree_get = lastComputedBindingTree.get(node)) === null || _lastComputedBindingTree_get === void 0 ? void 0 : _lastComputedBindingTree_get.forEach(function(binding) {
+                                        var _options_validation__getValidationForBinding, _options_validation;
+                                        var eow = (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : (_options_validation__getValidationForBinding = _options_validation._getValidationForBinding(binding)) === null || _options_validation__getValidationForBinding === void 0 ? void 0 : _options_validation__getValidationForBinding.get();
+                                        if (eow && (type === void 0 || type === eow.displayTarget)) {
+                                            validations.push(eow);
+                                        }
+                                    });
+                                    return validations;
+                                },
+                                getValidationsForSection: function() {
+                                    var _lastSectionBindingTree_get;
+                                    var validations = new Array();
+                                    (_lastSectionBindingTree_get = lastSectionBindingTree.get(node)) === null || _lastSectionBindingTree_get === void 0 ? void 0 : _lastSectionBindingTree_get.forEach(function(binding) {
+                                        var _options_validation__getValidationForBinding, _options_validation;
+                                        var eow = (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : (_options_validation__getValidationForBinding = _options_validation._getValidationForBinding(binding)) === null || _options_validation__getValidationForBinding === void 0 ? void 0 : _options_validation__getValidationForBinding.get();
+                                        if (eow && eow.displayTarget === "section") {
+                                            validations.push(eow);
+                                        }
+                                    });
+                                    return validations;
+                                },
+                                register: function(registerOptions) {
+                                    if ((registerOptions === null || registerOptions === void 0 ? void 0 : registerOptions.type) === "section") {
+                                        if (!sections.has(node)) {
+                                            sections.set(node, /* @__PURE__ */ new Set());
+                                        }
+                                    }
+                                },
+                                track: track
+                            })
+                        });
+                    });
+                    resolver.hooks.afterNodeUpdate.tap(CONTEXT, function(originalNode, parent, update) {
+                        var updated = update.updated, resolvedNode = update.node;
+                        resolvedNodeMap.set(resolvedNode, originalNode);
+                        if (updated) {
+                            var newlyComputed = new Set(tracked.get(originalNode));
+                            if (resolvedNode.type === "multi-node") {
+                                resolvedNode.values.forEach(function(value) {
+                                    var _currentBindingTree_get;
+                                    return (_currentBindingTree_get = currentBindingTree.get(value)) === null || _currentBindingTree_get === void 0 ? void 0 : _currentBindingTree_get.forEach(function(b) {
+                                        return newlyComputed.add(b);
+                                    });
+                                });
+                            }
+                            if ("children" in resolvedNode && resolvedNode.children) {
+                                resolvedNode.children.forEach(function(child) {
+                                    var _currentBindingTree_get;
+                                    (_currentBindingTree_get = currentBindingTree.get(child.value)) === null || _currentBindingTree_get === void 0 ? void 0 : _currentBindingTree_get.forEach(function(b) {
+                                        return newlyComputed.add(b);
+                                    });
+                                });
+                            }
+                            currentBindingTree.set(resolvedNode, newlyComputed);
+                        } else {
+                            var _lastComputedBindingTree_get;
+                            currentBindingTree.set(resolvedNode, (_lastComputedBindingTree_get = lastComputedBindingTree.get(originalNode)) !== null && _lastComputedBindingTree_get !== void 0 ? _lastComputedBindingTree_get : /* @__PURE__ */ new Set());
+                        }
+                        if (originalNode === resolver.root) {
+                            _this.trackedBindings = new Set(currentBindingTree.get(resolvedNode));
+                            lastComputedBindingTree.clear();
+                            currentBindingTree.forEach(function(value, key) {
+                                var node = resolvedNodeMap.get(key);
+                                if (node) {
+                                    lastComputedBindingTree.set(node, value);
+                                }
+                            });
+                            lastSectionBindingTree.clear();
+                            sections.forEach(function(nodeSet, sectionNode) {
+                                var temp = /* @__PURE__ */ new Set();
+                                nodeSet.forEach(function(n) {
+                                    var _tracked_get;
+                                    (_tracked_get = tracked.get(n)) === null || _tracked_get === void 0 ? void 0 : _tracked_get.forEach(temp.add, temp);
+                                });
+                                lastSectionBindingTree.set(sectionNode, temp);
+                            });
+                            tracked.clear();
+                            sections.clear();
+                            currentBindingTree = /* @__PURE__ */ new Map();
+                        }
+                    });
+                }
+            },
+            {
+                key: "apply",
+                value: function apply(view) {
+                    view.hooks.resolver.tap(CONTEXT, this.applyResolver.bind(this));
+                }
+            }
+        ]);
+        return ValidationBindingTrackerViewPlugin;
+    }();
+    var SCHEMA_VALIDATION_PROVIDER_NAME = "schema";
+    var VIEW_VALIDATION_PROVIDER_NAME = "view";
+    var VALIDATION_PROVIDER_NAME_SYMBOL = Symbol.for("validation-provider-name");
+    var ValidatedBinding = /*#__PURE__*/ function() {
+        function ValidatedBinding(possibleValidations, onDismiss, log, weakBindings) {
+            var _this = this;
+            _class_call_check(this, ValidatedBinding);
+            this.applicableValidations = [];
+            this.validationsByState = {
+                load: [],
+                change: [],
+                navigation: []
+            };
+            this.onDismiss = onDismiss;
+            possibleValidations.forEach(function(vObj) {
+                var trigger = vObj.trigger;
+                if (_this.validationsByState[trigger]) {
+                    var statefulValidationObject = createStatefulValidationObject(vObj);
+                    _this.validationsByState[trigger].push(statefulValidationObject);
+                } else {
+                    log === null || log === void 0 ? void 0 : log.warn("Unknown validation trigger: ".concat(trigger));
+                }
+            });
+            this.weakBindings = weakBindings !== null && weakBindings !== void 0 ? weakBindings : /* @__PURE__ */ new Set();
+        }
+        _create_class(ValidatedBinding, [
+            {
+                key: "allValidations",
+                get: function get() {
+                    return Object.values(this.validationsByState).flat();
+                }
+            },
+            {
+                key: "checkIfBlocking",
+                value: function checkIfBlocking(statefulObj) {
+                    if (statefulObj.state === "active") {
+                        var isBlockingNavigation = statefulObj.isBlockingNavigation;
+                        return isBlockingNavigation;
+                    }
+                    return false;
+                }
+            },
+            {
+                key: "getAll",
+                value: function getAll() {
+                    var _this = this;
+                    return this.applicableValidations.reduce(function(all, statefulObj) {
+                        if (statefulObj.state === "active" && statefulObj.response) {
+                            all.push(_object_spread_props(_object_spread({}, statefulObj.response), {
+                                blocking: _this.checkIfBlocking(statefulObj)
+                            }));
+                        }
+                        return all;
+                    }, []);
+                }
+            },
+            {
+                key: "get",
+                value: function get() {
+                    var firstInvalid = this.applicableValidations.find(function(statefulObj) {
+                        return statefulObj.state === "active" && statefulObj.response;
+                    });
+                    if ((firstInvalid === null || firstInvalid === void 0 ? void 0 : firstInvalid.state) === "active") {
+                        return _object_spread_props(_object_spread({}, firstInvalid.response), {
+                            blocking: this.checkIfBlocking(firstInvalid)
+                        });
+                    }
+                }
+            },
+            {
+                key: "runApplicableValidations",
+                value: function runApplicableValidations(runner, canDismiss, phase) {
+                    var _this = this;
+                    this.applicableValidations = this.applicableValidations.map(function(originalValue) {
+                        if (originalValue.state === "dismissed") {
+                            return originalValue;
+                        }
+                        var _originalValue_value_blocking;
+                        var blocking = (_originalValue_value_blocking = originalValue.value.blocking) !== null && _originalValue_value_blocking !== void 0 ? _originalValue_value_blocking : originalValue.value.severity === "warning" && "once" || true;
+                        var obj = (0, import_timm6.setIn)(originalValue, [
+                            "value",
+                            "blocking"
+                        ], blocking);
+                        var isBlockingNavigation = blocking === true || blocking === "once" && !canDismiss;
+                        if (phase === "navigation" && obj.state === "active" && obj.value.blocking !== true) {
+                            if (obj.value.severity === "warning") {
+                                var warn = obj;
+                                if (warn.dismissable && warn.response.dismiss && (warn.response.blocking !== "once" || !warn.response.blocking)) {
+                                    warn.response.dismiss();
+                                } else {
+                                    if ((warn === null || warn === void 0 ? void 0 : warn.response.blocking) === "once") {
+                                        warn.response.blocking = false;
+                                    }
+                                    warn.dismissable = true;
+                                }
+                                return warn;
+                            }
+                        }
+                        var response = runner(obj.value);
+                        var _response_message, _obj_value_displayTarget;
+                        var newState = {
+                            type: obj.type,
+                            value: obj.value,
+                            state: response ? "active" : "none",
+                            isBlockingNavigation: isBlockingNavigation,
+                            dismissable: obj.value.severity === "warning" && phase === "navigation",
+                            response: response ? _object_spread_props(_object_spread({}, obj.value), {
+                                message: (_response_message = response.message) !== null && _response_message !== void 0 ? _response_message : "Something is broken",
+                                severity: obj.value.severity,
+                                displayTarget: (_obj_value_displayTarget = obj.value.displayTarget) !== null && _obj_value_displayTarget !== void 0 ? _obj_value_displayTarget : "field"
+                            }) : void 0
+                        };
+                        if (newState.state === "active" && obj.value.severity === "warning") {
+                            newState.response.dismiss = function() {
+                                var _this_onDismiss, _this1;
+                                newState.state = "dismissed";
+                                (_this_onDismiss = (_this1 = _this).onDismiss) === null || _this_onDismiss === void 0 ? void 0 : _this_onDismiss.call(_this1);
+                            };
+                        }
+                        return newState;
+                    });
+                }
+            },
+            {
+                key: "update",
+                value: function update(phase, canDismiss, runner) {
+                    var newApplicableValidations = [];
+                    if (phase === "load" && this.currentPhase !== void 0) {
+                        return;
+                    }
+                    if (this.currentPhase === "navigation" || phase === this.currentPhase) {
+                        this.runApplicableValidations(runner, canDismiss, phase);
+                        return;
+                    }
+                    if (phase === "load") {
+                        this.currentPhase = "load";
+                        this.applicableValidations = _to_consumable_array(this.validationsByState.load);
+                    } else if (phase === "change" && this.currentPhase === "load") {
+                        this.currentPhase = "change";
+                        this.applicableValidations = _to_consumable_array(this.applicableValidations).concat(_to_consumable_array(this.validationsByState.change));
+                    } else if (phase === "navigation" && (this.currentPhase === "load" || this.currentPhase === "change")) {
+                        this.applicableValidations.forEach(function(element) {
+                            if (!(element.type === "error" && element.state === "active" && element.isBlockingNavigation === false)) {
+                                newApplicableValidations.push(element);
+                            }
+                        });
+                        this.applicableValidations = _to_consumable_array(newApplicableValidations).concat(_to_consumable_array(this.validationsByState.navigation), _to_consumable_array(this.currentPhase === "load" ? this.validationsByState.change : []));
+                        this.currentPhase = "navigation";
+                    }
+                    this.runApplicableValidations(runner, canDismiss, phase);
+                }
+            }
+        ]);
+        return ValidatedBinding;
+    }();
+    var ValidationController = /*#__PURE__*/ function() {
+        function ValidationController(schema, options) {
+            _class_call_check(this, ValidationController);
+            this.hooks = {
+                /** A hook called to tap into the validator registry for adding more validators */ createValidatorRegistry: new SyncHook(),
+                /** A callback/event when a new validation is added to the view */ onAddValidation: new SyncWaterfallHook(),
+                /** The inverse of onAddValidation, this is called when a validation is removed from the list */ onRemoveValidation: new SyncWaterfallHook(),
+                resolveValidationProviders: new SyncWaterfallHook(),
+                /** A hook called when a binding is added to the tracker */ onTrackBinding: new SyncHook()
+            };
+            this.validations = /* @__PURE__ */ new Map();
+            this.weakBindingTracker = /* @__PURE__ */ new Set();
+            this.schema = schema;
+            this.options = options;
+            this.reset();
+        }
+        _create_class(ValidationController, [
+            {
+                key: "setOptions",
+                value: function setOptions(options) {
+                    this.options = options;
+                }
+            },
+            {
+                /** Return the middleware for the data-model to stop propagation of invalid data */ key: "getDataMiddleware",
+                value: function getDataMiddleware() {
+                    var _this = this;
+                    return [
+                        {
+                            set: function(transaction, options, next) {
+                                var _next_set;
+                                return (_next_set = next === null || next === void 0 ? void 0 : next.set(transaction, options)) !== null && _next_set !== void 0 ? _next_set : [];
+                            },
+                            get: function(binding, options, next) {
+                                return next === null || next === void 0 ? void 0 : next.get(binding, options);
+                            },
+                            delete: function(binding, options, next) {
+                                _this.validations = removeBindingAndChildrenFromMap(_this.validations, binding);
+                                return next === null || next === void 0 ? void 0 : next.delete(binding, options);
+                            }
+                        },
+                        new ValidationMiddleware(function(binding) {
+                            var _strongValidation_get;
+                            if (!_this.options) {
+                                return;
+                            }
+                            _this.updateValidationsForBinding(binding, "change", _this.options);
+                            var strongValidation = _this.getValidationForBinding(binding);
+                            if ((strongValidation === null || strongValidation === void 0 ? void 0 : (_strongValidation_get = strongValidation.get()) === null || _strongValidation_get === void 0 ? void 0 : _strongValidation_get.severity) === "error") {
+                                return strongValidation.get();
+                            }
+                            var newInvalidBindings = /* @__PURE__ */ new Set();
+                            _this.validations.forEach(function(weakValidation, strongBinding) {
+                                var _weakValidation_get;
+                                if (caresAboutDataChanges(/* @__PURE__ */ new Set([
+                                    binding
+                                ]), weakValidation.weakBindings) && (weakValidation === null || weakValidation === void 0 ? void 0 : (_weakValidation_get = weakValidation.get()) === null || _weakValidation_get === void 0 ? void 0 : _weakValidation_get.severity) === "error") {
+                                    weakValidation === null || weakValidation === void 0 ? void 0 : weakValidation.weakBindings.forEach(function(weakBinding) {
+                                        if (weakBinding === strongBinding) {
+                                            newInvalidBindings.add({
+                                                binding: weakBinding,
+                                                isStrong: true
+                                            });
+                                        } else {
+                                            newInvalidBindings.add({
+                                                binding: weakBinding,
+                                                isStrong: false
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                            if (newInvalidBindings.size > 0) {
+                                return newInvalidBindings;
+                            }
+                        }, {
+                            logger: new ProxyLogger(function() {
+                                var _this_options;
+                                return (_this_options = _this.options) === null || _this_options === void 0 ? void 0 : _this_options.logger;
+                            })
+                        })
+                    ];
+                }
+            },
+            {
+                key: "getValidationProviders",
+                value: function getValidationProviders() {
+                    var _this = this;
+                    if (this.providers) {
+                        return this.providers;
+                    }
+                    this.providers = this.hooks.resolveValidationProviders.call([
+                        {
+                            source: SCHEMA_VALIDATION_PROVIDER_NAME,
+                            provider: this.schema
+                        },
+                        {
+                            source: VIEW_VALIDATION_PROVIDER_NAME,
+                            provider: {
+                                getValidationsForBinding: function(binding) {
+                                    var _this_viewValidationProvider_getValidationsForBinding, _this_viewValidationProvider;
+                                    return (_this_viewValidationProvider = _this.viewValidationProvider) === null || _this_viewValidationProvider === void 0 ? void 0 : (_this_viewValidationProvider_getValidationsForBinding = _this_viewValidationProvider.getValidationsForBinding) === null || _this_viewValidationProvider_getValidationsForBinding === void 0 ? void 0 : _this_viewValidationProvider_getValidationsForBinding.call(_this_viewValidationProvider, binding);
+                                },
+                                getValidationsForView: function() {
+                                    var _this_viewValidationProvider_getValidationsForView, _this_viewValidationProvider;
+                                    return (_this_viewValidationProvider = _this.viewValidationProvider) === null || _this_viewValidationProvider === void 0 ? void 0 : (_this_viewValidationProvider_getValidationsForView = _this_viewValidationProvider.getValidationsForView) === null || _this_viewValidationProvider_getValidationsForView === void 0 ? void 0 : _this_viewValidationProvider_getValidationsForView.call(_this_viewValidationProvider);
+                                }
+                            }
+                        }
+                    ]);
+                    return this.providers;
+                }
+            },
+            {
+                key: "reset",
+                value: function reset() {
+                    this.validations.clear();
+                    this.tracker = void 0;
+                }
+            },
+            {
+                key: "onView",
+                value: function onView(view) {
+                    var _this = this;
+                    this.validations.clear();
+                    if (!this.options) {
+                        return;
+                    }
+                    var bindingTrackerPlugin = new ValidationBindingTrackerViewPlugin(_object_spread_props(_object_spread({}, this.options), {
+                        callbacks: {
+                            onAdd: function(binding) {
+                                if (!_this.options || _this.getValidationForBinding(binding) !== void 0) {
+                                    return;
+                                }
+                                var originalValue = _this.options.model.get(binding);
+                                var withoutDefault = _this.options.model.get(binding, {
+                                    ignoreDefaultValue: true
+                                });
+                                if (originalValue !== withoutDefault) {
+                                    _this.options.model.set([
+                                        [
+                                            binding,
+                                            originalValue
+                                        ]
+                                    ], {
+                                        silent: true
+                                    });
+                                }
+                                _this.updateValidationsForBinding(binding, "load", _this.options, function() {
+                                    view.update(/* @__PURE__ */ new Set([
+                                        binding
+                                    ]));
+                                });
+                                _this.hooks.onTrackBinding.call(binding);
+                            }
+                        }
+                    }));
+                    this.tracker = bindingTrackerPlugin;
+                    this.viewValidationProvider = view;
+                    bindingTrackerPlugin.apply(view);
+                }
+            },
+            {
+                key: "updateValidationsForBinding",
+                value: function updateValidationsForBinding(binding, trigger, validationContext, onDismiss) {
+                    var _this = this;
+                    var context = validationContext !== null && validationContext !== void 0 ? validationContext : this.options;
+                    if (!context) {
+                        throw new Error("Context is required for executing validations");
+                    }
+                    if (trigger === "load") {
+                        var _this_options;
+                        var possibleValidations = this.getValidationProviders().reduce(function(vals, provider) {
+                            var _vals;
+                            var _provider_provider_getValidationsForBinding, _provider_provider_getValidationsForBinding1, _provider_provider;
+                            var _provider_provider_getValidationsForBinding_map;
+                            (_vals = vals).push.apply(_vals, _to_consumable_array((_provider_provider_getValidationsForBinding_map = (_provider_provider_getValidationsForBinding1 = (_provider_provider = provider.provider).getValidationsForBinding) === null || _provider_provider_getValidationsForBinding1 === void 0 ? void 0 : (_provider_provider_getValidationsForBinding = _provider_provider_getValidationsForBinding1.call(_provider_provider, binding)) === null || _provider_provider_getValidationsForBinding === void 0 ? void 0 : _provider_provider_getValidationsForBinding.map(function(valObj) {
+                                return _object_spread_props(_object_spread({}, valObj), _define_property({}, VALIDATION_PROVIDER_NAME_SYMBOL, provider.source));
+                            })) !== null && _provider_provider_getValidationsForBinding_map !== void 0 ? _provider_provider_getValidationsForBinding_map : []));
+                            return vals;
+                        }, []);
+                        if (possibleValidations.length === 0) {
+                            return;
+                        }
+                        this.validations.set(binding, new ValidatedBinding(possibleValidations, onDismiss, (_this_options = this.options) === null || _this_options === void 0 ? void 0 : _this_options.logger));
+                    }
+                    var trackedValidations = this.validations.get(binding);
+                    trackedValidations === null || trackedValidations === void 0 ? void 0 : trackedValidations.update(trigger, true, function(validationObj) {
+                        var response = _this.validationRunner(validationObj, binding, context);
+                        if (_this.weakBindingTracker.size > 0) {
+                            var t2 = _this.validations.get(binding);
+                            _this.weakBindingTracker.forEach(function(b) {
+                                return t2.weakBindings.add(b);
+                            });
+                        }
+                        return response ? {
+                            message: response.message
+                        } : void 0;
+                    });
+                    if (trigger !== "load") {
+                        this.validations.forEach(function(validation, vBinding) {
+                            if (vBinding !== binding && caresAboutDataChanges(/* @__PURE__ */ new Set([
+                                binding
+                            ]), validation.weakBindings)) {
+                                validation.update(trigger, true, function(validationObj) {
+                                    var response = _this.validationRunner(validationObj, vBinding, context);
+                                    return response ? {
+                                        message: response.message
+                                    } : void 0;
+                                });
+                            }
+                        });
+                    }
+                }
+            },
+            {
+                key: "validationRunner",
+                value: function validationRunner(validationObj, binding) {
+                    var context = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : this.options;
+                    if (!context) {
+                        throw new Error("No context provided to validation runner");
+                    }
+                    var _validationObj_handler;
+                    var handler = (_validationObj_handler = validationObj.handler) !== null && _validationObj_handler !== void 0 ? _validationObj_handler : this.getValidator(validationObj.type);
+                    var weakBindings = /* @__PURE__ */ new Set();
+                    var model = {
+                        get: function get(b, options) {
+                            weakBindings.add(isBinding(b) ? binding : context.parseBinding(b));
+                            return context.model.get(b, _object_spread_props(_object_spread({}, options), {
+                                includeInvalid: true
+                            }));
+                        },
+                        set: context.model.set,
+                        delete: context.model.delete
+                    };
+                    var result = handler === null || handler === void 0 ? void 0 : handler(_object_spread_props(_object_spread({}, context), {
+                        evaluate: function(exp) {
+                            var options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {
+                                model: model
+                            };
+                            return context.evaluate(exp, options);
+                        },
+                        model: model,
+                        validation: validationObj,
+                        schemaType: this.schema.getType(binding)
+                    }), context.model.get(binding, {
+                        includeInvalid: true,
+                        formatted: validationObj.dataTarget === "formatted"
+                    }), validationObj);
+                    this.weakBindingTracker = weakBindings;
+                    if (result) {
+                        var message = result.message;
+                        var parameters = result.parameters;
+                        if (validationObj.message) {
+                            message = resolveDataRefs(validationObj.message, {
+                                model: model,
+                                evaluate: context.evaluate
+                            });
+                            if (parameters) {
+                                message = replaceParams(message, parameters);
+                            }
+                        }
+                        return {
+                            message: message
+                        };
+                    }
+                }
+            },
+            {
+                key: "updateValidationsForView",
+                value: function updateValidationsForView(trigger) {
+                    var _this = this;
+                    var isNavigationTrigger = trigger === "navigation";
+                    var lastActiveBindings = this.activeBindings;
+                    var updateValidations = function(dismissValidations) {
+                        _this.getBindings().forEach(function(binding) {
+                            var _this_validations_get;
+                            (_this_validations_get = _this.validations.get(binding)) === null || _this_validations_get === void 0 ? void 0 : _this_validations_get.update(trigger, dismissValidations, function(obj) {
+                                if (!_this.options) {
+                                    return;
+                                }
+                                return _this.validationRunner(obj, binding, _this.options);
+                            });
+                        });
+                    };
+                    updateValidations(!isNavigationTrigger);
+                    if (isNavigationTrigger) {
+                        var activeBindings = this.activeBindings;
+                        if (isSubset(activeBindings, lastActiveBindings)) {
+                            updateValidations(true);
+                        }
+                    }
+                }
+            },
+            {
+                key: "activeBindings",
+                get: function get() {
+                    var _this = this;
+                    return new Set(Array.from(this.getBindings()).filter(function(b) {
+                        var _this_validations_get;
+                        return ((_this_validations_get = _this.validations.get(b)) === null || _this_validations_get === void 0 ? void 0 : _this_validations_get.get()) !== void 0;
+                    }));
+                }
+            },
+            {
+                key: "getValidator",
+                value: function getValidator(type) {
+                    if (this.validatorRegistry) {
+                        return this.validatorRegistry.get(type);
+                    }
+                    var registry = new ValidatorRegistry();
+                    this.hooks.createValidatorRegistry.call(registry);
+                    this.validatorRegistry = registry;
+                    return registry.get(type);
+                }
+            },
+            {
+                key: "getBindings",
+                value: function getBindings() {
+                    var _this_tracker;
+                    var _this_tracker_getBindings;
+                    return (_this_tracker_getBindings = (_this_tracker = this.tracker) === null || _this_tracker === void 0 ? void 0 : _this_tracker.getBindings()) !== null && _this_tracker_getBindings !== void 0 ? _this_tracker_getBindings : /* @__PURE__ */ new Set();
+                }
+            },
+            {
+                key: "trackBinding",
+                value: function trackBinding(binding) {
+                    var _this_tracker;
+                    (_this_tracker = this.tracker) === null || _this_tracker === void 0 ? void 0 : _this_tracker.trackBinding(binding);
+                }
+            },
+            {
+                /** Executes all known validations for the tracked bindings using the given model */ key: "validateView",
+                value: function validateView() {
+                    var _this = this;
+                    var trigger = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : "navigation";
+                    this.updateValidationsForView(trigger);
+                    var validations = /* @__PURE__ */ new Map();
+                    var canTransition = true;
+                    this.getBindings().forEach(function(b) {
+                        var _this_getValidationForBinding;
+                        var allValidations = (_this_getValidationForBinding = _this.getValidationForBinding(b)) === null || _this_getValidationForBinding === void 0 ? void 0 : _this_getValidationForBinding.getAll();
+                        allValidations === null || allValidations === void 0 ? void 0 : allValidations.forEach(function(v) {
+                            if (trigger === "navigation" && v.blocking) {
+                                var _this_options;
+                                (_this_options = _this.options) === null || _this_options === void 0 ? void 0 : _this_options.logger.debug("Validation on binding: ".concat(b.asString(), " is preventing navigation. ").concat(JSON.stringify(v)));
+                                canTransition = false;
+                            }
+                            if (!validations.has(b)) {
+                                validations.set(b, v);
+                            }
+                        });
+                    });
+                    return {
+                        canTransition: canTransition,
+                        validations: validations.size ? validations : void 0
+                    };
+                }
+            },
+            {
+                /** Get the current tracked validation for the given binding */ key: "getValidationForBinding",
+                value: function getValidationForBinding(binding) {
+                    return this.validations.get(binding);
+                }
+            },
+            {
+                key: "forView",
+                value: function forView(parser) {
+                    var _this = this;
+                    return {
+                        _getValidationForBinding: function(binding) {
+                            return _this.getValidationForBinding(isBinding(binding) ? binding : parser(binding));
+                        },
+                        getAll: function() {
+                            var bindings = _this.getBindings();
+                            if (bindings.size === 0) {
+                                return void 0;
+                            }
+                            var validationMapping = /* @__PURE__ */ new Map();
+                            bindings.forEach(function(b) {
+                                var _this_getValidationForBinding;
+                                var validation = (_this_getValidationForBinding = _this.getValidationForBinding(b)) === null || _this_getValidationForBinding === void 0 ? void 0 : _this_getValidationForBinding.get();
+                                if (validation) {
+                                    validationMapping.set(b, validation);
+                                }
+                            });
+                            return validationMapping.size === 0 ? void 0 : validationMapping;
+                        },
+                        get: function get() {
+                            throw new Error("Error Access be provided by the view plugin");
+                        },
+                        getValidationsForBinding: function getValidationsForBinding() {
+                            throw new Error("Error rollup should be provided by the view plugin");
+                        },
+                        getChildren: function getChildren() {
+                            throw new Error("Error rollup should be provided by the view plugin");
+                        },
+                        getValidationsForSection: function getValidationsForSection() {
+                            throw new Error("Error rollup should be provided by the view plugin");
+                        },
+                        track: function() {
+                            throw new Error("Tracking should be provided by the view plugin");
+                        },
+                        register: function() {
+                            throw new Error("Section functionality should be provided by the view plugin");
+                        },
+                        type: function(binding) {
+                            return _this.schema.getType(isBinding(binding) ? binding : parser(binding));
+                        }
+                    };
+                }
+            }
+        ]);
+        return ValidationController;
+    }();
+    var mergeSets = function(setA, setB) {
+        var _setA_values, _setB_values;
+        return /* @__PURE__ */ new Set(_to_consumable_array((_setA_values = setA === null || setA === void 0 ? void 0 : setA.values()) !== null && _setA_values !== void 0 ? _setA_values : []).concat(_to_consumable_array((_setB_values = setB === null || setB === void 0 ? void 0 : setB.values()) !== null && _setB_values !== void 0 ? _setB_values : [])));
+    };
+    var ViewController = /*#__PURE__*/ function() {
+        function ViewController(initialViews, options) {
+            var _this = this;
+            var _this1 = this;
+            _class_call_check(this, ViewController);
+            this.hooks = {
+                resolveView: new SyncWaterfallHook(),
+                view: new SyncHook()
+            };
+            this.transformRegistry = new Registry();
+            this.optimizeUpdates = true;
+            this.viewOptions = options;
+            this.viewMap = initialViews.reduce(function(viewMap, view) {
+                viewMap[view.id] = view;
+                return viewMap;
+            }, {});
+            options.flowController.hooks.flow.tap("viewController", function(flow) {
+                flow.hooks.transition.tap("viewController", function(_oldState, newState) {
+                    if (newState.value.state_type === "VIEW") {
+                        _this.onView(newState.value);
+                    } else {
+                        _this.currentView = void 0;
+                    }
+                });
+            });
+            var update = function(updates) {
+                var silent = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : false;
+                if (_this1.currentView) {
+                    if (_this1.optimizeUpdates) {
+                        _this1.queueUpdate(updates, void 0, silent);
+                    } else {
+                        _this1.updateView();
+                    }
+                }
+            };
+            options.model.hooks.onUpdate.tap("viewController", function(updates, updateOptions) {
+                var _updateOptions_silent;
+                update(new Set(updates.map(function(t2) {
+                    return t2.binding;
+                })), (_updateOptions_silent = updateOptions === null || updateOptions === void 0 ? void 0 : updateOptions.silent) !== null && _updateOptions_silent !== void 0 ? _updateOptions_silent : false);
+            });
+            options.model.hooks.onDelete.tap("viewController", function(binding) {
+                var parentBinding = binding.parent();
+                var property = binding.key();
+                if (typeof property === "number" && parentBinding) {
+                    update(/* @__PURE__ */ new Set([
+                        parentBinding
+                    ]));
+                } else {
+                    update(/* @__PURE__ */ new Set([
+                        binding
+                    ]));
+                }
+            });
+            this.viewPlugins = this.createViewPlugins();
+        }
+        _create_class(ViewController, [
+            {
+                key: "queueUpdate",
+                value: function queueUpdate(bindings, nodes) {
+                    var _this = this;
+                    var silent = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : false;
+                    if (!this.pendingUpdate) {
+                        this.pendingUpdate = {
+                            scheduled: false
+                        };
+                    }
+                    this.pendingUpdate = _object_spread_props(_object_spread({}, this.pendingUpdate), {
+                        changedBindings: mergeSets(this.pendingUpdate.changedBindings, bindings),
+                        changedNodes: mergeSets(this.pendingUpdate.changedNodes, nodes)
+                    });
+                    if (!this.pendingUpdate.scheduled && !silent) {
+                        this.pendingUpdate.scheduled = true;
+                        (0, import_queue_microtask.default)(function() {
+                            var _this_pendingUpdate;
+                            var _ref = (_this_pendingUpdate = _this.pendingUpdate) !== null && _this_pendingUpdate !== void 0 ? _this_pendingUpdate : {}, changedBindings = _ref.changedBindings, changedNodes = _ref.changedNodes;
+                            _this.pendingUpdate = void 0;
+                            _this.updateView(changedBindings, changedNodes);
+                        });
+                    }
+                }
+            },
+            {
+                key: "updateView",
+                value: function updateView(changedBindings, changedNodes) {
+                    try {
+                        var _this_currentView;
+                        (_this_currentView = this.currentView) === null || _this_currentView === void 0 ? void 0 : _this_currentView.update(changedBindings, changedNodes);
+                    } catch (exception) {
+                        var err = _instanceof(exception, Error) ? exception : new Error(String(exception));
+                        this.queueUpdate(changedBindings, changedNodes, true);
+                        this.viewOptions.errorController.captureError(err);
+                    }
+                }
+            },
+            {
+                key: "getViewForRef",
+                value: function getViewForRef(viewRef) {
+                    var _this = this;
+                    if (this.viewMap[viewRef]) {
+                        return this.viewMap[viewRef];
+                    }
+                    var matchingViewId = Object.keys(this.viewMap).find(function(possibleViewIdMatch) {
+                        return viewRef === resolveDataRefsInString(possibleViewIdMatch, {
+                            model: _this.viewOptions.model,
+                            evaluate: _this.viewOptions.evaluator.evaluate
+                        });
+                    });
+                    if (matchingViewId && this.viewMap[matchingViewId]) {
+                        return this.viewMap[matchingViewId];
+                    }
+                }
+            },
+            {
+                key: "onView",
+                value: function onView(state) {
+                    var viewId = state.ref;
+                    var source = this.hooks.resolveView.call(this.getViewForRef(viewId), viewId, state);
+                    if (!source) {
+                        throw new Error("No view with id ".concat(viewId));
+                    }
+                    var view = new ViewInstance(source, this.viewOptions);
+                    this.currentView = view;
+                    this.applyViewPlugins(view);
+                    this.hooks.view.call(view);
+                    this.updateView();
+                }
+            },
+            {
+                key: "applyViewPlugins",
+                value: function applyViewPlugins(view) {
+                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                    try {
+                        for(var _iterator = this.viewPlugins[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                            var plugin = _step.value;
+                            plugin.apply(view);
+                        }
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally{
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                _iterator.return();
+                            }
+                        } finally{
+                            if (_didIteratorError) {
+                                throw _iteratorError;
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                key: "createViewPlugins",
+                value: function createViewPlugins() {
+                    var pluginOptions = toNodeResolveOptions(this.viewOptions);
+                    return [
+                        new AssetPlugin(),
+                        new SwitchPlugin(pluginOptions),
+                        new ApplicabilityPlugin(),
+                        new AssetTransformCorePlugin(this.transformRegistry),
+                        new StringResolverPlugin(),
+                        new TemplatePlugin(pluginOptions),
+                        new MultiNodePlugin()
+                    ];
+                }
+            },
+            {
+                /** Marks all AST nodes in `nodes` as changed, triggering the view to update and re-resolve these nodes. View updates are triggered asynchronously and many calls to this in a short time will batch into a single update.
+     *
+     * NOTE: In most cases view updates are handled automatically by changes to data or any other built-in functionality that would require a view update. Only call this function if absolutely necessary.
+     */ key: "updateViewAST",
+                value: function updateViewAST(nodes) {
+                    this.queueUpdate(void 0, nodes);
+                }
+            }
+        ]);
+        return ViewController;
+    }();
+    var LocalStateStore = /*#__PURE__*/ function() {
+        function LocalStateStore(onUpdate) {
+            _class_call_check(this, LocalStateStore);
+            this.updateCallback = onUpdate;
+            this.state = /* @__PURE__ */ new Map();
+        }
+        _create_class(LocalStateStore, [
+            {
+                key: "removeKey",
+                value: function removeKey(key) {
+                    this.state.delete(key);
+                }
+            },
+            {
+                key: "reset",
+                value: function reset() {
+                    this.state.clear();
+                }
+            },
+            {
+                key: "useSharedState",
+                value: function useSharedState(key) {
+                    var _this = this;
+                    return function(initialState) {
+                        if (!_this.state.has(key)) {
+                            _this.state.set(key, initialState);
+                        }
+                        return [
+                            _this.state.get(key),
+                            function(newState) {
+                                var current = _this.state.get(key);
+                                _this.state.set(key, newState);
+                                if (current !== newState) {
+                                    var _this_updateCallback, _this1;
+                                    (_this_updateCallback = (_this1 = _this).updateCallback) === null || _this_updateCallback === void 0 ? void 0 : _this_updateCallback.call(_this1);
+                                }
+                            }
+                        ];
+                    };
+                }
+            },
+            {
+                key: "getLocalStateFunction",
+                value: function getLocalStateFunction(key, countKey) {
+                    var _this = this;
+                    return function(initialState) {
+                        if (!_this.state.has(key)) {
+                            _this.state.set(key, []);
+                        }
+                        if (!_this.state.has(countKey)) {
+                            _this.state.set(countKey, 0);
+                        }
+                        var localState = _this.state.get(key);
+                        var oldCount = _this.state.get(countKey);
+                        _this.state.set(countKey, oldCount + 1);
+                        if (localState.length <= oldCount) {
+                            localState.push(initialState);
+                        }
+                        var value = localState[oldCount];
+                        return [
+                            value,
+                            function(newState) {
+                                var oldValue = localState[oldCount];
+                                localState[oldCount] = newState;
+                                if (oldValue !== newState) {
+                                    var _this_updateCallback, _this1;
+                                    (_this_updateCallback = (_this1 = _this).updateCallback) === null || _this_updateCallback === void 0 ? void 0 : _this_updateCallback.call(_this1);
+                                }
+                            }
+                        ];
+                    };
+                }
+            }
+        ]);
+        return LocalStateStore;
+    }();
+    var ReadOnlyDataController = /*#__PURE__*/ function() {
+        function ReadOnlyDataController(controller) {
+            _class_call_check(this, ReadOnlyDataController);
+            this.controller = controller;
+        }
+        _create_class(ReadOnlyDataController, [
+            {
+                key: "get",
+                value: function get(binding, options) {
+                    return this.controller.get(binding, options);
+                }
+            }
+        ]);
+        return ReadOnlyDataController;
+    }();
+    var DataController = /*#__PURE__*/ function() {
+        function DataController(model, options) {
+            _class_call_check(this, DataController);
+            this.hooks = {
+                resolve: new SyncWaterfallHook(),
+                resolveDataStages: new SyncWaterfallHook(),
+                // On any set or get of an undefined value, redirect the value to be the default
+                resolveDefaultValue: new SyncBailHook(),
+                onDelete: new SyncHook(),
+                onSet: new SyncHook(),
+                onGet: new SyncHook(),
+                onUpdate: new SyncHook(),
+                format: new SyncWaterfallHook(),
+                deformat: new SyncWaterfallHook(),
+                serialize: new SyncWaterfallHook()
+            };
+            this.logger = options.logger;
+            var middleware = options.middleware || [];
+            this.baseMiddleware = [
+                new LocalModel(model)
+            ].concat(_to_consumable_array(middleware));
+            this.trash = /* @__PURE__ */ new Set();
+            this.pathResolver = options.pathResolver;
+        }
+        _create_class(DataController, [
+            {
+                key: "getModel",
+                value: function getModel() {
+                    if (!this.model) {
+                        var stages = this.hooks.resolveDataStages.call(this.baseMiddleware);
+                        var model = new PipelinedDataModel();
+                        model.setMiddleware(stages);
+                        this.model = model;
+                    }
+                    return this.model;
+                }
+            },
+            {
+                key: "resolveDataValue",
+                value: function resolveDataValue(binding, value, deformat) {
+                    if (deformat) {
+                        return this.hooks.deformat.call(value, binding);
+                    }
+                    return value;
+                }
+            },
+            {
+                key: "set",
+                value: function set(transaction, options) {
+                    var _this = this;
+                    var normalizedTransaction = [];
+                    if (Array.isArray(transaction)) {
+                        normalizedTransaction = transaction.map(function(param) {
+                            var _param = _sliced_to_array(param, 2), binding = _param[0], value = _param[1];
+                            var parsed = _this.pathResolver.parse(binding);
+                            return [
+                                parsed,
+                                _this.resolveDataValue(parsed, value, Boolean(options === null || options === void 0 ? void 0 : options.formatted))
+                            ];
+                        });
+                    } else {
+                        normalizedTransaction = Object.keys(transaction).map(function(binding) {
+                            var parsed = _this.pathResolver.parse(binding);
+                            var val = transaction[binding];
+                            return [
+                                parsed,
+                                _this.resolveDataValue(parsed, val, Boolean(options === null || options === void 0 ? void 0 : options.formatted))
+                            ];
+                        });
+                    }
+                    var setUpdates = normalizedTransaction.reduce(function(updates, param) {
+                        var _param = _sliced_to_array(param, 2), binding = _param[0], newVal = _param[1];
+                        var oldVal = _this.get(binding, {
+                            includeInvalid: true
+                        });
+                        var update = {
+                            binding: binding,
+                            newValue: newVal,
+                            oldValue: oldVal
+                        };
+                        if (dequal(oldVal, newVal)) {
+                            var _this_logger;
+                            (_this_logger = _this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.debug("Skipping update for path: ".concat(binding.asString(), ". Value was unchanged: ").concat(oldVal));
+                        } else {
+                            var _this_logger1;
+                            updates.push(update);
+                            (_this_logger1 = _this.logger) === null || _this_logger1 === void 0 ? void 0 : _this_logger1.debug("Setting path: ".concat(binding.asString(), " from: ").concat(oldVal, " to: ").concat(newVal));
+                        }
+                        return updates;
+                    }, []);
+                    var result = this.getModel().set(normalizedTransaction, options);
+                    var setUpdateBindings = new Set(setUpdates.map(function(su) {
+                        return su.binding;
+                    }));
+                    result.forEach(function(tr) {
+                        if (!setUpdateBindings.has(tr.binding) && (tr.force === true || !dequal(tr.oldValue, tr.newValue))) {
+                            var _this_logger;
+                            (_this_logger = _this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.debug("Path: ".concat(tr.binding.asString(), " was changed from: ").concat(tr.oldValue, " to: ").concat(tr.newValue));
+                            setUpdates.push(tr);
+                        }
+                    });
+                    this.hooks.onSet.call(normalizedTransaction);
+                    if (setUpdates.length > 0) {
+                        this.hooks.onUpdate.call(setUpdates, options);
+                    }
+                    return result;
+                }
+            },
+            {
+                key: "resolve",
+                value: function resolve(binding, readOnly) {
+                    return Array.isArray(binding) || typeof binding === "string" ? this.pathResolver.parse(binding, {
+                        readOnly: readOnly
+                    }) : binding;
+                }
+            },
+            {
+                key: "get",
+                value: function get(binding, options) {
+                    var resolved = _instanceof(binding, BindingInstance) ? binding : this.resolve(binding, true);
+                    var result = this.getModel().get(resolved, options);
+                    if (result === void 0 && !(options === null || options === void 0 ? void 0 : options.ignoreDefaultValue)) {
+                        var defaultVal = this.hooks.resolveDefaultValue.call(resolved);
+                        if (defaultVal !== result) {
+                            result = defaultVal;
+                        }
+                    }
+                    if (options === null || options === void 0 ? void 0 : options.formatted) {
+                        result = this.hooks.format.call(result, resolved);
+                    } else if ((options === null || options === void 0 ? void 0 : options.formatted) === false) {
+                        result = this.hooks.deformat.call(result, resolved);
+                    }
+                    this.hooks.onGet.call(binding, result);
+                    return result;
+                }
+            },
+            {
+                key: "delete",
+                value: function _delete(binding, options) {
+                    if (typeof binding !== "string" && !Array.isArray(binding) && !_instanceof(binding, BindingInstance)) {
+                        throw new Error("Invalid arguments: delete expects a data path (string)");
+                    }
+                    var resolved = _instanceof(binding, BindingInstance) ? binding : this.resolve(binding, false);
+                    var parentBinding = resolved.parent();
+                    var property = resolved.key();
+                    var parentValue = this.get(parentBinding);
+                    var existedBeforeDelete = (typeof parentValue === "undefined" ? "undefined" : _type_of(parentValue)) === "object" && parentValue !== null && Object.prototype.hasOwnProperty.call(parentValue, property);
+                    this.getModel().delete(resolved, options);
+                    if (existedBeforeDelete && !this.get(resolved)) {
+                        this.trash.add(resolved);
+                    }
+                    this.hooks.onDelete.call(resolved);
+                }
+            },
+            {
+                key: "serialize",
+                value: function serialize() {
+                    return this.hooks.serialize.call(this.get(""));
+                }
+            },
+            {
+                key: "makeReadOnly",
+                value: function makeReadOnly() {
+                    return new ReadOnlyDataController(this);
+                }
+            }
+        ]);
+        return DataController;
+    }();
+    function flatten(obj) {
+        var roots = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [], sep = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : ".";
+        return Object.keys(obj).reduce(function(memo, prop) {
+            return _object_spread({}, memo, Object.prototype.toString.call(obj[prop]) === "[object Object]" ? // keep working if value is an object
+            flatten(obj[prop], roots.concat([
+                prop
+            ])) : _define_property({}, roots.concat([
+                prop
+            ]).join(sep), obj[prop]));
+        }, {});
+    }
+    var ConstantsController = /*#__PURE__*/ function() {
+        function ConstantsController() {
+            _class_call_check(this, ConstantsController);
+            this.store = /* @__PURE__ */ new Map();
+            this.tempStore = /* @__PURE__ */ new Map();
+        }
+        _create_class(ConstantsController, [
+            {
+                key: "addConstants",
+                value: function addConstants(data, namespace) {
+                    if (this.store.has(namespace)) {
+                        var _this_store_get;
+                        (_this_store_get = this.store.get(namespace)) === null || _this_store_get === void 0 ? void 0 : _this_store_get.set(objectToBatchSet(data));
+                    } else {
+                        this.store.set(namespace, new LocalModel(data));
+                    }
+                }
+            },
+            {
+                key: "getConstants",
+                value: function getConstants(key, namespace, fallback) {
+                    var _this_tempStore_get, _this_store_get;
+                    var path = new BindingInstance(key);
+                    var _this_tempStore_get_get, _ref;
+                    return (_ref = (_this_tempStore_get_get = (_this_tempStore_get = this.tempStore.get(namespace)) === null || _this_tempStore_get === void 0 ? void 0 : _this_tempStore_get.get(path)) !== null && _this_tempStore_get_get !== void 0 ? _this_tempStore_get_get : (_this_store_get = this.store.get(namespace)) === null || _this_store_get === void 0 ? void 0 : _this_store_get.get(path)) !== null && _ref !== void 0 ? _ref : fallback;
+                }
+            },
+            {
+                key: "setTemporaryValues",
+                value: function setTemporaryValues(data, namespace) {
+                    if (this.tempStore.has(namespace)) {
+                        var _this_tempStore_get;
+                        (_this_tempStore_get = this.tempStore.get(namespace)) === null || _this_tempStore_get === void 0 ? void 0 : _this_tempStore_get.set(objectToBatchSet(data));
+                    } else {
+                        this.tempStore.set(namespace, new LocalModel(data));
+                    }
+                }
+            },
+            {
+                key: "clearTemporaryValues",
+                value: function clearTemporaryValues(namespace) {
+                    if (namespace) {
+                        var _this_tempStore_get;
+                        (_this_tempStore_get = this.tempStore.get(namespace)) === null || _this_tempStore_get === void 0 ? void 0 : _this_tempStore_get.reset();
+                    } else {
+                        this.tempStore.forEach(function(value) {
+                            value.reset();
+                        });
+                    }
+                }
+            }
+        ]);
+        return ConstantsController;
+    }();
+    var ERROR_BINDING_PREFIX = "errorState";
+    var isErrorBinding = function(binding) {
+        return binding.asArray()[0] === ERROR_BINDING_PREFIX;
+    };
+    var ErrorStateMiddleware = /*#__PURE__*/ function() {
+        function ErrorStateMiddleware(options) {
+            _class_call_check(this, ErrorStateMiddleware);
+            this.name = "error-state-middleware";
+            this.dataModel = new LocalModel();
+            this.logger = options.logger;
+            this.writeSymbol = options.writeSymbol;
+        }
+        _create_class(ErrorStateMiddleware, [
+            {
+                key: "set",
+                value: function set(transaction, options, next) {
+                    var _this = this;
+                    var filteredTransaction = [];
+                    var errorTransaction = [];
+                    transaction.forEach(function(transaction2) {
+                        var _transaction2 = _sliced_to_array(transaction2, 1), binding = _transaction2[0];
+                        var targetArray = isErrorBinding(binding) ? errorTransaction : filteredTransaction;
+                        targetArray.push(transaction2);
+                    });
+                    var _next_set;
+                    var nonErrorResults = (_next_set = next === null || next === void 0 ? void 0 : next.set(filteredTransaction, options)) !== null && _next_set !== void 0 ? _next_set : [];
+                    var errorResults = (options === null || options === void 0 ? void 0 : options.writeSymbol) === this.writeSymbol ? this.dataModel.set(errorTransaction) : errorTransaction.map(function(transaction2) {
+                        var _this_logger;
+                        var _transaction2 = _sliced_to_array(transaction2, 1), binding = _transaction2[0];
+                        (_this_logger = _this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.warn("[ErrorStateMiddleware] Blocked write to protected path: ".concat(binding.asString()));
+                        var oldValue = next === null || next === void 0 ? void 0 : next.get(binding, options);
+                        return {
+                            binding: binding,
+                            oldValue: oldValue,
+                            newValue: oldValue,
+                            // Keep old value
+                            force: false
+                        };
+                    });
+                    return _to_consumable_array(nonErrorResults).concat(_to_consumable_array(errorResults));
+                }
+            },
+            {
+                key: "get",
+                value: function get(binding, options, next) {
+                    return isErrorBinding(binding) ? this.dataModel.get(binding) : next === null || next === void 0 ? void 0 : next.get(binding, options);
+                }
+            },
+            {
+                key: "delete",
+                value: function _delete(binding, options, next) {
+                    if (!isErrorBinding(binding)) {
+                        next === null || next === void 0 ? void 0 : next.delete(binding, options);
+                        return;
+                    }
+                    if ((options === null || options === void 0 ? void 0 : options.writeSymbol) !== this.writeSymbol) {
+                        var _this_logger;
+                        (_this_logger = this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.warn("[ErrorStateMiddleware] Blocked delete of protected path: ".concat(binding.asString()));
+                        return;
+                    }
+                    this.dataModel.delete(binding);
+                }
+            }
+        ]);
+        return ErrorStateMiddleware;
+    }();
+    var ErrorSeverity = /* @__PURE__ */ function(ErrorSeverity2) {
+        ErrorSeverity2["FATAL"] = "fatal";
+        ErrorSeverity2["ERROR"] = "error";
+        ErrorSeverity2["WARNING"] = "warning";
+        return ErrorSeverity2;
+    }(ErrorSeverity || {});
+    var ErrorTypes = {
+        EXPRESSION: "expression",
+        BINDING: "binding",
+        VIEW: "view",
+        ASSET: "asset",
+        NAVIGATION: "navigation",
+        VALIDATION: "validation",
+        DATA: "data",
+        SCHEMA: "schema",
+        NETWORK: "network",
+        PLUGIN: "plugin",
+        RENDER: "render"
+    };
+    var SEVERITY_SET = new Set(Object.values(ErrorSeverity));
+    var isErrorWithMetadata = function(error) {
+        if (!("type" in error) || typeof error.type !== "string") {
+            return false;
+        }
+        if ("severity" in error && error.severity !== void 0 && (typeof error.severity !== "string" || !SEVERITY_SET.has(error.severity))) {
+            return false;
+        }
+        return !("metadata" in error) || error.metadata === void 0 || _type_of(error.metadata) === "object" && error.metadata !== null && !Array.isArray(error.metadata);
+    };
+    var makeJsonStringifyReplacer = function() {
+        var cache = /* @__PURE__ */ new Set();
+        return function(_, value) {
+            if ((typeof value === "undefined" ? "undefined" : _type_of(value)) === "object" && value !== null) {
+                if (cache.has(value)) {
+                    return "[CIRCULAR]";
+                }
+                cache.add(value);
+            }
+            return value;
+        };
+    };
+    var errorControllerWriteSymbol = Symbol("errorControllerWrite");
+    var ErrorController = /*#__PURE__*/ function() {
+        function ErrorController(options) {
+            _class_call_check(this, ErrorController);
+            this.hooks = {
+                onError: new SyncBailHook()
+            };
+            this.errorHistory = [];
+            this.options = options;
+            this.middleware = new ErrorStateMiddleware({
+                logger: options.logger,
+                writeSymbol: errorControllerWriteSymbol
+            });
+        }
+        _create_class(ErrorController, [
+            {
+                /**
+     * Get the middleware for protecting errorState
+     * This should be added to DataController's middleware array
+     */ key: "getDataMiddleware",
+                value: function getDataMiddleware() {
+                    return this.middleware;
+                }
+            },
+            {
+                /**
+     * Set the DataController after initialization
+     */ key: "setOptions",
+                value: function setOptions(options) {
+                    this.options.model = options.model;
+                }
+            },
+            {
+                /**
+     * Capture an error and try to recover. Errors implementing the `PlayerErrorMetadata` interface will be added to history, fire hooks and update data model. As a fallback, all errors will try to trigger an errorTransition. If the error does not have a `type` property, it will default to only using the wildcard navigation.
+     */ key: "captureError",
+                value: function captureError(error) {
+                    if (!isErrorWithMetadata(error)) {
+                        this.options.logger.debug("[ErrorController] Captured error: ".concat(error.message, "\n"), "Cannot determine optional error metadata, attempting default error navigation...");
+                        return this.tryNavigateToErrorState(error, "*");
+                    }
+                    this.errorHistory.push(error);
+                    this.currentError = error;
+                    this.options.logger.debug("[ErrorController] Captured error: ".concat(error.message), JSON.stringify({
+                        errorType: error.type,
+                        severity: error.severity,
+                        metadata: error.metadata
+                    }, makeJsonStringifyReplacer()));
+                    var _this_hooks_onError_call;
+                    var shouldSkip = (_this_hooks_onError_call = this.hooks.onError.call(error)) !== null && _this_hooks_onError_call !== void 0 ? _this_hooks_onError_call : false;
+                    if (shouldSkip) {
+                        this.options.logger.debug("[ErrorController] Error state navigation skipped by plugin");
+                        return true;
+                    }
+                    this.setErrorInDataModel(error);
+                    return this.tryNavigateToErrorState(error, error.type);
+                }
+            },
+            {
+                /**
+     * Navigate to error state using errorTransitions.
+     * Uses errorTransition() which handles node-level and flow-level fallback internally.
+     */ key: "tryNavigateToErrorState",
+                value: function tryNavigateToErrorState(error, transition) {
+                    var flowInstance = this.options.flow.current;
+                    if (!flowInstance) {
+                        this.options.logger.warn("[ErrorController] No active flow instance for error navigation");
+                        return false;
+                    }
+                    if (flowInstance.getErrorTransitionState(transition) === void 0) {
+                        this.options.fail(error);
+                        return false;
+                    }
+                    try {
+                        flowInstance.errorTransition(transition);
+                        return true;
+                    } catch (e) {
+                        this.options.logger.error("[ErrorController] Error transition failed with unexpected error: ".concat(e));
+                        this.options.logger.debug("[ErrorController] Rejecting flow with error");
+                        this.options.fail(error);
+                        return false;
+                    }
+                }
+            },
+            {
+                /**
+     * Get most recent error
+     */ key: "getCurrentError",
+                value: function getCurrentError() {
+                    return this.currentError;
+                }
+            },
+            {
+                /**
+     * Get error history (read-only)
+     */ key: "getErrors",
+                value: function getErrors() {
+                    return this.errorHistory;
+                }
+            },
+            {
+                /**
+     * Clear all errors (history + current + data model)
+     */ key: "clearErrors",
+                value: function clearErrors() {
+                    this.errorHistory = [];
+                    this.currentError = void 0;
+                    this.deleteErrorFromDataModel();
+                    this.options.logger.debug("[ErrorController] All errors cleared");
+                }
+            },
+            {
+                /**
+     * Clear only current error and remove from data model, preserve history
+     */ key: "clearCurrentError",
+                value: function clearCurrentError() {
+                    this.currentError = void 0;
+                    this.deleteErrorFromDataModel();
+                    this.options.logger.debug("[ErrorController] Current error cleared");
+                }
+            },
+            {
+                /**
+     * Write error to data model errorState
+     */ key: "setErrorInDataModel",
+                value: function setErrorInDataModel(playerError) {
+                    if (!this.options.model) {
+                        this.options.logger.warn("[ErrorController] No DataController available");
+                        return;
+                    }
+                    try {
+                        var type = playerError.type, severity = playerError.severity, metadata = playerError.metadata, name = playerError.name, message = playerError.message;
+                        this.options.model.set([
+                            [
+                                "errorState",
+                                _object_spread({
+                                    message: message,
+                                    name: name,
+                                    errorType: type,
+                                    severity: severity
+                                }, metadata)
+                            ]
+                        ], {
+                            writeSymbol: errorControllerWriteSymbol
+                        });
+                        this.options.logger.debug("[ErrorController] Error set in data model at 'data.errorState'");
+                    } catch (e) {
+                        this.options.logger.error("[ErrorController] Failed to set error in data model", e);
+                    }
+                }
+            },
+            {
+                /**
+     * Remove errorState from data model
+     */ key: "deleteErrorFromDataModel",
+                value: function deleteErrorFromDataModel() {
+                    if (!this.options.model) {
+                        return;
+                    }
+                    try {
+                        this.options.model.delete("errorState", {
+                            writeSymbol: errorControllerWriteSymbol
+                        });
+                        this.options.logger.debug("[ErrorController] errorState deleted from data model");
+                    } catch (e) {
+                        this.options.logger.error("[ErrorController] Failed to delete errorState from data model", e);
+                    }
+                }
+            }
+        ]);
+        return ErrorController;
+    }();
+    var ResolverError = /*#__PURE__*/ function(Error1) {
+        _inherits(ResolverError, Error1);
+        function ResolverError(cause, stage, node) {
+            _class_call_check(this, ResolverError);
+            var _this;
+            _this = _call_super(this, ResolverError, [
+                "An error in the resolver occurred at stage '".concat(stage, "'")
+            ]);
+            _this.cause = cause;
+            _this.stage = stage;
+            _this.type = ErrorTypes.VIEW;
+            _this.severity = "error";
+            _this.metadata = {
+                node: node
+            };
+            return _this;
+        }
+        return ResolverError;
+    }(_wrap_native_super(Error));
+    var withContext = function(model) {
         return {
-            get: function get(binding, options) {
+            get: function(binding, options) {
                 return model.get(binding, _object_spread({
                     context: {
                         model: model
                     }
                 }, options));
             },
-            set: function set(transaction, options) {
+            set: function(transaction, options) {
                 return model.set(transaction, _object_spread({
                     context: {
                         model: model
                     }
                 }, options));
             },
-            delete: function _delete(binding, options) {
+            delete: function(binding, options) {
                 return model.delete(binding, _object_spread({
                     context: {
                         model: model
@@ -5133,16 +7109,16 @@ var ReferenceAssetsPlugin = function() {
             {
                 key: "update",
                 value: function update(dataChanges, nodeChanges) {
-                    var _ref;
                     this.hooks.beforeUpdate.call(dataChanges);
                     var resolveCache = /* @__PURE__ */ new Map();
                     this.idCache.clear();
                     var prevASTMap = new Map(this.ASTMap);
                     this.ASTMap.clear();
                     var realNodeChanges = /* @__PURE__ */ new Set();
+                    var _nodeChanges_values;
                     var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
                     try {
-                        for(var _iterator = ((_ref = nodeChanges === null || nodeChanges === void 0 ? void 0 : nodeChanges.values()) !== null && _ref !== void 0 ? _ref : [])[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                        for(var _iterator = ((_nodeChanges_values = nodeChanges === null || nodeChanges === void 0 ? void 0 : nodeChanges.values()) !== null && _nodeChanges_values !== void 0 ? _nodeChanges_values : [])[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
                             var node = _step.value;
                             var current = node;
                             while(current){
@@ -5225,38 +7201,47 @@ var ReferenceAssetsPlugin = function() {
                 key: "computeTree",
                 value: function computeTree(node, rawParent, dataChanges, cacheUpdate, options, partiallyResolvedParent, prevASTMap, nodeChanges) {
                     var _this = this;
-                    var _this_hooks_beforeResolve_call;
                     var dependencyModel = new DependencyModel(options.data.model);
                     dependencyModel.trackSubset("core");
                     var depModelWithParser = withContext(withParser(dependencyModel, this.options.parseBinding));
-                    var resolveOptions = this.hooks.resolveOptions.call(_object_spread_props(_object_spread({}, options), {
+                    var resolveOptions = _object_spread_props(_object_spread({}, options), {
                         data: _object_spread_props(_object_spread({}, options.data), {
                             model: depModelWithParser
                         }),
-                        evaluate: function evaluate(exp) {
+                        evaluate: function(exp) {
                             return _this.options.evaluator.evaluate(exp, {
                                 model: depModelWithParser
                             });
                         },
                         node: node
-                    }), node);
+                    });
+                    try {
+                        resolveOptions = this.hooks.resolveOptions.call(resolveOptions, node);
+                    } catch (err) {
+                        throw new ResolverError(err, "resolveOptions", node);
+                    }
                     var previousResult = this.getPreviousResult(node);
                     var previousDeps = previousResult === null || previousResult === void 0 ? void 0 : previousResult.dependencies;
                     var isChanged = nodeChanges.has(node);
                     var dataChanged = caresAboutDataChanges(dataChanges, previousDeps);
-                    var shouldUseLastValue = this.hooks.skipResolve.call(!dataChanged && !isChanged, node, resolveOptions);
+                    var shouldUseLastValue = !dataChanged && !isChanged;
+                    try {
+                        shouldUseLastValue = this.hooks.skipResolve.call(shouldUseLastValue, node, resolveOptions);
+                    } catch (err) {
+                        throw new ResolverError(err, "skipResolve", node);
+                    }
                     if (previousResult && shouldUseLastValue) {
                         var update2 = _object_spread_props(_object_spread({}, previousResult), {
                             updated: false
                         });
-                        var repopulateASTMapFromCache = function repopulateASTMapFromCache1(resolvedNode, AST, ASTParent) {
+                        var repopulateASTMapFromCache = function(resolvedNode, AST, ASTParent) {
                             var resolvedASTLocal = resolvedNode.node;
                             _this.ASTMap.set(resolvedASTLocal, AST);
                             var resolvedUpdate = _object_spread_props(_object_spread({}, resolvedNode), {
                                 updated: false
                             });
                             cacheUpdate.set(AST, resolvedUpdate);
-                            var handleChildNode = function handleChildNode(childNode) {
+                            var handleChildNode = function(childNode) {
                                 var _prevASTMap_get;
                                 var originalChildNode = (_prevASTMap_get = prevASTMap.get(childNode)) !== null && _prevASTMap_get !== void 0 ? _prevASTMap_get : childNode;
                                 var previousChildResult = _this.getPreviousResult(originalChildNode);
@@ -5272,22 +7257,36 @@ var ReferenceAssetsPlugin = function() {
                             } else if (resolvedASTLocal.type === "multi-node") {
                                 resolvedASTLocal.values.forEach(handleChildNode);
                             }
-                            _this.hooks.afterNodeUpdate.call(AST, ASTParent, resolvedUpdate);
+                            try {
+                                _this.hooks.afterNodeUpdate.call(AST, ASTParent, resolvedUpdate);
+                            } catch (err) {
+                                throw new ResolverError(err, "afterNodeUpdate", node);
+                            }
                         };
                         previousResult.node.parent = partiallyResolvedParent;
                         repopulateASTMapFromCache(previousResult, node, rawParent);
                         return update2;
                     }
-                    var clonedNode = _object_spread_props(_object_spread({}, this.cloneNode(node)), {
+                    var resolvedAST = _object_spread_props(_object_spread({}, this.cloneNode(node)), {
                         parent: partiallyResolvedParent
                     });
-                    var resolvedAST = (_this_hooks_beforeResolve_call = this.hooks.beforeResolve.call(clonedNode, resolveOptions)) !== null && _this_hooks_beforeResolve_call !== void 0 ? _this_hooks_beforeResolve_call : {
-                        type: "empty"
-                    };
+                    try {
+                        var _this_hooks_beforeResolve_call;
+                        resolvedAST = (_this_hooks_beforeResolve_call = this.hooks.beforeResolve.call(resolvedAST, resolveOptions)) !== null && _this_hooks_beforeResolve_call !== void 0 ? _this_hooks_beforeResolve_call : {
+                            type: "empty"
+                        };
+                    } catch (err) {
+                        throw new ResolverError(err, "beforeResolve", node);
+                    }
                     resolvedAST.parent = partiallyResolvedParent;
                     resolveOptions.node = resolvedAST;
                     this.ASTMap.set(resolvedAST, node);
-                    var resolved = this.hooks.resolve.call(void 0, resolvedAST, resolveOptions);
+                    var resolved = void 0;
+                    try {
+                        resolved = this.hooks.resolve.call(void 0, resolvedAST, resolveOptions);
+                    } catch (err) {
+                        throw new ResolverError(err, "resolve", node);
+                    }
                     var updated = !dequal(previousResult === null || previousResult === void 0 ? void 0 : previousResult.value, resolved);
                     if (previousResult && !updated) {
                         resolved = previousResult === null || previousResult === void 0 ? void 0 : previousResult.value;
@@ -5339,18 +7338,26 @@ var ReferenceAssetsPlugin = function() {
                     if (previousResult && !updated) {
                         resolved = previousResult === null || previousResult === void 0 ? void 0 : previousResult.value;
                     }
-                    resolved = this.hooks.afterResolve.call(resolved, resolvedAST, _object_spread_props(_object_spread({}, resolveOptions), {
-                        getDependencies: function getDependencies(scope) {
-                            return dependencyModel.getDependencies(scope);
-                        }
-                    }));
+                    try {
+                        resolved = this.hooks.afterResolve.call(resolved, resolvedAST, _object_spread_props(_object_spread({}, resolveOptions), {
+                            getDependencies: function(scope) {
+                                return dependencyModel.getDependencies(scope);
+                            }
+                        }));
+                    } catch (err) {
+                        throw new ResolverError(err, "afterResolve", node);
+                    }
                     var update = {
                         node: resolvedAST,
                         updated: updated,
                         value: resolved,
                         dependencies: /* @__PURE__ */ new Set(_to_consumable_array(dependencyModel.getDependencies()).concat(_to_consumable_array(childDependencies)))
                     };
-                    this.hooks.afterNodeUpdate.call(node, rawParent, update);
+                    try {
+                        this.hooks.afterNodeUpdate.call(node, rawParent, update);
+                    } catch (err) {
+                        throw new ResolverError(err, "afterNodeUpdate", node);
+                    }
                     cacheUpdate.set(node, update);
                     return update;
                 }
@@ -5643,12 +7650,12 @@ var ReferenceAssetsPlugin = function() {
                         var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
                         try {
                             for(var _iterator = templateSubstitutions[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                                var _step_value = _step.value, expression = _step_value.expression, value = _step_value.value;
+                                var _step_value = _step.value, expression2 = _step_value.expression, value = _step_value.value;
                                 var flags = "g";
-                                if ((typeof expression === "undefined" ? "undefined" : _type_of(expression)) === "object") {
-                                    flags = "".concat(expression.flags).concat(expression.global ? "" : "g");
+                                if ((typeof expression2 === "undefined" ? "undefined" : _type_of(expression2)) === "object") {
+                                    flags = "".concat(expression2.flags).concat(expression2.global ? "" : "g");
                                 }
-                                templateStr = templateStr.replace(new RegExp(expression, flags), value);
+                                templateStr = templateStr.replace(new RegExp(expression2, flags), value);
                             }
                         } catch (err) {
                             _didIteratorError = true;
@@ -5778,7 +7785,7 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return TemplatePlugin;
     }();
-    var createPatternMatcher = function createPatternMatcher(start, end) {
+    var createPatternMatcher = function(start, end) {
         return function(testStr) {
             var startLocation = testStr.indexOf(start);
             if (startLocation === -1) {
@@ -5813,23 +7820,23 @@ var ReferenceAssetsPlugin = function() {
                 newVal = resolveString(val, resolveOptions);
             }
             if (newVal !== val) {
-                newNode = (0, import_timm6.set)(newNode, key, newVal);
+                newNode = (0, import_timm7.set)(newNode, key, newVal);
             }
         });
         return newNode;
     }
-    var findBasePath = function findBasePath1(node, resolver) {
+    var findBasePath = function(node, resolver) {
         var parentNode = node.parent;
         if (!parentNode) {
             return [];
         }
         if ("children" in parentNode) {
-            var _ref;
             var _parentNode_children_find, _parentNode_children;
             var original = resolver.getSourceNode(node);
-            return (_ref = (_parentNode_children = parentNode.children) === null || _parentNode_children === void 0 ? void 0 : (_parentNode_children_find = _parentNode_children.find(function(child) {
+            var _parentNode_children_find_path;
+            return (_parentNode_children_find_path = (_parentNode_children = parentNode.children) === null || _parentNode_children === void 0 ? void 0 : (_parentNode_children_find = _parentNode_children.find(function(child) {
                 return child.value === original;
-            })) === null || _parentNode_children_find === void 0 ? void 0 : _parentNode_children_find.path) !== null && _ref !== void 0 ? _ref : [];
+            })) === null || _parentNode_children_find === void 0 ? void 0 : _parentNode_children_find.path) !== null && _parentNode_children_find_path !== void 0 ? _parentNode_children_find_path : [];
         }
         if (parentNode.type !== "multi-node") {
             return [];
@@ -5854,9 +7861,9 @@ var ReferenceAssetsPlugin = function() {
                             var _node_parent, _node_parent_parent, _node_parent1, _node_parent_parent1, _node_parent2, _node_parent_parent_value;
                             var propsToSkip;
                             if (node.type === "asset" || node.type === "view") {
-                                var _ref;
                                 var _node_plugins_stringResolver, _node_plugins, _node_value;
-                                propsToSkip = new Set((_ref = (_node_plugins = node.plugins) === null || _node_plugins === void 0 ? void 0 : (_node_plugins_stringResolver = _node_plugins.stringResolver) === null || _node_plugins_stringResolver === void 0 ? void 0 : _node_plugins_stringResolver.propertiesToSkip) !== null && _ref !== void 0 ? _ref : [
+                                var _node_plugins_stringResolver_propertiesToSkip;
+                                propsToSkip = new Set((_node_plugins_stringResolver_propertiesToSkip = (_node_plugins = node.plugins) === null || _node_plugins === void 0 ? void 0 : (_node_plugins_stringResolver = _node_plugins.stringResolver) === null || _node_plugins_stringResolver === void 0 ? void 0 : _node_plugins_stringResolver.propertiesToSkip) !== null && _node_plugins_stringResolver_propertiesToSkip !== void 0 ? _node_plugins_stringResolver_propertiesToSkip : [
                                     "exp"
                                 ]);
                                 if ((_node_value = node.value) === null || _node_value === void 0 ? void 0 : _node_value.id) {
@@ -5923,7 +7930,7 @@ var ReferenceAssetsPlugin = function() {
                     var _this = this;
                     parser.hooks.parseNode.tap("applicability", function(obj, nodeType, options, childOptions) {
                         if (_this.isApplicability(obj)) {
-                            var parsedApplicability = parser.parseObject((0, import_timm7.omit)(obj, "applicability"), nodeType, options);
+                            var parsedApplicability = parser.parseObject((0, import_timm8.omit)(obj, "applicability"), nodeType, options);
                             if (!parsedApplicability) {
                                 return childOptions ? [] : null;
                             }
@@ -6174,82 +8181,6 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return AssetPlugin;
     }();
-    var LocalStateStore = /*#__PURE__*/ function() {
-        function LocalStateStore(onUpdate) {
-            _class_call_check(this, LocalStateStore);
-            this.updateCallback = onUpdate;
-            this.state = /* @__PURE__ */ new Map();
-        }
-        _create_class(LocalStateStore, [
-            {
-                key: "removeKey",
-                value: function removeKey(key) {
-                    this.state.delete(key);
-                }
-            },
-            {
-                key: "reset",
-                value: function reset() {
-                    this.state.clear();
-                }
-            },
-            {
-                key: "useSharedState",
-                value: function useSharedState(key) {
-                    var _this = this;
-                    return function(initialState) {
-                        if (!_this.state.has(key)) {
-                            _this.state.set(key, initialState);
-                        }
-                        return [
-                            _this.state.get(key),
-                            function(newState) {
-                                var current = _this.state.get(key);
-                                _this.state.set(key, newState);
-                                if (current !== newState) {
-                                    var _this_updateCallback, _this1;
-                                    (_this_updateCallback = (_this1 = _this).updateCallback) === null || _this_updateCallback === void 0 ? void 0 : _this_updateCallback.call(_this1);
-                                }
-                            }
-                        ];
-                    };
-                }
-            },
-            {
-                key: "getLocalStateFunction",
-                value: function getLocalStateFunction(key, countKey) {
-                    var _this = this;
-                    return function(initialState) {
-                        if (!_this.state.has(key)) {
-                            _this.state.set(key, []);
-                        }
-                        if (!_this.state.has(countKey)) {
-                            _this.state.set(countKey, 0);
-                        }
-                        var localState = _this.state.get(key);
-                        var oldCount = _this.state.get(countKey);
-                        _this.state.set(countKey, oldCount + 1);
-                        if (localState.length <= oldCount) {
-                            localState.push(initialState);
-                        }
-                        var value = localState[oldCount];
-                        return [
-                            value,
-                            function(newState) {
-                                var oldValue = localState[oldCount];
-                                localState[oldCount] = newState;
-                                if (oldValue !== newState) {
-                                    var _this_updateCallback, _this1;
-                                    (_this_updateCallback = (_this1 = _this).updateCallback) === null || _this_updateCallback === void 0 ? void 0 : _this_updateCallback.call(_this1);
-                                }
-                            }
-                        ];
-                    };
-                }
-            }
-        ]);
-        return LocalStateStore;
-    }();
     function findUp(node, target) {
         if (node === target) {
             return true;
@@ -6277,11 +8208,11 @@ var ReferenceAssetsPlugin = function() {
                     this.stateStore.clear();
                     view.hooks.resolver.tap("asset-transform", function(resolver) {
                         var lastUpdatedNode;
-                        var updateState = function updateState(node) {
+                        var updateState = function(node) {
                             lastUpdatedNode = node;
                             view.update(/* @__PURE__ */ new Set());
                         };
-                        var getStore = function getStore(node, stepKey) {
+                        var getStore = function(node, stepKey) {
                             var store;
                             var countKey = stepKey === _this.resolveSymbol ? _this.resolveCountSymbol : _this.beforeResolveCountSymbol;
                             var storedState = _this.stateStore.get(node);
@@ -6295,10 +8226,10 @@ var ReferenceAssetsPlugin = function() {
                                 _this.stateStore.set(node, store);
                             }
                             return {
-                                useSharedState: function useSharedState(key) {
+                                useSharedState: function(key) {
                                     return store.useSharedState(key);
                                 },
-                                useLocalState: function useLocalState(initialState) {
+                                useLocalState: function(initialState) {
                                     return store.getLocalStateFunction(stepKey, countKey)(initialState);
                                 }
                             };
@@ -6346,1466 +8277,6 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return AssetTransformCorePlugin;
     }();
-    var FlowInstance = /*#__PURE__*/ function() {
-        function FlowInstance(id, flow, options) {
-            var _this = this;
-            _class_call_check(this, FlowInstance);
-            this.isTransitioning = false;
-            this.hooks = {
-                beforeStart: new SyncBailHook(),
-                onStart: new SyncHook(),
-                onEnd: new SyncHook(),
-                skipTransition: new SyncBailHook(),
-                beforeTransition: new SyncWaterfallHook(),
-                resolveTransitionNode: new SyncWaterfallHook(),
-                transition: new SyncHook(),
-                afterTransition: new SyncHook()
-            };
-            this.id = id;
-            this.flow = flow;
-            this.log = options === null || options === void 0 ? void 0 : options.logger;
-            this.history = [];
-            this.hooks.transition.tap("startPromise", function(_oldState, nextState) {
-                return _async_to_generator(function() {
-                    var newState;
-                    return _ts_generator(this, function(_state) {
-                        newState = nextState.value;
-                        if (this.flowPromise && newState.state_type === "END") {
-                            this.flowPromise.resolve(newState);
-                        }
-                        return [
-                            2
-                        ];
-                    });
-                }).call(_this);
-            });
-        }
-        _create_class(FlowInstance, [
-            {
-                key: "start",
-                value: /** Start the state machine */ function start() {
-                    return _async_to_generator(function() {
-                        var _this_log, initialState;
-                        return _ts_generator(this, function(_state) {
-                            if (this.flowPromise) {
-                                ;
-                                (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.warn("Already called start for flow");
-                                return [
-                                    2,
-                                    this.flowPromise.promise
-                                ];
-                            }
-                            this.flow = this.hooks.beforeStart.call(this.flow) || this.flow;
-                            if (this.flow.onStart) {
-                                this.hooks.onStart.call(this.flow.onStart);
-                            }
-                            initialState = this.flow.startState;
-                            if (!initialState) {
-                                return [
-                                    2,
-                                    Promise.reject(new Error("No 'startState' defined for flow"))
-                                ];
-                            }
-                            this.flowPromise = (0, import_p_defer2.default)();
-                            this.pushHistory(initialState);
-                            return [
-                                2,
-                                this.flowPromise.promise
-                            ];
-                        });
-                    }).call(this);
-                }
-            },
-            {
-                key: "transition",
-                value: function transition(transitionValue, options) {
-                    var _this_currentState, _this_log;
-                    if (this.isTransitioning) {
-                        var _this_currentState1;
-                        throw new Error("Transitioning while ongoing transition from ".concat((_this_currentState1 = this.currentState) === null || _this_currentState1 === void 0 ? void 0 : _this_currentState1.name, " is in progress is not supported"));
-                    }
-                    if (((_this_currentState = this.currentState) === null || _this_currentState === void 0 ? void 0 : _this_currentState.value.state_type) === "END") {
-                        var _this_log1;
-                        (_this_log1 = this.log) === null || _this_log1 === void 0 ? void 0 : _this_log1.warn("Skipping transition using ".concat(transitionValue, ". Already at and END state"));
-                        return;
-                    }
-                    if (this.currentState === void 0) {
-                        throw new Error("Cannot transition when there's no current state");
-                    }
-                    if (options === null || options === void 0 ? void 0 : options.force) {
-                        var _this_log2;
-                        (_this_log2 = this.log) === null || _this_log2 === void 0 ? void 0 : _this_log2.debug("Forced transition. Skipping validation checks");
-                    } else {
-                        var skipTransition = this.hooks.skipTransition.call(this.currentState);
-                        if (skipTransition) {
-                            var _this_log3;
-                            (_this_log3 = this.log) === null || _this_log3 === void 0 ? void 0 : _this_log3.debug("Skipping transition from ".concat(this.currentState.name, " b/c hook told us to"));
-                            return;
-                        }
-                    }
-                    var state = this.hooks.beforeTransition.call(this.currentState.value, transitionValue);
-                    if (!("transitions" in state)) {
-                        throw new Error("No transitions defined for ".concat(this.currentState.value));
-                    }
-                    var transitions = state.transitions;
-                    var nextState = transitions[transitionValue] || transitions["*"];
-                    if (nextState === void 0) {
-                        var _this_log4;
-                        (_this_log4 = this.log) === null || _this_log4 === void 0 ? void 0 : _this_log4.warn("No transition from ".concat(this.currentState.name, " using ").concat(transitionValue, " or *"));
-                        return;
-                    }
-                    (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.debug("Transitioning from ".concat(this.currentState.name, " to ").concat(nextState, " using ").concat(transitionValue, " "));
-                    return this.pushHistory(nextState, options);
-                }
-            },
-            {
-                key: "pushHistory",
-                value: function pushHistory(stateName, options) {
-                    if (!Object.prototype.hasOwnProperty.call(this.flow, stateName)) {
-                        throw new Error("No flow definition for: ".concat(stateName, " was found."));
-                    }
-                    var nextState = this.flow[stateName];
-                    if (!this.flow[stateName] || (typeof nextState === "undefined" ? "undefined" : _type_of(nextState)) !== "object" || !("state_type" in nextState)) {
-                        var _this_log;
-                        (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.error("Flow doesn't contain any states named: ".concat(stateName));
-                        return;
-                    }
-                    var prevState = this.currentState;
-                    this.isTransitioning = true;
-                    nextState = this.hooks.resolveTransitionNode.call(nextState);
-                    var newCurrentState = {
-                        name: stateName,
-                        value: nextState
-                    };
-                    this.currentState = newCurrentState;
-                    this.history.push(stateName);
-                    if (newCurrentState.value.state_type === "END" && this.flow.onEnd) {
-                        this.hooks.onEnd.call(this.flow.onEnd);
-                    }
-                    this.hooks.transition.call(prevState, _object_spread({}, newCurrentState));
-                    this.isTransitioning = false;
-                    this.hooks.afterTransition.call(this);
-                }
-            }
-        ]);
-        return FlowInstance;
-    }();
-    var FlowController = /*#__PURE__*/ function() {
-        function FlowController(navigation, options) {
-            _class_call_check(this, FlowController);
-            this.hooks = {
-                flow: new SyncHook()
-            };
-            this.navigation = navigation;
-            this.navStack = [];
-            this.log = options === null || options === void 0 ? void 0 : options.logger;
-            this.start = this.start.bind(this);
-            this.run = this.run.bind(this);
-            this.transition = this.transition.bind(this);
-            this.addNewFlow = this.addNewFlow.bind(this);
-        }
-        _create_class(FlowController, [
-            {
-                /** Navigate to another state in the state-machine */ key: "transition",
-                value: function transition(stateTransition, options) {
-                    if (this.current === void 0) {
-                        throw new Error("Not currently in a flow. Cannot transition.");
-                    }
-                    this.current.transition(stateTransition, options);
-                }
-            },
-            {
-                key: "addNewFlow",
-                value: function addNewFlow(flow) {
-                    this.navStack.push(flow);
-                    this.current = flow;
-                    this.hooks.flow.call(flow);
-                }
-            },
-            {
-                key: "run",
-                value: function run(startState) {
-                    return _async_to_generator(function() {
-                        var _this, _this_log, startFlow, flow, end, firstItem;
-                        return _ts_generator(this, function(_state) {
-                            switch(_state.label){
-                                case 0:
-                                    _this = this;
-                                    if (!Object.prototype.hasOwnProperty.call(this.navigation, startState)) {
-                                        return [
-                                            2,
-                                            Promise.reject(new Error("No flow defined for: ".concat(startState)))
-                                        ];
-                                    }
-                                    startFlow = this.navigation[startState];
-                                    if (startFlow === null || (typeof startFlow === "undefined" ? "undefined" : _type_of(startFlow)) !== "object") {
-                                        return [
-                                            2,
-                                            Promise.reject(new Error("Flow: ".concat(startState, " needs to be an object")))
-                                        ];
-                                    }
-                                    (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.debug("Starting flow: ".concat(startState));
-                                    flow = new FlowInstance(startState, startFlow, {
-                                        logger: this.log
-                                    });
-                                    this.addNewFlow(flow);
-                                    flow.hooks.afterTransition.tap("flow-controller", function(flowInstance) {
-                                        var _flowInstance_currentState;
-                                        if (((_flowInstance_currentState = flowInstance.currentState) === null || _flowInstance_currentState === void 0 ? void 0 : _flowInstance_currentState.value.state_type) === "FLOW") {
-                                            var _flowInstance_currentState1, _this_log;
-                                            var subflowId = (_flowInstance_currentState1 = flowInstance.currentState) === null || _flowInstance_currentState1 === void 0 ? void 0 : _flowInstance_currentState1.value.ref;
-                                            (_this_log = _this.log) === null || _this_log === void 0 ? void 0 : _this_log.debug("Loading subflow ".concat(subflowId));
-                                            _this.run(subflowId).then(function(subFlowEndState) {
-                                                var _this_log;
-                                                (_this_log = _this.log) === null || _this_log === void 0 ? void 0 : _this_log.debug("Subflow ended. Using outcome: ".concat(subFlowEndState.outcome));
-                                                flowInstance.transition(subFlowEndState === null || subFlowEndState === void 0 ? void 0 : subFlowEndState.outcome);
-                                            });
-                                        }
-                                    });
-                                    return [
-                                        4,
-                                        flow.start()
-                                    ];
-                                case 1:
-                                    end = _state.sent();
-                                    this.navStack.pop();
-                                    if (this.navStack.length > 0) {
-                                        firstItem = 0;
-                                        this.current = this.navStack[firstItem];
-                                    }
-                                    return [
-                                        2,
-                                        end
-                                    ];
-                            }
-                        });
-                    }).call(this);
-                }
-            },
-            {
-                key: "start",
-                value: function start() {
-                    return _async_to_generator(function() {
-                        return _ts_generator(this, function(_state) {
-                            if (!this.navigation.BEGIN) {
-                                return [
-                                    2,
-                                    Promise.reject(new Error("Must supply a BEGIN state"))
-                                ];
-                            }
-                            return [
-                                2,
-                                this.run(this.navigation.BEGIN)
-                            ];
-                        });
-                    }).call(this);
-                }
-            }
-        ]);
-        return FlowController;
-    }();
-    var ANY_CHAR_REGEX = /%([a-zA-Z]+)/g;
-    var CONTEXT = "validation-binding-tracker";
-    var ValidationBindingTrackerViewPlugin = /*#__PURE__*/ function() {
-        function ValidationBindingTrackerViewPlugin(options) {
-            _class_call_check(this, ValidationBindingTrackerViewPlugin);
-            this.trackedBindings = /* @__PURE__ */ new Set();
-            this.options = options;
-        }
-        _create_class(ValidationBindingTrackerViewPlugin, [
-            {
-                /** Fetch the tracked bindings in the current view */ key: "getBindings",
-                value: function getBindings() {
-                    return this.trackedBindings;
-                }
-            },
-            {
-                /** Add a binding to the tracked set */ key: "trackBinding",
-                value: function trackBinding(binding) {
-                    var _this_options_callbacks_onAdd, _this_options_callbacks;
-                    if (this.trackedBindings.has(binding)) {
-                        return;
-                    }
-                    this.trackedBindings.add(binding);
-                    (_this_options_callbacks = this.options.callbacks) === null || _this_options_callbacks === void 0 ? void 0 : (_this_options_callbacks_onAdd = _this_options_callbacks.onAdd) === null || _this_options_callbacks_onAdd === void 0 ? void 0 : _this_options_callbacks_onAdd.call(_this_options_callbacks, binding);
-                }
-            },
-            {
-                /** Attach hooks to the given resolver */ key: "applyResolver",
-                value: function applyResolver(resolver) {
-                    var _this = this;
-                    this.trackedBindings.clear();
-                    var tracked = /* @__PURE__ */ new Map();
-                    var sections = /* @__PURE__ */ new Map();
-                    var lastViewUpdateChangeSet;
-                    var lastComputedBindingTree = /* @__PURE__ */ new Map();
-                    var currentBindingTree = /* @__PURE__ */ new Map();
-                    var lastSectionBindingTree = /* @__PURE__ */ new Map();
-                    var resolvedNodeMap = /* @__PURE__ */ new Map();
-                    resolver.hooks.beforeUpdate.tap(CONTEXT, function(changes) {
-                        lastViewUpdateChangeSet = changes;
-                    });
-                    resolver.hooks.skipResolve.tap(CONTEXT, function(shouldSkip, node) {
-                        var trackedBindingsForNode = lastComputedBindingTree.get(node);
-                        if (!shouldSkip || !lastViewUpdateChangeSet || !trackedBindingsForNode) {
-                            return shouldSkip;
-                        }
-                        var intersection = new Set(_to_consumable_array(lastViewUpdateChangeSet).filter(function(b) {
-                            return trackedBindingsForNode.has(b);
-                        }));
-                        return intersection.size === 0;
-                    });
-                    resolver.hooks.resolveOptions.tap(CONTEXT, function(options, node) {
-                        if (options.validation === void 0) {
-                            return options;
-                        }
-                        tracked.delete(node);
-                        var track = function track(binding) {
-                            var _this_options_callbacks_onAdd, _this_options_callbacks;
-                            var parsed = isBinding(binding) ? binding : _this.options.parseBinding(binding);
-                            if (tracked.has(node)) {
-                                var _tracked_get;
-                                (_tracked_get = tracked.get(node)) === null || _tracked_get === void 0 ? void 0 : _tracked_get.add(parsed);
-                            } else {
-                                tracked.set(node, /* @__PURE__ */ new Set([
-                                    parsed
-                                ]));
-                            }
-                            var parent = node.parent;
-                            while(parent){
-                                if (sections.has(parent)) {
-                                    var _sections_get;
-                                    (_sections_get = sections.get(parent)) === null || _sections_get === void 0 ? void 0 : _sections_get.add(node);
-                                    break;
-                                } else {
-                                    parent = parent.parent;
-                                }
-                            }
-                            _this.trackedBindings.add(parsed);
-                            (_this_options_callbacks = _this.options.callbacks) === null || _this_options_callbacks === void 0 ? void 0 : (_this_options_callbacks_onAdd = _this_options_callbacks.onAdd) === null || _this_options_callbacks_onAdd === void 0 ? void 0 : _this_options_callbacks_onAdd.call(_this_options_callbacks, parsed);
-                        };
-                        return _object_spread_props(_object_spread({}, options), {
-                            validation: _object_spread_props(_object_spread({}, options.validation), {
-                                get: function get(binding, getOptions) {
-                                    var _options_validation__getValidationForBinding, _options_validation;
-                                    if (getOptions === null || getOptions === void 0 ? void 0 : getOptions.track) {
-                                        track(binding);
-                                    }
-                                    var eows = (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : (_options_validation__getValidationForBinding = _options_validation._getValidationForBinding(binding)) === null || _options_validation__getValidationForBinding === void 0 ? void 0 : _options_validation__getValidationForBinding.getAll(getOptions);
-                                    var firstFieldEOW = eows === null || eows === void 0 ? void 0 : eows.find(function(eow) {
-                                        return eow.displayTarget === "field" || eow.displayTarget === void 0;
-                                    });
-                                    return firstFieldEOW;
-                                },
-                                getValidationsForBinding: function getValidationsForBinding(binding, getOptions) {
-                                    var _ref;
-                                    var _options_validation__getValidationForBinding, _options_validation;
-                                    if (getOptions === null || getOptions === void 0 ? void 0 : getOptions.track) {
-                                        track(binding);
-                                    }
-                                    return (_ref = (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : (_options_validation__getValidationForBinding = _options_validation._getValidationForBinding(binding)) === null || _options_validation__getValidationForBinding === void 0 ? void 0 : _options_validation__getValidationForBinding.getAll(getOptions)) !== null && _ref !== void 0 ? _ref : [];
-                                },
-                                getChildren: function getChildren(type) {
-                                    var _lastComputedBindingTree_get;
-                                    var validations = new Array();
-                                    (_lastComputedBindingTree_get = lastComputedBindingTree.get(node)) === null || _lastComputedBindingTree_get === void 0 ? void 0 : _lastComputedBindingTree_get.forEach(function(binding) {
-                                        var _options_validation__getValidationForBinding, _options_validation;
-                                        var eow = (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : (_options_validation__getValidationForBinding = _options_validation._getValidationForBinding(binding)) === null || _options_validation__getValidationForBinding === void 0 ? void 0 : _options_validation__getValidationForBinding.get();
-                                        if (eow && (type === void 0 || type === eow.displayTarget)) {
-                                            validations.push(eow);
-                                        }
-                                    });
-                                    return validations;
-                                },
-                                getValidationsForSection: function getValidationsForSection() {
-                                    var _lastSectionBindingTree_get;
-                                    var validations = new Array();
-                                    (_lastSectionBindingTree_get = lastSectionBindingTree.get(node)) === null || _lastSectionBindingTree_get === void 0 ? void 0 : _lastSectionBindingTree_get.forEach(function(binding) {
-                                        var _options_validation__getValidationForBinding, _options_validation;
-                                        var eow = (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : (_options_validation__getValidationForBinding = _options_validation._getValidationForBinding(binding)) === null || _options_validation__getValidationForBinding === void 0 ? void 0 : _options_validation__getValidationForBinding.get();
-                                        if (eow && eow.displayTarget === "section") {
-                                            validations.push(eow);
-                                        }
-                                    });
-                                    return validations;
-                                },
-                                register: function register(registerOptions) {
-                                    if ((registerOptions === null || registerOptions === void 0 ? void 0 : registerOptions.type) === "section") {
-                                        if (!sections.has(node)) {
-                                            sections.set(node, /* @__PURE__ */ new Set());
-                                        }
-                                    }
-                                },
-                                track: track
-                            })
-                        });
-                    });
-                    resolver.hooks.afterNodeUpdate.tap(CONTEXT, function(originalNode, parent, update) {
-                        var updated = update.updated, resolvedNode = update.node;
-                        resolvedNodeMap.set(resolvedNode, originalNode);
-                        if (updated) {
-                            var newlyComputed = new Set(tracked.get(originalNode));
-                            if (resolvedNode.type === "multi-node") {
-                                resolvedNode.values.forEach(function(value) {
-                                    var _currentBindingTree_get;
-                                    return (_currentBindingTree_get = currentBindingTree.get(value)) === null || _currentBindingTree_get === void 0 ? void 0 : _currentBindingTree_get.forEach(function(b) {
-                                        return newlyComputed.add(b);
-                                    });
-                                });
-                            }
-                            if ("children" in resolvedNode && resolvedNode.children) {
-                                resolvedNode.children.forEach(function(child) {
-                                    var _currentBindingTree_get;
-                                    (_currentBindingTree_get = currentBindingTree.get(child.value)) === null || _currentBindingTree_get === void 0 ? void 0 : _currentBindingTree_get.forEach(function(b) {
-                                        return newlyComputed.add(b);
-                                    });
-                                });
-                            }
-                            currentBindingTree.set(resolvedNode, newlyComputed);
-                        } else {
-                            var _lastComputedBindingTree_get;
-                            currentBindingTree.set(resolvedNode, (_lastComputedBindingTree_get = lastComputedBindingTree.get(originalNode)) !== null && _lastComputedBindingTree_get !== void 0 ? _lastComputedBindingTree_get : /* @__PURE__ */ new Set());
-                        }
-                        if (originalNode === resolver.root) {
-                            _this.trackedBindings = new Set(currentBindingTree.get(resolvedNode));
-                            lastComputedBindingTree.clear();
-                            currentBindingTree.forEach(function(value, key) {
-                                var node = resolvedNodeMap.get(key);
-                                if (node) {
-                                    lastComputedBindingTree.set(node, value);
-                                }
-                            });
-                            lastSectionBindingTree.clear();
-                            sections.forEach(function(nodeSet, sectionNode) {
-                                var temp = /* @__PURE__ */ new Set();
-                                nodeSet.forEach(function(n) {
-                                    var _tracked_get;
-                                    (_tracked_get = tracked.get(n)) === null || _tracked_get === void 0 ? void 0 : _tracked_get.forEach(temp.add, temp);
-                                });
-                                lastSectionBindingTree.set(sectionNode, temp);
-                            });
-                            tracked.clear();
-                            sections.clear();
-                            currentBindingTree = /* @__PURE__ */ new Map();
-                        }
-                    });
-                }
-            },
-            {
-                key: "apply",
-                value: function apply(view) {
-                    view.hooks.resolver.tap(CONTEXT, this.applyResolver.bind(this));
-                }
-            }
-        ]);
-        return ValidationBindingTrackerViewPlugin;
-    }();
-    var SCHEMA_VALIDATION_PROVIDER_NAME = "schema";
-    var VIEW_VALIDATION_PROVIDER_NAME = "view";
-    var VALIDATION_PROVIDER_NAME_SYMBOL = Symbol.for("validation-provider-name");
-    var ValidatedBinding = /*#__PURE__*/ function() {
-        function ValidatedBinding(possibleValidations, onDismiss, log, weakBindings) {
-            var _this = this;
-            _class_call_check(this, ValidatedBinding);
-            this.applicableValidations = [];
-            this.validationsByState = {
-                load: [],
-                change: [],
-                navigation: []
-            };
-            this.onDismiss = onDismiss;
-            possibleValidations.forEach(function(vObj) {
-                var trigger = vObj.trigger;
-                if (_this.validationsByState[trigger]) {
-                    var statefulValidationObject = createStatefulValidationObject(vObj);
-                    _this.validationsByState[trigger].push(statefulValidationObject);
-                } else {
-                    log === null || log === void 0 ? void 0 : log.warn("Unknown validation trigger: ".concat(trigger));
-                }
-            });
-            this.weakBindings = weakBindings !== null && weakBindings !== void 0 ? weakBindings : /* @__PURE__ */ new Set();
-        }
-        _create_class(ValidatedBinding, [
-            {
-                key: "allValidations",
-                get: function get() {
-                    return Object.values(this.validationsByState).flat();
-                }
-            },
-            {
-                key: "checkIfBlocking",
-                value: function checkIfBlocking(statefulObj) {
-                    if (statefulObj.state === "active") {
-                        var isBlockingNavigation = statefulObj.isBlockingNavigation;
-                        return isBlockingNavigation;
-                    }
-                    return false;
-                }
-            },
-            {
-                key: "getAll",
-                value: function getAll() {
-                    var _this = this;
-                    return this.applicableValidations.reduce(function(all, statefulObj) {
-                        if (statefulObj.state === "active" && statefulObj.response) {
-                            all.push(_object_spread_props(_object_spread({}, statefulObj.response), {
-                                blocking: _this.checkIfBlocking(statefulObj)
-                            }));
-                        }
-                        return all;
-                    }, []);
-                }
-            },
-            {
-                key: "get",
-                value: function get() {
-                    var firstInvalid = this.applicableValidations.find(function(statefulObj) {
-                        return statefulObj.state === "active" && statefulObj.response;
-                    });
-                    if ((firstInvalid === null || firstInvalid === void 0 ? void 0 : firstInvalid.state) === "active") {
-                        return _object_spread_props(_object_spread({}, firstInvalid.response), {
-                            blocking: this.checkIfBlocking(firstInvalid)
-                        });
-                    }
-                }
-            },
-            {
-                key: "runApplicableValidations",
-                value: function runApplicableValidations(runner, canDismiss, phase) {
-                    var _this = this;
-                    this.applicableValidations = this.applicableValidations.map(function(originalValue) {
-                        var _originalValue_value_blocking, _response_message, _obj_value_displayTarget;
-                        if (originalValue.state === "dismissed") {
-                            return originalValue;
-                        }
-                        var blocking = (_originalValue_value_blocking = originalValue.value.blocking) !== null && _originalValue_value_blocking !== void 0 ? _originalValue_value_blocking : originalValue.value.severity === "warning" && "once" || true;
-                        var obj = (0, import_timm9.setIn)(originalValue, [
-                            "value",
-                            "blocking"
-                        ], blocking);
-                        var isBlockingNavigation = blocking === true || blocking === "once" && !canDismiss;
-                        if (phase === "navigation" && obj.state === "active" && obj.value.blocking !== true) {
-                            if (obj.value.severity === "warning") {
-                                var warn = obj;
-                                if (warn.dismissable && warn.response.dismiss && (warn.response.blocking !== "once" || !warn.response.blocking)) {
-                                    warn.response.dismiss();
-                                } else {
-                                    if ((warn === null || warn === void 0 ? void 0 : warn.response.blocking) === "once") {
-                                        warn.response.blocking = false;
-                                    }
-                                    warn.dismissable = true;
-                                }
-                                return warn;
-                            }
-                        }
-                        var response = runner(obj.value);
-                        var newState = {
-                            type: obj.type,
-                            value: obj.value,
-                            state: response ? "active" : "none",
-                            isBlockingNavigation: isBlockingNavigation,
-                            dismissable: obj.value.severity === "warning" && phase === "navigation",
-                            response: response ? _object_spread_props(_object_spread({}, obj.value), {
-                                message: (_response_message = response.message) !== null && _response_message !== void 0 ? _response_message : "Something is broken",
-                                severity: obj.value.severity,
-                                displayTarget: (_obj_value_displayTarget = obj.value.displayTarget) !== null && _obj_value_displayTarget !== void 0 ? _obj_value_displayTarget : "field"
-                            }) : void 0
-                        };
-                        if (newState.state === "active" && obj.value.severity === "warning") {
-                            newState.response.dismiss = function() {
-                                var _this_onDismiss, _this1;
-                                newState.state = "dismissed";
-                                (_this_onDismiss = (_this1 = _this).onDismiss) === null || _this_onDismiss === void 0 ? void 0 : _this_onDismiss.call(_this1);
-                            };
-                        }
-                        return newState;
-                    });
-                }
-            },
-            {
-                key: "update",
-                value: function update(phase, canDismiss, runner) {
-                    var newApplicableValidations = [];
-                    if (phase === "load" && this.currentPhase !== void 0) {
-                        return;
-                    }
-                    if (this.currentPhase === "navigation" || phase === this.currentPhase) {
-                        this.runApplicableValidations(runner, canDismiss, phase);
-                        return;
-                    }
-                    if (phase === "load") {
-                        this.currentPhase = "load";
-                        this.applicableValidations = _to_consumable_array(this.validationsByState.load);
-                    } else if (phase === "change" && this.currentPhase === "load") {
-                        this.currentPhase = "change";
-                        this.applicableValidations = _to_consumable_array(this.applicableValidations).concat(_to_consumable_array(this.validationsByState.change));
-                    } else if (phase === "navigation" && (this.currentPhase === "load" || this.currentPhase === "change")) {
-                        this.applicableValidations.forEach(function(element) {
-                            if (!(element.type === "error" && element.state === "active" && element.isBlockingNavigation === false)) {
-                                newApplicableValidations.push(element);
-                            }
-                        });
-                        this.applicableValidations = _to_consumable_array(newApplicableValidations).concat(_to_consumable_array(this.validationsByState.navigation), _to_consumable_array(this.currentPhase === "load" ? this.validationsByState.change : []));
-                        this.currentPhase = "navigation";
-                    }
-                    this.runApplicableValidations(runner, canDismiss, phase);
-                }
-            }
-        ]);
-        return ValidatedBinding;
-    }();
-    var ValidationController = /*#__PURE__*/ function() {
-        function ValidationController(schema, options) {
-            _class_call_check(this, ValidationController);
-            this.hooks = {
-                /** A hook called to tap into the validator registry for adding more validators */ createValidatorRegistry: new SyncHook(),
-                /** A callback/event when a new validation is added to the view */ onAddValidation: new SyncWaterfallHook(),
-                /** The inverse of onAddValidation, this is called when a validation is removed from the list */ onRemoveValidation: new SyncWaterfallHook(),
-                resolveValidationProviders: new SyncWaterfallHook(),
-                /** A hook called when a binding is added to the tracker */ onTrackBinding: new SyncHook()
-            };
-            this.validations = /* @__PURE__ */ new Map();
-            this.weakBindingTracker = /* @__PURE__ */ new Set();
-            this.schema = schema;
-            this.options = options;
-            this.reset();
-        }
-        _create_class(ValidationController, [
-            {
-                key: "setOptions",
-                value: function setOptions(options) {
-                    this.options = options;
-                }
-            },
-            {
-                /** Return the middleware for the data-model to stop propagation of invalid data */ key: "getDataMiddleware",
-                value: function getDataMiddleware() {
-                    var _this = this;
-                    return [
-                        {
-                            set: function set(transaction, options, next) {
-                                var _ref;
-                                return (_ref = next === null || next === void 0 ? void 0 : next.set(transaction, options)) !== null && _ref !== void 0 ? _ref : [];
-                            },
-                            get: function get(binding, options, next) {
-                                return next === null || next === void 0 ? void 0 : next.get(binding, options);
-                            },
-                            delete: function _delete(binding, options, next) {
-                                _this.validations = removeBindingAndChildrenFromMap(_this.validations, binding);
-                                return next === null || next === void 0 ? void 0 : next.delete(binding, options);
-                            }
-                        },
-                        new ValidationMiddleware(function(binding) {
-                            var _strongValidation_get;
-                            if (!_this.options) {
-                                return;
-                            }
-                            _this.updateValidationsForBinding(binding, "change", _this.options);
-                            var strongValidation = _this.getValidationForBinding(binding);
-                            if ((strongValidation === null || strongValidation === void 0 ? void 0 : (_strongValidation_get = strongValidation.get()) === null || _strongValidation_get === void 0 ? void 0 : _strongValidation_get.severity) === "error") {
-                                return strongValidation.get();
-                            }
-                            var newInvalidBindings = /* @__PURE__ */ new Set();
-                            _this.validations.forEach(function(weakValidation, strongBinding) {
-                                var _weakValidation_get;
-                                if (caresAboutDataChanges(/* @__PURE__ */ new Set([
-                                    binding
-                                ]), weakValidation.weakBindings) && (weakValidation === null || weakValidation === void 0 ? void 0 : (_weakValidation_get = weakValidation.get()) === null || _weakValidation_get === void 0 ? void 0 : _weakValidation_get.severity) === "error") {
-                                    weakValidation === null || weakValidation === void 0 ? void 0 : weakValidation.weakBindings.forEach(function(weakBinding) {
-                                        if (weakBinding === strongBinding) {
-                                            newInvalidBindings.add({
-                                                binding: weakBinding,
-                                                isStrong: true
-                                            });
-                                        } else {
-                                            newInvalidBindings.add({
-                                                binding: weakBinding,
-                                                isStrong: false
-                                            });
-                                        }
-                                    });
-                                }
-                            });
-                            if (newInvalidBindings.size > 0) {
-                                return newInvalidBindings;
-                            }
-                        }, {
-                            logger: new ProxyLogger(function() {
-                                var _this_options;
-                                return (_this_options = _this.options) === null || _this_options === void 0 ? void 0 : _this_options.logger;
-                            })
-                        })
-                    ];
-                }
-            },
-            {
-                key: "getValidationProviders",
-                value: function getValidationProviders() {
-                    var _this = this;
-                    if (this.providers) {
-                        return this.providers;
-                    }
-                    this.providers = this.hooks.resolveValidationProviders.call([
-                        {
-                            source: SCHEMA_VALIDATION_PROVIDER_NAME,
-                            provider: this.schema
-                        },
-                        {
-                            source: VIEW_VALIDATION_PROVIDER_NAME,
-                            provider: {
-                                getValidationsForBinding: function getValidationsForBinding(binding) {
-                                    var _this_viewValidationProvider_getValidationsForBinding, _this_viewValidationProvider;
-                                    return (_this_viewValidationProvider = _this.viewValidationProvider) === null || _this_viewValidationProvider === void 0 ? void 0 : (_this_viewValidationProvider_getValidationsForBinding = _this_viewValidationProvider.getValidationsForBinding) === null || _this_viewValidationProvider_getValidationsForBinding === void 0 ? void 0 : _this_viewValidationProvider_getValidationsForBinding.call(_this_viewValidationProvider, binding);
-                                },
-                                getValidationsForView: function getValidationsForView() {
-                                    var _this_viewValidationProvider_getValidationsForView, _this_viewValidationProvider;
-                                    return (_this_viewValidationProvider = _this.viewValidationProvider) === null || _this_viewValidationProvider === void 0 ? void 0 : (_this_viewValidationProvider_getValidationsForView = _this_viewValidationProvider.getValidationsForView) === null || _this_viewValidationProvider_getValidationsForView === void 0 ? void 0 : _this_viewValidationProvider_getValidationsForView.call(_this_viewValidationProvider);
-                                }
-                            }
-                        }
-                    ]);
-                    return this.providers;
-                }
-            },
-            {
-                key: "reset",
-                value: function reset() {
-                    this.validations.clear();
-                    this.tracker = void 0;
-                }
-            },
-            {
-                key: "onView",
-                value: function onView(view) {
-                    var _this = this;
-                    this.validations.clear();
-                    if (!this.options) {
-                        return;
-                    }
-                    var bindingTrackerPlugin = new ValidationBindingTrackerViewPlugin(_object_spread_props(_object_spread({}, this.options), {
-                        callbacks: {
-                            onAdd: function onAdd(binding) {
-                                if (!_this.options || _this.getValidationForBinding(binding) !== void 0) {
-                                    return;
-                                }
-                                var originalValue = _this.options.model.get(binding);
-                                var withoutDefault = _this.options.model.get(binding, {
-                                    ignoreDefaultValue: true
-                                });
-                                if (originalValue !== withoutDefault) {
-                                    _this.options.model.set([
-                                        [
-                                            binding,
-                                            originalValue
-                                        ]
-                                    ], {
-                                        silent: true
-                                    });
-                                }
-                                _this.updateValidationsForBinding(binding, "load", _this.options, function() {
-                                    view.update(/* @__PURE__ */ new Set([
-                                        binding
-                                    ]));
-                                });
-                                _this.hooks.onTrackBinding.call(binding);
-                            }
-                        }
-                    }));
-                    this.tracker = bindingTrackerPlugin;
-                    this.viewValidationProvider = view;
-                    bindingTrackerPlugin.apply(view);
-                }
-            },
-            {
-                key: "updateValidationsForBinding",
-                value: function updateValidationsForBinding(binding, trigger, validationContext, onDismiss) {
-                    var _this = this;
-                    var context = validationContext !== null && validationContext !== void 0 ? validationContext : this.options;
-                    if (!context) {
-                        throw new Error("Context is required for executing validations");
-                    }
-                    if (trigger === "load") {
-                        var _this_options;
-                        var possibleValidations = this.getValidationProviders().reduce(function(vals, provider) {
-                            var _vals;
-                            var _ref;
-                            var _provider_provider_getValidationsForBinding, _provider_provider_getValidationsForBinding1, _provider_provider;
-                            (_vals = vals).push.apply(_vals, _to_consumable_array((_ref = (_provider_provider_getValidationsForBinding1 = (_provider_provider = provider.provider).getValidationsForBinding) === null || _provider_provider_getValidationsForBinding1 === void 0 ? void 0 : (_provider_provider_getValidationsForBinding = _provider_provider_getValidationsForBinding1.call(_provider_provider, binding)) === null || _provider_provider_getValidationsForBinding === void 0 ? void 0 : _provider_provider_getValidationsForBinding.map(function(valObj) {
-                                return _object_spread_props(_object_spread({}, valObj), _define_property({}, VALIDATION_PROVIDER_NAME_SYMBOL, provider.source));
-                            })) !== null && _ref !== void 0 ? _ref : []));
-                            return vals;
-                        }, []);
-                        if (possibleValidations.length === 0) {
-                            return;
-                        }
-                        this.validations.set(binding, new ValidatedBinding(possibleValidations, onDismiss, (_this_options = this.options) === null || _this_options === void 0 ? void 0 : _this_options.logger));
-                    }
-                    var trackedValidations = this.validations.get(binding);
-                    trackedValidations === null || trackedValidations === void 0 ? void 0 : trackedValidations.update(trigger, true, function(validationObj) {
-                        var response = _this.validationRunner(validationObj, binding, context);
-                        if (_this.weakBindingTracker.size > 0) {
-                            var t2 = _this.validations.get(binding);
-                            _this.weakBindingTracker.forEach(function(b) {
-                                return t2.weakBindings.add(b);
-                            });
-                        }
-                        return response ? {
-                            message: response.message
-                        } : void 0;
-                    });
-                    if (trigger !== "load") {
-                        this.validations.forEach(function(validation, vBinding) {
-                            if (vBinding !== binding && caresAboutDataChanges(/* @__PURE__ */ new Set([
-                                binding
-                            ]), validation.weakBindings)) {
-                                validation.update(trigger, true, function(validationObj) {
-                                    var response = _this.validationRunner(validationObj, vBinding, context);
-                                    return response ? {
-                                        message: response.message
-                                    } : void 0;
-                                });
-                            }
-                        });
-                    }
-                }
-            },
-            {
-                key: "validationRunner",
-                value: function validationRunner(validationObj, binding) {
-                    var context = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : this.options;
-                    var _validationObj_handler;
-                    if (!context) {
-                        throw new Error("No context provided to validation runner");
-                    }
-                    var handler = (_validationObj_handler = validationObj.handler) !== null && _validationObj_handler !== void 0 ? _validationObj_handler : this.getValidator(validationObj.type);
-                    var weakBindings = /* @__PURE__ */ new Set();
-                    var model = {
-                        get: function get(b, options) {
-                            weakBindings.add(isBinding(b) ? binding : context.parseBinding(b));
-                            return context.model.get(b, _object_spread_props(_object_spread({}, options), {
-                                includeInvalid: true
-                            }));
-                        },
-                        set: context.model.set,
-                        delete: context.model.delete
-                    };
-                    var result = handler === null || handler === void 0 ? void 0 : handler(_object_spread_props(_object_spread({}, context), {
-                        evaluate: function evaluate(exp) {
-                            var options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {
-                                model: model
-                            };
-                            return context.evaluate(exp, options);
-                        },
-                        model: model,
-                        validation: validationObj,
-                        schemaType: this.schema.getType(binding)
-                    }), context.model.get(binding, {
-                        includeInvalid: true,
-                        formatted: validationObj.dataTarget === "formatted"
-                    }), validationObj);
-                    this.weakBindingTracker = weakBindings;
-                    if (result) {
-                        var message = result.message;
-                        var parameters = result.parameters;
-                        if (validationObj.message) {
-                            message = resolveDataRefs(validationObj.message, {
-                                model: model,
-                                evaluate: context.evaluate
-                            });
-                            if (parameters) {
-                                message = replaceParams(message, parameters);
-                            }
-                        }
-                        return {
-                            message: message
-                        };
-                    }
-                }
-            },
-            {
-                key: "updateValidationsForView",
-                value: function updateValidationsForView(trigger) {
-                    var _this = this;
-                    var isNavigationTrigger = trigger === "navigation";
-                    var lastActiveBindings = this.activeBindings;
-                    var updateValidations = function updateValidations(dismissValidations) {
-                        _this.getBindings().forEach(function(binding) {
-                            var _this_validations_get;
-                            (_this_validations_get = _this.validations.get(binding)) === null || _this_validations_get === void 0 ? void 0 : _this_validations_get.update(trigger, dismissValidations, function(obj) {
-                                if (!_this.options) {
-                                    return;
-                                }
-                                return _this.validationRunner(obj, binding, _this.options);
-                            });
-                        });
-                    };
-                    updateValidations(!isNavigationTrigger);
-                    if (isNavigationTrigger) {
-                        var activeBindings = this.activeBindings;
-                        if (isSubset(activeBindings, lastActiveBindings)) {
-                            updateValidations(true);
-                        }
-                    }
-                }
-            },
-            {
-                key: "activeBindings",
-                get: function get() {
-                    var _this = this;
-                    return new Set(Array.from(this.getBindings()).filter(function(b) {
-                        var _this_validations_get;
-                        return ((_this_validations_get = _this.validations.get(b)) === null || _this_validations_get === void 0 ? void 0 : _this_validations_get.get()) !== void 0;
-                    }));
-                }
-            },
-            {
-                key: "getValidator",
-                value: function getValidator(type) {
-                    if (this.validatorRegistry) {
-                        return this.validatorRegistry.get(type);
-                    }
-                    var registry = new ValidatorRegistry();
-                    this.hooks.createValidatorRegistry.call(registry);
-                    this.validatorRegistry = registry;
-                    return registry.get(type);
-                }
-            },
-            {
-                key: "getBindings",
-                value: function getBindings() {
-                    var _ref;
-                    var _this_tracker;
-                    return (_ref = (_this_tracker = this.tracker) === null || _this_tracker === void 0 ? void 0 : _this_tracker.getBindings()) !== null && _ref !== void 0 ? _ref : /* @__PURE__ */ new Set();
-                }
-            },
-            {
-                key: "trackBinding",
-                value: function trackBinding(binding) {
-                    var _this_tracker;
-                    (_this_tracker = this.tracker) === null || _this_tracker === void 0 ? void 0 : _this_tracker.trackBinding(binding);
-                }
-            },
-            {
-                /** Executes all known validations for the tracked bindings using the given model */ key: "validateView",
-                value: function validateView() {
-                    var _this = this;
-                    var trigger = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : "navigation";
-                    this.updateValidationsForView(trigger);
-                    var validations = /* @__PURE__ */ new Map();
-                    var canTransition = true;
-                    this.getBindings().forEach(function(b) {
-                        var _this_getValidationForBinding;
-                        var allValidations = (_this_getValidationForBinding = _this.getValidationForBinding(b)) === null || _this_getValidationForBinding === void 0 ? void 0 : _this_getValidationForBinding.getAll();
-                        allValidations === null || allValidations === void 0 ? void 0 : allValidations.forEach(function(v) {
-                            if (trigger === "navigation" && v.blocking) {
-                                var _this_options;
-                                (_this_options = _this.options) === null || _this_options === void 0 ? void 0 : _this_options.logger.debug("Validation on binding: ".concat(b.asString(), " is preventing navigation. ").concat(JSON.stringify(v)));
-                                canTransition = false;
-                            }
-                            if (!validations.has(b)) {
-                                validations.set(b, v);
-                            }
-                        });
-                    });
-                    return {
-                        canTransition: canTransition,
-                        validations: validations.size ? validations : void 0
-                    };
-                }
-            },
-            {
-                /** Get the current tracked validation for the given binding */ key: "getValidationForBinding",
-                value: function getValidationForBinding(binding) {
-                    return this.validations.get(binding);
-                }
-            },
-            {
-                key: "forView",
-                value: function forView(parser) {
-                    var _this = this;
-                    return {
-                        _getValidationForBinding: function _getValidationForBinding(binding) {
-                            return _this.getValidationForBinding(isBinding(binding) ? binding : parser(binding));
-                        },
-                        getAll: function getAll() {
-                            var bindings = _this.getBindings();
-                            if (bindings.size === 0) {
-                                return void 0;
-                            }
-                            var validationMapping = /* @__PURE__ */ new Map();
-                            bindings.forEach(function(b) {
-                                var _this_getValidationForBinding;
-                                var validation = (_this_getValidationForBinding = _this.getValidationForBinding(b)) === null || _this_getValidationForBinding === void 0 ? void 0 : _this_getValidationForBinding.get();
-                                if (validation) {
-                                    validationMapping.set(b, validation);
-                                }
-                            });
-                            return validationMapping.size === 0 ? void 0 : validationMapping;
-                        },
-                        get: function get() {
-                            throw new Error("Error Access be provided by the view plugin");
-                        },
-                        getValidationsForBinding: function getValidationsForBinding() {
-                            throw new Error("Error rollup should be provided by the view plugin");
-                        },
-                        getChildren: function getChildren() {
-                            throw new Error("Error rollup should be provided by the view plugin");
-                        },
-                        getValidationsForSection: function getValidationsForSection() {
-                            throw new Error("Error rollup should be provided by the view plugin");
-                        },
-                        track: function track() {
-                            throw new Error("Tracking should be provided by the view plugin");
-                        },
-                        register: function register() {
-                            throw new Error("Section functionality should be provided by the view plugin");
-                        },
-                        type: function type(binding) {
-                            return _this.schema.getType(isBinding(binding) ? binding : parser(binding));
-                        }
-                    };
-                }
-            }
-        ]);
-        return ValidationController;
-    }();
-    var mergeSets = function mergeSets(setA, setB) {
-        var _ref, _ref1;
-        return /* @__PURE__ */ new Set(_to_consumable_array((_ref = setA === null || setA === void 0 ? void 0 : setA.values()) !== null && _ref !== void 0 ? _ref : []).concat(_to_consumable_array((_ref1 = setB === null || setB === void 0 ? void 0 : setB.values()) !== null && _ref1 !== void 0 ? _ref1 : [])));
-    };
-    var ViewController = /*#__PURE__*/ function() {
-        function ViewController(initialViews, options) {
-            var _this = this;
-            var _this1 = this;
-            _class_call_check(this, ViewController);
-            this.hooks = {
-                resolveView: new SyncWaterfallHook(),
-                view: new SyncHook()
-            };
-            this.transformRegistry = new Registry();
-            this.optimizeUpdates = true;
-            this.viewOptions = options;
-            this.viewMap = initialViews.reduce(function(viewMap, view) {
-                viewMap[view.id] = view;
-                return viewMap;
-            }, {});
-            options.flowController.hooks.flow.tap("viewController", function(flow) {
-                flow.hooks.transition.tap("viewController", function(_oldState, newState) {
-                    if (newState.value.state_type === "VIEW") {
-                        _this.onView(newState.value);
-                    } else {
-                        _this.currentView = void 0;
-                    }
-                });
-            });
-            var update = function update(updates) {
-                var silent = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : false;
-                if (_this1.currentView) {
-                    if (_this1.optimizeUpdates) {
-                        _this1.queueUpdate(updates, void 0, silent);
-                    } else {
-                        _this1.currentView.update();
-                    }
-                }
-            };
-            options.model.hooks.onUpdate.tap("viewController", function(updates, updateOptions) {
-                var _ref;
-                update(new Set(updates.map(function(t2) {
-                    return t2.binding;
-                })), (_ref = updateOptions === null || updateOptions === void 0 ? void 0 : updateOptions.silent) !== null && _ref !== void 0 ? _ref : false);
-            });
-            options.model.hooks.onDelete.tap("viewController", function(binding) {
-                var parentBinding = binding.parent();
-                var property = binding.key();
-                if (typeof property === "number" && parentBinding) {
-                    update(/* @__PURE__ */ new Set([
-                        parentBinding
-                    ]));
-                } else {
-                    update(/* @__PURE__ */ new Set([
-                        binding
-                    ]));
-                }
-            });
-            this.viewPlugins = this.createViewPlugins();
-        }
-        _create_class(ViewController, [
-            {
-                key: "queueUpdate",
-                value: function queueUpdate(bindings, nodes) {
-                    var _this = this;
-                    var silent = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : false;
-                    if (!this.pendingUpdate) {
-                        this.pendingUpdate = {
-                            scheduled: false
-                        };
-                    }
-                    this.pendingUpdate = _object_spread_props(_object_spread({}, this.pendingUpdate), {
-                        changedBindings: mergeSets(this.pendingUpdate.changedBindings, bindings),
-                        changedNodes: mergeSets(this.pendingUpdate.changedNodes, nodes)
-                    });
-                    if (!this.pendingUpdate.scheduled && !silent) {
-                        this.pendingUpdate.scheduled = true;
-                        (0, import_queue_microtask2.default)(function() {
-                            var _this_pendingUpdate;
-                            var _this_currentView;
-                            var _ref = (_this_pendingUpdate = _this.pendingUpdate) !== null && _this_pendingUpdate !== void 0 ? _this_pendingUpdate : {}, changedBindings = _ref.changedBindings, changedNodes = _ref.changedNodes;
-                            _this.pendingUpdate = void 0;
-                            (_this_currentView = _this.currentView) === null || _this_currentView === void 0 ? void 0 : _this_currentView.update(changedBindings, changedNodes);
-                        });
-                    }
-                }
-            },
-            {
-                key: "getViewForRef",
-                value: function getViewForRef(viewRef) {
-                    var _this = this;
-                    if (this.viewMap[viewRef]) {
-                        return this.viewMap[viewRef];
-                    }
-                    var matchingViewId = Object.keys(this.viewMap).find(function(possibleViewIdMatch) {
-                        return viewRef === resolveDataRefsInString(possibleViewIdMatch, {
-                            model: _this.viewOptions.model,
-                            evaluate: _this.viewOptions.evaluator.evaluate
-                        });
-                    });
-                    if (matchingViewId && this.viewMap[matchingViewId]) {
-                        return this.viewMap[matchingViewId];
-                    }
-                }
-            },
-            {
-                key: "onView",
-                value: function onView(state) {
-                    var viewId = state.ref;
-                    var source = this.hooks.resolveView.call(this.getViewForRef(viewId), viewId, state);
-                    if (!source) {
-                        throw new Error("No view with id ".concat(viewId));
-                    }
-                    var view = new ViewInstance(source, this.viewOptions);
-                    this.currentView = view;
-                    this.applyViewPlugins(view);
-                    this.hooks.view.call(view);
-                    view.update();
-                }
-            },
-            {
-                key: "applyViewPlugins",
-                value: function applyViewPlugins(view) {
-                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                    try {
-                        for(var _iterator = this.viewPlugins[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                            var plugin = _step.value;
-                            plugin.apply(view);
-                        }
-                    } catch (err) {
-                        _didIteratorError = true;
-                        _iteratorError = err;
-                    } finally{
-                        try {
-                            if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                _iterator.return();
-                            }
-                        } finally{
-                            if (_didIteratorError) {
-                                throw _iteratorError;
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                key: "createViewPlugins",
-                value: function createViewPlugins() {
-                    var pluginOptions = toNodeResolveOptions(this.viewOptions);
-                    return [
-                        new AssetPlugin(),
-                        new SwitchPlugin(pluginOptions),
-                        new ApplicabilityPlugin(),
-                        new AssetTransformCorePlugin(this.transformRegistry),
-                        new StringResolverPlugin(),
-                        new TemplatePlugin(pluginOptions),
-                        new MultiNodePlugin()
-                    ];
-                }
-            },
-            {
-                /** Marks all AST nodes in `nodes` as changed, triggering the view to update and re-resolve these nodes. View updates are triggered asynchronously and many calls to this in a short time will batch into a single update.
-     *
-     * NOTE: In most cases view updates are handled automatically by changes to data or any other built-in functionality that would require a view update. Only call this function if absolutely necessary.
-     */ key: "updateViewAST",
-                value: function updateViewAST(nodes) {
-                    this.queueUpdate(void 0, nodes);
-                }
-            }
-        ]);
-        return ViewController;
-    }();
-    var ReadOnlyDataController = /*#__PURE__*/ function() {
-        function ReadOnlyDataController(controller, logger) {
-            _class_call_check(this, ReadOnlyDataController);
-            this.controller = controller;
-            this.logger = logger;
-        }
-        _create_class(ReadOnlyDataController, [
-            {
-                key: "get",
-                value: function get(binding, options) {
-                    return this.controller.get(binding, options);
-                }
-            },
-            {
-                key: "set",
-                value: function set(transaction, options) {
-                    var _this_logger;
-                    (_this_logger = this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.error("Error: Tried to set in a read only instance of the DataController");
-                    return [];
-                }
-            },
-            {
-                key: "delete",
-                value: function _delete(binding, options) {
-                    var _this_logger;
-                    (_this_logger = this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.error("Error: Tried to delete in a read only instance of the DataController");
-                }
-            }
-        ]);
-        return ReadOnlyDataController;
-    }();
-    var DataController = /*#__PURE__*/ function() {
-        function DataController(model, options) {
-            _class_call_check(this, DataController);
-            this.hooks = {
-                resolve: new SyncWaterfallHook(),
-                resolveDataStages: new SyncWaterfallHook(),
-                // On any set or get of an undefined value, redirect the value to be the default
-                resolveDefaultValue: new SyncBailHook(),
-                onDelete: new SyncHook(),
-                onSet: new SyncHook(),
-                onGet: new SyncHook(),
-                onUpdate: new SyncHook(),
-                format: new SyncWaterfallHook(),
-                deformat: new SyncWaterfallHook(),
-                serialize: new SyncWaterfallHook()
-            };
-            this.logger = options.logger;
-            var middleware = options.middleware || [];
-            this.baseMiddleware = [
-                new LocalModel(model)
-            ].concat(_to_consumable_array(middleware));
-            this.trash = /* @__PURE__ */ new Set();
-            this.pathResolver = options.pathResolver;
-        }
-        _create_class(DataController, [
-            {
-                key: "getModel",
-                value: function getModel() {
-                    if (!this.model) {
-                        var stages = this.hooks.resolveDataStages.call(this.baseMiddleware);
-                        var model = new PipelinedDataModel();
-                        model.setMiddleware(stages);
-                        this.model = model;
-                    }
-                    return this.model;
-                }
-            },
-            {
-                key: "resolveDataValue",
-                value: function resolveDataValue(binding, value, deformat) {
-                    if (deformat) {
-                        return this.hooks.deformat.call(value, binding);
-                    }
-                    return value;
-                }
-            },
-            {
-                key: "set",
-                value: function set(transaction, options) {
-                    var _this = this;
-                    var normalizedTransaction = [];
-                    if (Array.isArray(transaction)) {
-                        normalizedTransaction = transaction.map(function(param) {
-                            var _param = _sliced_to_array(param, 2), binding = _param[0], value = _param[1];
-                            var parsed = _this.pathResolver.parse(binding);
-                            return [
-                                parsed,
-                                _this.resolveDataValue(parsed, value, Boolean(options === null || options === void 0 ? void 0 : options.formatted))
-                            ];
-                        });
-                    } else {
-                        normalizedTransaction = Object.keys(transaction).map(function(binding) {
-                            var parsed = _this.pathResolver.parse(binding);
-                            var val = transaction[binding];
-                            return [
-                                parsed,
-                                _this.resolveDataValue(parsed, val, Boolean(options === null || options === void 0 ? void 0 : options.formatted))
-                            ];
-                        });
-                    }
-                    var setUpdates = normalizedTransaction.reduce(function(updates, param) {
-                        var _param = _sliced_to_array(param, 2), binding = _param[0], newVal = _param[1];
-                        var oldVal = _this.get(binding, {
-                            includeInvalid: true
-                        });
-                        var update = {
-                            binding: binding,
-                            newValue: newVal,
-                            oldValue: oldVal
-                        };
-                        if (dequal(oldVal, newVal)) {
-                            var _this_logger;
-                            (_this_logger = _this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.debug("Skipping update for path: ".concat(binding.asString(), ". Value was unchanged: ").concat(oldVal));
-                        } else {
-                            var _this_logger1;
-                            updates.push(update);
-                            (_this_logger1 = _this.logger) === null || _this_logger1 === void 0 ? void 0 : _this_logger1.debug("Setting path: ".concat(binding.asString(), " from: ").concat(oldVal, " to: ").concat(newVal));
-                        }
-                        return updates;
-                    }, []);
-                    var result = this.getModel().set(normalizedTransaction, options);
-                    var setUpdateBindings = new Set(setUpdates.map(function(su) {
-                        return su.binding;
-                    }));
-                    result.forEach(function(tr) {
-                        if (!setUpdateBindings.has(tr.binding) && (tr.force === true || !dequal(tr.oldValue, tr.newValue))) {
-                            var _this_logger;
-                            (_this_logger = _this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.debug("Path: ".concat(tr.binding.asString(), " was changed from: ").concat(tr.oldValue, " to: ").concat(tr.newValue));
-                            setUpdates.push(tr);
-                        }
-                    });
-                    this.hooks.onSet.call(normalizedTransaction);
-                    if (setUpdates.length > 0) {
-                        this.hooks.onUpdate.call(setUpdates, options);
-                    }
-                    return result;
-                }
-            },
-            {
-                key: "resolve",
-                value: function resolve(binding, readOnly) {
-                    return Array.isArray(binding) || typeof binding === "string" ? this.pathResolver.parse(binding, {
-                        readOnly: readOnly
-                    }) : binding;
-                }
-            },
-            {
-                key: "get",
-                value: function get(binding, options) {
-                    var resolved = _instanceof(binding, BindingInstance) ? binding : this.resolve(binding, true);
-                    var result = this.getModel().get(resolved, options);
-                    if (result === void 0 && !(options === null || options === void 0 ? void 0 : options.ignoreDefaultValue)) {
-                        var defaultVal = this.hooks.resolveDefaultValue.call(resolved);
-                        if (defaultVal !== result) {
-                            result = defaultVal;
-                        }
-                    }
-                    if (options === null || options === void 0 ? void 0 : options.formatted) {
-                        result = this.hooks.format.call(result, resolved);
-                    } else if ((options === null || options === void 0 ? void 0 : options.formatted) === false) {
-                        result = this.hooks.deformat.call(result, resolved);
-                    }
-                    this.hooks.onGet.call(binding, result);
-                    return result;
-                }
-            },
-            {
-                key: "delete",
-                value: function _delete(binding, options) {
-                    if (typeof binding !== "string" && !Array.isArray(binding) && !_instanceof(binding, BindingInstance)) {
-                        throw new Error("Invalid arguments: delete expects a data path (string)");
-                    }
-                    var resolved = _instanceof(binding, BindingInstance) ? binding : this.resolve(binding, false);
-                    var parentBinding = resolved.parent();
-                    var property = resolved.key();
-                    var parentValue = this.get(parentBinding);
-                    var existedBeforeDelete = (typeof parentValue === "undefined" ? "undefined" : _type_of(parentValue)) === "object" && parentValue !== null && Object.prototype.hasOwnProperty.call(parentValue, property);
-                    this.getModel().delete(resolved, options);
-                    if (existedBeforeDelete && !this.get(resolved)) {
-                        this.trash.add(resolved);
-                    }
-                    this.hooks.onDelete.call(resolved);
-                }
-            },
-            {
-                key: "serialize",
-                value: function serialize() {
-                    return this.hooks.serialize.call(this.get(""));
-                }
-            },
-            {
-                key: "makeReadOnly",
-                value: function makeReadOnly() {
-                    return new ReadOnlyDataController(this, this.logger);
-                }
-            }
-        ]);
-        return DataController;
-    }();
-    function flatten(obj) {
-        var roots = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [], sep = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : ".";
-        return Object.keys(obj).reduce(function(memo, prop) {
-            return _object_spread({}, memo, Object.prototype.toString.call(obj[prop]) === "[object Object]" ? // keep working if value is an object
-            flatten(obj[prop], roots.concat([
-                prop
-            ])) : _define_property({}, roots.concat([
-                prop
-            ]).join(sep), obj[prop]));
-        }, {});
-    }
-    var ConstantsController = /*#__PURE__*/ function() {
-        function ConstantsController() {
-            _class_call_check(this, ConstantsController);
-            this.store = /* @__PURE__ */ new Map();
-            this.tempStore = /* @__PURE__ */ new Map();
-        }
-        _create_class(ConstantsController, [
-            {
-                key: "addConstants",
-                value: function addConstants(data, namespace) {
-                    if (this.store.has(namespace)) {
-                        var _this_store_get;
-                        (_this_store_get = this.store.get(namespace)) === null || _this_store_get === void 0 ? void 0 : _this_store_get.set(objectToBatchSet(data));
-                    } else {
-                        this.store.set(namespace, new LocalModel(data));
-                    }
-                }
-            },
-            {
-                key: "getConstants",
-                value: function getConstants(key, namespace, fallback) {
-                    var _ref, _ref1;
-                    var _this_tempStore_get, _this_store_get;
-                    var path = new BindingInstance(key);
-                    return (_ref = (_ref1 = (_this_tempStore_get = this.tempStore.get(namespace)) === null || _this_tempStore_get === void 0 ? void 0 : _this_tempStore_get.get(path)) !== null && _ref1 !== void 0 ? _ref1 : (_this_store_get = this.store.get(namespace)) === null || _this_store_get === void 0 ? void 0 : _this_store_get.get(path)) !== null && _ref !== void 0 ? _ref : fallback;
-                }
-            },
-            {
-                key: "setTemporaryValues",
-                value: function setTemporaryValues(data, namespace) {
-                    if (this.tempStore.has(namespace)) {
-                        var _this_tempStore_get;
-                        (_this_tempStore_get = this.tempStore.get(namespace)) === null || _this_tempStore_get === void 0 ? void 0 : _this_tempStore_get.set(objectToBatchSet(data));
-                    } else {
-                        this.tempStore.set(namespace, new LocalModel(data));
-                    }
-                }
-            },
-            {
-                key: "clearTemporaryValues",
-                value: function clearTemporaryValues(namespace) {
-                    if (namespace) {
-                        var _this_tempStore_get;
-                        (_this_tempStore_get = this.tempStore.get(namespace)) === null || _this_tempStore_get === void 0 ? void 0 : _this_tempStore_get.reset();
-                    } else {
-                        this.tempStore.forEach(function(value) {
-                            value.reset();
-                        });
-                    }
-                }
-            }
-        ]);
-        return ConstantsController;
-    }();
     var FlowExpPlugin = /*#__PURE__*/ function() {
         function FlowExpPlugin() {
             _class_call_check(this, FlowExpPlugin);
@@ -7817,7 +8288,7 @@ var ReferenceAssetsPlugin = function() {
                 value: function apply(player) {
                     var _this = this;
                     var expressionEvaluator;
-                    var handleEval = function handleEval(exp) {
+                    var handleEval = function(exp) {
                         if (exp) {
                             if ((typeof exp === "undefined" ? "undefined" : _type_of(exp)) === "object" && "exp" in exp) {
                                 expressionEvaluator === null || expressionEvaluator === void 0 ? void 0 : expressionEvaluator.evaluate(exp.exp);
@@ -7838,7 +8309,7 @@ var ReferenceAssetsPlugin = function() {
                                 return handleEval(exp);
                             });
                             flow.hooks.resolveTransitionNode.intercept({
-                                call: function call(nextState) {
+                                call: function(nextState) {
                                     if (nextState === null || nextState === void 0 ? void 0 : nextState.onStart) {
                                         handleEval(nextState.onStart);
                                     }
@@ -7851,13 +8322,13 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return FlowExpPlugin;
     }();
-    var createFormatFunction = function createFormatFunction(schema) {
-        var handler = function handler(ctx, value, formatName) {
-            var _ref;
+    var createFormatFunction = function(schema) {
+        var handler = function(ctx, value, formatName) {
             var _schema_getFormatterForType;
-            return (_ref = (_schema_getFormatterForType = schema.getFormatterForType({
+            var _schema_getFormatterForType_format;
+            return (_schema_getFormatterForType_format = (_schema_getFormatterForType = schema.getFormatterForType({
                 type: formatName
-            })) === null || _schema_getFormatterForType === void 0 ? void 0 : _schema_getFormatterForType.format(value)) !== null && _ref !== void 0 ? _ref : value;
+            })) === null || _schema_getFormatterForType === void 0 ? void 0 : _schema_getFormatterForType.format(value)) !== null && _schema_getFormatterForType_format !== void 0 ? _schema_getFormatterForType_format : value;
         };
         return handler;
     };
@@ -7909,8 +8380,8 @@ var ReferenceAssetsPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "0.15.3" : "unknown";
-    var COMMIT = true ? "635ec38f97e5afa4d5f7ff4ddd3e4f7a6fbe0988" : "unknown";
+    var PLAYER_VERSION = true ? "1.0.0--canary.865.36694" : "unknown";
+    var COMMIT = true ? "2fdb374207fd3782c786733301343db28c43ca46" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
@@ -7928,6 +8399,7 @@ var ReferenceAssetsPlugin = function() {
                 schema: new SyncHook(),
                 validationController: new SyncHook(),
                 bindingParser: new SyncHook(),
+                errorController: new SyncHook(),
                 state: new SyncHook(),
                 onStart: new SyncHook(),
                 onEnd: new SyncHook(),
@@ -8025,26 +8497,34 @@ var ReferenceAssetsPlugin = function() {
                     var expressionEvaluator;
                     var dataController;
                     var pathResolver = new BindingParser({
-                        get: function get(binding) {
+                        get: function(binding) {
                             return dataController.get(binding);
                         },
-                        set: function set(transaction) {
+                        set: function(transaction) {
                             return dataController.set(transaction);
                         },
-                        evaluate: function evaluate(expression) {
-                            return expressionEvaluator.evaluate(expression);
+                        evaluate: function(expression2) {
+                            return expressionEvaluator.evaluate(expression2);
                         }
                     });
                     this.hooks.bindingParser.call(pathResolver);
                     var parseBinding = pathResolver.parse;
-                    var flowResultDeferred = (0, import_p_defer.default)();
+                    var flowResultDeferred = (0, import_p_defer2.default)();
                     var schema = new SchemaController(userFlow.schema);
                     this.hooks.schema.call(schema);
                     var validationController = new ValidationController(schema);
                     this.hooks.validationController.call(validationController);
+                    var errorController = new ErrorController({
+                        logger: this.logger,
+                        flow: flowController,
+                        fail: flowResultDeferred.reject
+                    });
+                    this.hooks.errorController.call(errorController);
                     dataController = new DataController(userFlow.data, {
                         pathResolver: pathResolver,
-                        middleware: validationController.getDataMiddleware(),
+                        middleware: _to_consumable_array(validationController.getDataMiddleware()).concat([
+                            errorController.getDataMiddleware()
+                        ]),
                         logger: this.logger
                     });
                     dataController.hooks.format.tap("player", function(value, binding) {
@@ -8058,6 +8538,9 @@ var ReferenceAssetsPlugin = function() {
                     dataController.hooks.resolveDefaultValue.tap("player", function(binding) {
                         var _schema_getApparentType;
                         return (_schema_getApparentType = schema.getApparentType(binding)) === null || _schema_getApparentType === void 0 ? void 0 : _schema_getApparentType.default;
+                    });
+                    errorController.setOptions({
+                        model: dataController
                     });
                     var viewController;
                     expressionEvaluator = new ExpressionEvaluator({
@@ -8089,7 +8572,7 @@ var ReferenceAssetsPlugin = function() {
                             if (!("transitions" in state) || !state.transitions[computedTransitionVal]) {
                                 return state;
                             }
-                            return (0, import_timm8.setIn)(state, [
+                            return (0, import_timm9.setIn)(state, [
                                 "transitions",
                                 computedTransitionVal
                             ], resolveStrings(state.transitions[computedTransitionVal]));
@@ -8109,12 +8592,12 @@ var ReferenceAssetsPlugin = function() {
                         flow.hooks.resolveTransitionNode.tap("player", function(state) {
                             var newState = state;
                             if ("ref" in state) {
-                                newState = (0, import_timm8.setIn)(state, [
+                                newState = (0, import_timm9.setIn)(state, [
                                     "ref"
                                 ], resolveStrings(state.ref));
                             }
                             if ("param" in state) {
-                                newState = (0, import_timm8.setIn)(state, [
+                                newState = (0, import_timm9.setIn)(state, [
                                     "param"
                                 ], resolveStrings(state.param, false));
                             }
@@ -8134,7 +8617,7 @@ var ReferenceAssetsPlugin = function() {
                                     var result = expressionEvaluator.evaluateAsync(exp);
                                     if (isPromiseLike(result)) {
                                         if (value.await) {
-                                            (0, import_queue_microtask.default)(function() {
+                                            (0, import_queue_microtask2.default)(function() {
                                                 result.then(function(r) {
                                                     return flowController === null || flowController === void 0 ? void 0 : flowController.transition(String(r));
                                                 }).catch(flowResultDeferred.reject);
@@ -8175,27 +8658,28 @@ var ReferenceAssetsPlugin = function() {
                         transition: flowController.transition,
                         model: dataController,
                         utils: {
-                            findPlugin: function findPlugin(pluginSymbol) {
+                            findPlugin: function(pluginSymbol) {
                                 return _this.findPlugin(pluginSymbol);
                             }
                         },
                         logger: this.logger,
                         flowController: flowController,
                         schema: schema,
-                        format: function format(binding, value) {
+                        format: function(binding, value) {
                             var formatter = schema.getFormatter(binding);
                             return (formatter === null || formatter === void 0 ? void 0 : formatter.format) ? formatter.format(value) : value;
                         },
-                        formatValue: function formatValue(ref, value) {
+                        formatValue: function(ref, value) {
                             var formatter = schema.getFormatterForType(ref);
                             return (formatter === null || formatter === void 0 ? void 0 : formatter.format) ? formatter.format(value) : value;
                         },
                         validation: _object_spread_props(_object_spread({}, validationController.forView(parseBinding)), {
-                            type: function type(b) {
+                            type: function(b) {
                                 return schema.getType(parseBinding(b));
                             }
                         }),
-                        constants: this.constantsController
+                        constants: this.constantsController,
+                        errorController: errorController
                     });
                     viewController.hooks.view.tap("player", function(view) {
                         validationController.onView(view);
@@ -8203,7 +8687,7 @@ var ReferenceAssetsPlugin = function() {
                     });
                     this.hooks.viewController.call(viewController);
                     return {
-                        start: function start() {
+                        start: function() {
                             flowController.start().then(function(endState) {
                                 var flowResult = {
                                     endState: resolveStrings(endState, false),
@@ -8227,7 +8711,8 @@ var ReferenceAssetsPlugin = function() {
                                 schema: schema,
                                 expression: expressionEvaluator,
                                 binding: pathResolver,
-                                validation: validationController
+                                validation: validationController,
+                                error: errorController
                             },
                             fail: flowResultDeferred.reject,
                             flow: userFlow,
@@ -8240,13 +8725,13 @@ var ReferenceAssetsPlugin = function() {
                 key: "start",
                 value: function start(payload) {
                     return _async_to_generator(function() {
-                        var _this, _ref, ref, maybeUpdateState, _this_setupFlow, state, start, endProps, _tmp, error, errorState;
+                        var _this, _payload_id, ref, maybeUpdateState, _this_setupFlow, state, start, endProps, _tmp, error, errorState;
                         return _ts_generator(this, function(_state) {
                             switch(_state.label){
                                 case 0:
                                     _this = this;
-                                    ref = Symbol((_ref = payload === null || payload === void 0 ? void 0 : payload.id) !== null && _ref !== void 0 ? _ref : "payload");
-                                    maybeUpdateState = function maybeUpdateState(newState) {
+                                    ref = Symbol((_payload_id = payload === null || payload === void 0 ? void 0 : payload.id) !== null && _payload_id !== void 0 ? _payload_id : "payload");
+                                    maybeUpdateState = function(newState) {
                                         if (_this.state.ref !== ref) {
                                             _this.logger.warn("Received update for a flow that's not the current one");
                                             return newState;
@@ -8324,7 +8809,26 @@ var ReferenceAssetsPlugin = function() {
     };
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+async-node-plugin@0.0.0/node_modules/@player-ui/async-node-plugin/dist/index.mjs
     var import_queue_microtask3 = __toESM(require_queue_microtask(), 1);
-    var getMatchValue = function getMatchValue(pathA, pathB) {
+    var ASYNC_ERROR_TYPE = "ASYNC-PLUGIN";
+    var AsyncNodeError = /*#__PURE__*/ function(Error1) {
+        _inherits(AsyncNodeError, Error1);
+        function AsyncNodeError(node, message, cause) {
+            _class_call_check(this, AsyncNodeError);
+            var _this;
+            _this = _call_super(this, AsyncNodeError, [
+                message
+            ]);
+            _this.cause = cause;
+            _this.type = ASYNC_ERROR_TYPE;
+            _this.severity = ErrorSeverity.ERROR;
+            _this.metadata = {
+                node: node
+            };
+            return _this;
+        }
+        return AsyncNodeError;
+    }(_wrap_native_super(Error));
+    var getMatchValue = function(pathA, pathB) {
         if (pathA.length > pathB.length) {
             return 0;
         }
@@ -8338,7 +8842,7 @@ var ReferenceAssetsPlugin = function() {
         }
         return matchCount;
     };
-    var extractNodeFromPath = function extractNodeFromPath1(node, path) {
+    var extractNodeFromPath = function(node, path) {
         if (path === void 0 || path.length === 0) {
             return node;
         }
@@ -8379,7 +8883,7 @@ var ReferenceAssetsPlugin = function() {
         }
         return extractNodeFromPath(bestMatch.value, path.slice(matchResult));
     };
-    var traverseAndReplace = function traverseAndReplace(node, replaceFn) {
+    var traverseAndReplace = function(node, replaceFn) {
         if (node.type === NodeType.MultiNode) {
             var index = 0;
             while(index < node.values.length){
@@ -8400,7 +8904,7 @@ var ReferenceAssetsPlugin = function() {
         }
         return replaceFn(node);
     };
-    var unwrapAsset = function unwrapAsset(node) {
+    var unwrapAsset = function(node) {
         var _node_children;
         if (node.type !== NodeType.Value) {
             return node;
@@ -8413,7 +8917,7 @@ var ReferenceAssetsPlugin = function() {
         }
         return child.value;
     };
-    var requiresAssetWrapper = function requiresAssetWrapper(node) {
+    var requiresAssetWrapper = function(node) {
         if (node.type === NodeType.Asset) {
             return true;
         }
@@ -8422,26 +8926,51 @@ var ReferenceAssetsPlugin = function() {
         }
         return node.value.type === NodeType.Asset;
     };
-    var defaultGetNodeId = function defaultGetNodeId(node) {
+    var isAsyncPlayerError = function(error) {
+        return error.type === ASYNC_ERROR_TYPE;
+    };
+    var getNodeFromError = function(playerError, context) {
+        if (playerError.type === ErrorTypes.RENDER) {
+            var _playerError_metadata;
+            var assetId = ((_playerError_metadata = playerError.metadata) !== null && _playerError_metadata !== void 0 ? _playerError_metadata : {}).assetId;
+            if (typeof assetId !== "string") {
+                return void 0;
+            }
+            return context.assetIdCache.get(assetId);
+        }
+        if (playerError.type === ErrorTypes.VIEW) {
+            var _playerError_metadata1;
+            var node = ((_playerError_metadata1 = playerError.metadata) !== null && _playerError_metadata1 !== void 0 ? _playerError_metadata1 : {}).node;
+            if ((typeof node === "undefined" ? "undefined" : _type_of(node)) === "object" && node !== null && !Array.isArray(node)) {
+                return node;
+            }
+        }
+        if (isAsyncPlayerError(playerError) && playerError.metadata !== void 0) {
+            var _context_asyncNodeCache_get;
+            return (_context_asyncNodeCache_get = context.asyncNodeCache.get(playerError.metadata.node.id)) === null || _context_asyncNodeCache_get === void 0 ? void 0 : _context_asyncNodeCache_get.asyncNode;
+        }
+        return void 0;
+    };
+    var defaultGetNodeId = function(node) {
         return "async-".concat(node.value.id);
     };
-    var createAsyncTransform = function createAsyncTransform(options) {
+    var createAsyncTransform = function(options) {
         var transformAssetType = options.transformAssetType, wrapperAssetType = options.wrapperAssetType, getNestedAsset = options.getNestedAsset, _options_getAsyncNodeId = options.getAsyncNodeId, getAsyncNodeId = _options_getAsyncNodeId === void 0 ? defaultGetNodeId : _options_getAsyncNodeId, _options_path = options.path, path = _options_path === void 0 ? [
             "values"
         ] : _options_path, tmp = options.flatten, flatten2 = tmp === void 0 ? true : tmp, _options_asyncNodePosition = options.asyncNodePosition, asyncNodePosition = _options_asyncNodePosition === void 0 ? "append" : _options_asyncNodePosition;
-        var replaceNode = function replaceNode(node) {
-            var _extractNodeFromPath;
+        var replaceNode = function(node) {
             var unwrapped = unwrapAsset(node);
             if (unwrapped.type !== NodeType.Asset || unwrapped.value.type !== transformAssetType) {
                 return node;
             }
             var transformed = asyncTransform2(unwrapped);
+            var _extractNodeFromPath;
             return (_extractNodeFromPath = extractNodeFromPath(transformed, path)) !== null && _extractNodeFromPath !== void 0 ? _extractNodeFromPath : node;
         };
-        var replacer = function replacer(node) {
+        var replacer = function(node) {
             return traverseAndReplace(node, replaceNode);
         };
-        var asyncTransform2 = function asyncTransform2(node) {
+        var asyncTransform2 = function(node) {
             var _Builder;
             var id = getAsyncNodeId(node);
             var asset = getNestedAsset === null || getNestedAsset === void 0 ? void 0 : getNestedAsset(node);
@@ -8562,8 +9091,8 @@ var ReferenceAssetsPlugin = function() {
      * @param options Options provided for node resolution, including a potential parseNode function to process the result.
      * @param view The view instance where the node resides. This can be undefined if the view is not currently active.
      */ key: "parseNodeAndUpdate",
-                value: function parseNodeAndUpdate(node, context, result, options) {
-                    var parsedNode = options.parseNode && result ? options.parseNode(result) : void 0;
+                value: function parseNodeAndUpdate(node, context, result, parseFunction) {
+                    var parsedNode = parseFunction && result ? parseFunction(result) : void 0;
                     if (parsedNode && node.onValueReceived) {
                         parsedNode = node.onValueReceived(parsedNode);
                     }
@@ -8581,22 +9110,36 @@ var ReferenceAssetsPlugin = function() {
      * @param view The view instance where the node resides. This can be undefined if the view is not currently active.
      */ key: "handleAsyncUpdate",
                 value: function handleAsyncUpdate(node, context, newNode) {
-                    var nodeResolveCache = context.nodeResolveCache, viewController = context.viewController, originalNodeCache = context.originalNodeCache;
-                    if (nodeResolveCache.get(node.id) !== newNode) {
-                        var _originalNodeCache_get;
-                        nodeResolveCache.set(node.id, newNode ? newNode : node);
-                        var originalNode = (_originalNodeCache_get = originalNodeCache.get(node.id)) !== null && _originalNodeCache_get !== void 0 ? _originalNodeCache_get : /* @__PURE__ */ new Set([
-                            node
-                        ]);
-                        viewController.updateViewAST(originalNode);
+                    var asyncNodeInfo = context.asyncNodeCache, viewController = context.viewController;
+                    var entry = asyncNodeInfo.get(node.id);
+                    if (!entry) {
+                        throw new Error("Failed to update async content. Cache entry not found");
+                    }
+                    if (entry.resolvedContent !== newNode) {
+                        entry.resolvedContent = newNode ? newNode : entry.asyncNode;
+                        viewController.updateViewAST(entry.updateNodes);
                     }
                 }
             },
             {
                 key: "hasValidMapping",
-                value: function hasValidMapping(node, context) {
-                    var nodeResolveCache = context.nodeResolveCache;
-                    return nodeResolveCache.has(node.id) && nodeResolveCache.get(node.id) !== node;
+                value: function hasValidMapping(cacheEntry) {
+                    return cacheEntry.resolvedContent !== void 0 && cacheEntry.resolvedContent !== cacheEntry.asyncNode;
+                }
+            },
+            {
+                key: "getOrCreateAsyncNodeCacheEntry",
+                value: function getOrCreateAsyncNodeCacheEntry(node, context) {
+                    var asyncNodeInfo = context.asyncNodeCache;
+                    var entry = asyncNodeInfo.get(node.id);
+                    if (!entry) {
+                        entry = {
+                            asyncNode: node,
+                            updateNodes: /* @__PURE__ */ new Set()
+                        };
+                        asyncNodeInfo.set(node.id, entry);
+                    }
+                    return entry;
                 }
             },
             {
@@ -8608,18 +9151,26 @@ var ReferenceAssetsPlugin = function() {
      */ key: "applyResolver",
                 value: function applyResolver(resolver, context) {
                     var _this = this;
+                    var assetIdCache = context.assetIdCache;
+                    resolver.hooks.afterNodeUpdate.tap(this.name, function(original, _, update) {
+                        if (update.node.type !== NodeType.Asset && update.node.type !== NodeType.View) {
+                            return;
+                        }
+                        assetIdCache.set(update.value.id, original);
+                    });
                     resolver.hooks.beforeResolve.tap(this.name, function(node, options) {
                         if (!_this.isAsync(node)) {
                             return node === null ? node : _this.resolveAsyncChildren(node, context);
                         }
+                        var entry = _this.getOrCreateAsyncNodeCacheEntry(node, context);
                         if (options.node) {
-                            context.originalNodeCache.set(node.id, /* @__PURE__ */ new Set([
+                            entry.updateNodes = /* @__PURE__ */ new Set([
                                 options.node
-                            ]));
+                            ]);
+                            context.generatedByMap.set(options.node, node.id);
                         }
-                        var resolvedNode = context.nodeResolveCache.get(node.id);
-                        if (resolvedNode !== void 0) {
-                            return _this.resolveAsyncChildren(resolvedNode, context);
+                        if (entry.resolvedContent !== void 0) {
+                            return _this.resolveAsyncChildren(entry.resolvedContent, context);
                         }
                         if (context.inProgressNodes.has(node.id)) {
                             return node;
@@ -8645,16 +9196,22 @@ var ReferenceAssetsPlugin = function() {
                     if (node.type === NodeType.MultiNode) {
                         var _this1, _loop = function() {
                             var childNode = node.values[index];
-                            if ((childNode === null || childNode === void 0 ? void 0 : childNode.type) !== NodeType.Async || !_this1.hasValidMapping(childNode, context)) {
+                            if ((childNode === null || childNode === void 0 ? void 0 : childNode.type) !== NodeType.Async) {
                                 index++;
                                 return "continue";
                             }
-                            var mappedNode = context.nodeResolveCache.get(childNode.id);
+                            var entry = _this1.getOrCreateAsyncNodeCacheEntry(childNode, context);
+                            if (!_this1.hasValidMapping(entry)) {
+                                index++;
+                                return "continue";
+                            }
+                            var mappedNode = entry.resolvedContent;
                             var nodeSet = /* @__PURE__ */ new Set();
                             if (mappedNode.type === NodeType.MultiNode && childNode.flatten) {
                                 mappedNode.values.forEach(function(v) {
                                     v.parent = node;
                                     nodeSet.add(v);
+                                    context.originalParentMap.set(v, childNode);
                                 });
                                 node.values = _to_consumable_array(node.values.slice(0, index)).concat(_to_consumable_array(mappedNode.values), _to_consumable_array(node.values.slice(index + 1)));
                             } else {
@@ -8662,18 +9219,43 @@ var ReferenceAssetsPlugin = function() {
                                 mappedNode.parent = node;
                                 nodeSet.add(mappedNode);
                             }
-                            context.originalNodeCache.set(childNode.id, nodeSet);
+                            entry.updateNodes = nodeSet;
+                            var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                            try {
+                                for(var _iterator = nodeSet[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                                    var n = _step.value;
+                                    context.generatedByMap.set(n, childNode.id);
+                                }
+                            } catch (err) {
+                                _didIteratorError = true;
+                                _iteratorError = err;
+                            } finally{
+                                try {
+                                    if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                        _iterator.return();
+                                    }
+                                } finally{
+                                    if (_didIteratorError) {
+                                        throw _iteratorError;
+                                    }
+                                }
+                            }
                         };
                         var index = 0;
                         while(index < node.values.length)_this1 = this, _loop();
                     } else if ("children" in node) {
                         var _node_children;
                         (_node_children = node.children) === null || _node_children === void 0 ? void 0 : _node_children.forEach(function(c) {
-                            while(c.value.type === NodeType.Async && _this.hasValidMapping(c.value, context)){
-                                var mappedNode = context.nodeResolveCache.get(c.value.id);
-                                context.originalNodeCache.set(c.value.id, /* @__PURE__ */ new Set([
+                            while(c.value.type === NodeType.Async){
+                                var entry = _this.getOrCreateAsyncNodeCacheEntry(c.value, context);
+                                if (!_this.hasValidMapping(entry)) {
+                                    break;
+                                }
+                                var mappedNode = entry.resolvedContent;
+                                entry.updateNodes = /* @__PURE__ */ new Set([
                                     mappedNode
-                                ]));
+                                ]);
+                                context.generatedByMap.set(mappedNode, c.value.id);
                                 c.value = mappedNode;
                                 c.value.parent = node;
                             }
@@ -8686,7 +9268,7 @@ var ReferenceAssetsPlugin = function() {
                 key: "runAsyncNode",
                 value: function runAsyncNode(node, context, options) {
                     return _async_to_generator(function() {
-                        var _this, _this_basePlugin, result, e, _this_basePlugin1, _options_logger, error, result1, _this_basePlugin_getPlayerInstance, _this_basePlugin2, playerState;
+                        var _this, _this_basePlugin, result, e, _this_basePlugin_getPlayerInstance, _this_basePlugin1, cause, playerState, _options_logger, error;
                         return _ts_generator(this, function(_state) {
                             switch(_state.label){
                                 case 0:
@@ -8702,34 +9284,30 @@ var ReferenceAssetsPlugin = function() {
                                     return [
                                         4,
                                         (_this_basePlugin = this.basePlugin) === null || _this_basePlugin === void 0 ? void 0 : _this_basePlugin.hooks.onAsyncNode.call(node, function(result2) {
-                                            _this.parseNodeAndUpdate(node, context, result2, options);
+                                            _this.parseNodeAndUpdate(node, context, result2, options.parseNode);
                                         })
                                     ];
                                 case 2:
                                     result = _state.sent();
                                     context.inProgressNodes.delete(node.id);
-                                    this.parseNodeAndUpdate(node, context, result, options);
+                                    this.parseNodeAndUpdate(node, context, result, options.parseNode);
                                     return [
                                         3,
                                         4
                                     ];
                                 case 3:
                                     e = _state.sent();
-                                    error = _instanceof(e, Error) ? e : new Error(String(e));
-                                    result1 = (_this_basePlugin1 = this.basePlugin) === null || _this_basePlugin1 === void 0 ? void 0 : _this_basePlugin1.hooks.onAsyncNodeError.call(error, node);
-                                    if (result1 === void 0) {
+                                    cause = _instanceof(e, Error) ? e : new Error(String(e));
+                                    playerState = (_this_basePlugin1 = this.basePlugin) === null || _this_basePlugin1 === void 0 ? void 0 : (_this_basePlugin_getPlayerInstance = _this_basePlugin1.getPlayerInstance()) === null || _this_basePlugin_getPlayerInstance === void 0 ? void 0 : _this_basePlugin_getPlayerInstance.getState();
+                                    if ((playerState === null || playerState === void 0 ? void 0 : playerState.status) !== "in-progress") {
                                         ;
-                                        playerState = (_this_basePlugin2 = this.basePlugin) === null || _this_basePlugin2 === void 0 ? void 0 : (_this_basePlugin_getPlayerInstance = _this_basePlugin2.getPlayerInstance()) === null || _this_basePlugin_getPlayerInstance === void 0 ? void 0 : _this_basePlugin_getPlayerInstance.getState();
-                                        if ((playerState === null || playerState === void 0 ? void 0 : playerState.status) === "in-progress") {
-                                            playerState.fail(error);
-                                        }
+                                        (_options_logger = options.logger) === null || _options_logger === void 0 ? void 0 : _options_logger.warn("[AsyncNodePlugin]: An error occured during async node resolution, but the player instance is no londer running. Exception: ", cause);
                                         return [
                                             2
                                         ];
                                     }
-                                    (_options_logger = options.logger) === null || _options_logger === void 0 ? void 0 : _options_logger.error("Async node handling failed and resolved with a fallback. Error:", error);
-                                    context.inProgressNodes.delete(node.id);
-                                    this.parseNodeAndUpdate(node, context, result1, options);
+                                    error = new AsyncNodeError(node, "An error occured during async node resolution. See cause for details.", cause);
+                                    playerState.controllers.error.captureError(error);
                                     return [
                                         3,
                                         4
@@ -8801,15 +9379,74 @@ var ReferenceAssetsPlugin = function() {
                 key: "applyPlayer",
                 value: function applyPlayer(player) {
                     var _this = this;
+                    var currentContext = void 0;
+                    var parser = void 0;
+                    player.hooks.errorController.tap("async", function(errorController) {
+                        errorController.hooks.onError.tap("async", function(playerError) {
+                            if (currentContext === void 0) {
+                                return void 0;
+                            }
+                            var tryHandleError = function(asyncNode) {
+                                var _this_basePlugin, _player_logger;
+                                if (_this.basePlugin === void 0) {
+                                    player.logger.warn("[AsyncNodePlugin]: No plugin detected. Error handling will fail");
+                                }
+                                var result = void 0;
+                                result = (_this_basePlugin = _this.basePlugin) === null || _this_basePlugin === void 0 ? void 0 : _this_basePlugin.hooks.onAsyncNodeError.call(playerError, asyncNode);
+                                if (result === void 0) {
+                                    return false;
+                                }
+                                (_player_logger = player.logger) === null || _player_logger === void 0 ? void 0 : _player_logger.warn("[AsyncNodePlugin]: Async node handling failed and resolved with a fallback. Cause:", playerError.message);
+                                currentContext.inProgressNodes.delete(asyncNode.id);
+                                _this.parseNodeAndUpdate(asyncNode, currentContext, result, parser === null || parser === void 0 ? void 0 : parser.parseObject.bind(parser));
+                                return true;
+                            };
+                            var getNextNode = function(node2) {
+                                var _currentContext_asyncNodeCache_get;
+                                var _currentContext_originalParentMap_get;
+                                var parent = (_currentContext_originalParentMap_get = currentContext === null || currentContext === void 0 ? void 0 : currentContext.originalParentMap.get(node2)) !== null && _currentContext_originalParentMap_get !== void 0 ? _currentContext_originalParentMap_get : node2.parent;
+                                if (!parent) {
+                                    return void 0;
+                                }
+                                return _this.isAsync(parent) ? currentContext === null || currentContext === void 0 ? void 0 : (_currentContext_asyncNodeCache_get = currentContext.asyncNodeCache.get(parent.id)) === null || _currentContext_asyncNodeCache_get === void 0 ? void 0 : _currentContext_asyncNodeCache_get.asyncNode : parent;
+                            };
+                            var node = getNodeFromError(playerError, currentContext);
+                            if ((node === null || node === void 0 ? void 0 : node.type) === NodeType.Async && tryHandleError(node)) {
+                                return true;
+                            }
+                            while(node !== void 0){
+                                var generatedBy = currentContext.generatedByMap.get(node);
+                                if (generatedBy) {
+                                    var entry = currentContext.asyncNodeCache.get(generatedBy);
+                                    if (!entry) {
+                                        node = getNextNode(node);
+                                        continue;
+                                    }
+                                    var asyncNode = entry.asyncNode;
+                                    if (tryHandleError(asyncNode)) {
+                                        return true;
+                                    }
+                                }
+                                node = getNextNode(node);
+                            }
+                            return void 0;
+                        });
+                    });
                     player.hooks.viewController.tap("async", function(viewController) {
                         viewController.hooks.view.tap("async", function(view) {
+                            view.hooks.parser.tap(_this.name, function(p) {
+                                parser = p;
+                            });
                             var context = {
-                                nodeResolveCache: /* @__PURE__ */ new Map(),
                                 inProgressNodes: /* @__PURE__ */ new Set(),
                                 view: view,
                                 viewController: viewController,
-                                originalNodeCache: /* @__PURE__ */ new Map()
+                                generatedByMap: /* @__PURE__ */ new Map(),
+                                assetIdCache: /* @__PURE__ */ new Map(),
+                                asyncNodeCache: /* @__PURE__ */ new Map(),
+                                originalParentMap: /* @__PURE__ */ new Map()
                             };
+                            currentContext = context;
                             view.hooks.resolver.tap("async", function(resolver) {
                                 _this.applyResolver(resolver, context);
                             });
@@ -8830,7 +9467,7 @@ var ReferenceAssetsPlugin = function() {
     var transform2 = createAsyncTransform({
         transformAssetType: "chat-message",
         wrapperAssetType: "collection",
-        getNestedAsset: function getNestedAsset(node) {
+        getNestedAsset: function(node) {
             var _node_children_, _node_children;
             return (_node_children = node.children) === null || _node_children === void 0 ? void 0 : (_node_children_ = _node_children[0]) === null || _node_children_ === void 0 ? void 0 : _node_children_.value;
         }
@@ -8879,7 +9516,14 @@ var ReferenceAssetsPlugin = function() {
         return ExpressionPlugin;
     }();
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugins/chat-ui-demo-plugin.ts
-    var createContentFromMessage = function createContentFromMessage(message, id) {
+    var isInChatDemo = function(node) {
+        var _node_parent_parent, _node_parent, _node_parent_parent1, _node_parent1;
+        if (((_node_parent = node.parent) === null || _node_parent === void 0 ? void 0 : (_node_parent_parent = _node_parent.parent) === null || _node_parent_parent === void 0 ? void 0 : _node_parent_parent.type) === NodeType.View && node.parent.parent.value.id === "chat-view") {
+            return true;
+        }
+        return ((_node_parent1 = node.parent) === null || _node_parent1 === void 0 ? void 0 : (_node_parent_parent1 = _node_parent1.parent) === null || _node_parent_parent1 === void 0 ? void 0 : _node_parent_parent1.type) === NodeType.Asset && node.parent.parent.value.id.startsWith("collection-async-chat-demo");
+    };
+    var createContentFromMessage = function(message, id) {
         return {
             asset: {
                 type: "chat-message",
@@ -8890,6 +9534,27 @@ var ReferenceAssetsPlugin = function() {
                         id: "".concat(id, "-value"),
                         value: message
                     }
+                }
+            }
+        };
+    };
+    var createBrokenRenderContent = function(id) {
+        return {
+            asset: {
+                id: id,
+                type: "input",
+                binding: "binding",
+                label: 100
+            }
+        };
+    };
+    var createBrokenTransformContent = function(id) {
+        return {
+            asset: {
+                id: id,
+                type: "input",
+                binding: {
+                    prop: "value"
                 }
             }
         };
@@ -8911,7 +9576,7 @@ var ReferenceAssetsPlugin = function() {
                     var deferredPromises = {};
                     var allPromiseKeys = [];
                     var counter = 0;
-                    var sendMessage = function sendMessage(context, message, nodeId) {
+                    var sendMessage = function(context, nodeId, getContent) {
                         if (nodeId && !(nodeId in deferredPromises)) {
                             var _context_logger;
                             (_context_logger = context.logger) === null || _context_logger === void 0 ? void 0 : _context_logger.warn("'send' expression called with unrecognized id '".concat(nodeId, "'"));
@@ -8929,9 +9594,8 @@ var ReferenceAssetsPlugin = function() {
                         try {
                             for(var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
                                 var id = _step.value;
-                                var content = createContentFromMessage(message, "chat-demo-".concat(counter++));
                                 var resolveFunction = deferredPromises[id];
-                                resolveFunction === null || resolveFunction === void 0 ? void 0 : resolveFunction(content);
+                                resolveFunction === null || resolveFunction === void 0 ? void 0 : resolveFunction(getContent === null || getContent === void 0 ? void 0 : getContent());
                                 delete deferredPromises[id];
                             }
                         } catch (err) {
@@ -8956,8 +9620,7 @@ var ReferenceAssetsPlugin = function() {
                         }
                     };
                     asyncNodePlugin.hooks.onAsyncNode.tap(this.name, function(node) {
-                        var _node_parent_parent, _node_parent, _node_parent_parent1, _node_parent1;
-                        if (((_node_parent = node.parent) === null || _node_parent === void 0 ? void 0 : (_node_parent_parent = _node_parent.parent) === null || _node_parent_parent === void 0 ? void 0 : _node_parent_parent.type) !== NodeType.Asset && ((_node_parent1 = node.parent) === null || _node_parent1 === void 0 ? void 0 : (_node_parent_parent1 = _node_parent1.parent) === null || _node_parent_parent1 === void 0 ? void 0 : _node_parent_parent1.type) !== NodeType.View || !node.parent.parent.value.id.startsWith("collection-async-chat-demo")) {
+                        if (!isInChatDemo(node)) {
                             return Promise.resolve(void 0);
                         }
                         return new Promise(function(res) {
@@ -8965,6 +9628,21 @@ var ReferenceAssetsPlugin = function() {
                             allPromiseKeys.push(node.id);
                         });
                     });
+                    var sendRealMessage = function(context, message, nodeId) {
+                        return sendMessage(context, nodeId, function() {
+                            return createContentFromMessage(message, "chat-demo-".concat(counter++));
+                        });
+                    };
+                    var sendBrokenMessage = function(context, _, nodeId) {
+                        return sendMessage(context, nodeId, function() {
+                            return createBrokenRenderContent("chat-demo-".concat(counter++));
+                        });
+                    };
+                    var sendBrokenTransformMessage = function(context, _, nodeId) {
+                        return sendMessage(context, nodeId, function() {
+                            return createBrokenTransformContent("chat-demo-".concat(counter++));
+                        });
+                    };
                     player.hooks.view.tap(this.name, function(_) {
                         deferredPromises = {};
                         allPromiseKeys = [];
@@ -8973,7 +9651,15 @@ var ReferenceAssetsPlugin = function() {
                     var expressionPlugin = new ExpressionPlugin(/* @__PURE__ */ new Map([
                         [
                             "send",
-                            sendMessage
+                            sendRealMessage
+                        ],
+                        [
+                            "sendBroken",
+                            sendBrokenMessage
+                        ],
+                        [
+                            "sendBrokenTransform",
+                            sendBrokenTransformMessage
                         ]
                     ]));
                     player.registerPlugin(expressionPlugin);
@@ -9035,19 +9721,1166 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return ReferenceAssetsTransformPlugin;
     }();
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugins/error-recovery-plugin.ts
+    var ErrorRecoveryPlugin = /*#__PURE__*/ function() {
+        function ErrorRecoveryPlugin() {
+            _class_call_check(this, ErrorRecoveryPlugin);
+            this.name = "ErrorRecoveryPlugin";
+        }
+        _create_class(ErrorRecoveryPlugin, [
+            {
+                /** */ key: "apply",
+                value: function apply(player) {
+                    var _this = this;
+                    player.applyTo(AsyncNodePlugin.Symbol, function(plugin) {
+                        plugin.hooks.onAsyncNodeError.tap(_this.name, function(err, node) {
+                            var _playerState_controllers_view_currentView;
+                            var playerState = player.getState();
+                            if (playerState.status !== "in-progress") {
+                                return;
+                            }
+                            var viewId = (_playerState_controllers_view_currentView = playerState.controllers.view.currentView) === null || _playerState_controllers_view_currentView === void 0 ? void 0 : _playerState_controllers_view_currentView.initialView.id;
+                            if (viewId !== "chat-view") {
+                                return;
+                            }
+                            return {
+                                asset: {
+                                    type: "chat-message",
+                                    id: "".concat(node.id, "-recovery"),
+                                    value: {
+                                        asset: {
+                                            id: "".concat(node.id, "-recovery-text"),
+                                            type: "text",
+                                            value: "Something went wrong, please try again."
+                                        }
+                                    }
+                                }
+                            };
+                        });
+                    });
+                }
+            }
+        ]);
+        return ErrorRecoveryPlugin;
+    }();
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+types-provider-plugin@0.0.0/node_modules/@player-ui/types-provider-plugin/dist/index.mjs
+    var TypesProviderPlugin = /*#__PURE__*/ function() {
+        function TypesProviderPlugin(config) {
+            _class_call_check(this, TypesProviderPlugin);
+            this.name = "TypesProviderPlugin";
+            this.config = config;
+        }
+        _create_class(TypesProviderPlugin, [
+            {
+                key: "apply",
+                value: function apply(player) {
+                    var _this = this;
+                    player.hooks.schema.tap(this.name, function(schema) {
+                        if (_this.config.types) {
+                            schema.addDataTypes(_this.config.types);
+                        }
+                        if (_this.config.formats) {
+                            schema.addFormatters(_this.config.formats);
+                        }
+                    });
+                    if (this.config.validators) {
+                        player.hooks.validationController.tap(this.name, function(validationController) {
+                            validationController.hooks.createValidatorRegistry.tap(_this.name, function(validationRegistry) {
+                                var _this_config_validators;
+                                (_this_config_validators = _this.config.validators) === null || _this_config_validators === void 0 ? void 0 : _this_config_validators.forEach(function(param) {
+                                    var _param = _sliced_to_array(param, 2), name = _param[0], handler = _param[1];
+                                    validationRegistry.register(name, handler);
+                                });
+                            });
+                        });
+                    }
+                }
+            }
+        ]);
+        return TypesProviderPlugin;
+    }();
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+common-types-plugin@0.0.0/node_modules/@player-ui/common-types-plugin/dist/index.mjs
+    var __defProp3 = Object.defineProperty;
+    var __export3 = function(target, all) {
+        for(var name in all)__defProp3(target, name, {
+            get: all[name],
+            enumerable: true
+        });
+    };
+    var validators_exports = {};
+    __export3(validators_exports, {
+        collection: function() {
+            return collection;
+        },
+        email: function() {
+            return email;
+        },
+        expression: function() {
+            return expression;
+        },
+        integer: function() {
+            return integer;
+        },
+        length: function() {
+            return length;
+        },
+        max: function() {
+            return max;
+        },
+        min: function() {
+            return min;
+        },
+        oneOf: function() {
+            return oneOf;
+        },
+        phone: function() {
+            return phone;
+        },
+        readonly: function() {
+            return readonly;
+        },
+        regex: function() {
+            return regex;
+        },
+        required: function() {
+            return required;
+        },
+        string: function() {
+            return string;
+        },
+        zip: function() {
+            return zip;
+        }
+    });
+    var EMAIL_REGEX = // eslint-disable-next-line no-control-regex
+    /^((([a-z]|\d|[!#$%&'*+\-/=?^_`{|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#$%&'*+-/=?^_`{|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i;
+    var PHONE_REGEX = /^\+?[1]?[- ]?\(?\d{3}[)\- ]?\s?\d{3}[ -]?\d{4}$/;
+    var ZIP_REGEX = /^\d{5}(-\d{4})?$/;
+    var string = skipNullish(function(context, value) {
+        if (typeof value !== "string") {
+            var message = context.constants.getConstants("validation.string", "constants", "Value must be a string");
+            return {
+                message: message,
+                parameters: {
+                    type: typeof value === "undefined" ? "undefined" : _type_of(value)
+                }
+            };
+        }
+    });
+    var readonly = function(context) {
+        var message = context.constants.getConstants("validation.readonly", "constants", "Value cannot be modified");
+        return {
+            message: message
+        };
+    };
+    var collection = skipNullish(function(context, value) {
+        if (!Array.isArray(value)) {
+            var message = context.constants.getConstants("validation.collection", "constants", "Cannot set collection to non-array");
+            return {
+                message: message
+            };
+        }
+    });
+    var integer = skipNullish(function(context, value) {
+        if (value && (typeof value !== "number" || Math.floor(value) !== value || Number(value) > Number.MAX_SAFE_INTEGER || Number(value) < Number.MIN_SAFE_INTEGER)) {
+            var message = context.constants.getConstants("validation.integer", "constants", "Value must be an integer");
+            return {
+                message: message,
+                parameters: {
+                    type: typeof value === "undefined" ? "undefined" : _type_of(value),
+                    flooredValue: Math.floor(value)
+                }
+            };
+        }
+    });
+    var oneOf = skipNullish(function(context, value, options) {
+        var _options_options;
+        if ((options === null || options === void 0 ? void 0 : options.options) === void 0 || ((_options_options = options.options) === null || _options_options === void 0 ? void 0 : _options_options.includes(value))) {
+            return;
+        }
+        var message = context.constants.getConstants("validation.oneOf", "constants", "Invalid entry");
+        return {
+            message: message
+        };
+    });
+    var expression = function(context, value, options) {
+        if ((options === null || options === void 0 ? void 0 : options.exp) === void 0) {
+            context.logger.warn("No expression defined for validation");
+            return;
+        }
+        var result = context.evaluate(options.exp);
+        if (!result) {
+            var message = context.constants.getConstants("validation.expression", "constants", "Expression evaluation failed");
+            return {
+                message: message
+            };
+        }
+    };
+    var required = function(context, value, options) {
+        if ((options === null || options === void 0 ? void 0 : options.if) && !context.evaluate(options.if) || (options === null || options === void 0 ? void 0 : options.ifNot) && context.evaluate(options.ifNot)) {
+            return;
+        }
+        if (value === void 0 || value === null || value === "") {
+            var message = context.constants.getConstants("validation.required", "constants", "A value is required");
+            return {
+                message: message,
+                severity: "error"
+            };
+        }
+    };
+    var regex = skipNullish(function(context, value, options) {
+        if (value === void 0 || value === null || value === "" || typeof (options === null || options === void 0 ? void 0 : options.regex) !== "string") {
+            return;
+        }
+        var resolvedRegex = resolveDataRefs(options.regex, context);
+        var patternMatch = resolvedRegex.match(/^\/(.*)\/(\w)*$/);
+        var regexp = patternMatch ? new RegExp(patternMatch[1], patternMatch[2]) : new RegExp(resolvedRegex);
+        if (!regexp.test(value)) {
+            var message = context.constants.getConstants("validation.regex", "constants", "Invalid entry");
+            return {
+                message: message
+            };
+        }
+    });
+    var length = skipNullish(function(context, value, options) {
+        if ((typeof options === "undefined" ? "undefined" : _type_of(options)) !== "object") {
+            context.logger.warn("Missing comparison in length validation");
+            return;
+        }
+        var valLength;
+        var itemName = "items";
+        if (typeof value === "string") {
+            valLength = value.length;
+            itemName = "characters";
+        } else if ((typeof value === "undefined" ? "undefined" : _type_of(value)) === "object" && value !== null) {
+            valLength = Object.keys(value).length;
+        }
+        if (valLength === void 0) {
+            context.logger.warn("Unable to determine a length for value of type: ".concat(value));
+            return;
+        }
+        if ("exact" in options) {
+            if (valLength !== options.exact) {
+                return {
+                    message: "Must be exactly ".concat(options.exact, " ").concat(itemName, " long"),
+                    parameters: {
+                        validationLength: valLength
+                    }
+                };
+            }
+            return;
+        }
+        if (options.min !== void 0 && valLength < options.min) {
+            var message = context.constants.getConstants("validation.length.minimum", "constants", "At least ".concat(options.min, " ").concat(itemName, " needed"));
+            return {
+                message: message,
+                parameters: {
+                    validationLength: valLength
+                }
+            };
+        }
+        if (options.max !== void 0 && valLength > options.max) {
+            var message1 = context.constants.getConstants("validation.length.maximum", "constants", "Up to ".concat(options.max, " ").concat(itemName, " allowed"));
+            return {
+                message: message1,
+                parameters: {
+                    validationLength: valLength
+                }
+            };
+        }
+    });
+    var min = skipNullish(function(context, value, options) {
+        if (typeof value !== "number" || (options === null || options === void 0 ? void 0 : options.value) === void 0) {
+            return;
+        }
+        if (value < options.value) {
+            var message = context.constants.getConstants("validation.min", "constants", "Must be at least ".concat(options.value));
+            return {
+                message: message
+            };
+        }
+    });
+    var max = skipNullish(function(context, value, options) {
+        if (typeof value !== "number" || (options === null || options === void 0 ? void 0 : options.value) === void 0) {
+            return;
+        }
+        if (value > options.value) {
+            var message = context.constants.getConstants("validation.max", "constants", "Cannot exceed ".concat(options.value));
+            return {
+                message: message
+            };
+        }
+    });
+    var stringRegexValidator = function(test, messagePath, invalidMessage) {
+        return skipNullish(function(context, value) {
+            if (typeof value === "string" && value === "") {
+                return;
+            }
+            if (typeof value !== "string" || !test.test(value)) {
+                var message = context.constants.getConstants(messagePath, "constants", invalidMessage);
+                return {
+                    message: message
+                };
+            }
+        });
+    };
+    var email = stringRegexValidator(EMAIL_REGEX, "validation.email", "Improper email format");
+    var phone = stringRegexValidator(PHONE_REGEX, "validation.phone", "Invalid phone number");
+    var zip = stringRegexValidator(ZIP_REGEX, "validation.regex", "Invalid zip code");
+    var types_exports = {};
+    __export3(types_exports, {
+        BooleanType: function() {
+            return BooleanType;
+        },
+        CollectionType: function() {
+            return CollectionType;
+        },
+        DateType: function() {
+            return DateType;
+        },
+        IntegerNNType: function() {
+            return IntegerNNType;
+        },
+        IntegerPosType: function() {
+            return IntegerPosType;
+        },
+        IntegerType: function() {
+            return IntegerType;
+        },
+        PhoneType: function() {
+            return PhoneType;
+        },
+        StringType: function() {
+            return StringType;
+        }
+    });
+    var BooleanType = {
+        type: "BooleanType",
+        default: false,
+        validation: [
+            {
+                type: "oneOf",
+                message: "Value must be true or false",
+                options: [
+                    true,
+                    false
+                ]
+            }
+        ]
+    };
+    var IntegerType = {
+        type: "IntegerType",
+        validation: [
+            {
+                type: "integer"
+            }
+        ],
+        format: {
+            type: "integer"
+        }
+    };
+    var IntegerPosType = {
+        type: "IntegerPosType",
+        validation: [
+            {
+                type: "integer"
+            },
+            {
+                type: "min",
+                value: 1
+            }
+        ],
+        format: {
+            type: "integer"
+        }
+    };
+    var IntegerNNType = {
+        type: "IntegerNNType",
+        validation: [
+            {
+                type: "integer"
+            },
+            {
+                type: "min",
+                value: 0
+            }
+        ],
+        format: {
+            type: "integer"
+        }
+    };
+    var StringType = {
+        type: "StringType",
+        default: "",
+        validation: [
+            {
+                type: "string"
+            }
+        ],
+        format: {
+            type: "string"
+        }
+    };
+    var CollectionType = {
+        type: "CollectionType",
+        validation: [
+            {
+                type: "collection"
+            }
+        ]
+    };
+    var DateType = {
+        type: "DateType",
+        validation: [
+            {
+                type: "string"
+            }
+        ],
+        format: {
+            type: "date"
+        }
+    };
+    var PhoneType = {
+        type: "PhoneType",
+        validation: [
+            {
+                type: "phone"
+            }
+        ],
+        format: {
+            type: "phone"
+        }
+    };
+    var formats_exports = {};
+    __export3(formats_exports, {
+        commaNumber: function() {
+            return commaNumber;
+        },
+        currency: function() {
+            return currency;
+        },
+        date: function() {
+            return date;
+        },
+        integer: function() {
+            return integer2;
+        },
+        phone: function() {
+            return phone2;
+        }
+    });
+    var PLACEHOLDER = "#";
+    var formatAsEnum = function(value, acceptedValues, options) {
+        var autoCompletionsByOverlapCount = acceptedValues.reduce(function(validCompletions, validValue) {
+            var overlap = 0;
+            for(var charIndex = 0; charIndex < Math.min(validValue.length, value.length); charIndex++){
+                var validChar = (options === null || options === void 0 ? void 0 : options.ignoreCase) ? validValue[charIndex].toLowerCase() : validValue[charIndex];
+                var actualChar = (options === null || options === void 0 ? void 0 : options.ignoreCase) ? value[charIndex].toLowerCase() : value[charIndex];
+                if (validChar !== actualChar) {
+                    break;
+                }
+                overlap += 1;
+            }
+            if (overlap === 0) {
+                return validCompletions;
+            }
+            validCompletions.push({
+                count: overlap,
+                target: validValue
+            });
+            return validCompletions;
+        }, []).sort(function(e) {
+            return e.count;
+        });
+        if (autoCompletionsByOverlapCount.length === 0) {
+            return void 0;
+        }
+        if (autoCompletionsByOverlapCount.length === 1 && (options === null || options === void 0 ? void 0 : options.autocomplete)) {
+            return autoCompletionsByOverlapCount[0].target;
+        }
+        return autoCompletionsByOverlapCount[0].target.substr(0, autoCompletionsByOverlapCount[0].count);
+    };
+    var formatAsMasked = function(value, valueCharMaskMatch, mask) {
+        var valStr = String(value);
+        var withMask = mask;
+        if (valStr.trim() === "") {
+            return "";
+        }
+        valStr.replace(valueCharMaskMatch, function(match) {
+            withMask = withMask.replace(PLACEHOLDER, match);
+            return match;
+        });
+        return withMask.split(PLACEHOLDER)[0];
+    };
+    var createMaskedNumericFormatter = function(name, mask) {
+        return {
+            name: name,
+            format: function(value, options) {
+                if (typeof value !== "string") {
+                    return value;
+                }
+                if ((options === null || options === void 0 ? void 0 : options.exceptions) && options.exceptions.length > 0) {
+                    var formattedUsingExceptions = formatAsEnum(value, options.exceptions, {
+                        autocomplete: true,
+                        ignoreCase: true
+                    });
+                    if (formattedUsingExceptions !== void 0) {
+                        return formattedUsingExceptions;
+                    }
+                }
+                return formatAsMasked(value, /\d/g, mask);
+            },
+            deformat: function(value, options) {
+                if (typeof value !== "string") {
+                    return value;
+                }
+                if ((options === null || options === void 0 ? void 0 : options.exceptions) && options.exceptions.length > 0) {
+                    var usingExceptions = formatAsEnum(value, options.exceptions, {
+                        autocomplete: false,
+                        ignoreCase: false
+                    });
+                    if (usingExceptions !== void 0) {
+                        return usingExceptions;
+                    }
+                }
+                return formatAsMasked(value, /\d/g, mask.replace(/[^#]/g, ""));
+            }
+        };
+    };
+    var LENGTH_OF_MAX_INT = String(Number.MAX_SAFE_INTEGER).split("").length;
+    var integer2 = {
+        name: "integer",
+        /** Converts any integer to a string */ format: function(value) {
+            var _integer2_deformat;
+            if (value === "-") {
+                return value;
+            }
+            var _integer2_deformat1;
+            var formatted = (_integer2_deformat1 = (_integer2_deformat = integer2.deformat) === null || _integer2_deformat === void 0 ? void 0 : _integer2_deformat.call(integer2, value)) !== null && _integer2_deformat1 !== void 0 ? _integer2_deformat1 : value;
+            if (typeof formatted === "number") {
+                return String(formatted);
+            }
+            return "";
+        },
+        /** Converts any string or number to an integer */ deformat: function(value) {
+            if (typeof value === "number") {
+                return Math.floor(value) + 0;
+            }
+            if (typeof value !== "string") {
+                return;
+            }
+            var isNeg = value.replace(/[^0-9.-]/g, "").charAt(0) === "-";
+            var digits = value.replace(/[^0-9.]/g, "");
+            var decimalPlace = digits.indexOf(".");
+            if (decimalPlace > -1) {
+                digits = digits.substring(0, decimalPlace);
+            }
+            if (digits.length === 0) {
+                return;
+            }
+            digits = digits.substr(0, LENGTH_OF_MAX_INT);
+            var num = Number("".concat(isNeg ? "-" : "").concat(digits));
+            return Math.floor(num) + 0;
+        }
+    };
+    var commaNumber = {
+        name: "commaNumber",
+        /** Go from number to number w/ commas */ format: function(_value, options) {
+            if (_value === void 0 || _value === "") {
+                return _value;
+            }
+            if (typeof _value !== "string" && typeof _value !== "number") {
+                return "";
+            }
+            var value = String(_value);
+            var isNeg = value.replace(/[^0-9.-]/g, "").charAt(0) === "-";
+            var digitAndDecimal = value.replace(/[^0-9.]/g, "");
+            digitAndDecimal = digitAndDecimal.replace(/^(0*)((0.)?\d)/g, "$2");
+            var firstDecimal = digitAndDecimal.indexOf(".");
+            var digitsOnly = digitAndDecimal.replace(/[^0-9]/g, "");
+            var preDecDigits = digitsOnly;
+            var postDecDigits = "";
+            if (firstDecimal >= 0) {
+                preDecDigits = digitsOnly.substring(0, firstDecimal).substr(0, LENGTH_OF_MAX_INT);
+                postDecDigits = digitsOnly.substring(firstDecimal);
+            } else {
+                preDecDigits = preDecDigits.substr(0, LENGTH_OF_MAX_INT);
+            }
+            if ((options === null || options === void 0 ? void 0 : options.precision) !== void 0) {
+                postDecDigits = postDecDigits.substring(0, options.precision).padEnd(options.precision, "0");
+            }
+            preDecDigits = preDecDigits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            if (preDecDigits === "" && firstDecimal === 0) {
+                preDecDigits = "0";
+            }
+            var retVal = preDecDigits;
+            if (isNeg) {
+                retVal = "-".concat(retVal);
+            }
+            if ((firstDecimal >= 0 || (options === null || options === void 0 ? void 0 : options.precision) !== void 0) && postDecDigits !== "") {
+                retVal += ".".concat(postDecDigits);
+            }
+            return retVal;
+        },
+        /** Go from string with comma's to numbers */ deformat: function(value) {
+            if (typeof value !== "string") {
+                return value;
+            }
+            var strValue = value.replace(/,/g, "");
+            if (strValue === "") {
+                return void 0;
+            }
+            var number2 = Number(strValue);
+            return isNaN(number2) || number2 > Number.MAX_SAFE_INTEGER || number2 < Number.MIN_SAFE_INTEGER ? void 0 : number2;
+        }
+    };
+    var date = {
+        name: "date",
+        format: function(_value, options) {
+            var _options_mask;
+            var value = typeof _value === "number" ? String(_value) : _value;
+            if (_value === void 0) {
+                return void 0;
+            }
+            if (typeof value !== "string" || value === "") {
+                return "";
+            }
+            if (value.match(/^\d{4}[-]\d{1,2}[-]\d{1,2}$/)) {
+                var tempVal = value.split("-");
+                value = "".concat(tempVal[1], "/").concat(tempVal[2], "/").concat(tempVal[0]);
+            }
+            var _options_mask_toUpperCase;
+            var dateFormat = (_options_mask_toUpperCase = options === null || options === void 0 ? void 0 : (_options_mask = options.mask) === null || _options_mask === void 0 ? void 0 : _options_mask.toUpperCase()) !== null && _options_mask_toUpperCase !== void 0 ? _options_mask_toUpperCase : "MM/DD/YYYY";
+            var delimiter = dateFormat.replace(/[^/.-]/g, "").charAt(0);
+            var formatParts = dateFormat.split(delimiter);
+            var valueParts = value.split(delimiter);
+            var processedValueParts = [];
+            var lastMatchIsFull = true;
+            for(var index = 0; index < valueParts.length; index++){
+                var part = valueParts[index];
+                if (lastMatchIsFull && index < formatParts.length) {
+                    part = part.replace(/[^0-9]/g, "");
+                    var isLastExpectedField = formatParts.length - 1 === index;
+                    var hasDelimiterAfter = valueParts.length - 1 > index;
+                    var curFormat = formatParts[index];
+                    if (curFormat === "YYYY") {
+                        if (part.length > 4) {
+                            valueParts[index + 1] = [
+                                "*",
+                                part.substring(4),
+                                valueParts[index + 1]
+                            ].join("");
+                            part = part.substring(0, 4);
+                        }
+                        if (part.length === 4) {
+                            lastMatchIsFull = true;
+                            processedValueParts.push(part);
+                        }
+                        if (part.length === 3) {
+                            if (isLastExpectedField || !hasDelimiterAfter) {
+                                lastMatchIsFull = false;
+                                processedValueParts.push(part);
+                            } else {
+                                valueParts[index + 1] = "*".concat(part.substring(2)).concat(valueParts[index + 1]);
+                                part = part.substring(0, 2);
+                            }
+                        }
+                        if (part.length === 2) {
+                            var autocomplete = void 0;
+                            if (part.length === 2 && (hasDelimiterAfter || isLastExpectedField && part !== "19" && part !== "20")) {
+                                autocomplete = "20".concat(part);
+                                if (part > (/* @__PURE__ */ new Date().getFullYear() + 5).toString().substring(2)) {
+                                    autocomplete = "19".concat(part);
+                                }
+                            }
+                            if (autocomplete) {
+                                lastMatchIsFull = true;
+                                processedValueParts.push(autocomplete);
+                            } else {
+                                lastMatchIsFull = false;
+                                processedValueParts.push(part);
+                            }
+                        }
+                        if (part.length === 1 || part.length === 0) {
+                            lastMatchIsFull = false;
+                            processedValueParts.push(part);
+                        }
+                    } else if (curFormat === "YY") {
+                        if (part.length > 2) {
+                            valueParts[index + 1] = [
+                                "*",
+                                part.substring(2),
+                                valueParts[index + 1]
+                            ].join("");
+                            part = part.substring(0, 2);
+                        }
+                        if (part.length === 2) {
+                            lastMatchIsFull = true;
+                            processedValueParts.push(part);
+                        }
+                        if (part.length === 1 || part.length === 0) {
+                            lastMatchIsFull = false;
+                            processedValueParts.push(part);
+                        }
+                    } else {
+                        if (part.length > 2) {
+                            valueParts[index + 1] = [
+                                "*",
+                                part.substring(2),
+                                valueParts[index + 1]
+                            ].join("");
+                            part = part.substring(0, 2);
+                        }
+                        if (part.length === 2) {
+                            if (part === "00" && !hasDelimiterAfter) {
+                                lastMatchIsFull = false;
+                                processedValueParts.push("0");
+                            } else {
+                                lastMatchIsFull = true;
+                                processedValueParts.push(part);
+                            }
+                        }
+                        if (part.length === 1) {
+                            if (hasDelimiterAfter) {
+                                lastMatchIsFull = true;
+                                processedValueParts.push("0".concat(part));
+                            } else {
+                                lastMatchIsFull = false;
+                                processedValueParts.push(part);
+                            }
+                        }
+                        if (part.length === 0) {
+                            lastMatchIsFull = false;
+                            processedValueParts.push(part);
+                        }
+                    }
+                }
+            }
+            return processedValueParts.join(delimiter);
+        }
+    };
+    var currency = {
+        name: "currency",
+        format: function(_value, options) {
+            var value = typeof _value === "number" ? String(_value) : _value;
+            var _ref = options !== null && options !== void 0 ? options : {}, _ref_currencySymbol = _ref.currencySymbol, currencySymbol = _ref_currencySymbol === void 0 ? "" : _ref_currencySymbol, _ref_useParensForNeg = _ref.useParensForNeg, useParensForNeg = _ref_useParensForNeg === void 0 ? false : _ref_useParensForNeg, _ref_precision = _ref.precision, precision = _ref_precision === void 0 ? 2 : _ref_precision;
+            if (value === void 0 || value === "") {
+                return value;
+            }
+            if (typeof value !== "string") {
+                return value;
+            }
+            var sign = /^\s*-/.test(value) ? -1 : 1;
+            var dotIndex = value.indexOf(".");
+            var preDecimal;
+            var postDecimal;
+            if (dotIndex >= 0) {
+                preDecimal = value.substr(0, dotIndex).replace(/\D+/g, "");
+                postDecimal = value.substr(dotIndex + 1).replace(/\D+/g, "");
+            } else {
+                preDecimal = value.replace(/\D+/g, "");
+                postDecimal = "0";
+            }
+            var numericalValue = sign * Number("".concat(preDecimal, ".").concat(postDecimal));
+            var fixedString = numericalValue.toFixed(precision);
+            var prettyString = fixedString.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            if (prettyString.charAt(0) === "-") {
+                if (useParensForNeg) {
+                    return "(".concat(currencySymbol).concat(prettyString.substring(1), ")");
+                }
+                return "-".concat(currencySymbol).concat(prettyString.substring(1));
+            }
+            return currencySymbol + prettyString;
+        },
+        deformat: function(value, options) {
+            var _commaNumber_deformat;
+            if (typeof value === "number") {
+                return value;
+            }
+            if (typeof value !== "string") {
+                return void 0;
+            }
+            var deformatted = value;
+            if (options === null || options === void 0 ? void 0 : options.currencySymbol) {
+                deformatted = value.replace(options.currencySymbol, "");
+            }
+            return (_commaNumber_deformat = commaNumber.deformat) === null || _commaNumber_deformat === void 0 ? void 0 : _commaNumber_deformat.call(commaNumber, deformatted);
+        }
+    };
+    var basePhoneFormatter = createMaskedNumericFormatter("phone", "(###) ###-####");
+    var phone2 = _object_spread_props(_object_spread({}, basePhoneFormatter), {
+        deformat: function(value) {
+            var _basePhoneFormatter_deformat;
+            return (_basePhoneFormatter_deformat = basePhoneFormatter.deformat) === null || _basePhoneFormatter_deformat === void 0 ? void 0 : _basePhoneFormatter_deformat.call(basePhoneFormatter, value);
+        },
+        format: function(value) {
+            var _basePhoneFormatter_format;
+            var _basePhoneFormatter_format1;
+            return (_basePhoneFormatter_format1 = (_basePhoneFormatter_format = basePhoneFormatter.format) === null || _basePhoneFormatter_format === void 0 ? void 0 : _basePhoneFormatter_format.call(basePhoneFormatter, value === "(" ? "" : value)) !== null && _basePhoneFormatter_format1 !== void 0 ? _basePhoneFormatter_format1 : value;
+        }
+    });
+    var CommonTypesPlugin = /*#__PURE__*/ function() {
+        function CommonTypesPlugin() {
+            _class_call_check(this, CommonTypesPlugin);
+            this.name = "CommonTypes";
+        }
+        _create_class(CommonTypesPlugin, [
+            {
+                key: "apply",
+                value: function apply(player) {
+                    player.registerPlugin(new TypesProviderPlugin({
+                        types: Object.values(types_exports),
+                        formats: Object.values(formats_exports),
+                        validators: Object.entries(validators_exports)
+                    }));
+                }
+            }
+        ]);
+        return CommonTypesPlugin;
+    }();
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+common-expressions-plugin@0.0.0/node_modules/@player-ui/common-expressions-plugin/dist/index.mjs
+    var __defProp4 = Object.defineProperty;
+    var __export4 = function(target, all) {
+        for(var name in all)__defProp4(target, name, {
+            get: all[name],
+            enumerable: true
+        });
+    };
+    var expressions_exports = {};
+    __export4(expressions_exports, {
+        ceil: function() {
+            return ceil;
+        },
+        concat: function() {
+            return concat;
+        },
+        containsAny: function() {
+            return containsAny;
+        },
+        findProperty: function() {
+            return findProperty;
+        },
+        findPropertyIndex: function() {
+            return findPropertyIndex;
+        },
+        floor: function() {
+            return floor;
+        },
+        isEmpty: function() {
+            return isEmpty;
+        },
+        isNotEmpty: function() {
+            return isNotEmpty;
+        },
+        length: function() {
+            return length2;
+        },
+        lowerCase: function() {
+            return lowerCase;
+        },
+        number: function() {
+            return number;
+        },
+        replace: function() {
+            return replace;
+        },
+        round: function() {
+            return round;
+        },
+        sentenceCase: function() {
+            return sentenceCase;
+        },
+        size: function() {
+            return size;
+        },
+        split: function() {
+            return split;
+        },
+        substr: function() {
+            return substr;
+        },
+        sum: function() {
+            return sum;
+        },
+        titleCase: function() {
+            return titleCase;
+        },
+        trim: function() {
+            return trim;
+        },
+        upperCase: function() {
+            return upperCase;
+        }
+    });
+    var size = withoutContext(function(val) {
+        if (typeof val === "string") {
+            return val.length;
+        }
+        if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object" && val !== null) {
+            return Object.keys(val).length;
+        }
+        return 0;
+    });
+    var length2 = size;
+    var isEmpty = function(ctx, val) {
+        if (val === void 0 || val === null) {
+            return true;
+        }
+        if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object" || typeof val === "string") {
+            return size(ctx, val) === 0;
+        }
+        return false;
+    };
+    var isNotEmpty = function(ctx, val) {
+        return !isEmpty(ctx, val);
+    };
+    var concat = withoutContext(function() {
+        for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
+            args[_key] = arguments[_key];
+        }
+        if (args.every(function(v) {
+            return Array.isArray(v);
+        })) {
+            var merged = [];
+            args.forEach(function(next) {
+                var _merged;
+                (_merged = merged).push.apply(_merged, _to_consumable_array(next));
+            });
+            return merged;
+        }
+        return args.reduce(function(merged, next) {
+            return merged + (next !== null && next !== void 0 ? next : "");
+        }, "");
+    });
+    var trim = withoutContext(ifString(function(str) {
+        return str.trim();
+    }));
+    var upperCase = withoutContext(ifString(function(str) {
+        return str.toUpperCase();
+    }));
+    var lowerCase = withoutContext(ifString(function(str) {
+        return str.toLowerCase();
+    }));
+    var replace = withoutContext(function(str, pattern) {
+        var replacement = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : "";
+        if (typeof str === "string" && typeof pattern === "string" && typeof replacement === "string") {
+            var replacementRegex = new RegExp(pattern, "g");
+            return str.replace(replacementRegex, replacement);
+        }
+        return str;
+    });
+    var titleCase = withoutContext(ifString(function(str) {
+        return str.split(" ").map(function(word) {
+            return word[0].toUpperCase() + word.slice(1);
+        }).join(" ");
+    }));
+    var sentenceCase = withoutContext(ifString(function(str) {
+        return str.replace(/\b[a-zA-Z]/, function(word) {
+            return word.toUpperCase();
+        });
+    }));
+    var split = withoutContext(function(str, separator, limit) {
+        if (separator === void 0 || separator === null) {
+            return str;
+        }
+        var separatorStr = String(separator);
+        if (separatorStr === "") {
+            var result2 = str.split("");
+            if (limit !== void 0 && limit !== null && limit > 0) {
+                return result2.slice(0, limit);
+            }
+            return result2;
+        }
+        var result = str.split(separatorStr);
+        if (limit !== void 0 && limit !== null && limit > 0) {
+            return result.slice(0, limit);
+        }
+        return result;
+    });
+    var substr = withoutContext(function(str, start, length22) {
+        var actualStartIndex = start < 0 ? str.length + start : start;
+        if (length22 !== void 0) {
+            return str.substring(actualStartIndex, actualStartIndex + length22);
+        }
+        return str.substring(actualStartIndex);
+    });
+    var number = withoutContext(toNum);
+    var round = withoutContext(function(num) {
+        var _toNum;
+        return Math.round((_toNum = toNum(num, true)) !== null && _toNum !== void 0 ? _toNum : 0);
+    });
+    var floor = withoutContext(function(num) {
+        var _toNum;
+        return Math.floor((_toNum = toNum(num, true)) !== null && _toNum !== void 0 ? _toNum : 0);
+    });
+    var ceil = withoutContext(function(num) {
+        var _toNum;
+        return Math.ceil((_toNum = toNum(num, true)) !== null && _toNum !== void 0 ? _toNum : 0);
+    });
+    var sum = withoutContext(function() {
+        for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
+            args[_key] = arguments[_key];
+        }
+        return args.reduce(function(s, next) {
+            var _toNum;
+            return s + ((_toNum = toNum(next)) !== null && _toNum !== void 0 ? _toNum : 0);
+        }, 0);
+    });
+    var findPropertyIndex = function(context, bindingOrModel, propToCheck, valueToCheck) {
+        if (bindingOrModel === void 0) {
+            return -1;
+        }
+        var searchArray = Array.isArray(bindingOrModel) ? bindingOrModel : context.model.get(bindingOrModel);
+        if (!Array.isArray(searchArray)) {
+            return -1;
+        }
+        return searchArray.findIndex(function(value) {
+            var propVal = (typeof value === "undefined" ? "undefined" : _type_of(value)) === "object" && propToCheck !== void 0 ? value[propToCheck] : value;
+            return valueToCheck === propVal;
+        });
+    };
+    var findProperty = function(context, bindingOrModel, propToCheck, valueToCheck, propToReturn, defaultValue) {
+        var searchArray = Array.isArray(bindingOrModel) ? bindingOrModel : context.model.get(bindingOrModel);
+        if (!Array.isArray(searchArray)) {
+            return defaultValue;
+        }
+        var foundValue = searchArray.find(function(value) {
+            var propVal = (typeof value === "undefined" ? "undefined" : _type_of(value)) === "object" && propToCheck !== void 0 ? value[propToCheck] : value;
+            return valueToCheck === propVal;
+        });
+        if (foundValue === void 0) {
+            return defaultValue;
+        }
+        if ((typeof foundValue === "undefined" ? "undefined" : _type_of(foundValue)) === "object" && propToReturn) {
+            var _foundValue_propToReturn;
+            return (_foundValue_propToReturn = foundValue[propToReturn]) !== null && _foundValue_propToReturn !== void 0 ? _foundValue_propToReturn : defaultValue;
+        }
+        return foundValue;
+    };
+    var containsAny = withoutContext(function(str, keywords) {
+        if (!(typeof str === "string") || !(typeof keywords === "string" || Array.isArray(keywords))) {
+            return false;
+        }
+        if (Array.isArray(keywords)) {
+            return keywords.some(function(keyword) {
+                return str.indexOf(keyword) > -1;
+            });
+        }
+        return str.indexOf(keywords) > -1;
+    });
+    var CommonExpressionsPlugin = /*#__PURE__*/ function() {
+        function CommonExpressionsPlugin() {
+            _class_call_check(this, CommonExpressionsPlugin);
+            this.name = "CommonExpressions";
+        }
+        _create_class(CommonExpressionsPlugin, [
+            {
+                key: "apply",
+                value: function apply(player) {
+                    player.registerPlugin(new ExpressionPlugin(new Map(Object.entries(expressions_exports))));
+                }
+            }
+        ]);
+        return CommonExpressionsPlugin;
+    }();
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+computed-properties-plugin@0.0.0/node_modules/@player-ui/computed-properties-plugin/dist/index.mjs
+    var ComputedPropertiesPlugin = /*#__PURE__*/ function() {
+        function ComputedPropertiesPlugin() {
+            _class_call_check(this, ComputedPropertiesPlugin);
+            this.name = "ComputedProperties";
+        }
+        _create_class(ComputedPropertiesPlugin, [
+            {
+                key: "apply",
+                value: function apply(player) {
+                    var _this = this;
+                    var schemaController;
+                    var expressionEvaluator;
+                    var getExpressionType = function(binding) {
+                        var dataType = schemaController === null || schemaController === void 0 ? void 0 : schemaController.getType(binding);
+                        if ((dataType === null || dataType === void 0 ? void 0 : dataType.type) === "Expression") {
+                            return dataType;
+                        }
+                    };
+                    var computedPropertyMiddleware = {
+                        name: this.name,
+                        get: function get(binding, options, next) {
+                            var expType = getExpressionType(binding);
+                            if (expType) {
+                                var exp = expType.exp;
+                                var result = exp && (expressionEvaluator === null || expressionEvaluator === void 0 ? void 0 : expressionEvaluator.evaluate(exp, options === null || options === void 0 ? void 0 : options.context));
+                                return result !== null && result !== void 0 ? result : expType.default;
+                            }
+                            return next === null || next === void 0 ? void 0 : next.get(binding, options);
+                        },
+                        set: function set(transaction, options, next) {
+                            var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                            try {
+                                for(var _iterator = transaction[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                                    var setOperation = _step.value;
+                                    if (getExpressionType(setOperation[0])) {
+                                        throw new Error("Invalid 'set' operation on computed property: ".concat(setOperation[0].asString()));
+                                    }
+                                }
+                            } catch (err) {
+                                _didIteratorError = true;
+                                _iteratorError = err;
+                            } finally{
+                                try {
+                                    if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                        _iterator.return();
+                                    }
+                                } finally{
+                                    if (_didIteratorError) {
+                                        throw _iteratorError;
+                                    }
+                                }
+                            }
+                            var _next_set;
+                            return (_next_set = next === null || next === void 0 ? void 0 : next.set(transaction, options)) !== null && _next_set !== void 0 ? _next_set : [];
+                        },
+                        delete: function _delete(binding, options, next) {
+                            if (getExpressionType(binding)) {
+                                throw new Error("Invalid 'delete' operation on computed property: ".concat(binding.asString()));
+                            }
+                            return next === null || next === void 0 ? void 0 : next.delete(binding, options);
+                        }
+                    };
+                    player.hooks.dataController.tap(this.name, function(dataController) {
+                        dataController.hooks.resolveDataStages.tap(_this.name, function(dataPipeline) {
+                            return _to_consumable_array(dataPipeline).concat([
+                                computedPropertyMiddleware
+                            ]);
+                        });
+                    });
+                    player.hooks.schema.tap(this.name, function(schema) {
+                        schemaController = schema;
+                    });
+                    player.hooks.expressionEvaluator.tap(this.name, function(evaluator) {
+                        expressionEvaluator = evaluator;
+                    });
+                }
+            }
+        ]);
+        return ComputedPropertiesPlugin;
+    }();
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugin.ts
     var ReferenceAssetsPlugin = /*#__PURE__*/ function() {
         function ReferenceAssetsPlugin() {
             _class_call_check(this, ReferenceAssetsPlugin);
             this.name = "reference-assets-plugin";
             this.metaPlugin = new MetaPlugin([
+                new CommonTypesPlugin(),
+                new CommonExpressionsPlugin(),
+                new ComputedPropertiesPlugin(),
                 new AsyncNodePlugin({
                     plugins: [
                         new AsyncNodePluginPlugin()
                     ]
                 }),
                 new ReferenceAssetsTransformPlugin(),
-                new ChatUiDemoPlugin()
+                new ChatUiDemoPlugin(),
+                new ErrorRecoveryPlugin()
             ]);
         }
         _create_class(ReferenceAssetsPlugin, [
