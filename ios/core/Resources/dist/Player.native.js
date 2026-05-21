@@ -8018,8 +8018,8 @@ var Player = function() {
         status: "not-started"
     };
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/player.ts
-    var PLAYER_VERSION = true ? "0.15.3" : "unknown";
-    var COMMIT = true ? "635ec38f97e5afa4d5f7ff4ddd3e4f7a6fbe0988" : "unknown";
+    var PLAYER_VERSION = true ? "0.15.4-next.1" : "unknown";
+    var COMMIT = true ? "b37344f2bae3f2f5e44b8f126cdd4d65747305dd" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player(config) {
             var _this = this;
