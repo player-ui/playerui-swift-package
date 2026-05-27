@@ -7488,8 +7488,8 @@ var MetricsPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "0.15.3" : "unknown";
-    var COMMIT = true ? "635ec38f97e5afa4d5f7ff4ddd3e4f7a6fbe0988" : "unknown";
+    var PLAYER_VERSION = true ? "0.16.0--canary.872.37078" : "unknown";
+    var COMMIT = true ? "fcc220696c977825757d404c53347f32aa5d95b9" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
@@ -7510,7 +7510,8 @@ var MetricsPlugin = function() {
                 state: new SyncHook(),
                 onStart: new SyncHook(),
                 onEnd: new SyncHook(),
-                resolveFlowContent: new SyncWaterfallHook()
+                resolveFlowContent: new SyncWaterfallHook(),
+                transformContent: new SyncWaterfallHook()
             };
             if (config === null || config === void 0 ? void 0 : config.logger) {
                 this.logger.addHandler(config.logger);
@@ -7817,14 +7818,19 @@ var MetricsPlugin = function() {
             },
             {
                 key: "start",
-                value: function start(payload) {
+                value: function start(payload, options) {
                     return _async_to_generator(function() {
-                        var _this, _ref, ref, maybeUpdateState, _this_setupFlow, state, start, endProps, _tmp, error, errorState;
+                        var _this, _ref, _ref1, meta, flow, ref, maybeUpdateState, _this_setupFlow, state, start, endProps, _tmp, error, errorState;
                         return _ts_generator(this, function(_state) {
                             switch(_state.label){
                                 case 0:
                                     _this = this;
-                                    ref = Symbol((_ref = payload === null || payload === void 0 ? void 0 : payload.id) !== null && _ref !== void 0 ? _ref : "payload");
+                                    meta = {
+                                        format: (_ref = options === null || options === void 0 ? void 0 : options.format) !== null && _ref !== void 0 ? _ref : "player",
+                                        version: options === null || options === void 0 ? void 0 : options.version
+                                    };
+                                    flow = this.hooks.transformContent.call(payload, meta);
+                                    ref = Symbol((_ref1 = flow === null || flow === void 0 ? void 0 : flow.id) !== null && _ref1 !== void 0 ? _ref1 : "payload");
                                     maybeUpdateState = function maybeUpdateState(newState) {
                                         if (_this.state.ref !== ref) {
                                             _this.logger.warn("Received update for a flow that's not the current one");
@@ -7845,7 +7851,7 @@ var MetricsPlugin = function() {
                                         ,
                                         4
                                     ]);
-                                    _this_setupFlow = this.setupFlow(payload), state = _this_setupFlow.state, start = _this_setupFlow.start;
+                                    _this_setupFlow = this.setupFlow(flow), state = _this_setupFlow.state, start = _this_setupFlow.start;
                                     this.setState(_object_spread({
                                         ref: ref
                                     }, state));
@@ -7880,7 +7886,7 @@ var MetricsPlugin = function() {
                                     errorState = {
                                         status: "error",
                                         ref: ref,
-                                        flow: payload,
+                                        flow: flow,
                                         error: error
                                     };
                                     maybeUpdateState(errorState);
