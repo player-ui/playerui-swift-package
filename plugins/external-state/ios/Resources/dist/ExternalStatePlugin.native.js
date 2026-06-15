@@ -385,7 +385,7 @@ function _ts_generator(thisArg, body) {
         };
     }
 }
-var ReferenceAssetsPlugin = function() {
+var ExternalStatePlugin = function() {
     var createNewSortInstance = function createNewSortInstance(opts) {
         var comparer = castComparer(opts.comparer);
         return function(arrayToSort) {
@@ -445,98 +445,6 @@ var ReferenceAssetsPlugin = function() {
         };
         matcher.count = 1;
         return matcher;
-    };
-    var composeTransforms = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+asset-transform-plugin@0.0.0/node_modules/@player-ui/asset-transform-plugin/dist/index.mjs
-    function composeTransforms() {
-        for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
-            args[_key] = arguments[_key];
-        }
-        var _args_reverse = _to_array(args.reverse()), fn = _args_reverse[0], fns = _args_reverse.slice(1);
-        return function(asset, options, store) {
-            var value = fn(asset, options, store);
-            if (!fns.length) {
-                return value;
-            }
-            return fns.reduce(function(prevValue, current) {
-                return current(prevValue, options, store);
-            }, value);
-        };
-    };
-    var composeBefore = function composeBefore() {
-        for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
-            args[_key] = arguments[_key];
-        }
-        return {
-            beforeResolve: composeTransforms.apply(void 0, _to_consumable_array(args))
-        };
-    };
-    var compose = function compose() {
-        for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
-            args[_key] = arguments[_key];
-        }
-        var beforeResolveFns = [];
-        var resolveFns = [];
-        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-        try {
-            for(var _iterator = args[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                var arg = _step.value;
-                if (typeof arg === "function") {
-                    resolveFns.push(arg);
-                } else {
-                    if (arg === null || arg === void 0 ? void 0 : arg.resolve) {
-                        resolveFns.push(arg.resolve);
-                    }
-                    if (arg === null || arg === void 0 ? void 0 : arg.beforeResolve) {
-                        beforeResolveFns.push(arg.beforeResolve);
-                    }
-                }
-            }
-        } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-        } finally{
-            try {
-                if (!_iteratorNormalCompletion && _iterator.return != null) {
-                    _iterator.return();
-                }
-            } finally{
-                if (_didIteratorError) {
-                    throw _iteratorError;
-                }
-            }
-        }
-        return {
-            beforeResolve: beforeResolveFns.length ? composeTransforms.apply(void 0, _to_consumable_array(beforeResolveFns)) : void 0,
-            resolve: resolveFns.length ? composeTransforms.apply(void 0, _to_consumable_array(resolveFns)) : void 0
-        };
-    };
-    var maybeCompose = function maybeCompose(maybeFn) {
-        if ((typeof maybeFn === "undefined" ? "undefined" : _type_of(maybeFn)) === "object") {
-            return maybeFn;
-        }
-        return compose(maybeFn);
-    };
-    var cleanupTransformRegistry = function cleanupTransformRegistry(maybeRegistry) {
-        if (Array.isArray(maybeRegistry)) {
-            var wrappedTransforms = maybeRegistry.map(function(param) {
-                var _param = _sliced_to_array(param, 2), key = _param[0], value = _param[1];
-                return [
-                    key,
-                    maybeCompose(value)
-                ];
-            });
-            return new Registry(wrappedTransforms);
-        }
-        var registry = new Registry();
-        maybeRegistry.forEach(function(param) {
-            var key = param.key, value = param.value;
-            registry.set(key, maybeCompose(value));
-        });
-        return registry;
-    };
-    var isBackAction = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/action/transform.ts
-    function isBackAction(action) {
-        return action.value === "Prev";
     };
     var equalToOrIn = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/tapable-ts@0.2.4/node_modules/tapable-ts/dist/hooks.mjs
     function equalToOrIn(value, check) {
@@ -763,7 +671,7 @@ var ReferenceAssetsPlugin = function() {
         var strictMode = (_options_strict = options === null || options === void 0 ? void 0 : options.strict) !== null && _options_strict !== void 0 ? _options_strict : true;
         var charAtFunc = expr.charAt;
         var charCodeAtFunc = expr.charCodeAt;
-        var length3 = expr.length;
+        var length = expr.length;
         var index = 0;
         var getLocation = function(startChar) {
             return {
@@ -790,7 +698,7 @@ var ReferenceAssetsPlugin = function() {
             var chCode;
             var startCharIndex = index;
             ++index;
-            while(index < length3){
+            while(index < length){
                 gobbleSpaces();
                 chCode = exprICode(index);
                 if (chCode === CCURL_CODE) {
@@ -851,7 +759,7 @@ var ReferenceAssetsPlugin = function() {
             var test = gobbleBinaryExpression();
             gobbleSpaces();
             var startCharIndex = index;
-            if (index < length3 && exprICode(index) === QUMARK_CODE) {
+            if (index < length && exprICode(index) === QUMARK_CODE) {
                 index++;
                 var consequent = gobbleExpression();
                 if (!consequent) {
@@ -1029,7 +937,7 @@ var ReferenceAssetsPlugin = function() {
             var str = "";
             var closed = false;
             var startCharIndex = index;
-            while(index < length3){
+            while(index < length){
                 var ch = exprI(index++);
                 if (ch === quote) {
                     closed = true;
@@ -1079,7 +987,7 @@ var ReferenceAssetsPlugin = function() {
             var openBraceCount = 1;
             var startCharIndex = index;
             index += 2;
-            while(index < length3){
+            while(index < length){
                 var ch = exprI(index++);
                 if (ch === "}" && exprICode(index) === CCURL_CODE) {
                     index++;
@@ -1115,7 +1023,7 @@ var ReferenceAssetsPlugin = function() {
             } else {
                 throwError("Unexpected ".concat(exprI(index)), index);
             }
-            while(index < length3){
+            while(index < length){
                 ch = exprICode(index);
                 if (isIdentifierPart(ch)) {
                     index++;
@@ -1151,7 +1059,7 @@ var ReferenceAssetsPlugin = function() {
             var args = [];
             var charIndex;
             var node;
-            while(index < length3){
+            while(index < length){
                 gobbleSpaces();
                 charIndex = exprICode(index);
                 if (charIndex === termination) {
@@ -1242,7 +1150,7 @@ var ReferenceAssetsPlugin = function() {
         }
         var nodes = [];
         try {
-            while(index < length3){
+            while(index < length){
                 var chIndex = exprICode(index);
                 if (chIndex === SEMCOL_CODE || chIndex === COMMA_CODE) {
                     index++;
@@ -1251,7 +1159,7 @@ var ReferenceAssetsPlugin = function() {
                 var node = gobbleExpression();
                 if (node) {
                     nodes.push(node);
-                } else if (strictMode && index < length3) {
+                } else if (strictMode && index < length) {
                     throwError('Unexpected "'.concat(exprI(index), '"'), index);
                 }
             }
@@ -1290,14 +1198,6 @@ var ReferenceAssetsPlugin = function() {
     var collateAwaitable = function collateAwaitable(promises) {
         var result = Promise.all(promises);
         return makeAwaitable(result);
-    };
-    var withoutContext = function withoutContext(fn) {
-        return function(_context) {
-            for(var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++){
-                args[_key - 1] = arguments[_key];
-            }
-            return fn.apply(void 0, _to_consumable_array(args));
-        };
     };
     var isObjectExpression = function isObjectExpression(expr) {
         if (isExpressionNode(expr)) {
@@ -1612,34 +1512,12 @@ var ReferenceAssetsPlugin = function() {
             evaluate: resolveOptions.evaluate
         }) : str;
     };
-    var skipNullish = function skipNullish(validationFn) {
-        return function(context, value, options) {
-            if (value === null || value === void 0) {
-                return;
-            }
-            return validationFn(context, value, options);
-        };
+    var isExternal = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/external-state/core/src/index.ts
+    function isExternal(state) {
+        return state.state_type === "EXTERNAL";
     };
-    var toNum = function toNum(val, coerceTo0) {
-        if (typeof val === "number") {
-            return val;
-        }
-        if (typeof val === "string" && val.length > 0) {
-            var newVal = val.trim();
-            newVal = newVal.replace(/,/g, "");
-            newVal = newVal.replace(/[¥£$€]/, "");
-            var nVal = Number(newVal);
-            return newVal.match(/^0[xbo]/i) || isNaN(nVal) ? void 0 : nVal;
-        }
-        return coerceTo0 ? 0 : void 0;
-    };
-    var ifString = function ifString(fn) {
-        return function(arg) {
-            if (typeof arg === "string") {
-                return fn(arg);
-            }
-            return arg;
-        };
+    var isInProgress = function isInProgress(state) {
+        return state.status === "in-progress";
     };
     var __create = Object.create;
     var __defProp = Object.defineProperty;
@@ -2129,73 +2007,16 @@ var ReferenceAssetsPlugin = function() {
             };
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/index.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/external-state/core/src/index.ts
     var src_exports = {};
     __export(src_exports, {
-        ReferenceAssetsPlugin: function() {
-            return ReferenceAssetsPlugin;
+        ExternalStateError: function() {
+            return ExternalStateError;
         },
-        actionTransform: function() {
-            return actionTransform;
-        },
-        chatMessageTransform: function() {
-            return chatMessageTransform;
-        },
-        choiceTransform: function() {
-            return choiceTransform;
-        },
-        expPropTransform: function() {
-            return expPropTransform;
-        },
-        imageTransform: function() {
-            return imageTransform;
-        },
-        infoTransform: function() {
-            return infoTransform;
-        },
-        inputTransform: function() {
-            return inputTransform;
-        },
-        isBackAction: function() {
-            return isBackAction;
-        },
-        transform: function() {
-            return transform2;
+        ExternalStatePlugin: function() {
+            return ExternalStatePlugin;
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/input/transform.ts
-    var inputTransform = function(asset, options) {
-        var _options_validation, _options_validation1;
-        return _object_spread_props(_object_spread({}, asset), {
-            format: function format(val) {
-                if (asset.binding === void 0) {
-                    return val;
-                }
-                return options.data.format(asset.binding, val);
-            },
-            set: function set(val) {
-                if (asset.binding === void 0) {
-                    return;
-                }
-                return options.data.model.set([
-                    [
-                        asset.binding,
-                        val
-                    ]
-                ], {
-                    formatted: true
-                });
-            },
-            value: asset.binding === void 0 ? "" : options.data.model.get(asset.binding, {
-                includeInvalid: true,
-                formatted: true
-            }),
-            validation: asset.binding === void 0 ? void 0 : (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : _options_validation.get(asset.binding, {
-                track: true
-            }),
-            dataType: asset.binding === void 0 ? void 0 : (_options_validation1 = options.validation) === null || _options_validation1 === void 0 ? void 0 : _options_validation1.type(asset.binding)
-        });
-    };
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/fast-sort@3.4.1/node_modules/fast-sort/dist/sort.mjs
     var castComparer = function castComparer(comparer) {
         return function(a, b, order) {
@@ -2444,150 +2265,8 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return Registry;
     }();
-    var AssetTransformPlugin = /*#__PURE__*/ function() {
-        function AssetTransformPlugin(transforms) {
-            _class_call_check(this, AssetTransformPlugin);
-            this.name = "asset-transform";
-            this.registry = cleanupTransformRegistry(transforms);
-        }
-        _create_class(AssetTransformPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    var _this = this;
-                    player.hooks.viewController.tap(this.name, function(vc) {
-                        _this.registry.forEach(function(param) {
-                            var key = param.key, value = param.value;
-                            return vc.transformRegistry.set(key, maybeCompose(value));
-                        });
-                    });
-                }
-            }
-        ]);
-        return AssetTransformPlugin;
-    }();
-    var transform = function(action, options) {
-        return _object_spread_props(_object_spread({}, action), {
-            run: function run() {
-                if (action.exp) {
-                    options.evaluate(action.exp);
-                }
-                if (action.value) {
-                    var _action_metaData, _options_transition;
-                    var skipValidation = (_action_metaData = action.metaData) === null || _action_metaData === void 0 ? void 0 : _action_metaData.skipValidation;
-                    (_options_transition = options.transition) === null || _options_transition === void 0 ? void 0 : _options_transition.call(options, action.value, {
-                        force: skipValidation
-                    });
-                }
-            }
-        });
-    };
-    var backIconTransform = function(action) {
-        var _action_metaData;
-        if (isBackAction(action) && (action === null || action === void 0 ? void 0 : (_action_metaData = action.metaData) === null || _action_metaData === void 0 ? void 0 : _action_metaData.role) === void 0) {
-            return _object_spread_props(_object_spread({}, action), {
-                metaData: _object_spread_props(_object_spread({}, action === null || action === void 0 ? void 0 : action.metaData), {
-                    role: "back"
-                })
-            });
-        }
-        return action;
-    };
-    var expPropTransform = function(asset) {
-        var _asset_plugins_stringResolver, _asset_plugins, _asset_plugins1, _asset_plugins_stringResolver1, _asset_plugins2;
-        var skipArray = (_asset_plugins = asset.plugins) === null || _asset_plugins === void 0 ? void 0 : (_asset_plugins_stringResolver = _asset_plugins.stringResolver) === null || _asset_plugins_stringResolver === void 0 ? void 0 : _asset_plugins_stringResolver.propertiesToSkip;
-        if (skipArray && skipArray.indexOf("exp") > 1) {
-            return asset;
-        }
-        var _asset_plugins_stringResolver_propertiesToSkip;
-        return _object_spread_props(_object_spread({}, asset), {
-            plugins: _object_spread_props(_object_spread({}, asset.plugins), {
-                stringResolver: _object_spread_props(_object_spread({}, asset === null || asset === void 0 ? void 0 : (_asset_plugins1 = asset.plugins) === null || _asset_plugins1 === void 0 ? void 0 : _asset_plugins1.stringResolver), {
-                    propertiesToSkip: _to_consumable_array((_asset_plugins_stringResolver_propertiesToSkip = (_asset_plugins2 = asset.plugins) === null || _asset_plugins2 === void 0 ? void 0 : (_asset_plugins_stringResolver1 = _asset_plugins2.stringResolver) === null || _asset_plugins_stringResolver1 === void 0 ? void 0 : _asset_plugins_stringResolver1.propertiesToSkip) !== null && _asset_plugins_stringResolver_propertiesToSkip !== void 0 ? _asset_plugins_stringResolver_propertiesToSkip : []).concat([
-                        "exp"
-                    ])
-                })
-            })
-        });
-    };
-    var actionTransform = compose(transform, backIconTransform, composeBefore(expPropTransform));
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/info/transform.ts
-    var infoTransform = function(infoAsset) {
-        var actions = infoAsset === null || infoAsset === void 0 ? void 0 : infoAsset.actions;
-        var segmentedActions = actions === null || actions === void 0 ? void 0 : actions.reduce(function(segmentedActionsArray, action) {
-            segmentedActionsArray[isBackAction(action.asset) ? "prev" : "next"].push(action);
-            return segmentedActionsArray;
-        }, {
-            next: [],
-            prev: []
-        });
-        return _object_spread_props(_object_spread({}, infoAsset), {
-            segmentedActions: segmentedActions
-        });
-    };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/image/transform.ts
-    var getImageAlt = function(props) {
-        var metaData = props.metaData, placeholder = props.placeholder;
-        if (metaData.accessibility) return metaData.accessibility;
-        if (placeholder) return placeholder;
-        return "Image";
-    };
-    var imageTransform = function(props) {
-        var altText = getImageAlt(props);
-        var newImage = _object_spread_props(_object_spread({}, props), {
-            altText: altText
-        });
-        return newImage;
-    };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/choice/transform.ts
-    var choiceTransform = function(asset, options) {
-        var _options_validation, _options_validation1;
-        var items = asset.items, binding = asset.binding, rest = _object_without_properties(asset, [
-            "items",
-            "binding"
-        ]);
-        var assetHasBinding = binding !== void 0;
-        var currentValue = assetHasBinding ? options.data.model.get(binding, {
-            includeInvalid: true
-        }) : void 0;
-        var resetValue = function() {
-            if (assetHasBinding) {
-                return options.data.model.set([
-                    [
-                        binding,
-                        null
-                    ]
-                ]);
-            }
-        };
-        var transformedChoiceItems = (items || []).map(function(item, index) {
-            var _item_id;
-            return _object_spread_props(_object_spread({}, item), {
-                id: (_item_id = item.id) !== null && _item_id !== void 0 ? _item_id : "".concat(asset.id, "-choice-").concat(index),
-                select: function select() {
-                    if (assetHasBinding) {
-                        return options.data.model.set([
-                            [
-                                binding,
-                                item.value
-                            ]
-                        ]);
-                    }
-                },
-                unselect: resetValue
-            });
-        });
-        return _object_spread_props(_object_spread({}, rest), {
-            binding: binding,
-            clearSelection: resetValue,
-            items: transformedChoiceItems,
-            value: currentValue,
-            validation: assetHasBinding ? (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : _options_validation.get(binding, {
-                track: true
-            }) : void 0,
-            dataType: assetHasBinding ? (_options_validation1 = options.validation) === null || _options_validation1 === void 0 ? void 0 : _options_validation1.type(binding) : void 0
-        });
-    };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/external-state/core/src/symbols.ts
+    var ExternalStatePluginSymbol = Symbol.for("@player-ui/ExternalStatePlugin");
     var InterceptionManager = /*#__PURE__*/ function() {
         function InterceptionManager() {
             _class_call_check(this, InterceptionManager);
@@ -2873,85 +2552,6 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return SyncWaterfallHook;
     }(Hook);
-    var AsyncSeriesBailHook = /*#__PURE__*/ function(Hook) {
-        _inherits(AsyncSeriesBailHook, Hook);
-        function AsyncSeriesBailHook() {
-            _class_call_check(this, AsyncSeriesBailHook);
-            return _call_super(this, AsyncSeriesBailHook, arguments);
-        }
-        _create_class(AsyncSeriesBailHook, [
-            {
-                key: "call",
-                value: function call() {
-                    for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
-                        args[_key] = arguments[_key];
-                    }
-                    return _async_to_generator(function() {
-                        var _this_interceptions, ctx, tapIndex, rtn, e;
-                        return _ts_generator(this, function(_state) {
-                            switch(_state.label){
-                                case 0:
-                                    ctx = {};
-                                    (_this_interceptions = this.interceptions).call.apply(_this_interceptions, [
-                                        ctx
-                                    ].concat(_to_consumable_array(args)));
-                                    _state.label = 1;
-                                case 1:
-                                    _state.trys.push([
-                                        1,
-                                        6,
-                                        ,
-                                        7
-                                    ]);
-                                    tapIndex = 0;
-                                    _state.label = 2;
-                                case 2:
-                                    if (!(tapIndex < this.taps.length)) return [
-                                        3,
-                                        5
-                                    ];
-                                    return [
-                                        4,
-                                        callTap(this.taps[tapIndex], args, ctx)
-                                    ];
-                                case 3:
-                                    rtn = _state.sent();
-                                    if (rtn !== void 0) {
-                                        this.interceptions.result(rtn);
-                                        return [
-                                            2,
-                                            rtn
-                                        ];
-                                    }
-                                    _state.label = 4;
-                                case 4:
-                                    tapIndex += 1;
-                                    return [
-                                        3,
-                                        2
-                                    ];
-                                case 5:
-                                    return [
-                                        3,
-                                        7
-                                    ];
-                                case 6:
-                                    e = _state.sent();
-                                    this.interceptions.error(e);
-                                    throw e;
-                                case 7:
-                                    this.interceptions.done();
-                                    return [
-                                        2
-                                    ];
-                            }
-                        });
-                    }).call(this);
-                }
-            }
-        ]);
-        return AsyncSeriesBailHook;
-    }(Hook);
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_ts_nested_error = __toESM(require_nested_error(), 1);
     var import_ts_nested_error2 = __toESM(require_nested_error(), 1);
@@ -3186,7 +2786,7 @@ var ReferenceAssetsPlugin = function() {
                 return toValue(value);
             }
         };
-        var expression2 = function() {
+        var expression = function() {
             if (ch === BACK_TICK) {
                 next(BACK_TICK);
                 var exp = ch;
@@ -3202,7 +2802,7 @@ var ReferenceAssetsPlugin = function() {
                 }
             }
         };
-        var regex2 = function(match) {
+        var regex = function(match) {
             if (!(ch === null || ch === void 0 ? void 0 : ch.match(match))) {
                 return;
             }
@@ -3230,7 +2830,7 @@ var ReferenceAssetsPlugin = function() {
         var simpleSegment = function() {
             var allowBoolValue = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : false;
             var _nestedPath, _ref;
-            return (_ref = (_nestedPath = nestedPath()) !== null && _nestedPath !== void 0 ? _nestedPath : expression2()) !== null && _ref !== void 0 ? _ref : identifier(allowBoolValue);
+            return (_ref = (_nestedPath = nestedPath()) !== null && _nestedPath !== void 0 ? _nestedPath : expression()) !== null && _ref !== void 0 ? _ref : identifier(allowBoolValue);
         };
         var segment = function() {
             var segments = [];
@@ -3250,7 +2850,7 @@ var ReferenceAssetsPlugin = function() {
             if (ch === SINGLE_QUOTE || ch === DOUBLE_QUOTE) {
                 var singleQuote = ch === SINGLE_QUOTE;
                 next(singleQuote ? SINGLE_QUOTE : DOUBLE_QUOTE);
-                var id = regex2(/[^'"]+/);
+                var id = regex(/[^'"]+/);
                 next(singleQuote ? SINGLE_QUOTE : DOUBLE_QUOTE);
                 return id;
             }
@@ -3340,8 +2940,8 @@ var ReferenceAssetsPlugin = function() {
                 return new _BindingInstance(rawBinding);
             };
             _class_call_check(this, _BindingInstance);
-            var split2 = Array.isArray(raw) ? raw : raw.split(".");
-            this.split = split2.map(function(segment) {
+            var split = Array.isArray(raw) ? raw : raw.split(".");
+            this.split = split.map(function(segment) {
                 if (typeof segment === "number") {
                     return segment;
                 }
@@ -4264,22 +3864,22 @@ var ReferenceAssetsPlugin = function() {
                         }
                     }));
                     var _this_hooks_beforeEvaluate_call;
-                    var expression2 = (_this_hooks_beforeEvaluate_call = this.hooks.beforeEvaluate.call(expr, resolvedOpts)) !== null && _this_hooks_beforeEvaluate_call !== void 0 ? _this_hooks_beforeEvaluate_call : expr;
-                    while(isObjectExpression(expression2)){
-                        expression2 = expression2.value;
+                    var expression = (_this_hooks_beforeEvaluate_call = this.hooks.beforeEvaluate.call(expr, resolvedOpts)) !== null && _this_hooks_beforeEvaluate_call !== void 0 ? _this_hooks_beforeEvaluate_call : expr;
+                    while(isObjectExpression(expression)){
+                        expression = expression.value;
                     }
-                    if (typeof expression2 === "number" || typeof expression2 === "boolean" || expression2 === void 0 || expression2 === null) {
-                        return expression2;
+                    if (typeof expression === "number" || typeof expression === "boolean" || expression === void 0 || expression === null) {
+                        return expression;
                     }
-                    if (isExpressionNode(expression2)) {
-                        return this._execAST(expression2, resolvedOpts);
+                    if (isExpressionNode(expression)) {
+                        return this._execAST(expression, resolvedOpts);
                     }
-                    if (Array.isArray(expression2)) {
-                        return expression2.reduce(function(_nothing, exp) {
+                    if (Array.isArray(expression)) {
+                        return expression.reduce(function(_nothing, exp) {
                             return _this.evaluate(exp, options);
                         }, null);
                     }
-                    return this._execString(String(expression2), resolvedOpts);
+                    return this._execString(String(expression), resolvedOpts);
                 }
             },
             {
@@ -5018,19 +4618,6 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return ValidatorRegistry;
     }();
-    var NodeType = /* @__PURE__ */ function(NodeType2) {
-        NodeType2["Asset"] = "asset";
-        NodeType2["View"] = "view";
-        NodeType2["Applicability"] = "applicability";
-        NodeType2["Template"] = "template";
-        NodeType2["Value"] = "value";
-        NodeType2["MultiNode"] = "multi-node";
-        NodeType2["Switch"] = "switch";
-        NodeType2["Async"] = "async";
-        NodeType2["Unknown"] = "unknown";
-        NodeType2["Empty"] = "empty";
-        return NodeType2;
-    }(NodeType || {});
     var EMPTY_NODE = {
         type: "empty"
     };
@@ -7485,134 +7072,6 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return ViewInstance;
     }();
-    var Builder = /*#__PURE__*/ function() {
-        function _Builder() {
-            _class_call_check(this, _Builder);
-        }
-        _create_class(_Builder, null, [
-            {
-                key: "asset",
-                value: /**
-     * Creates an asset node
-     *
-     * @param value - the value to put in the asset node
-     */ function asset(value) {
-                    return {
-                        type: "asset",
-                        value: value
-                    };
-                }
-            },
-            {
-                key: "assetWrapper",
-                value: function assetWrapper(value) {
-                    var valueNode = _Builder.value();
-                    _Builder.addChild(valueNode, "asset", value);
-                    return valueNode;
-                }
-            },
-            {
-                key: "value",
-                value: /**
-     * Creates a value node
-     *
-     * @param v - The object to put in the value node
-     */ function value(v) {
-                    return {
-                        type: "value",
-                        value: v
-                    };
-                }
-            },
-            {
-                key: "multiNode",
-                value: /**
-     * Creates a multiNode and associates the multiNode as the parent
-     * of all the value nodes
-     *
-     * @param values - the value, applicability or async nodes to put in the multinode
-     */ function multiNode() {
-                    for(var _len = arguments.length, values = new Array(_len), _key = 0; _key < _len; _key++){
-                        values[_key] = arguments[_key];
-                    }
-                    var m = {
-                        type: "multi-node",
-                        override: true,
-                        values: values
-                    };
-                    values.forEach(function(v) {
-                        v.parent = m;
-                    });
-                    return m;
-                }
-            },
-            {
-                key: "asyncNode",
-                value: /**
-     * Creates an async node
-     *
-     * @param id - the id of async node. It should be identical for each async node
-     */ function asyncNode(id) {
-                    var flatten2 = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true, onValueReceived = arguments.length > 2 ? arguments[2] : void 0;
-                    return {
-                        id: id,
-                        type: "async",
-                        flatten: flatten2,
-                        onValueReceived: onValueReceived,
-                        value: {
-                            type: "value",
-                            value: {
-                                id: id
-                            }
-                        }
-                    };
-                }
-            },
-            {
-                key: "addChild",
-                value: /**
-     * Adds a child node to a node
-     *
-     * @param node - The node to add a child to
-     * @param path - The path at which to add the child
-     * @param child - The child node
-     */ function addChild(node, path, child) {
-                    child.parent = node;
-                    var newChild = {
-                        path: Array.isArray(path) ? path : [
-                            path
-                        ],
-                        value: child
-                    };
-                    node.children = node.children || [];
-                    node.children.push(newChild);
-                    return node;
-                }
-            },
-            {
-                key: "updateChildrenByPath",
-                value: /**
-     * Updates children of a node of the same path and preserves order
-     *
-     * @param node - The node to update children for
-     * @param pathToMatch - The path to match against child paths
-     * @param mapFn - Function to transform matching children
-     */ function updateChildrenByPath(node, pathToMatch, updateFn) {
-                    if (!node.children) return node;
-                    var updatedChildren = node.children.map(function(child) {
-                        return(// Check if paths match exactly
-                        child.path.join() === pathToMatch.join() ? _object_spread_props(_object_spread({}, child), {
-                            value: updateFn(child)
-                        }) : child);
-                    });
-                    return _object_spread_props(_object_spread({}, node), {
-                        children: updatedChildren
-                    });
-                }
-            }
-        ]);
-        return _Builder;
-    }();
     var templateSymbol = Symbol("template");
     var TemplatePlugin = /*#__PURE__*/ function() {
         function TemplatePlugin(options) {
@@ -7651,12 +7110,12 @@ var ReferenceAssetsPlugin = function() {
                         var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
                         try {
                             for(var _iterator = templateSubstitutions[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                                var _step_value = _step.value, expression2 = _step_value.expression, value = _step_value.value;
+                                var _step_value = _step.value, expression = _step_value.expression, value = _step_value.value;
                                 var flags = "g";
-                                if ((typeof expression2 === "undefined" ? "undefined" : _type_of(expression2)) === "object") {
-                                    flags = "".concat(expression2.flags).concat(expression2.global ? "" : "g");
+                                if ((typeof expression === "undefined" ? "undefined" : _type_of(expression)) === "object") {
+                                    flags = "".concat(expression.flags).concat(expression.global ? "" : "g");
                                 }
-                                templateStr = templateStr.replace(new RegExp(expression2, flags), value);
+                                templateStr = templateStr.replace(new RegExp(expression, flags), value);
                             }
                         } catch (err) {
                             _didIteratorError = true;
@@ -8237,11 +7696,11 @@ var ReferenceAssetsPlugin = function() {
                         };
                         resolver.hooks.beforeResolve.tap("asset-transform", function(node, options) {
                             if (node && (node.type === "asset" || node.type === "view")) {
-                                var transform3 = _this.registry.get(node.value);
-                                if (transform3 === null || transform3 === void 0 ? void 0 : transform3.beforeResolve) {
+                                var transform = _this.registry.get(node.value);
+                                if (transform === null || transform === void 0 ? void 0 : transform.beforeResolve) {
                                     var _options_node;
                                     var store = getStore((_options_node = options.node) !== null && _options_node !== void 0 ? _options_node : node, _this.beforeResolveSymbol);
-                                    return transform3.beforeResolve(node, options, store);
+                                    return transform.beforeResolve(node, options, store);
                                 }
                             }
                             return node;
@@ -8265,10 +7724,10 @@ var ReferenceAssetsPlugin = function() {
                             if (!originalNode) {
                                 return value;
                             }
-                            var transform3 = _this.registry.get(value);
-                            if (transform3 === null || transform3 === void 0 ? void 0 : transform3.resolve) {
+                            var transform = _this.registry.get(value);
+                            if (transform === null || transform === void 0 ? void 0 : transform.resolve) {
                                 var store = getStore(originalNode, _this.resolveSymbol);
-                                return transform3 === null || transform3 === void 0 ? void 0 : transform3.resolve(value, options, store);
+                                return transform === null || transform === void 0 ? void 0 : transform.resolve(value, options, store);
                             }
                             return value;
                         });
@@ -8504,8 +7963,8 @@ var ReferenceAssetsPlugin = function() {
                         set: function(transaction) {
                             return dataController.set(transaction);
                         },
-                        evaluate: function(expression2) {
-                            return expressionEvaluator.evaluate(expression2);
+                        evaluate: function(expression) {
+                            return expressionEvaluator.evaluate(expression);
                         }
                     });
                     this.hooks.bindingParser.call(pathResolver);
@@ -8808,472 +8267,88 @@ var ReferenceAssetsPlugin = function() {
         version: PLAYER_VERSION,
         commit: COMMIT
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+async-node-plugin@0.0.0/node_modules/@player-ui/async-node-plugin/dist/index.mjs
-    var import_queue_microtask3 = __toESM(require_queue_microtask(), 1);
-    var ASYNC_ERROR_TYPE = "ASYNC-PLUGIN";
-    var AsyncNodeError = /*#__PURE__*/ function(Error1) {
-        _inherits(AsyncNodeError, Error1);
-        function AsyncNodeError(node, message, cause) {
-            _class_call_check(this, AsyncNodeError);
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/external-state/core/src/ExternalStateError.ts
+    var ExternalStateError = /*#__PURE__*/ function(Error1) {
+        _inherits(_ExternalStateError, Error1);
+        function _ExternalStateError(message, metadata) {
+            _class_call_check(this, _ExternalStateError);
             var _this;
-            _this = _call_super(this, AsyncNodeError, [
+            _this = _call_super(this, _ExternalStateError, [
                 message
             ]);
-            _this.cause = cause;
-            _this.type = ASYNC_ERROR_TYPE;
+            _this.type = ErrorTypes.EXTERNAL_STATE;
             _this.severity = ErrorSeverity.ERROR;
-            _this.metadata = {
-                node: node
-            };
+            _this.metadata = metadata;
             return _this;
         }
-        return AsyncNodeError;
-    }(_wrap_native_super(Error));
-    var getMatchValue = function(pathA, pathB) {
-        if (pathA.length > pathB.length) {
-            return 0;
-        }
-        var matchCount = 0;
-        for(var i = 0; i < pathA.length; i++){
-            if (pathA[i] === pathB[i]) {
-                matchCount++;
-            } else {
-                return 0;
-            }
-        }
-        return matchCount;
-    };
-    var extractNodeFromPath = function(node, path) {
-        if (path === void 0 || path.length === 0) {
-            return node;
-        }
-        if (!("children" in node && node.children)) {
-            return void 0;
-        }
-        var matchResult = 0;
-        var bestMatch;
-        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-        try {
-            for(var _iterator = node.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                var child = _step.value;
-                var matchValue = getMatchValue(child.path, path);
-                if (matchValue > matchResult) {
-                    matchResult = matchValue;
-                    bestMatch = child;
-                }
-            }
-        } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-        } finally{
-            try {
-                if (!_iteratorNormalCompletion && _iterator.return != null) {
-                    _iterator.return();
-                }
-            } finally{
-                if (_didIteratorError) {
-                    throw _iteratorError;
-                }
-            }
-        }
-        if (!bestMatch) {
-            return void 0;
-        }
-        if (matchResult >= path.length) {
-            return bestMatch.value;
-        }
-        return extractNodeFromPath(bestMatch.value, path.slice(matchResult));
-    };
-    var traverseAndReplace = function(node, replaceFn) {
-        if (node.type === NodeType.MultiNode) {
-            var index = 0;
-            while(index < node.values.length){
-                var child = node.values[index];
-                if (!child) {
-                    index++;
-                    continue;
-                }
-                var result = replaceFn(child);
-                if (result.type === NodeType.MultiNode) {
-                    node.values = _to_consumable_array(node.values.slice(0, index)).concat(_to_consumable_array(result.values), _to_consumable_array(node.values.slice(index + 1)));
-                } else {
-                    node.values[index] = result;
-                    index++;
-                }
-            }
-            return node;
-        }
-        return replaceFn(node);
-    };
-    var unwrapAsset = function(node) {
-        var _node_children;
-        if (node.type !== NodeType.Value) {
-            return node;
-        }
-        var child = (_node_children = node.children) === null || _node_children === void 0 ? void 0 : _node_children.find(function(x) {
-            return x.path.length === 1 && x.path[0] === "asset";
-        });
-        if (!child) {
-            return node;
-        }
-        return child.value;
-    };
-    var requiresAssetWrapper = function(node) {
-        if (node.type === NodeType.Asset) {
-            return true;
-        }
-        if (node.type !== NodeType.Applicability) {
-            return false;
-        }
-        return node.value.type === NodeType.Asset;
-    };
-    var isAsyncPlayerError = function(error) {
-        return error.type === ASYNC_ERROR_TYPE;
-    };
-    var getNodeFromError = function(playerError, context) {
-        if (playerError.type === ErrorTypes.RENDER) {
-            var _playerError_metadata;
-            var assetId = ((_playerError_metadata = playerError.metadata) !== null && _playerError_metadata !== void 0 ? _playerError_metadata : {}).assetId;
-            if (typeof assetId !== "string") {
-                return void 0;
-            }
-            return context.assetIdCache.get(assetId);
-        }
-        if (playerError.type === ErrorTypes.VIEW) {
-            var _playerError_metadata1;
-            var node = ((_playerError_metadata1 = playerError.metadata) !== null && _playerError_metadata1 !== void 0 ? _playerError_metadata1 : {}).node;
-            if ((typeof node === "undefined" ? "undefined" : _type_of(node)) === "object" && node !== null && !Array.isArray(node)) {
-                return node;
-            }
-        }
-        if (isAsyncPlayerError(playerError) && playerError.metadata !== void 0) {
-            var _context_asyncNodeCache_get;
-            return (_context_asyncNodeCache_get = context.asyncNodeCache.get(playerError.metadata.node.id)) === null || _context_asyncNodeCache_get === void 0 ? void 0 : _context_asyncNodeCache_get.asyncNode;
-        }
-        return void 0;
-    };
-    var defaultGetNodeId = function(node) {
-        return "async-".concat(node.value.id);
-    };
-    var createAsyncTransform = function(options) {
-        var transformAssetType = options.transformAssetType, wrapperAssetType = options.wrapperAssetType, getNestedAsset = options.getNestedAsset, _options_getAsyncNodeId = options.getAsyncNodeId, getAsyncNodeId = _options_getAsyncNodeId === void 0 ? defaultGetNodeId : _options_getAsyncNodeId, _options_path = options.path, path = _options_path === void 0 ? [
-            "values"
-        ] : _options_path, tmp = options.flatten, flatten2 = tmp === void 0 ? true : tmp, _options_asyncNodePosition = options.asyncNodePosition, asyncNodePosition = _options_asyncNodePosition === void 0 ? "append" : _options_asyncNodePosition;
-        var replaceNode = function(node) {
-            var unwrapped = unwrapAsset(node);
-            if (unwrapped.type !== NodeType.Asset || unwrapped.value.type !== transformAssetType) {
-                return node;
-            }
-            var transformed = asyncTransform2(unwrapped);
-            var _extractNodeFromPath;
-            return (_extractNodeFromPath = extractNodeFromPath(transformed, path)) !== null && _extractNodeFromPath !== void 0 ? _extractNodeFromPath : node;
-        };
-        var replacer = function(node) {
-            return traverseAndReplace(node, replaceNode);
-        };
-        var asyncTransform2 = function(node) {
-            var _Builder;
-            var id = getAsyncNodeId(node);
-            var asset = getNestedAsset === null || getNestedAsset === void 0 ? void 0 : getNestedAsset(node);
-            var replaceFunction = flatten2 ? replacer : void 0;
-            var asyncNode = Builder.asyncNode(id, flatten2, replaceFunction);
-            var values = [
-                asyncNode
-            ];
-            if (asset) {
-                var otherValues = [];
-                if (requiresAssetWrapper(asset)) {
-                    otherValues.push(Builder.assetWrapper(asset));
-                } else if (asset.type === NodeType.MultiNode) {
-                    var _otherValues;
-                    (_otherValues = otherValues).push.apply(_otherValues, _to_consumable_array(asset.values));
-                } else {
-                    otherValues.push(asset);
-                }
-                if (asyncNodePosition === "append") {
-                    var _values;
-                    (_values = values).unshift.apply(_values, _to_consumable_array(otherValues));
-                } else {
-                    var _values1;
-                    (_values1 = values).push.apply(_values1, _to_consumable_array(otherValues));
-                }
-            }
-            var multiNode = (_Builder = Builder).multiNode.apply(_Builder, _to_consumable_array(values));
-            var wrapperAsset = Builder.asset({
-                id: wrapperAssetType + "-" + id,
-                type: wrapperAssetType
-            });
-            Builder.addChild(wrapperAsset, path, multiNode);
-            return wrapperAsset;
-        };
-        return asyncTransform2;
-    };
-    var AsyncNodePluginSymbol = Symbol.for("AsyncNodePlugin");
-    var _AsyncNodePlugin = /*#__PURE__*/ function() {
-        function _AsyncNodePlugin2(options, asyncHandler) {
-            var _this = this;
-            _class_call_check(this, _AsyncNodePlugin2);
-            this.symbol = _AsyncNodePlugin2.Symbol;
-            this.hooks = {
-                onAsyncNode: new AsyncSeriesBailHook(),
-                onAsyncNodeError: new SyncBailHook()
-            };
-            this.name = "AsyncNode";
-            if (options === null || options === void 0 ? void 0 : options.plugins) {
-                this.plugins = options.plugins;
-                options.plugins.forEach(function(plugin) {
-                    plugin.applyPlugin(_this);
-                });
-            }
-            if (asyncHandler) {
-                this.hooks.onAsyncNode.tap("async", function(node, callback) {
-                    return _async_to_generator(function() {
-                        return _ts_generator(this, function(_state) {
-                            switch(_state.label){
-                                case 0:
-                                    return [
-                                        4,
-                                        asyncHandler(node, callback)
-                                    ];
-                                case 1:
-                                    return [
-                                        2,
-                                        _state.sent()
-                                    ];
-                            }
-                        });
-                    })();
-                });
-            }
-        }
-        _create_class(_AsyncNodePlugin2, [
+        _create_class(_ExternalStateError, null, [
             {
-                key: "getPlayerInstance",
-                value: function getPlayerInstance() {
-                    return this.playerInstance;
+                key: "missingHandler",
+                value: /** No handler was registered for the EXTERNAL state's ref. */ function missingHandler(ref) {
+                    return new _ExternalStateError('No handler found for external state with ref: "'.concat(ref, '". Ensure a handler is registered for this state.'), {
+                        ref: ref,
+                        reason: "missing-handler"
+                    });
                 }
             },
             {
-                key: "apply",
-                value: function apply(player) {
-                    var _this = this;
-                    var _this_plugins;
-                    this.playerInstance = player;
-                    (_this_plugins = this.plugins) === null || _this_plugins === void 0 ? void 0 : _this_plugins.forEach(function(plugin) {
-                        var _plugin_applyPlayer;
-                        (_plugin_applyPlayer = plugin.applyPlayer) === null || _plugin_applyPlayer === void 0 ? void 0 : _plugin_applyPlayer.call(plugin, player);
-                    });
-                    player.hooks.viewController.tap(this.name, function(viewController) {
-                        viewController.hooks.view.tap(_this.name, function(view) {
-                            var _this_plugins;
-                            (_this_plugins = _this.plugins) === null || _this_plugins === void 0 ? void 0 : _this_plugins.forEach(function(plugin) {
-                                plugin.apply(view);
-                            });
-                        });
+                key: "missingTransitionValue",
+                value: /** A handler ran but returned no transition value. */ function missingTransitionValue(ref) {
+                    return new _ExternalStateError('Handler for external state with ref: "'.concat(ref, '" did not return a transition value. Ensure the handler returns the name of a valid transition.'), {
+                        ref: ref,
+                        reason: "missing-transition-value"
                     });
                 }
             }
         ]);
-        return _AsyncNodePlugin2;
-    }();
-    _AsyncNodePlugin.Symbol = AsyncNodePluginSymbol;
-    var AsyncNodePlugin = _AsyncNodePlugin;
-    var AsyncNodePluginPlugin = /*#__PURE__*/ function() {
-        function AsyncNodePluginPlugin() {
-            _class_call_check(this, AsyncNodePluginPlugin);
-            this.name = "AsyncNode";
+        return _ExternalStateError;
+    }(_wrap_native_super(Error));
+    var _ExternalStatePlugin = /*#__PURE__*/ function() {
+        function _ExternalStatePlugin(handlers) {
+            _class_call_check(this, _ExternalStatePlugin);
+            this.name = "ExternalStatePlugin";
+            this.symbol = _ExternalStatePlugin.Symbol;
+            this.handlers = handlers;
         }
-        _create_class(AsyncNodePluginPlugin, [
+        _create_class(_ExternalStatePlugin, [
             {
-                /**
-     * Parses the node from the result and triggers an asynchronous view update if necessary.
-     * @param node The asynchronous node that might be updated.
-     * @param result The result obtained from resolving the async node. This could be any data structure or value.
-     * @param options Options provided for node resolution, including a potential parseNode function to process the result.
-     * @param view The view instance where the node resides. This can be undefined if the view is not currently active.
-     */ key: "parseNodeAndUpdate",
-                value: function parseNodeAndUpdate(node, context, result, parseFunction) {
-                    var parsedNode = parseFunction && result ? parseFunction(result) : void 0;
-                    if (parsedNode && node.onValueReceived) {
-                        parsedNode = node.onValueReceived(parsedNode);
-                    }
-                    this.handleAsyncUpdate(node, context, parsedNode);
-                }
-            },
-            {
-                /**
-     * Updates the node asynchronously based on the result provided.
-     * This method is responsible for handling the update logic of asynchronous nodes.
-     * It checks if the node needs to be updated based on the new result and updates the mapping accordingly.
-     * If an update is necessary, it triggers an asynchronous update on the view.
-     * @param node The asynchronous node that might be updated.
-     * @param newNode The new node to replace the async node.
-     * @param view The view instance where the node resides. This can be undefined if the view is not currently active.
-     */ key: "handleAsyncUpdate",
-                value: function handleAsyncUpdate(node, context, newNode) {
-                    var asyncNodeInfo = context.asyncNodeCache, viewController = context.viewController;
-                    var entry = asyncNodeInfo.get(node.id);
-                    if (!entry) {
-                        throw new Error("Failed to update async content. Cache entry not found");
-                    }
-                    if (entry.resolvedContent !== newNode) {
-                        entry.resolvedContent = newNode ? newNode : entry.asyncNode;
-                        viewController.updateViewAST(entry.updateNodes);
-                    }
-                }
-            },
-            {
-                key: "hasValidMapping",
-                value: function hasValidMapping(cacheEntry) {
-                    return cacheEntry.resolvedContent !== void 0 && cacheEntry.resolvedContent !== cacheEntry.asyncNode;
-                }
-            },
-            {
-                key: "getOrCreateAsyncNodeCacheEntry",
-                value: function getOrCreateAsyncNodeCacheEntry(node, context) {
-                    var asyncNodeInfo = context.asyncNodeCache;
-                    var entry = asyncNodeInfo.get(node.id);
-                    if (!entry) {
-                        entry = {
-                            asyncNode: node,
-                            updateNodes: /* @__PURE__ */ new Set()
-                        };
-                        asyncNodeInfo.set(node.id, entry);
-                    }
-                    return entry;
-                }
-            },
-            {
-                /**
-     * Handles the asynchronous API integration for resolving nodes.
-     * This method sets up a hook on the resolver's `beforeResolve` event to process async nodes.
-     * @param resolver The resolver instance to attach the hook to.
-     * @param view
-     */ key: "applyResolver",
-                value: function applyResolver(resolver, context) {
+                key: "apply",
+                value: function apply(player) {
                     var _this = this;
-                    var assetIdCache = context.assetIdCache;
-                    resolver.hooks.afterNodeUpdate.tap(this.name, function(original, _, update) {
-                        if (update.node.type !== NodeType.Asset && update.node.type !== NodeType.View) {
-                            return;
-                        }
-                        assetIdCache.set(update.value.id, original);
+                    var isFirstInstance = this.createRegistry(player);
+                    this.registerHandlers(player);
+                    if (!isFirstInstance) {
+                        return;
+                    }
+                    player.hooks.errorController.tap(this.name, function(errorController) {
+                        _this.errorController = errorController;
                     });
-                    resolver.hooks.beforeResolve.tap(this.name, function(node, options) {
-                        if (!_this.isAsync(node)) {
-                            return node === null ? node : _this.resolveAsyncChildren(node, context);
-                        }
-                        var entry = _this.getOrCreateAsyncNodeCacheEntry(node, context);
-                        if (options.node) {
-                            entry.updateNodes = /* @__PURE__ */ new Set([
-                                options.node
-                            ]);
-                            context.generatedByMap.set(options.node, node.id);
-                        }
-                        if (entry.resolvedContent !== void 0) {
-                            return _this.resolveAsyncChildren(entry.resolvedContent, context);
-                        }
-                        if (context.inProgressNodes.has(node.id)) {
-                            return node;
-                        }
-                        context.inProgressNodes.add(node.id);
-                        (0, import_queue_microtask3.default)(function() {
-                            _this.runAsyncNode(node, context, options).finally();
+                    player.hooks.flowController.tap(this.name, function(flowController) {
+                        flowController.hooks.flow.tap(_this.name, function(flow) {
+                            flow.hooks.afterTransition.tap(_this.name, function(flowInstance) {
+                                _this.handleAfterTransition(player, flowInstance);
+                            });
                         });
-                        return node;
                     });
                 }
             },
             {
-                /**
-     * Replaces child async nodes with their resolved content and flattens when necessary. Resolving the children directly helps manage the `parent` reference without needing as much work within the resolver itself.
-     * Handles async node chains as well to make sure all applicable nodes can get flattened.
-     * @param node - The node whose children need to be resolved.
-     * @param context - the async plugin context needed to reach into the cache
-     * @returns The same node but with async node children mapped to their resolved AST.
-     */ key: "resolveAsyncChildren",
-                value: function resolveAsyncChildren(node, context) {
-                    var _this = this;
-                    if (node.type === NodeType.MultiNode) {
-                        var _this1, _loop = function() {
-                            var childNode = node.values[index];
-                            if ((childNode === null || childNode === void 0 ? void 0 : childNode.type) !== NodeType.Async) {
-                                index++;
-                                return "continue";
-                            }
-                            var entry = _this1.getOrCreateAsyncNodeCacheEntry(childNode, context);
-                            if (!_this1.hasValidMapping(entry)) {
-                                index++;
-                                return "continue";
-                            }
-                            var mappedNode = entry.resolvedContent;
-                            var nodeSet = /* @__PURE__ */ new Set();
-                            if (mappedNode.type === NodeType.MultiNode && childNode.flatten) {
-                                mappedNode.values.forEach(function(v) {
-                                    v.parent = node;
-                                    nodeSet.add(v);
-                                    context.originalParentMap.set(v, childNode);
-                                });
-                                node.values = _to_consumable_array(node.values.slice(0, index)).concat(_to_consumable_array(mappedNode.values), _to_consumable_array(node.values.slice(index + 1)));
-                            } else {
-                                node.values[index] = mappedNode;
-                                mappedNode.parent = node;
-                                nodeSet.add(mappedNode);
-                            }
-                            entry.updateNodes = nodeSet;
-                            var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                            try {
-                                for(var _iterator = nodeSet[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                                    var n = _step.value;
-                                    context.generatedByMap.set(n, childNode.id);
-                                }
-                            } catch (err) {
-                                _didIteratorError = true;
-                                _iteratorError = err;
-                            } finally{
-                                try {
-                                    if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                        _iterator.return();
-                                    }
-                                } finally{
-                                    if (_didIteratorError) {
-                                        throw _iteratorError;
-                                    }
-                                }
-                            }
-                        };
-                        var index = 0;
-                        while(index < node.values.length)_this1 = this, _loop();
-                    } else if ("children" in node) {
-                        var _node_children;
-                        (_node_children = node.children) === null || _node_children === void 0 ? void 0 : _node_children.forEach(function(c) {
-                            while(c.value.type === NodeType.Async){
-                                var entry = _this.getOrCreateAsyncNodeCacheEntry(c.value, context);
-                                if (!_this.hasValidMapping(entry)) {
-                                    break;
-                                }
-                                var mappedNode = entry.resolvedContent;
-                                entry.updateNodes = /* @__PURE__ */ new Set([
-                                    mappedNode
-                                ]);
-                                context.generatedByMap.set(mappedNode, c.value.id);
-                                c.value = mappedNode;
-                                c.value.parent = node;
-                            }
-                        });
-                    }
-                    return node;
-                }
-            },
-            {
-                key: "runAsyncNode",
-                value: function runAsyncNode(node, context, options) {
+                key: "handleAfterTransition",
+                value: /**
+     * Resolve an EXTERNAL state transition.
+     */ function handleAfterTransition(player, flowInstance) {
                     return _async_to_generator(function() {
-                        var _this, _this_basePlugin, result, e, _this_basePlugin_getPlayerInstance, _this_basePlugin1, cause, playerState, _options_logger, error;
+                        var toState, currentState, _this_registry, _latestState_controllers_flow_current_currentState, _latestState_controllers_flow_current, handler, transitionValue, latestState, error;
                         return _ts_generator(this, function(_state) {
                             switch(_state.label){
                                 case 0:
-                                    _this = this;
+                                    toState = flowInstance.currentState;
+                                    currentState = player.getState();
+                                    if (!toState || !toState.value || !isExternal(toState.value) || !isInProgress(currentState)) {
+                                        return [
+                                            2
+                                        ];
+                                    }
                                     _state.label = 1;
                                 case 1:
                                     _state.trys.push([
@@ -9282,33 +8357,40 @@ var ReferenceAssetsPlugin = function() {
                                         ,
                                         4
                                     ]);
+                                    handler = (_this_registry = this.registry) === null || _this_registry === void 0 ? void 0 : _this_registry.get(toState.value);
+                                    if (!handler) {
+                                        this.reportError(player, ExternalStateError.missingHandler(toState.value.ref));
+                                        return [
+                                            2
+                                        ];
+                                    }
                                     return [
                                         4,
-                                        (_this_basePlugin = this.basePlugin) === null || _this_basePlugin === void 0 ? void 0 : _this_basePlugin.hooks.onAsyncNode.call(node, function(result2) {
-                                            _this.parseNodeAndUpdate(node, context, result2, options.parseNode);
-                                        })
+                                        handler(toState.value, currentState.controllers)
                                     ];
                                 case 2:
-                                    result = _state.sent();
-                                    context.inProgressNodes.delete(node.id);
-                                    this.parseNodeAndUpdate(node, context, result, options.parseNode);
+                                    transitionValue = _state.sent();
+                                    if (!transitionValue) {
+                                        this.reportError(player, ExternalStateError.missingTransitionValue(toState.value.ref));
+                                        return [
+                                            2
+                                        ];
+                                    }
+                                    latestState = player.getState();
+                                    if (isInProgress(latestState) && ((_latestState_controllers_flow_current = latestState.controllers.flow.current) === null || _latestState_controllers_flow_current === void 0 ? void 0 : (_latestState_controllers_flow_current_currentState = _latestState_controllers_flow_current.currentState) === null || _latestState_controllers_flow_current_currentState === void 0 ? void 0 : _latestState_controllers_flow_current_currentState.name) === toState.name) {
+                                        latestState.controllers.flow.transition(transitionValue);
+                                    } else {
+                                        player.logger.warn("External state resolved with [".concat(transitionValue, "], but Player already navigated away from [").concat(toState.name, "]"));
+                                    }
                                     return [
                                         3,
                                         4
                                     ];
                                 case 3:
-                                    e = _state.sent();
-                                    cause = _instanceof(e, Error) ? e : new Error(String(e));
-                                    playerState = (_this_basePlugin1 = this.basePlugin) === null || _this_basePlugin1 === void 0 ? void 0 : (_this_basePlugin_getPlayerInstance = _this_basePlugin1.getPlayerInstance()) === null || _this_basePlugin_getPlayerInstance === void 0 ? void 0 : _this_basePlugin_getPlayerInstance.getState();
-                                    if ((playerState === null || playerState === void 0 ? void 0 : playerState.status) !== "in-progress") {
-                                        ;
-                                        (_options_logger = options.logger) === null || _options_logger === void 0 ? void 0 : _options_logger.warn("[AsyncNodePlugin]: An error occured during async node resolution, but the player instance is no londer running. Exception: ", cause);
-                                        return [
-                                            2
-                                        ];
+                                    error = _state.sent();
+                                    if (_instanceof(error, Error)) {
+                                        currentState.fail(error);
                                     }
-                                    error = new AsyncNodeError(node, "An error occured during async node resolution. See cause for details.", cause);
-                                    playerState.controllers.error.captureError(error);
                                     return [
                                         3,
                                         4
@@ -9323,1577 +8405,82 @@ var ReferenceAssetsPlugin = function() {
                 }
             },
             {
-                key: "isAsync",
-                value: function isAsync(node) {
-                    return (node === null || node === void 0 ? void 0 : node.type) === NodeType.Async;
-                }
-            },
-            {
-                key: "isDeterminedAsync",
-                value: function isDeterminedAsync(obj) {
-                    return (typeof obj === "undefined" ? "undefined" : _type_of(obj)) === "object" && obj !== null && Object.prototype.hasOwnProperty.call(obj, "async");
-                }
-            },
-            {
-                key: "applyParser",
-                value: function applyParser(parser) {
-                    var _this = this;
-                    parser.hooks.parseNode.tap(this.name, function(obj, nodeType, options, childOptions) {
-                        if (_this.isDeterminedAsync(obj)) {
-                            var async = obj.async, flatten2 = obj.flatten, rest = _object_without_properties(obj, [
-                                "async",
-                                "flatten"
-                            ]);
-                            var parsedAsync = parser.parseObject(rest, nodeType, options);
-                            var parsedNodeId = getNodeID(parsedAsync);
-                            if (parsedAsync === null || !parsedNodeId) {
-                                return childOptions ? [] : null;
-                            }
-                            var asyncAST = parser.createASTNode({
-                                id: parsedNodeId,
-                                type: NodeType.Async,
-                                value: parsedAsync,
-                                flatten: flatten2
-                            }, obj);
-                            if (childOptions) {
-                                return asyncAST ? [
-                                    {
-                                        path: _to_consumable_array(childOptions.path).concat([
-                                            childOptions.key
-                                        ]),
-                                        value: asyncAST
-                                    }
-                                ] : [];
-                            }
-                            return asyncAST;
-                        }
-                    });
-                }
-            },
-            {
-                key: "apply",
-                value: function apply(view) {
-                    view.hooks.parser.tap("async", this.applyParser.bind(this));
-                }
-            },
-            {
-                key: "applyPlayer",
-                value: function applyPlayer(player) {
-                    var _this = this;
-                    var currentContext = void 0;
-                    var parser = void 0;
-                    player.hooks.errorController.tap("async", function(errorController) {
-                        errorController.hooks.onError.tap("async", function(playerError) {
-                            if (currentContext === void 0) {
-                                return void 0;
-                            }
-                            var tryHandleError = function(asyncNode) {
-                                var _this_basePlugin, _player_logger;
-                                if (_this.basePlugin === void 0) {
-                                    player.logger.warn("[AsyncNodePlugin]: No plugin detected. Error handling will fail");
-                                }
-                                var result = void 0;
-                                result = (_this_basePlugin = _this.basePlugin) === null || _this_basePlugin === void 0 ? void 0 : _this_basePlugin.hooks.onAsyncNodeError.call(playerError, asyncNode);
-                                if (result === void 0) {
-                                    return false;
-                                }
-                                (_player_logger = player.logger) === null || _player_logger === void 0 ? void 0 : _player_logger.warn("[AsyncNodePlugin]: Async node handling failed and resolved with a fallback. Cause:", playerError.message);
-                                currentContext.inProgressNodes.delete(asyncNode.id);
-                                _this.parseNodeAndUpdate(asyncNode, currentContext, result, parser === null || parser === void 0 ? void 0 : parser.parseObject.bind(parser));
-                                return true;
-                            };
-                            var getNextNode = function(node2) {
-                                var _currentContext_asyncNodeCache_get;
-                                var _currentContext_originalParentMap_get;
-                                var parent = (_currentContext_originalParentMap_get = currentContext === null || currentContext === void 0 ? void 0 : currentContext.originalParentMap.get(node2)) !== null && _currentContext_originalParentMap_get !== void 0 ? _currentContext_originalParentMap_get : node2.parent;
-                                if (!parent) {
-                                    return void 0;
-                                }
-                                return _this.isAsync(parent) ? currentContext === null || currentContext === void 0 ? void 0 : (_currentContext_asyncNodeCache_get = currentContext.asyncNodeCache.get(parent.id)) === null || _currentContext_asyncNodeCache_get === void 0 ? void 0 : _currentContext_asyncNodeCache_get.asyncNode : parent;
-                            };
-                            var node = getNodeFromError(playerError, currentContext);
-                            if ((node === null || node === void 0 ? void 0 : node.type) === NodeType.Async && tryHandleError(node)) {
-                                return true;
-                            }
-                            while(node !== void 0){
-                                var generatedBy = currentContext.generatedByMap.get(node);
-                                if (generatedBy) {
-                                    var entry = currentContext.asyncNodeCache.get(generatedBy);
-                                    if (!entry) {
-                                        node = getNextNode(node);
-                                        continue;
-                                    }
-                                    var asyncNode = entry.asyncNode;
-                                    if (tryHandleError(asyncNode)) {
-                                        return true;
-                                    }
-                                }
-                                node = getNextNode(node);
-                            }
-                            return void 0;
-                        });
-                    });
-                    player.hooks.viewController.tap("async", function(viewController) {
-                        viewController.hooks.view.tap("async", function(view) {
-                            view.hooks.parser.tap(_this.name, function(p) {
-                                parser = p;
-                            });
-                            var context = {
-                                inProgressNodes: /* @__PURE__ */ new Set(),
-                                view: view,
-                                viewController: viewController,
-                                generatedByMap: /* @__PURE__ */ new Map(),
-                                assetIdCache: /* @__PURE__ */ new Map(),
-                                asyncNodeCache: /* @__PURE__ */ new Map(),
-                                originalParentMap: /* @__PURE__ */ new Map()
-                            };
-                            currentContext = context;
-                            view.hooks.resolver.tap("async", function(resolver) {
-                                _this.applyResolver(resolver, context);
-                            });
-                        });
-                    });
-                }
-            },
-            {
-                key: "applyPlugin",
-                value: function applyPlugin(asyncNodePlugin) {
-                    this.basePlugin = asyncNodePlugin;
-                }
-            }
-        ]);
-        return AsyncNodePluginPlugin;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/chat-message/transform.ts
-    var transform2 = createAsyncTransform({
-        transformAssetType: "chat-message",
-        wrapperAssetType: "collection",
-        getNestedAsset: function(node) {
-            var _node_children_, _node_children;
-            return (_node_children = node.children) === null || _node_children === void 0 ? void 0 : (_node_children_ = _node_children[0]) === null || _node_children_ === void 0 ? void 0 : _node_children_.value;
-        }
-    });
-    var chatMessageTransform = compose(composeBefore(transform2));
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+meta-plugin@0.0.0/node_modules/@player-ui/meta-plugin/dist/index.mjs
-    var MetaPlugin = /*#__PURE__*/ function() {
-        function MetaPlugin() {
-            var plugins = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : [];
-            _class_call_check(this, MetaPlugin);
-            this.name = "meta-plugin";
-            this.plugins = plugins;
-        }
-        _create_class(MetaPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    this.plugins.forEach(function(plugin) {
-                        return player.registerPlugin(plugin);
-                    });
-                }
-            }
-        ]);
-        return MetaPlugin;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+expression-plugin@0.0.0/node_modules/@player-ui/expression-plugin/dist/index.mjs
-    var ExpressionPlugin = /*#__PURE__*/ function() {
-        function ExpressionPlugin(expressionMap) {
-            _class_call_check(this, ExpressionPlugin);
-            this.name = "ExpressionPlugin";
-            this.expressions = expressionMap;
-        }
-        _create_class(ExpressionPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    var _this = this;
-                    player.hooks.expressionEvaluator.tap(this.name, function(expEvaluator) {
-                        _this.expressions.forEach(function(handler, name) {
-                            expEvaluator.addExpressionFunction(name, handler);
-                        });
-                    });
-                }
-            }
-        ]);
-        return ExpressionPlugin;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugins/chat-ui-demo-plugin.ts
-    var isInChatDemo = function(node) {
-        var _node_parent_parent, _node_parent, _node_parent_parent1, _node_parent1;
-        if (((_node_parent = node.parent) === null || _node_parent === void 0 ? void 0 : (_node_parent_parent = _node_parent.parent) === null || _node_parent_parent === void 0 ? void 0 : _node_parent_parent.type) === NodeType.View && node.parent.parent.value.id === "chat-view") {
-            return true;
-        }
-        return ((_node_parent1 = node.parent) === null || _node_parent1 === void 0 ? void 0 : (_node_parent_parent1 = _node_parent1.parent) === null || _node_parent_parent1 === void 0 ? void 0 : _node_parent_parent1.type) === NodeType.Asset && node.parent.parent.value.id.startsWith("collection-async-chat-demo");
-    };
-    var createContentFromMessage = function(message, id) {
-        return {
-            asset: {
-                type: "chat-message",
-                id: id,
-                value: {
-                    asset: {
-                        type: "text",
-                        id: "".concat(id, "-value"),
-                        value: message
-                    }
-                }
-            }
-        };
-    };
-    var createBrokenRenderContent = function(id) {
-        return {
-            asset: {
-                id: id,
-                type: "input",
-                binding: "binding",
-                label: 100
-            }
-        };
-    };
-    var createBrokenTransformContent = function(id) {
-        return {
-            asset: {
-                id: id,
-                type: "input",
-                binding: {
-                    prop: "value"
-                }
-            }
-        };
-    };
-    var ChatUiDemoPlugin = /*#__PURE__*/ function() {
-        function ChatUiDemoPlugin() {
-            _class_call_check(this, ChatUiDemoPlugin);
-            this.name = "chat-ui-demo-plugin";
-        }
-        _create_class(ChatUiDemoPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    var asyncNodePlugin = player.findPlugin(AsyncNodePlugin.Symbol);
-                    if (!asyncNodePlugin) {
-                        player.logger.warn("Failed to apply '".concat(this.name, "'. Reason: Could not find AsyncNodePlugin."));
+                /**
+     * Report an ExternalStateError via the errorController.
+     */ key: "reportError",
+                value: function reportError(player, error) {
+                    if (!this.errorController) {
+                        player.logger.error("".concat(error.message, " (errorController was unexpectedly undefined; it should always be set by the time this code runs)"));
                         return;
                     }
-                    var deferredPromises = {};
-                    var allPromiseKeys = [];
-                    var counter = 0;
-                    var sendMessage = function(context, nodeId, getContent) {
-                        if (nodeId && !(nodeId in deferredPromises)) {
-                            var _context_logger;
-                            (_context_logger = context.logger) === null || _context_logger === void 0 ? void 0 : _context_logger.warn("'send' expression called with unrecognized id '".concat(nodeId, "'"));
-                            return;
+                    this.errorController.captureError(error);
+                }
+            },
+            {
+                /**
+     * Create or share the registry for this plugin instance.
+     *
+     * Uses the Player's plugin registry to find if another instance of ExternalStatePlugin
+     * has already been registered. If found, this instance will share that plugin's registry.
+     * Otherwise, this instance creates a new registry.
+     */ key: "createRegistry",
+                value: function createRegistry(player) {
+                    var existing = player.findPlugin(ExternalStatePluginSymbol);
+                    if (existing && existing !== this) {
+                        this.registry = existing.registry;
+                        return false;
+                    }
+                    this.registry = new Registry(void 0, player.logger);
+                    return true;
+                }
+            },
+            {
+                /**
+     * Register this plugin's handlers to the shared registry.
+     *
+     * If a handler with the same specificity already exists, it will be replaced
+     * and a debug log will be emitted (accessible via player.logger.debug).
+     */ key: "registerHandlers",
+                value: function registerHandlers(player) {
+                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                    try {
+                        for(var _iterator = this.handlers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                            var handler = _step.value;
+                            var _handler_match, _this_registry;
+                            if ((_handler_match = handler.match) === null || _handler_match === void 0 ? void 0 : _handler_match.ref) {
+                                var _handler_match1;
+                                player.logger.warn("An ExternalStateHandler contains a superfluous 'match.ref' property. 'match.ref' will be ignored. 'ref' will be used instead. Handler: ".concat(JSON.stringify({
+                                    ref: handler.ref,
+                                    match: handler.match
+                                })));
+                                (_handler_match1 = handler.match) === null || _handler_match1 === void 0 ? true : delete _handler_match1["ref"];
+                                continue;
+                            }
+                            (_this_registry = this.registry) === null || _this_registry === void 0 ? void 0 : _this_registry.set(_object_spread({
+                                ref: handler.ref
+                            }, handler.match), handler.handlerFunction);
                         }
-                        if (!nodeId && allPromiseKeys.length === 0) {
-                            var _context_logger1;
-                            (_context_logger1 = context.logger) === null || _context_logger1 === void 0 ? void 0 : _context_logger1.warn("'send' called with no waiting async nodes");
-                            return;
-                        }
-                        var keys = nodeId ? [
-                            nodeId
-                        ] : allPromiseKeys;
-                        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally{
                         try {
-                            for(var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                                var id = _step.value;
-                                var resolveFunction = deferredPromises[id];
-                                resolveFunction === null || resolveFunction === void 0 ? void 0 : resolveFunction(getContent === null || getContent === void 0 ? void 0 : getContent());
-                                delete deferredPromises[id];
+                            if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                _iterator.return();
                             }
-                        } catch (err) {
-                            _didIteratorError = true;
-                            _iteratorError = err;
                         } finally{
-                            try {
-                                if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                    _iterator.return();
-                                }
-                            } finally{
-                                if (_didIteratorError) {
-                                    throw _iteratorError;
-                                }
+                            if (_didIteratorError) {
+                                throw _iteratorError;
                             }
                         }
-                        if (nodeId) {
-                            var index = allPromiseKeys.indexOf(nodeId);
-                            allPromiseKeys.splice(index, 1);
-                        } else {
-                            allPromiseKeys = [];
-                        }
-                    };
-                    asyncNodePlugin.hooks.onAsyncNode.tap(this.name, function(node) {
-                        if (!isInChatDemo(node)) {
-                            return Promise.resolve(void 0);
-                        }
-                        return new Promise(function(res) {
-                            deferredPromises[node.id] = res;
-                            allPromiseKeys.push(node.id);
-                        });
-                    });
-                    var sendRealMessage = function(context, message, nodeId) {
-                        return sendMessage(context, nodeId, function() {
-                            return createContentFromMessage(message, "chat-demo-".concat(counter++));
-                        });
-                    };
-                    var sendBrokenMessage = function(context, _, nodeId) {
-                        return sendMessage(context, nodeId, function() {
-                            return createBrokenRenderContent("chat-demo-".concat(counter++));
-                        });
-                    };
-                    var sendBrokenTransformMessage = function(context, _, nodeId) {
-                        return sendMessage(context, nodeId, function() {
-                            return createBrokenTransformContent("chat-demo-".concat(counter++));
-                        });
-                    };
-                    player.hooks.view.tap(this.name, function(_) {
-                        deferredPromises = {};
-                        allPromiseKeys = [];
-                        counter = 0;
-                    });
-                    var expressionPlugin = new ExpressionPlugin(/* @__PURE__ */ new Map([
-                        [
-                            "send",
-                            sendRealMessage
-                        ],
-                        [
-                            "sendBroken",
-                            sendBrokenMessage
-                        ],
-                        [
-                            "sendBrokenTransform",
-                            sendBrokenTransformMessage
-                        ]
-                    ]));
-                    player.registerPlugin(expressionPlugin);
-                }
-            }
-        ]);
-        return ChatUiDemoPlugin;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugins/reference-assets-transform-plugin.ts
-    var ReferenceAssetsTransformPlugin = /*#__PURE__*/ function() {
-        function ReferenceAssetsTransformPlugin() {
-            _class_call_check(this, ReferenceAssetsTransformPlugin);
-            this.name = "reference-assets-transforms";
-        }
-        _create_class(ReferenceAssetsTransformPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    player.registerPlugin(new AssetTransformPlugin([
-                        [
-                            {
-                                type: "action"
-                            },
-                            actionTransform
-                        ],
-                        [
-                            {
-                                type: "input"
-                            },
-                            inputTransform
-                        ],
-                        [
-                            {
-                                type: "image"
-                            },
-                            imageTransform
-                        ],
-                        [
-                            {
-                                type: "info"
-                            },
-                            infoTransform
-                        ],
-                        [
-                            {
-                                type: "choice"
-                            },
-                            choiceTransform
-                        ],
-                        [
-                            {
-                                type: "chat-message"
-                            },
-                            chatMessageTransform
-                        ]
-                    ]));
-                }
-            }
-        ]);
-        return ReferenceAssetsTransformPlugin;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugins/error-recovery-plugin.ts
-    var ErrorRecoveryPlugin = /*#__PURE__*/ function() {
-        function ErrorRecoveryPlugin() {
-            _class_call_check(this, ErrorRecoveryPlugin);
-            this.name = "ErrorRecoveryPlugin";
-        }
-        _create_class(ErrorRecoveryPlugin, [
-            {
-                /** */ key: "apply",
-                value: function apply(player) {
-                    var _this = this;
-                    player.applyTo(AsyncNodePlugin.Symbol, function(plugin) {
-                        plugin.hooks.onAsyncNodeError.tap(_this.name, function(err, node) {
-                            var _playerState_controllers_view_currentView;
-                            var playerState = player.getState();
-                            if (playerState.status !== "in-progress") {
-                                return;
-                            }
-                            var viewId = (_playerState_controllers_view_currentView = playerState.controllers.view.currentView) === null || _playerState_controllers_view_currentView === void 0 ? void 0 : _playerState_controllers_view_currentView.initialView.id;
-                            if (viewId !== "chat-view") {
-                                return;
-                            }
-                            return {
-                                asset: {
-                                    type: "chat-message",
-                                    id: "".concat(node.id, "-recovery"),
-                                    value: {
-                                        asset: {
-                                            id: "".concat(node.id, "-recovery-text"),
-                                            type: "text",
-                                            value: "Something went wrong, please try again."
-                                        }
-                                    }
-                                }
-                            };
-                        });
-                    });
-                }
-            }
-        ]);
-        return ErrorRecoveryPlugin;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+types-provider-plugin@0.0.0/node_modules/@player-ui/types-provider-plugin/dist/index.mjs
-    var TypesProviderPlugin = /*#__PURE__*/ function() {
-        function TypesProviderPlugin(config) {
-            _class_call_check(this, TypesProviderPlugin);
-            this.name = "TypesProviderPlugin";
-            this.config = config;
-        }
-        _create_class(TypesProviderPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    var _this = this;
-                    player.hooks.schema.tap(this.name, function(schema) {
-                        if (_this.config.types) {
-                            schema.addDataTypes(_this.config.types);
-                        }
-                        if (_this.config.formats) {
-                            schema.addFormatters(_this.config.formats);
-                        }
-                    });
-                    if (this.config.validators) {
-                        player.hooks.validationController.tap(this.name, function(validationController) {
-                            validationController.hooks.createValidatorRegistry.tap(_this.name, function(validationRegistry) {
-                                var _this_config_validators;
-                                (_this_config_validators = _this.config.validators) === null || _this_config_validators === void 0 ? void 0 : _this_config_validators.forEach(function(param) {
-                                    var _param = _sliced_to_array(param, 2), name = _param[0], handler = _param[1];
-                                    validationRegistry.register(name, handler);
-                                });
-                            });
-                        });
                     }
                 }
             }
         ]);
-        return TypesProviderPlugin;
+        return _ExternalStatePlugin;
     }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+common-types-plugin@0.0.0/node_modules/@player-ui/common-types-plugin/dist/index.mjs
-    var __defProp3 = Object.defineProperty;
-    var __export3 = function(target, all) {
-        for(var name in all)__defProp3(target, name, {
-            get: all[name],
-            enumerable: true
-        });
-    };
-    var validators_exports = {};
-    __export3(validators_exports, {
-        collection: function() {
-            return collection;
-        },
-        email: function() {
-            return email;
-        },
-        expression: function() {
-            return expression;
-        },
-        integer: function() {
-            return integer;
-        },
-        length: function() {
-            return length;
-        },
-        max: function() {
-            return max;
-        },
-        min: function() {
-            return min;
-        },
-        oneOf: function() {
-            return oneOf;
-        },
-        phone: function() {
-            return phone;
-        },
-        readonly: function() {
-            return readonly;
-        },
-        regex: function() {
-            return regex;
-        },
-        required: function() {
-            return required;
-        },
-        string: function() {
-            return string;
-        },
-        zip: function() {
-            return zip;
-        }
-    });
-    var EMAIL_REGEX = // eslint-disable-next-line no-control-regex
-    /^((([a-z]|\d|[!#$%&'*+\-/=?^_`{|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#$%&'*+-/=?^_`{|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i;
-    var PHONE_REGEX = /^\+?[1]?[- ]?\(?\d{3}[)\- ]?\s?\d{3}[ -]?\d{4}$/;
-    var ZIP_REGEX = /^\d{5}(-\d{4})?$/;
-    var string = skipNullish(function(context, value) {
-        if (typeof value !== "string") {
-            var message = context.constants.getConstants("validation.string", "constants", "Value must be a string");
-            return {
-                message: message,
-                parameters: {
-                    type: typeof value === "undefined" ? "undefined" : _type_of(value)
-                }
-            };
-        }
-    });
-    var readonly = function(context) {
-        var message = context.constants.getConstants("validation.readonly", "constants", "Value cannot be modified");
-        return {
-            message: message
-        };
-    };
-    var collection = skipNullish(function(context, value) {
-        if (!Array.isArray(value)) {
-            var message = context.constants.getConstants("validation.collection", "constants", "Cannot set collection to non-array");
-            return {
-                message: message
-            };
-        }
-    });
-    var integer = skipNullish(function(context, value) {
-        if (value && (typeof value !== "number" || Math.floor(value) !== value || Number(value) > Number.MAX_SAFE_INTEGER || Number(value) < Number.MIN_SAFE_INTEGER)) {
-            var message = context.constants.getConstants("validation.integer", "constants", "Value must be an integer");
-            return {
-                message: message,
-                parameters: {
-                    type: typeof value === "undefined" ? "undefined" : _type_of(value),
-                    flooredValue: Math.floor(value)
-                }
-            };
-        }
-    });
-    var oneOf = skipNullish(function(context, value, options) {
-        var _options_options;
-        if ((options === null || options === void 0 ? void 0 : options.options) === void 0 || ((_options_options = options.options) === null || _options_options === void 0 ? void 0 : _options_options.includes(value))) {
-            return;
-        }
-        var message = context.constants.getConstants("validation.oneOf", "constants", "Invalid entry");
-        return {
-            message: message
-        };
-    });
-    var expression = function(context, value, options) {
-        if ((options === null || options === void 0 ? void 0 : options.exp) === void 0) {
-            context.logger.warn("No expression defined for validation");
-            return;
-        }
-        var result = context.evaluate(options.exp);
-        if (!result) {
-            var message = context.constants.getConstants("validation.expression", "constants", "Expression evaluation failed");
-            return {
-                message: message
-            };
-        }
-    };
-    var required = function(context, value, options) {
-        if ((options === null || options === void 0 ? void 0 : options.if) && !context.evaluate(options.if) || (options === null || options === void 0 ? void 0 : options.ifNot) && context.evaluate(options.ifNot)) {
-            return;
-        }
-        if (value === void 0 || value === null || value === "") {
-            var message = context.constants.getConstants("validation.required", "constants", "A value is required");
-            return {
-                message: message,
-                severity: "error"
-            };
-        }
-    };
-    var regex = skipNullish(function(context, value, options) {
-        if (value === void 0 || value === null || value === "" || typeof (options === null || options === void 0 ? void 0 : options.regex) !== "string") {
-            return;
-        }
-        var resolvedRegex = resolveDataRefs(options.regex, context);
-        var patternMatch = resolvedRegex.match(/^\/(.*)\/(\w)*$/);
-        var regexp = patternMatch ? new RegExp(patternMatch[1], patternMatch[2]) : new RegExp(resolvedRegex);
-        if (!regexp.test(value)) {
-            var message = context.constants.getConstants("validation.regex", "constants", "Invalid entry");
-            return {
-                message: message
-            };
-        }
-    });
-    var length = skipNullish(function(context, value, options) {
-        if ((typeof options === "undefined" ? "undefined" : _type_of(options)) !== "object") {
-            context.logger.warn("Missing comparison in length validation");
-            return;
-        }
-        var valLength;
-        var itemName = "items";
-        if (typeof value === "string") {
-            valLength = value.length;
-            itemName = "characters";
-        } else if ((typeof value === "undefined" ? "undefined" : _type_of(value)) === "object" && value !== null) {
-            valLength = Object.keys(value).length;
-        }
-        if (valLength === void 0) {
-            context.logger.warn("Unable to determine a length for value of type: ".concat(value));
-            return;
-        }
-        if ("exact" in options) {
-            if (valLength !== options.exact) {
-                return {
-                    message: "Must be exactly ".concat(options.exact, " ").concat(itemName, " long"),
-                    parameters: {
-                        validationLength: valLength
-                    }
-                };
-            }
-            return;
-        }
-        if (options.min !== void 0 && valLength < options.min) {
-            var message = context.constants.getConstants("validation.length.minimum", "constants", "At least ".concat(options.min, " ").concat(itemName, " needed"));
-            return {
-                message: message,
-                parameters: {
-                    validationLength: valLength
-                }
-            };
-        }
-        if (options.max !== void 0 && valLength > options.max) {
-            var message1 = context.constants.getConstants("validation.length.maximum", "constants", "Up to ".concat(options.max, " ").concat(itemName, " allowed"));
-            return {
-                message: message1,
-                parameters: {
-                    validationLength: valLength
-                }
-            };
-        }
-    });
-    var min = skipNullish(function(context, value, options) {
-        if (typeof value !== "number" || (options === null || options === void 0 ? void 0 : options.value) === void 0) {
-            return;
-        }
-        if (value < options.value) {
-            var message = context.constants.getConstants("validation.min", "constants", "Must be at least ".concat(options.value));
-            return {
-                message: message
-            };
-        }
-    });
-    var max = skipNullish(function(context, value, options) {
-        if (typeof value !== "number" || (options === null || options === void 0 ? void 0 : options.value) === void 0) {
-            return;
-        }
-        if (value > options.value) {
-            var message = context.constants.getConstants("validation.max", "constants", "Cannot exceed ".concat(options.value));
-            return {
-                message: message
-            };
-        }
-    });
-    var stringRegexValidator = function(test, messagePath, invalidMessage) {
-        return skipNullish(function(context, value) {
-            if (typeof value === "string" && value === "") {
-                return;
-            }
-            if (typeof value !== "string" || !test.test(value)) {
-                var message = context.constants.getConstants(messagePath, "constants", invalidMessage);
-                return {
-                    message: message
-                };
-            }
-        });
-    };
-    var email = stringRegexValidator(EMAIL_REGEX, "validation.email", "Improper email format");
-    var phone = stringRegexValidator(PHONE_REGEX, "validation.phone", "Invalid phone number");
-    var zip = stringRegexValidator(ZIP_REGEX, "validation.regex", "Invalid zip code");
-    var types_exports = {};
-    __export3(types_exports, {
-        BooleanType: function() {
-            return BooleanType;
-        },
-        CollectionType: function() {
-            return CollectionType;
-        },
-        DateType: function() {
-            return DateType;
-        },
-        IntegerNNType: function() {
-            return IntegerNNType;
-        },
-        IntegerPosType: function() {
-            return IntegerPosType;
-        },
-        IntegerType: function() {
-            return IntegerType;
-        },
-        PhoneType: function() {
-            return PhoneType;
-        },
-        StringType: function() {
-            return StringType;
-        }
-    });
-    var BooleanType = {
-        type: "BooleanType",
-        default: false,
-        validation: [
-            {
-                type: "oneOf",
-                message: "Value must be true or false",
-                options: [
-                    true,
-                    false
-                ]
-            }
-        ]
-    };
-    var IntegerType = {
-        type: "IntegerType",
-        validation: [
-            {
-                type: "integer"
-            }
-        ],
-        format: {
-            type: "integer"
-        }
-    };
-    var IntegerPosType = {
-        type: "IntegerPosType",
-        validation: [
-            {
-                type: "integer"
-            },
-            {
-                type: "min",
-                value: 1
-            }
-        ],
-        format: {
-            type: "integer"
-        }
-    };
-    var IntegerNNType = {
-        type: "IntegerNNType",
-        validation: [
-            {
-                type: "integer"
-            },
-            {
-                type: "min",
-                value: 0
-            }
-        ],
-        format: {
-            type: "integer"
-        }
-    };
-    var StringType = {
-        type: "StringType",
-        default: "",
-        validation: [
-            {
-                type: "string"
-            }
-        ],
-        format: {
-            type: "string"
-        }
-    };
-    var CollectionType = {
-        type: "CollectionType",
-        validation: [
-            {
-                type: "collection"
-            }
-        ]
-    };
-    var DateType = {
-        type: "DateType",
-        validation: [
-            {
-                type: "string"
-            }
-        ],
-        format: {
-            type: "date"
-        }
-    };
-    var PhoneType = {
-        type: "PhoneType",
-        validation: [
-            {
-                type: "phone"
-            }
-        ],
-        format: {
-            type: "phone"
-        }
-    };
-    var formats_exports = {};
-    __export3(formats_exports, {
-        commaNumber: function() {
-            return commaNumber;
-        },
-        currency: function() {
-            return currency;
-        },
-        date: function() {
-            return date;
-        },
-        integer: function() {
-            return integer2;
-        },
-        phone: function() {
-            return phone2;
-        }
-    });
-    var PLACEHOLDER = "#";
-    var formatAsEnum = function(value, acceptedValues, options) {
-        var autoCompletionsByOverlapCount = acceptedValues.reduce(function(validCompletions, validValue) {
-            var overlap = 0;
-            for(var charIndex = 0; charIndex < Math.min(validValue.length, value.length); charIndex++){
-                var validChar = (options === null || options === void 0 ? void 0 : options.ignoreCase) ? validValue[charIndex].toLowerCase() : validValue[charIndex];
-                var actualChar = (options === null || options === void 0 ? void 0 : options.ignoreCase) ? value[charIndex].toLowerCase() : value[charIndex];
-                if (validChar !== actualChar) {
-                    break;
-                }
-                overlap += 1;
-            }
-            if (overlap === 0) {
-                return validCompletions;
-            }
-            validCompletions.push({
-                count: overlap,
-                target: validValue
-            });
-            return validCompletions;
-        }, []).sort(function(e) {
-            return e.count;
-        });
-        if (autoCompletionsByOverlapCount.length === 0) {
-            return void 0;
-        }
-        if (autoCompletionsByOverlapCount.length === 1 && (options === null || options === void 0 ? void 0 : options.autocomplete)) {
-            return autoCompletionsByOverlapCount[0].target;
-        }
-        return autoCompletionsByOverlapCount[0].target.substr(0, autoCompletionsByOverlapCount[0].count);
-    };
-    var formatAsMasked = function(value, valueCharMaskMatch, mask) {
-        var valStr = String(value);
-        var withMask = mask;
-        if (valStr.trim() === "") {
-            return "";
-        }
-        valStr.replace(valueCharMaskMatch, function(match) {
-            withMask = withMask.replace(PLACEHOLDER, match);
-            return match;
-        });
-        return withMask.split(PLACEHOLDER)[0];
-    };
-    var createMaskedNumericFormatter = function(name, mask) {
-        return {
-            name: name,
-            format: function(value, options) {
-                if (typeof value !== "string") {
-                    return value;
-                }
-                if ((options === null || options === void 0 ? void 0 : options.exceptions) && options.exceptions.length > 0) {
-                    var formattedUsingExceptions = formatAsEnum(value, options.exceptions, {
-                        autocomplete: true,
-                        ignoreCase: true
-                    });
-                    if (formattedUsingExceptions !== void 0) {
-                        return formattedUsingExceptions;
-                    }
-                }
-                return formatAsMasked(value, /\d/g, mask);
-            },
-            deformat: function(value, options) {
-                if (typeof value !== "string") {
-                    return value;
-                }
-                if ((options === null || options === void 0 ? void 0 : options.exceptions) && options.exceptions.length > 0) {
-                    var usingExceptions = formatAsEnum(value, options.exceptions, {
-                        autocomplete: false,
-                        ignoreCase: false
-                    });
-                    if (usingExceptions !== void 0) {
-                        return usingExceptions;
-                    }
-                }
-                return formatAsMasked(value, /\d/g, mask.replace(/[^#]/g, ""));
-            }
-        };
-    };
-    var LENGTH_OF_MAX_INT = String(Number.MAX_SAFE_INTEGER).split("").length;
-    var integer2 = {
-        name: "integer",
-        /** Converts any integer to a string */ format: function(value) {
-            var _integer2_deformat;
-            if (value === "-") {
-                return value;
-            }
-            var _integer2_deformat1;
-            var formatted = (_integer2_deformat1 = (_integer2_deformat = integer2.deformat) === null || _integer2_deformat === void 0 ? void 0 : _integer2_deformat.call(integer2, value)) !== null && _integer2_deformat1 !== void 0 ? _integer2_deformat1 : value;
-            if (typeof formatted === "number") {
-                return String(formatted);
-            }
-            return "";
-        },
-        /** Converts any string or number to an integer */ deformat: function(value) {
-            if (typeof value === "number") {
-                return Math.floor(value) + 0;
-            }
-            if (typeof value !== "string") {
-                return;
-            }
-            var isNeg = value.replace(/[^0-9.-]/g, "").charAt(0) === "-";
-            var digits = value.replace(/[^0-9.]/g, "");
-            var decimalPlace = digits.indexOf(".");
-            if (decimalPlace > -1) {
-                digits = digits.substring(0, decimalPlace);
-            }
-            if (digits.length === 0) {
-                return;
-            }
-            digits = digits.substr(0, LENGTH_OF_MAX_INT);
-            var num = Number("".concat(isNeg ? "-" : "").concat(digits));
-            return Math.floor(num) + 0;
-        }
-    };
-    var commaNumber = {
-        name: "commaNumber",
-        /** Go from number to number w/ commas */ format: function(_value, options) {
-            if (_value === void 0 || _value === "") {
-                return _value;
-            }
-            if (typeof _value !== "string" && typeof _value !== "number") {
-                return "";
-            }
-            var value = String(_value);
-            var isNeg = value.replace(/[^0-9.-]/g, "").charAt(0) === "-";
-            var digitAndDecimal = value.replace(/[^0-9.]/g, "");
-            digitAndDecimal = digitAndDecimal.replace(/^(0*)((0.)?\d)/g, "$2");
-            var firstDecimal = digitAndDecimal.indexOf(".");
-            var digitsOnly = digitAndDecimal.replace(/[^0-9]/g, "");
-            var preDecDigits = digitsOnly;
-            var postDecDigits = "";
-            if (firstDecimal >= 0) {
-                preDecDigits = digitsOnly.substring(0, firstDecimal).substr(0, LENGTH_OF_MAX_INT);
-                postDecDigits = digitsOnly.substring(firstDecimal);
-            } else {
-                preDecDigits = preDecDigits.substr(0, LENGTH_OF_MAX_INT);
-            }
-            if ((options === null || options === void 0 ? void 0 : options.precision) !== void 0) {
-                postDecDigits = postDecDigits.substring(0, options.precision).padEnd(options.precision, "0");
-            }
-            preDecDigits = preDecDigits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            if (preDecDigits === "" && firstDecimal === 0) {
-                preDecDigits = "0";
-            }
-            var retVal = preDecDigits;
-            if (isNeg) {
-                retVal = "-".concat(retVal);
-            }
-            if ((firstDecimal >= 0 || (options === null || options === void 0 ? void 0 : options.precision) !== void 0) && postDecDigits !== "") {
-                retVal += ".".concat(postDecDigits);
-            }
-            return retVal;
-        },
-        /** Go from string with comma's to numbers */ deformat: function(value) {
-            if (typeof value !== "string") {
-                return value;
-            }
-            var strValue = value.replace(/,/g, "");
-            if (strValue === "") {
-                return void 0;
-            }
-            var number2 = Number(strValue);
-            return isNaN(number2) || number2 > Number.MAX_SAFE_INTEGER || number2 < Number.MIN_SAFE_INTEGER ? void 0 : number2;
-        }
-    };
-    var date = {
-        name: "date",
-        format: function(_value, options) {
-            var _options_mask;
-            var value = typeof _value === "number" ? String(_value) : _value;
-            if (_value === void 0) {
-                return void 0;
-            }
-            if (typeof value !== "string" || value === "") {
-                return "";
-            }
-            if (value.match(/^\d{4}[-]\d{1,2}[-]\d{1,2}$/)) {
-                var tempVal = value.split("-");
-                value = "".concat(tempVal[1], "/").concat(tempVal[2], "/").concat(tempVal[0]);
-            }
-            var _options_mask_toUpperCase;
-            var dateFormat = (_options_mask_toUpperCase = options === null || options === void 0 ? void 0 : (_options_mask = options.mask) === null || _options_mask === void 0 ? void 0 : _options_mask.toUpperCase()) !== null && _options_mask_toUpperCase !== void 0 ? _options_mask_toUpperCase : "MM/DD/YYYY";
-            var delimiter = dateFormat.replace(/[^/.-]/g, "").charAt(0);
-            var formatParts = dateFormat.split(delimiter);
-            var valueParts = value.split(delimiter);
-            var processedValueParts = [];
-            var lastMatchIsFull = true;
-            for(var index = 0; index < valueParts.length; index++){
-                var part = valueParts[index];
-                if (lastMatchIsFull && index < formatParts.length) {
-                    part = part.replace(/[^0-9]/g, "");
-                    var isLastExpectedField = formatParts.length - 1 === index;
-                    var hasDelimiterAfter = valueParts.length - 1 > index;
-                    var curFormat = formatParts[index];
-                    if (curFormat === "YYYY") {
-                        if (part.length > 4) {
-                            valueParts[index + 1] = [
-                                "*",
-                                part.substring(4),
-                                valueParts[index + 1]
-                            ].join("");
-                            part = part.substring(0, 4);
-                        }
-                        if (part.length === 4) {
-                            lastMatchIsFull = true;
-                            processedValueParts.push(part);
-                        }
-                        if (part.length === 3) {
-                            if (isLastExpectedField || !hasDelimiterAfter) {
-                                lastMatchIsFull = false;
-                                processedValueParts.push(part);
-                            } else {
-                                valueParts[index + 1] = "*".concat(part.substring(2)).concat(valueParts[index + 1]);
-                                part = part.substring(0, 2);
-                            }
-                        }
-                        if (part.length === 2) {
-                            var autocomplete = void 0;
-                            if (part.length === 2 && (hasDelimiterAfter || isLastExpectedField && part !== "19" && part !== "20")) {
-                                autocomplete = "20".concat(part);
-                                if (part > (/* @__PURE__ */ new Date().getFullYear() + 5).toString().substring(2)) {
-                                    autocomplete = "19".concat(part);
-                                }
-                            }
-                            if (autocomplete) {
-                                lastMatchIsFull = true;
-                                processedValueParts.push(autocomplete);
-                            } else {
-                                lastMatchIsFull = false;
-                                processedValueParts.push(part);
-                            }
-                        }
-                        if (part.length === 1 || part.length === 0) {
-                            lastMatchIsFull = false;
-                            processedValueParts.push(part);
-                        }
-                    } else if (curFormat === "YY") {
-                        if (part.length > 2) {
-                            valueParts[index + 1] = [
-                                "*",
-                                part.substring(2),
-                                valueParts[index + 1]
-                            ].join("");
-                            part = part.substring(0, 2);
-                        }
-                        if (part.length === 2) {
-                            lastMatchIsFull = true;
-                            processedValueParts.push(part);
-                        }
-                        if (part.length === 1 || part.length === 0) {
-                            lastMatchIsFull = false;
-                            processedValueParts.push(part);
-                        }
-                    } else {
-                        if (part.length > 2) {
-                            valueParts[index + 1] = [
-                                "*",
-                                part.substring(2),
-                                valueParts[index + 1]
-                            ].join("");
-                            part = part.substring(0, 2);
-                        }
-                        if (part.length === 2) {
-                            if (part === "00" && !hasDelimiterAfter) {
-                                lastMatchIsFull = false;
-                                processedValueParts.push("0");
-                            } else {
-                                lastMatchIsFull = true;
-                                processedValueParts.push(part);
-                            }
-                        }
-                        if (part.length === 1) {
-                            if (hasDelimiterAfter) {
-                                lastMatchIsFull = true;
-                                processedValueParts.push("0".concat(part));
-                            } else {
-                                lastMatchIsFull = false;
-                                processedValueParts.push(part);
-                            }
-                        }
-                        if (part.length === 0) {
-                            lastMatchIsFull = false;
-                            processedValueParts.push(part);
-                        }
-                    }
-                }
-            }
-            return processedValueParts.join(delimiter);
-        }
-    };
-    var currency = {
-        name: "currency",
-        format: function(_value, options) {
-            var value = typeof _value === "number" ? String(_value) : _value;
-            var _ref = options !== null && options !== void 0 ? options : {}, _ref_currencySymbol = _ref.currencySymbol, currencySymbol = _ref_currencySymbol === void 0 ? "" : _ref_currencySymbol, _ref_useParensForNeg = _ref.useParensForNeg, useParensForNeg = _ref_useParensForNeg === void 0 ? false : _ref_useParensForNeg, _ref_precision = _ref.precision, precision = _ref_precision === void 0 ? 2 : _ref_precision;
-            if (value === void 0 || value === "") {
-                return value;
-            }
-            if (typeof value !== "string") {
-                return value;
-            }
-            var sign = /^\s*-/.test(value) ? -1 : 1;
-            var dotIndex = value.indexOf(".");
-            var preDecimal;
-            var postDecimal;
-            if (dotIndex >= 0) {
-                preDecimal = value.substr(0, dotIndex).replace(/\D+/g, "");
-                postDecimal = value.substr(dotIndex + 1).replace(/\D+/g, "");
-            } else {
-                preDecimal = value.replace(/\D+/g, "");
-                postDecimal = "0";
-            }
-            var numericalValue = sign * Number("".concat(preDecimal, ".").concat(postDecimal));
-            var fixedString = numericalValue.toFixed(precision);
-            var prettyString = fixedString.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            if (prettyString.charAt(0) === "-") {
-                if (useParensForNeg) {
-                    return "(".concat(currencySymbol).concat(prettyString.substring(1), ")");
-                }
-                return "-".concat(currencySymbol).concat(prettyString.substring(1));
-            }
-            return currencySymbol + prettyString;
-        },
-        deformat: function(value, options) {
-            var _commaNumber_deformat;
-            if (typeof value === "number") {
-                return value;
-            }
-            if (typeof value !== "string") {
-                return void 0;
-            }
-            var deformatted = value;
-            if (options === null || options === void 0 ? void 0 : options.currencySymbol) {
-                deformatted = value.replace(options.currencySymbol, "");
-            }
-            return (_commaNumber_deformat = commaNumber.deformat) === null || _commaNumber_deformat === void 0 ? void 0 : _commaNumber_deformat.call(commaNumber, deformatted);
-        }
-    };
-    var basePhoneFormatter = createMaskedNumericFormatter("phone", "(###) ###-####");
-    var phone2 = _object_spread_props(_object_spread({}, basePhoneFormatter), {
-        deformat: function(value) {
-            var _basePhoneFormatter_deformat;
-            return (_basePhoneFormatter_deformat = basePhoneFormatter.deformat) === null || _basePhoneFormatter_deformat === void 0 ? void 0 : _basePhoneFormatter_deformat.call(basePhoneFormatter, value);
-        },
-        format: function(value) {
-            var _basePhoneFormatter_format;
-            var _basePhoneFormatter_format1;
-            return (_basePhoneFormatter_format1 = (_basePhoneFormatter_format = basePhoneFormatter.format) === null || _basePhoneFormatter_format === void 0 ? void 0 : _basePhoneFormatter_format.call(basePhoneFormatter, value === "(" ? "" : value)) !== null && _basePhoneFormatter_format1 !== void 0 ? _basePhoneFormatter_format1 : value;
-        }
-    });
-    var CommonTypesPlugin = /*#__PURE__*/ function() {
-        function CommonTypesPlugin() {
-            _class_call_check(this, CommonTypesPlugin);
-            this.name = "CommonTypes";
-        }
-        _create_class(CommonTypesPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    player.registerPlugin(new TypesProviderPlugin({
-                        types: Object.values(types_exports),
-                        formats: Object.values(formats_exports),
-                        validators: Object.entries(validators_exports)
-                    }));
-                }
-            }
-        ]);
-        return CommonTypesPlugin;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+common-expressions-plugin@0.0.0/node_modules/@player-ui/common-expressions-plugin/dist/index.mjs
-    var __defProp4 = Object.defineProperty;
-    var __export4 = function(target, all) {
-        for(var name in all)__defProp4(target, name, {
-            get: all[name],
-            enumerable: true
-        });
-    };
-    var expressions_exports = {};
-    __export4(expressions_exports, {
-        ceil: function() {
-            return ceil;
-        },
-        concat: function() {
-            return concat;
-        },
-        containsAny: function() {
-            return containsAny;
-        },
-        findProperty: function() {
-            return findProperty;
-        },
-        findPropertyIndex: function() {
-            return findPropertyIndex;
-        },
-        floor: function() {
-            return floor;
-        },
-        isEmpty: function() {
-            return isEmpty;
-        },
-        isNotEmpty: function() {
-            return isNotEmpty;
-        },
-        length: function() {
-            return length2;
-        },
-        lowerCase: function() {
-            return lowerCase;
-        },
-        number: function() {
-            return number;
-        },
-        replace: function() {
-            return replace;
-        },
-        round: function() {
-            return round;
-        },
-        sentenceCase: function() {
-            return sentenceCase;
-        },
-        size: function() {
-            return size;
-        },
-        split: function() {
-            return split;
-        },
-        substr: function() {
-            return substr;
-        },
-        sum: function() {
-            return sum;
-        },
-        titleCase: function() {
-            return titleCase;
-        },
-        trim: function() {
-            return trim;
-        },
-        upperCase: function() {
-            return upperCase;
-        }
-    });
-    var size = withoutContext(function(val) {
-        if (typeof val === "string") {
-            return val.length;
-        }
-        if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object" && val !== null) {
-            return Object.keys(val).length;
-        }
-        return 0;
-    });
-    var length2 = size;
-    var isEmpty = function(ctx, val) {
-        if (val === void 0 || val === null) {
-            return true;
-        }
-        if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object" || typeof val === "string") {
-            return size(ctx, val) === 0;
-        }
-        return false;
-    };
-    var isNotEmpty = function(ctx, val) {
-        return !isEmpty(ctx, val);
-    };
-    var concat = withoutContext(function() {
-        for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
-            args[_key] = arguments[_key];
-        }
-        if (args.every(function(v) {
-            return Array.isArray(v);
-        })) {
-            var merged = [];
-            args.forEach(function(next) {
-                var _merged;
-                (_merged = merged).push.apply(_merged, _to_consumable_array(next));
-            });
-            return merged;
-        }
-        return args.reduce(function(merged, next) {
-            return merged + (next !== null && next !== void 0 ? next : "");
-        }, "");
-    });
-    var trim = withoutContext(ifString(function(str) {
-        return str.trim();
-    }));
-    var upperCase = withoutContext(ifString(function(str) {
-        return str.toUpperCase();
-    }));
-    var lowerCase = withoutContext(ifString(function(str) {
-        return str.toLowerCase();
-    }));
-    var replace = withoutContext(function(str, pattern) {
-        var replacement = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : "";
-        if (typeof str === "string" && typeof pattern === "string" && typeof replacement === "string") {
-            var replacementRegex = new RegExp(pattern, "g");
-            return str.replace(replacementRegex, replacement);
-        }
-        return str;
-    });
-    var titleCase = withoutContext(ifString(function(str) {
-        return str.split(" ").map(function(word) {
-            return word[0].toUpperCase() + word.slice(1);
-        }).join(" ");
-    }));
-    var sentenceCase = withoutContext(ifString(function(str) {
-        return str.replace(/\b[a-zA-Z]/, function(word) {
-            return word.toUpperCase();
-        });
-    }));
-    var split = withoutContext(function(str, separator, limit) {
-        if (separator === void 0 || separator === null) {
-            return str;
-        }
-        var separatorStr = String(separator);
-        if (separatorStr === "") {
-            var result2 = str.split("");
-            if (limit !== void 0 && limit !== null && limit > 0) {
-                return result2.slice(0, limit);
-            }
-            return result2;
-        }
-        var result = str.split(separatorStr);
-        if (limit !== void 0 && limit !== null && limit > 0) {
-            return result.slice(0, limit);
-        }
-        return result;
-    });
-    var substr = withoutContext(function(str, start, length22) {
-        var actualStartIndex = start < 0 ? str.length + start : start;
-        if (length22 !== void 0) {
-            return str.substring(actualStartIndex, actualStartIndex + length22);
-        }
-        return str.substring(actualStartIndex);
-    });
-    var number = withoutContext(toNum);
-    var round = withoutContext(function(num) {
-        var _toNum;
-        return Math.round((_toNum = toNum(num, true)) !== null && _toNum !== void 0 ? _toNum : 0);
-    });
-    var floor = withoutContext(function(num) {
-        var _toNum;
-        return Math.floor((_toNum = toNum(num, true)) !== null && _toNum !== void 0 ? _toNum : 0);
-    });
-    var ceil = withoutContext(function(num) {
-        var _toNum;
-        return Math.ceil((_toNum = toNum(num, true)) !== null && _toNum !== void 0 ? _toNum : 0);
-    });
-    var sum = withoutContext(function() {
-        for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
-            args[_key] = arguments[_key];
-        }
-        return args.reduce(function(s, next) {
-            var _toNum;
-            return s + ((_toNum = toNum(next)) !== null && _toNum !== void 0 ? _toNum : 0);
-        }, 0);
-    });
-    var findPropertyIndex = function(context, bindingOrModel, propToCheck, valueToCheck) {
-        if (bindingOrModel === void 0) {
-            return -1;
-        }
-        var searchArray = Array.isArray(bindingOrModel) ? bindingOrModel : context.model.get(bindingOrModel);
-        if (!Array.isArray(searchArray)) {
-            return -1;
-        }
-        return searchArray.findIndex(function(value) {
-            var propVal = (typeof value === "undefined" ? "undefined" : _type_of(value)) === "object" && propToCheck !== void 0 ? value[propToCheck] : value;
-            return valueToCheck === propVal;
-        });
-    };
-    var findProperty = function(context, bindingOrModel, propToCheck, valueToCheck, propToReturn, defaultValue) {
-        var searchArray = Array.isArray(bindingOrModel) ? bindingOrModel : context.model.get(bindingOrModel);
-        if (!Array.isArray(searchArray)) {
-            return defaultValue;
-        }
-        var foundValue = searchArray.find(function(value) {
-            var propVal = (typeof value === "undefined" ? "undefined" : _type_of(value)) === "object" && propToCheck !== void 0 ? value[propToCheck] : value;
-            return valueToCheck === propVal;
-        });
-        if (foundValue === void 0) {
-            return defaultValue;
-        }
-        if ((typeof foundValue === "undefined" ? "undefined" : _type_of(foundValue)) === "object" && propToReturn) {
-            var _foundValue_propToReturn;
-            return (_foundValue_propToReturn = foundValue[propToReturn]) !== null && _foundValue_propToReturn !== void 0 ? _foundValue_propToReturn : defaultValue;
-        }
-        return foundValue;
-    };
-    var containsAny = withoutContext(function(str, keywords) {
-        if (!(typeof str === "string") || !(typeof keywords === "string" || Array.isArray(keywords))) {
-            return false;
-        }
-        if (Array.isArray(keywords)) {
-            return keywords.some(function(keyword) {
-                return str.indexOf(keyword) > -1;
-            });
-        }
-        return str.indexOf(keywords) > -1;
-    });
-    var CommonExpressionsPlugin = /*#__PURE__*/ function() {
-        function CommonExpressionsPlugin() {
-            _class_call_check(this, CommonExpressionsPlugin);
-            this.name = "CommonExpressions";
-        }
-        _create_class(CommonExpressionsPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    player.registerPlugin(new ExpressionPlugin(new Map(Object.entries(expressions_exports))));
-                }
-            }
-        ]);
-        return CommonExpressionsPlugin;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+computed-properties-plugin@0.0.0/node_modules/@player-ui/computed-properties-plugin/dist/index.mjs
-    var ComputedPropertiesPlugin = /*#__PURE__*/ function() {
-        function ComputedPropertiesPlugin() {
-            _class_call_check(this, ComputedPropertiesPlugin);
-            this.name = "ComputedProperties";
-        }
-        _create_class(ComputedPropertiesPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    var _this = this;
-                    var schemaController;
-                    var expressionEvaluator;
-                    var getExpressionType = function(binding) {
-                        var dataType = schemaController === null || schemaController === void 0 ? void 0 : schemaController.getType(binding);
-                        if ((dataType === null || dataType === void 0 ? void 0 : dataType.type) === "Expression") {
-                            return dataType;
-                        }
-                    };
-                    var computedPropertyMiddleware = {
-                        name: this.name,
-                        get: function get(binding, options, next) {
-                            var expType = getExpressionType(binding);
-                            if (expType) {
-                                var exp = expType.exp;
-                                var result = exp && (expressionEvaluator === null || expressionEvaluator === void 0 ? void 0 : expressionEvaluator.evaluate(exp, options === null || options === void 0 ? void 0 : options.context));
-                                return result !== null && result !== void 0 ? result : expType.default;
-                            }
-                            return next === null || next === void 0 ? void 0 : next.get(binding, options);
-                        },
-                        set: function set(transaction, options, next) {
-                            var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                            try {
-                                for(var _iterator = transaction[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                                    var setOperation = _step.value;
-                                    if (getExpressionType(setOperation[0])) {
-                                        throw new Error("Invalid 'set' operation on computed property: ".concat(setOperation[0].asString()));
-                                    }
-                                }
-                            } catch (err) {
-                                _didIteratorError = true;
-                                _iteratorError = err;
-                            } finally{
-                                try {
-                                    if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                        _iterator.return();
-                                    }
-                                } finally{
-                                    if (_didIteratorError) {
-                                        throw _iteratorError;
-                                    }
-                                }
-                            }
-                            var _next_set;
-                            return (_next_set = next === null || next === void 0 ? void 0 : next.set(transaction, options)) !== null && _next_set !== void 0 ? _next_set : [];
-                        },
-                        delete: function _delete(binding, options, next) {
-                            if (getExpressionType(binding)) {
-                                throw new Error("Invalid 'delete' operation on computed property: ".concat(binding.asString()));
-                            }
-                            return next === null || next === void 0 ? void 0 : next.delete(binding, options);
-                        }
-                    };
-                    player.hooks.dataController.tap(this.name, function(dataController) {
-                        dataController.hooks.resolveDataStages.tap(_this.name, function(dataPipeline) {
-                            return _to_consumable_array(dataPipeline).concat([
-                                computedPropertyMiddleware
-                            ]);
-                        });
-                    });
-                    player.hooks.schema.tap(this.name, function(schema) {
-                        schemaController = schema;
-                    });
-                    player.hooks.expressionEvaluator.tap(this.name, function(evaluator) {
-                        expressionEvaluator = evaluator;
-                    });
-                }
-            }
-        ]);
-        return ComputedPropertiesPlugin;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugin.ts
-    var ReferenceAssetsPlugin = /*#__PURE__*/ function() {
-        function ReferenceAssetsPlugin() {
-            _class_call_check(this, ReferenceAssetsPlugin);
-            this.name = "reference-assets-plugin";
-            this.metaPlugin = new MetaPlugin([
-                new CommonTypesPlugin(),
-                new CommonExpressionsPlugin(),
-                new ComputedPropertiesPlugin(),
-                new AsyncNodePlugin({
-                    plugins: [
-                        new AsyncNodePluginPlugin()
-                    ]
-                }),
-                new ReferenceAssetsTransformPlugin(),
-                new ChatUiDemoPlugin(),
-                new ErrorRecoveryPlugin()
-            ]);
-        }
-        _create_class(ReferenceAssetsPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    player.registerPlugin(this.metaPlugin);
-                }
-            }
-        ]);
-        return ReferenceAssetsPlugin;
-    }();
+    /** Symbol used to identify and find existing instances of this plugin */ _ExternalStatePlugin.Symbol = ExternalStatePluginSymbol;
+    var ExternalStatePlugin = _ExternalStatePlugin;
     return __toCommonJS(src_exports);
 }(); /*! Bundled license information:
 

@@ -81,6 +81,23 @@ function _unsupported_iterable_to_array(o, minLen) {
     if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _array_like_to_array(o, minLen);
 }
 var Registry = function() {
+    var createNewSortInstance = function createNewSortInstance(opts) {
+        var comparer = castComparer(opts.comparer);
+        return function(arrayToSort) {
+            var ctx = Array.isArray(arrayToSort) && !opts.inPlaceSorting ? arrayToSort.slice() : arrayToSort;
+            return {
+                asc: function asc(sortBy) {
+                    return sortArray(1, ctx, sortBy, comparer);
+                },
+                desc: function desc(sortBy) {
+                    return sortArray(-1, ctx, sortBy, comparer);
+                },
+                by: function by(sortBy) {
+                    return sortArray(1, ctx, sortBy, comparer);
+                }
+            };
+        };
+    };
     var dlv_es_default = // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/dlv@1.1.3/node_modules/dlv/dist/dlv.es.js
     function dlv_es_default(t, e, l, n, r) {
         for(e = e.split ? e.split(".") : e, n = 0; n < e.length; n++)t = t ? t[e[n]] : r;
@@ -88,7 +105,7 @@ var Registry = function() {
     };
     var createObjectMatcher = function createObjectMatcher(partialObj) {
         var pairs = traverseObj(partialObj);
-        var matchFunction = function matchFunction(searchObj) {
+        var matchFunction = function(searchObj) {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
             try {
                 for(var _iterator = Array.from(pairs)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
@@ -119,39 +136,30 @@ var Registry = function() {
     };
     var createBasicMatcher = // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/partial-match-registry/src/index.ts
     function createBasicMatcher(seed) {
-        var matcher = function matcher(match) {
+        var matcher = function(match) {
             return seed === match;
         };
         matcher.count = 1;
         return matcher;
     };
-    var __create = Object.create;
     var __defProp = Object.defineProperty;
     var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
     var __getOwnPropNames = Object.getOwnPropertyNames;
-    var __getProtoOf = Object.getPrototypeOf;
     var __hasOwnProp = Object.prototype.hasOwnProperty;
-    var __commonJS = function __commonJS(cb, mod) {
-        return function __require() {
-            return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = {
-                exports: {}
-            }).exports, mod), mod.exports;
-        };
-    };
-    var __export = function __export(target, all) {
+    var __export = function(target, all) {
         for(var name in all)__defProp(target, name, {
             get: all[name],
             enumerable: true
         });
     };
-    var __copyProps = function __copyProps(to, from, except, desc) {
+    var __copyProps = function(to, from, except, desc) {
         if (from && (typeof from === "undefined" ? "undefined" : _type_of(from)) === "object" || typeof from === "function") {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
             try {
                 var _loop = function() {
                     var key = _step.value;
                     if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
-                        get: function get() {
+                        get: function() {
                             return from[key];
                         },
                         enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
@@ -175,113 +183,117 @@ var Registry = function() {
         }
         return to;
     };
-    var __toESM = function __toESM(mod, isNodeMode, target) {
-        return target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(// If the importer is in node compatibility mode or this is not an ESM
-        // file that has been converted to a CommonJS file using a Babel-
-        // compatible transform (i.e. "__esModule" has not been set), then set
-        // "default" to the CommonJS "module.exports" for node compatibility.
-        isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", {
-            value: mod,
-            enumerable: true
-        }) : target, mod);
-    };
-    var __toCommonJS = function __toCommonJS(mod) {
+    var __toCommonJS = function(mod) {
         return __copyProps(__defProp({}, "__esModule", {
             value: true
         }), mod);
     };
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js
-    var require_sorted_array = __commonJS({
-        "../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js": function(exports, module) {
-            "use strict";
-            var SortedArray2 = function() {
-                var SortedArray3 = defclass({
-                    constructor: function constructor(array, compare) {
-                        this.array = [];
-                        this.compare = compare || compareDefault;
-                        var length = array.length, index = 0;
-                        while(index < length)this.insert(array[index++]);
-                    },
-                    insert: function insert(element) {
-                        var array = this.array, compare = this.compare, high = array.length - 1, low = 0, pos = -1, index, ordering;
-                        while(high >= low){
-                            index = (high + low) / 2 >>> 0;
-                            ordering = compare(array[index], element);
-                            if (ordering < 0) low = index + 1;
-                            else if (ordering > 0) high = index - 1;
-                            else {
-                                pos = index;
-                                break;
-                            }
-                            ;
-                        }
-                        if (pos === -1) {
-                            pos = high;
-                        }
-                        pos++;
-                        high = array.length - 1;
-                        while(pos < high && compare(element, array[pos]) === 0){
-                            pos++;
-                        }
-                        index = array.length;
-                        array.push(element);
-                        while(index > pos){
-                            array[index] = array[--index];
-                        }
-                        array[pos] = element;
-                        return this;
-                    },
-                    search: function search(element) {
-                        var array = this.array, compare = this.compare, high = array.length - 1, low = 0, index, ordering;
-                        while(high >= low){
-                            index = (high + low) / 2 >>> 0;
-                            ordering = compare(array[index], element);
-                            if (ordering < 0) low = index + 1;
-                            else if (ordering > 0) high = index - 1;
-                            else return index;
-                        }
-                        return -1;
-                    },
-                    remove: function remove(element) {
-                        var index = this.search(element);
-                        if (index >= 0) this.array.splice(index, 1);
-                        return this;
-                    }
-                });
-                SortedArray3.comparing = function(property, array) {
-                    return new SortedArray3(array, function(a, b) {
-                        return compareDefault(a[property], b[property]);
-                    });
-                };
-                return SortedArray3;
-                function defclass(prototype) {
-                    var constructor = prototype.constructor;
-                    constructor.prototype = prototype;
-                    return constructor;
-                }
-                function compareDefault(a, b) {
-                    if (a < b) return -1;
-                    else if (a > b) return 1;
-                    else return 0;
-                }
-            }();
-            if ((typeof module === "undefined" ? "undefined" : _type_of(module)) === "object") module.exports = SortedArray2;
-            if (typeof define === "function" && define.amd) define(function() {
-                return SortedArray2;
-            });
-        }
-    });
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/partial-match-registry/src/index.ts
     var src_exports = {};
     __export(src_exports, {
-        Registry: function Registry1() {
+        Registry: function() {
             return Registry;
         },
-        createObjectMatcher: function createObjectMatcher1() {
+        createObjectMatcher: function() {
             return createObjectMatcher;
         }
     });
-    var import_sorted_array = __toESM(require_sorted_array());
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/fast-sort@3.4.1/node_modules/fast-sort/dist/sort.mjs
+    var castComparer = function castComparer(comparer) {
+        return function(a, b, order) {
+            return comparer(a, b, order) * order;
+        };
+    };
+    var throwInvalidConfigErrorIfTrue = function throwInvalidConfigErrorIfTrue(condition, context) {
+        if (condition) throw Error("Invalid sort config: " + context);
+    };
+    var unpackObjectSorter = function unpackObjectSorter(sortByObj) {
+        var _a = sortByObj || {}, asc = _a.asc, desc = _a.desc;
+        var order = asc ? 1 : -1;
+        var sortBy = asc || desc;
+        throwInvalidConfigErrorIfTrue(!sortBy, "Expected `asc` or `desc` property");
+        throwInvalidConfigErrorIfTrue(asc && desc, "Ambiguous object with `asc` and `desc` config properties");
+        var comparer = sortByObj.comparer && castComparer(sortByObj.comparer);
+        return {
+            order: order,
+            sortBy: sortBy,
+            comparer: comparer
+        };
+    };
+    var multiPropertySorterProvider = function multiPropertySorterProvider(defaultComparer2) {
+        return function multiPropertySorter(sortBy, sortByArr, depth, order, comparer, a, b) {
+            var valA;
+            var valB;
+            if (typeof sortBy === "string") {
+                valA = a[sortBy];
+                valB = b[sortBy];
+            } else if (typeof sortBy === "function") {
+                valA = sortBy(a);
+                valB = sortBy(b);
+            } else {
+                var objectSorterConfig = unpackObjectSorter(sortBy);
+                return multiPropertySorter(objectSorterConfig.sortBy, sortByArr, depth, objectSorterConfig.order, objectSorterConfig.comparer || defaultComparer2, a, b);
+            }
+            var equality = comparer(valA, valB, order);
+            if ((equality === 0 || valA == null && valB == null) && sortByArr.length > depth) {
+                return multiPropertySorter(sortByArr[depth], sortByArr, depth + 1, order, comparer, a, b);
+            }
+            return equality;
+        };
+    };
+    function getSortStrategy(sortBy, comparer, order) {
+        if (sortBy === void 0 || sortBy === true) {
+            return function(a, b) {
+                return comparer(a, b, order);
+            };
+        }
+        if (typeof sortBy === "string") {
+            throwInvalidConfigErrorIfTrue(sortBy.includes("."), "String syntax not allowed for nested properties.");
+            return function(a, b) {
+                return comparer(a[sortBy], b[sortBy], order);
+            };
+        }
+        if (typeof sortBy === "function") {
+            return function(a, b) {
+                return comparer(sortBy(a), sortBy(b), order);
+            };
+        }
+        if (Array.isArray(sortBy)) {
+            var multiPropSorter_1 = multiPropertySorterProvider(comparer);
+            return function(a, b) {
+                return multiPropSorter_1(sortBy[0], sortBy, 1, order, comparer, a, b);
+            };
+        }
+        var objectSorterConfig = unpackObjectSorter(sortBy);
+        return getSortStrategy(objectSorterConfig.sortBy, objectSorterConfig.comparer || comparer, objectSorterConfig.order);
+    }
+    var sortArray = function sortArray(order, ctx, sortBy, comparer) {
+        var _a;
+        if (!Array.isArray(ctx)) {
+            return ctx;
+        }
+        if (Array.isArray(sortBy) && sortBy.length < 2) {
+            _a = sortBy, sortBy = _a[0];
+        }
+        return ctx.sort(getSortStrategy(sortBy, comparer, order));
+    };
+    var defaultComparer = function defaultComparer(a, b, order) {
+        if (a == null) return order;
+        if (b == null) return -order;
+        if ((typeof a === "undefined" ? "undefined" : _type_of(a)) !== (typeof b === "undefined" ? "undefined" : _type_of(b))) {
+            return (typeof a === "undefined" ? "undefined" : _type_of(a)) < (typeof b === "undefined" ? "undefined" : _type_of(b)) ? -1 : 1;
+        }
+        if (a < b) return -1;
+        if (a > b) return 1;
+        return 0;
+    };
+    var sort = createNewSortInstance({
+        comparer: defaultComparer
+    });
+    var inPlaceSort = createNewSortInstance({
+        comparer: defaultComparer,
+        inPlaceSorting: true
+    });
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/partial-match-registry/src/deep-partial-matcher.ts
     function traverseObj(object) {
         var path = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [], pairs = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : /* @__PURE__ */ new Map();
@@ -293,7 +305,7 @@ var Registry = function() {
                 var nestedPath = _to_consumable_array(path).concat([
                     key
                 ]);
-                if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object") {
+                if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object" && val !== null) {
                     traverseObj(val, nestedPath, pairs);
                 } else {
                     pairs.set(nestedPath, val);
@@ -315,16 +327,12 @@ var Registry = function() {
         }
         return pairs;
     }
-    var createSortedArray = function createSortedArray() {
-        return new import_sorted_array.default([], function(c) {
-            return c.matcher.count;
-        });
-    };
     var Registry = /*#__PURE__*/ function() {
-        function Registry(initialSet) {
+        function Registry(initialSet, logger) {
             var _this = this;
             _class_call_check(this, Registry);
-            this.store = createSortedArray();
+            this.store = [];
+            this.logger = logger;
             initialSet === null || initialSet === void 0 ? void 0 : initialSet.forEach(function(param) {
                 var _param = _sliced_to_array(param, 2), match = _param[0], value = _param[1];
                 _this.set(match, value);
@@ -332,22 +340,50 @@ var Registry = function() {
         }
         _create_class(Registry, [
             {
-                /** Add match -> value mapping to the registry */ key: "set",
+                /**
+     * Add match -> value mapping to the registry
+     *
+     * If an entry with the same specificity and matching key already exists, it will be replaced
+     * and a debug log will be emitted (if a logger is configured).
+     *
+     * @param match - The key to match against (can be a primitive or object)
+     * @param value - The value to associate with this key
+     */ key: "set",
                 value: function set(match, value) {
                     var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createObjectMatcher(match) : createBasicMatcher(match);
-                    this.store.insert({
+                    var existingIndex = this.store.findIndex(function(entry) {
+                        return entry.matcher(match) && matcher(entry.key);
+                    });
+                    if (existingIndex !== -1) {
+                        var _this_logger_debug, _this_logger;
+                        this.store.splice(existingIndex, 1);
+                        (_this_logger = this.logger) === null || _this_logger === void 0 ? void 0 : (_this_logger_debug = _this_logger.debug) === null || _this_logger_debug === void 0 ? void 0 : _this_logger_debug.call(_this_logger, "Registry: Replacing existing entry for key ", match);
+                    }
+                    this.store.push({
                         key: match,
                         value: value,
                         matcher: matcher
                     });
+                    this.store = sort(this.store).desc(function(entry) {
+                        return entry.matcher.count;
+                    });
                 }
             },
             {
-                /** Fetch the best match in the registry */ key: "get",
+                /**
+     * Fetch the best match in the registry
+     *
+     * Searches for the most specific entry that matches the given query.
+     * The registry is sorted by specificity (matcher.count) in descending order,
+     * so we iterate forward to find the highest specificity match first.
+     *
+     * @param query - The query object to match against registered keys
+     * @returns The value associated with the best matching key, or undefined if no match found
+     */ key: "get",
                 value: function get(query) {
                     var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
                     try {
-                        for(var _iterator = this.store.array[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                        for(var _iterator = this.store[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
                             var entry = _step.value;
                             if (entry.matcher(query)) {
                                 return entry.value;
@@ -367,6 +403,7 @@ var Registry = function() {
                             }
                         }
                     }
+                    return void 0;
                 }
             },
             {
@@ -374,7 +411,7 @@ var Registry = function() {
                 value: function forEach(callbackfn) {
                     var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
                     try {
-                        for(var _iterator = this.store.array[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                        for(var _iterator = this.store[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
                             var entry = _step.value;
                             callbackfn(entry);
                         }
@@ -397,13 +434,13 @@ var Registry = function() {
             {
                 /** Reset the items in the registry */ key: "clear",
                 value: function clear() {
-                    this.store = createSortedArray();
+                    this.store = [];
                 }
             },
             {
                 /** Check if the registry is empty*/ key: "isRegistryEmpty",
                 value: function isRegistryEmpty() {
-                    return this.store.array.length === 0;
+                    return this.store.length === 0;
                 }
             }
         ]);

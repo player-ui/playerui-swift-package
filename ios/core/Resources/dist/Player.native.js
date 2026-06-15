@@ -118,7 +118,6 @@ function _inherits(subClass, superClass) {
     if (superClass) _set_prototype_of(subClass, superClass);
 }
 function _instanceof(left, right) {
-    "@swc/helpers - instanceof";
     if (right != null && typeof Symbol !== "undefined" && right[Symbol.hasInstance]) {
         return !!right[Symbol.hasInstance](left);
     } else {
@@ -202,22 +201,12 @@ function _object_spread_props(target, source) {
 }
 function _object_without_properties(source, excluded) {
     if (source == null) return {};
-    var target = {}, sourceKeys, key, i;
-    if (typeof Reflect !== "undefined" && Reflect.ownKeys) {
-        sourceKeys = Reflect.ownKeys(Object(source));
-        for(i = 0; i < sourceKeys.length; i++){
-            key = sourceKeys[i];
-            if (excluded.indexOf(key) >= 0) continue;
-            if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-            target[key] = source[key];
-        }
-        return target;
-    }
-    target = _object_without_properties_loose(source, excluded);
+    var target = _object_without_properties_loose(source, excluded);
+    var key, i;
     if (Object.getOwnPropertySymbols) {
-        sourceKeys = Object.getOwnPropertySymbols(source);
-        for(i = 0; i < sourceKeys.length; i++){
-            key = sourceKeys[i];
+        var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+        for(i = 0; i < sourceSymbolKeys.length; i++){
+            key = sourceSymbolKeys[i];
             if (excluded.indexOf(key) >= 0) continue;
             if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
             target[key] = source[key];
@@ -227,11 +216,12 @@ function _object_without_properties(source, excluded) {
 }
 function _object_without_properties_loose(source, excluded) {
     if (source == null) return {};
-    var target = {}, sourceKeys = Object.getOwnPropertyNames(source), key, i;
+    var target = {};
+    var sourceKeys = Object.keys(source);
+    var key, i;
     for(i = 0; i < sourceKeys.length; i++){
         key = sourceKeys[i];
         if (excluded.indexOf(key) >= 0) continue;
-        if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
         target[key] = source[key];
     }
     return target;
@@ -313,17 +303,9 @@ function _ts_generator(thisArg, body) {
         },
         trys: [],
         ops: []
-    }, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype), d = Object.defineProperty;
-    return d(g, "next", {
-        value: verb(0)
-    }), d(g, "throw", {
-        value: verb(1)
-    }), d(g, "return", {
-        value: verb(2)
-    }), typeof Symbol === "function" && d(g, Symbol.iterator, {
-        value: function() {
-            return this;
-        }
+    }, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
+    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() {
+        return this;
     }), g;
     function verb(n) {
         return function(v) {
@@ -484,21 +466,21 @@ var Player = function() {
             return middleware;
         }
         return {
-            get: function get(binding, options) {
+            get: function(binding, options) {
                 var resolvedOptions = options !== null && options !== void 0 ? options : defaultOptions;
                 if (middleware.get) {
                     return middleware.get(binding, resolvedOptions, next);
                 }
                 return next === null || next === void 0 ? void 0 : next.get(binding, resolvedOptions);
             },
-            set: function set(transaction, options) {
+            set: function(transaction, options) {
                 var resolvedOptions = options !== null && options !== void 0 ? options : defaultOptions;
                 if (middleware.set) {
                     return middleware.set(transaction, resolvedOptions, next);
                 }
                 return next === null || next === void 0 ? void 0 : next.set(transaction, resolvedOptions);
             },
-            delete: function _delete(binding, options) {
+            delete: function(binding, options) {
                 var resolvedOptions = options !== null && options !== void 0 ? options : defaultOptions;
                 if (middleware.delete) {
                     return middleware.delete(binding, resolvedOptions, next);
@@ -522,15 +504,15 @@ var Player = function() {
             return model;
         }
         return {
-            get: function get(binding, options) {
+            get: function(binding, options) {
                 var _createModelWithOptions;
                 return (_createModelWithOptions = createModelWithOptions(options)) === null || _createModelWithOptions === void 0 ? void 0 : _createModelWithOptions.get(binding, options);
             },
-            set: function set(transaction, options) {
+            set: function(transaction, options) {
                 var _createModelWithOptions;
                 return (_createModelWithOptions = createModelWithOptions(options)) === null || _createModelWithOptions === void 0 ? void 0 : _createModelWithOptions.set(transaction, options);
             },
-            delete: function _delete(binding, options) {
+            delete: function(binding, options) {
                 var _createModelWithOptions;
                 return (_createModelWithOptions = createModelWithOptions(options)) === null || _createModelWithOptions === void 0 ? void 0 : _createModelWithOptions.delete(binding, options);
             }
@@ -609,13 +591,13 @@ var Player = function() {
         return ch0 === OCURL_CODE && ch1 === OCURL_CODE;
     };
     var parseExpression = function parseExpression(expr, options) {
-        var _ref;
-        var strictMode = (_ref = options === null || options === void 0 ? void 0 : options.strict) !== null && _ref !== void 0 ? _ref : true;
+        var _options_strict;
+        var strictMode = (_options_strict = options === null || options === void 0 ? void 0 : options.strict) !== null && _options_strict !== void 0 ? _options_strict : true;
         var charAtFunc = expr.charAt;
         var charCodeAtFunc = expr.charCodeAt;
         var length = expr.length;
         var index = 0;
-        var getLocation = function getLocation(startChar) {
+        var getLocation = function(startChar) {
             return {
                 start: {
                     character: startChar
@@ -1423,29 +1405,20 @@ var Player = function() {
         return _object_spread_props(_object_spread({}, resolverOptions), {
             data: {
                 model: resolverOptions.model,
-                formatValue: function formatValue(ref, value) {
+                formatValue: function(ref, value) {
                     if (resolverOptions.formatValue) {
                         return resolverOptions.formatValue(ref, value);
                     }
                     return value;
                 },
-                format: function format(bindingLike, value) {
+                format: function(bindingLike, value) {
                     return resolverOptions.format ? resolverOptions.format(isBinding(bindingLike) ? bindingLike : resolverOptions.parseBinding(bindingLike), value) : value;
                 }
             },
-            evaluate: function evaluate(exp) {
+            evaluate: function(exp) {
                 return resolverOptions.evaluator.evaluate(exp, resolverOptions);
             }
         });
-    };
-    var hasSomethingToResolve = function hasSomethingToResolve(str) {
-        return bindingResolveLookup(str) || expressionResolveLookup(str);
-    };
-    var resolveString = function resolveString(str, resolveOptions) {
-        return hasSomethingToResolve(str) ? resolveDataRefs(str, {
-            model: resolveOptions.data.model,
-            evaluate: resolveOptions.evaluate
-        }) : str;
     };
     var replaceParams = function replaceParams(message, params) {
         return message.slice().replace(ANY_CHAR_REGEX, function(keyExpr) {
@@ -1484,9 +1457,26 @@ var Player = function() {
             isBlockingNavigation: false
         };
     };
+    var createNewSortInstance = function createNewSortInstance(opts) {
+        var comparer = castComparer(opts.comparer);
+        return function(arrayToSort) {
+            var ctx = Array.isArray(arrayToSort) && !opts.inPlaceSorting ? arrayToSort.slice() : arrayToSort;
+            return {
+                asc: function asc(sortBy) {
+                    return sortArray(1, ctx, sortBy, comparer);
+                },
+                desc: function desc(sortBy) {
+                    return sortArray(-1, ctx, sortBy, comparer);
+                },
+                by: function by(sortBy) {
+                    return sortArray(1, ctx, sortBy, comparer);
+                }
+            };
+        };
+    };
     var createObjectMatcher = function createObjectMatcher(partialObj) {
         var pairs = traverseObj(partialObj);
-        var matchFunction = function matchFunction(searchObj) {
+        var matchFunction = function(searchObj) {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
             try {
                 for(var _iterator = Array.from(pairs)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
@@ -1516,7 +1506,7 @@ var Player = function() {
         return matchFunction;
     };
     var createBasicMatcher = function createBasicMatcher(seed) {
-        var matcher = function matcher(match) {
+        var matcher = function(match) {
             return seed === match;
         };
         matcher.count = 1;
@@ -1533,33 +1523,42 @@ var Player = function() {
         });
         return batchTxn;
     };
+    var hasSomethingToResolve = function hasSomethingToResolve(str) {
+        return bindingResolveLookup(str) || expressionResolveLookup(str);
+    };
+    var resolveString = function resolveString(str, resolveOptions) {
+        return hasSomethingToResolve(str) ? resolveDataRefs(str, {
+            model: resolveOptions.data.model,
+            evaluate: resolveOptions.evaluate
+        }) : str;
+    };
     var __create = Object.create;
     var __defProp = Object.defineProperty;
     var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
     var __getOwnPropNames = Object.getOwnPropertyNames;
     var __getProtoOf = Object.getPrototypeOf;
     var __hasOwnProp = Object.prototype.hasOwnProperty;
-    var __commonJS = function __commonJS(cb, mod) {
+    var __commonJS = function(cb, mod) {
         return function __require() {
             return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = {
                 exports: {}
             }).exports, mod), mod.exports;
         };
     };
-    var __export = function __export(target, all) {
+    var __export = function(target, all) {
         for(var name in all)__defProp(target, name, {
             get: all[name],
             enumerable: true
         });
     };
-    var __copyProps = function __copyProps(to, from, except, desc) {
+    var __copyProps = function(to, from, except, desc) {
         if (from && (typeof from === "undefined" ? "undefined" : _type_of(from)) === "object" || typeof from === "function") {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
             try {
                 var _loop = function() {
                     var key = _step.value;
                     if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
-                        get: function get() {
+                        get: function() {
                             return from[key];
                         },
                         enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
@@ -1583,7 +1582,7 @@ var Player = function() {
         }
         return to;
     };
-    var __toESM = function __toESM(mod, isNodeMode, target) {
+    var __toESM = function(mod, isNodeMode, target) {
         return target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(// If the importer is in node compatibility mode or this is not an ESM
         // file that has been converted to a CommonJS file using a Babel-
         // compatible transform (i.e. "__esModule" has not been set), then set
@@ -1593,7 +1592,7 @@ var Player = function() {
             enumerable: true
         }) : target, mod);
     };
-    var __toCommonJS = function __toCommonJS(mod) {
+    var __toCommonJS = function(mod) {
         return __copyProps(__defProp({}, "__esModule", {
             value: true
         }), mod);
@@ -1695,7 +1694,7 @@ var Player = function() {
             function toError(err) {
                 try {
                     return _instanceof(err, Error) ? err : new Error("Value that is not an instance of Error was thrown: ".concat(err));
-                } catch (unused) {
+                } catch (e) {
                     return new Error("Failed to stringify non-instance of Error that was thrown.This is possibly due to the fact that toString() method of the valuedoesn't return a primitive value.");
                 }
             }
@@ -1996,7 +1995,7 @@ var Player = function() {
     var require_p_defer = __commonJS({
         "../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/p-defer@3.0.0/node_modules/p-defer/index.js": function(exports, module) {
             "use strict";
-            var pDefer = function pDefer() {
+            var pDefer = function() {
                 var deferred2 = {};
                 deferred2.promise = new Promise(function(resolve, reject) {
                     deferred2.resolve = resolve;
@@ -2021,316 +2020,256 @@ var Player = function() {
             };
         }
     });
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js
-    var require_sorted_array = __commonJS({
-        "../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js": function(exports, module) {
-            "use strict";
-            var SortedArray2 = function() {
-                var SortedArray3 = defclass({
-                    constructor: function constructor(array, compare) {
-                        this.array = [];
-                        this.compare = compare || compareDefault;
-                        var length = array.length, index = 0;
-                        while(index < length)this.insert(array[index++]);
-                    },
-                    insert: function insert(element) {
-                        var array = this.array, compare = this.compare, high = array.length - 1, low = 0, pos = -1, index, ordering;
-                        while(high >= low){
-                            index = (high + low) / 2 >>> 0;
-                            ordering = compare(array[index], element);
-                            if (ordering < 0) low = index + 1;
-                            else if (ordering > 0) high = index - 1;
-                            else {
-                                pos = index;
-                                break;
-                            }
-                            ;
-                        }
-                        if (pos === -1) {
-                            pos = high;
-                        }
-                        pos++;
-                        high = array.length - 1;
-                        while(pos < high && compare(element, array[pos]) === 0){
-                            pos++;
-                        }
-                        index = array.length;
-                        array.push(element);
-                        while(index > pos){
-                            array[index] = array[--index];
-                        }
-                        array[pos] = element;
-                        return this;
-                    },
-                    search: function search(element) {
-                        var array = this.array, compare = this.compare, high = array.length - 1, low = 0, index, ordering;
-                        while(high >= low){
-                            index = (high + low) / 2 >>> 0;
-                            ordering = compare(array[index], element);
-                            if (ordering < 0) low = index + 1;
-                            else if (ordering > 0) high = index - 1;
-                            else return index;
-                        }
-                        return -1;
-                    },
-                    remove: function remove(element) {
-                        var index = this.search(element);
-                        if (index >= 0) this.array.splice(index, 1);
-                        return this;
-                    }
-                });
-                SortedArray3.comparing = function(property, array) {
-                    return new SortedArray3(array, function(a, b) {
-                        return compareDefault(a[property], b[property]);
-                    });
-                };
-                return SortedArray3;
-                function defclass(prototype) {
-                    var constructor = prototype.constructor;
-                    constructor.prototype = prototype;
-                    return constructor;
-                }
-                function compareDefault(a, b) {
-                    if (a < b) return -1;
-                    else if (a > b) return 1;
-                    else return 0;
-                }
-            }();
-            if ((typeof module === "undefined" ? "undefined" : _type_of(module)) === "object") module.exports = SortedArray2;
-            if (typeof define === "function" && define.amd) define(function() {
-                return SortedArray2;
-            });
-        }
-    });
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/index.ts
     var src_exports = {};
     __export(src_exports, {
-        ApplicabilityPlugin: function ApplicabilityPlugin1() {
+        ApplicabilityPlugin: function() {
             return ApplicabilityPlugin;
         },
-        AssetPlugin: function AssetPlugin1() {
+        AssetPlugin: function() {
             return AssetPlugin;
         },
-        AssetTransformCorePlugin: function AssetTransformCorePlugin1() {
+        AssetTransformCorePlugin: function() {
             return AssetTransformCorePlugin;
         },
-        BINDING_BRACKETS_REGEX: function BINDING_BRACKETS_REGEX1() {
+        BINDING_BRACKETS_REGEX: function() {
             return BINDING_BRACKETS_REGEX;
         },
-        BindingInstance: function BindingInstance1() {
+        BindingInstance: function() {
             return BindingInstance;
         },
-        BindingParser: function BindingParser1() {
+        BindingParser: function() {
             return BindingParser;
         },
-        Builder: function Builder1() {
+        Builder: function() {
             return Builder;
         },
-        ConsoleLogger: function ConsoleLogger1() {
+        ConsoleLogger: function() {
             return ConsoleLogger;
         },
-        ConstantsController: function ConstantsController1() {
+        ConstantsController: function() {
             return ConstantsController;
         },
-        DataController: function DataController1() {
+        DataController: function() {
             return DataController;
         },
-        DependencyMiddleware: function DependencyMiddleware1() {
+        DependencyMiddleware: function() {
             return DependencyMiddleware;
         },
-        DependencyModel: function DependencyModel1() {
+        DependencyModel: function() {
             return DependencyModel;
         },
-        DependencyTracker: function DependencyTracker1() {
+        DependencyTracker: function() {
             return DependencyTracker;
         },
-        EMPTY_NODE: function EMPTY_NODE1() {
+        EMPTY_NODE: function() {
             return EMPTY_NODE;
         },
-        ExpNodeOpaqueIdentifier: function ExpNodeOpaqueIdentifier1() {
+        ERROR_BINDING_PREFIX: function() {
+            return ERROR_BINDING_PREFIX;
+        },
+        ErrorController: function() {
+            return ErrorController;
+        },
+        ErrorSeverity: function() {
+            return ErrorSeverity;
+        },
+        ErrorStateMiddleware: function() {
+            return ErrorStateMiddleware;
+        },
+        ErrorTypes: function() {
+            return ErrorTypes;
+        },
+        ExpNodeOpaqueIdentifier: function() {
             return ExpNodeOpaqueIdentifier;
         },
-        ExpressionEvaluator: function ExpressionEvaluator1() {
+        ExpressionEvaluator: function() {
             return ExpressionEvaluator;
         },
-        FlowController: function FlowController1() {
+        FlowController: function() {
             return FlowController;
         },
-        FlowExpPlugin: function FlowExpPlugin1() {
+        FlowExpPlugin: function() {
             return FlowExpPlugin;
         },
-        FlowInstance: function FlowInstance1() {
+        FlowInstance: function() {
             return FlowInstance;
         },
-        LocalModel: function LocalModel1() {
+        LocalModel: function() {
             return LocalModel;
         },
-        LocalStateStore: function LocalStateStore1() {
+        LocalStateStore: function() {
             return LocalStateStore;
         },
-        MultiNodePlugin: function MultiNodePlugin1() {
+        MultiNodePlugin: function() {
             return MultiNodePlugin;
         },
-        NOOPDataModel: function NOOPDataModel1() {
+        NOOPDataModel: function() {
             return NOOPDataModel;
         },
-        NOOP_MODEL: function NOOP_MODEL1() {
+        NOOP_MODEL: function() {
             return NOOP_MODEL;
         },
-        NOT_STARTED_STATE: function NOT_STARTED_STATE1() {
+        NOT_STARTED_STATE: function() {
             return NOT_STARTED_STATE;
         },
-        NodeType: function NodeType1() {
+        NodeType: function() {
             return NodeType;
         },
-        NoopLogger: function NoopLogger1() {
+        NoopLogger: function() {
             return NoopLogger;
         },
-        Parser: function Parser1() {
+        Parser: function() {
             return Parser;
         },
-        PipelinedDataModel: function PipelinedDataModel1() {
+        PipelinedDataModel: function() {
             return PipelinedDataModel;
         },
-        Player: function Player1() {
+        Player: function() {
             return Player;
         },
-        ProxyLogger: function ProxyLogger1() {
+        ProxyLogger: function() {
             return ProxyLogger;
         },
-        ROOT_BINDING: function ROOT_BINDING1() {
+        ROOT_BINDING: function() {
             return ROOT_BINDING;
         },
-        Resolver: function Resolver1() {
+        Resolver: function() {
             return Resolver;
         },
-        SCHEMA_VALIDATION_PROVIDER_NAME: function SCHEMA_VALIDATION_PROVIDER_NAME1() {
+        ResolverError: function() {
+            return ResolverError;
+        },
+        ResolverStage: function() {
+            return ResolverStage;
+        },
+        SCHEMA_VALIDATION_PROVIDER_NAME: function() {
             return SCHEMA_VALIDATION_PROVIDER_NAME;
         },
-        SIMPLE_BINDING_REGEX: function SIMPLE_BINDING_REGEX1() {
+        SIMPLE_BINDING_REGEX: function() {
             return SIMPLE_BINDING_REGEX;
         },
-        SchemaController: function SchemaController1() {
+        SchemaController: function() {
             return SchemaController;
         },
-        StringResolverPlugin: function StringResolverPlugin1() {
+        StringResolverPlugin: function() {
             return StringResolverPlugin;
         },
-        SwitchPlugin: function SwitchPlugin1() {
+        SwitchPlugin: function() {
             return SwitchPlugin;
         },
-        TapableLogger: function TapableLogger1() {
+        TapableLogger: function() {
             return TapableLogger;
         },
-        TemplatePlugin: function TemplatePlugin1() {
+        TemplatePlugin: function() {
             return TemplatePlugin;
         },
-        VALIDATION_PROVIDER_NAME_SYMBOL: function VALIDATION_PROVIDER_NAME_SYMBOL1() {
+        VALIDATION_PROVIDER_NAME_SYMBOL: function() {
             return VALIDATION_PROVIDER_NAME_SYMBOL;
         },
-        VIEW_VALIDATION_PROVIDER_NAME: function VIEW_VALIDATION_PROVIDER_NAME1() {
+        VIEW_VALIDATION_PROVIDER_NAME: function() {
             return VIEW_VALIDATION_PROVIDER_NAME;
         },
-        ValidationBindingTrackerViewPlugin: function ValidationBindingTrackerViewPlugin1() {
+        ValidationBindingTrackerViewPlugin: function() {
             return ValidationBindingTrackerViewPlugin;
         },
-        ValidationController: function ValidationController1() {
+        ValidationController: function() {
             return ValidationController;
         },
-        ValidationMiddleware: function ValidationMiddleware1() {
+        ValidationMiddleware: function() {
             return ValidationMiddleware;
         },
-        ValidatorRegistry: function ValidatorRegistry1() {
+        ValidatorRegistry: function() {
             return ValidatorRegistry;
         },
-        ViewController: function ViewController1() {
+        ViewController: function() {
             return ViewController;
         },
-        ViewInstance: function ViewInstance1() {
+        ViewInstance: function() {
             return ViewInstance;
         },
-        caresAboutDataChanges: function caresAboutDataChanges1() {
+        caresAboutDataChanges: function() {
             return caresAboutDataChanges;
         },
-        constructModelForPipeline: function constructModelForPipeline1() {
+        constructModelForPipeline: function() {
             return constructModelForPipeline;
         },
-        findClosestNodeAtPosition: function findClosestNodeAtPosition1() {
+        findClosestNodeAtPosition: function() {
             return findClosestNodeAtPosition;
         },
-        findInArray: function findInArray1() {
+        findInArray: function() {
             return findInArray;
         },
-        findNextExp: function findNextExp1() {
+        findNextExp: function() {
             return findNextExp;
         },
-        getBindingSegments: function getBindingSegments1() {
+        getBindingSegments: function() {
             return getBindingSegments;
         },
-        getNodeID: function getNodeID1() {
+        getNodeID: function() {
             return getNodeID;
         },
-        hasSwitchKey: function hasSwitchKey1() {
+        hasSwitchKey: function() {
             return hasSwitchKey;
         },
-        hasTemplateKey: function hasTemplateKey1() {
+        hasTemplateKey: function() {
             return hasTemplateKey;
         },
-        hasTemplateValues: function hasTemplateValues1() {
+        hasTemplateValues: function() {
             return hasTemplateValues;
         },
-        isAwaitable: function isAwaitable1() {
+        isAwaitable: function() {
             return isAwaitable;
         },
-        isBinding: function isBinding1() {
+        isBinding: function() {
             return isBinding;
         },
-        isErrorWithLocation: function isErrorWithLocation1() {
+        isErrorWithLocation: function() {
             return isErrorWithLocation;
         },
-        isExpressionNode: function isExpressionNode1() {
+        isExpressionNode: function() {
             return isExpressionNode;
         },
-        isObjectExpression: function isObjectExpression1() {
+        isObjectExpression: function() {
             return isObjectExpression;
         },
-        isPromiseLike: function isPromiseLike1() {
+        isPromiseLike: function() {
             return isPromiseLike;
         },
-        maybeConvertToNum: function maybeConvertToNum1() {
+        maybeConvertToNum: function() {
             return maybeConvertToNum;
         },
-        parse: function parse() {
+        parse: function() {
             return parse2;
         },
-        parseExpression: function parseExpression1() {
+        parseExpression: function() {
             return parseExpression;
         },
-        removeBindingAndChildrenFromMap: function removeBindingAndChildrenFromMap1() {
+        removeBindingAndChildrenFromMap: function() {
             return removeBindingAndChildrenFromMap;
         },
-        resolveDataRefs: function resolveDataRefs1() {
+        resolveDataRefs: function() {
             return resolveDataRefs;
         },
-        resolveDataRefsInString: function resolveDataRefsInString1() {
+        resolveDataRefsInString: function() {
             return resolveDataRefsInString;
         },
-        resolveExpressionsInString: function resolveExpressionsInString1() {
+        resolveExpressionsInString: function() {
             return resolveExpressionsInString;
         },
-        severities: function severities1() {
+        severities: function() {
             return severities;
         },
-        toModel: function toModel1() {
+        toModel: function() {
             return toModel;
         },
-        toNodeResolveOptions: function toNodeResolveOptions1() {
+        toNodeResolveOptions: function() {
             return toNodeResolveOptions;
         },
-        withParser: function withParser1() {
+        withParser: function() {
             return withParser;
         },
-        withoutContext: function withoutContext1() {
+        withoutContext: function() {
             return withoutContext;
         }
     });
@@ -2622,32 +2561,32 @@ var Player = function() {
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/binding/index.ts
     var import_ts_nested_error2 = __toESM(require_nested_error());
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/binding-grammar/ast.ts
-    var toValue = function toValue(value) {
+    var toValue = function(value) {
         return {
             name: "Value",
             value: value
         };
     };
-    var toExpression = function toExpression(value) {
+    var toExpression = function(value) {
         return {
             name: "Expression",
             value: value
         };
     };
-    var toPath = function toPath(path) {
+    var toPath = function(path) {
         return {
             name: "PathNode",
             path: path
         };
     };
-    var toQuery = function toQuery(key, value) {
+    var toQuery = function(key, value) {
         return {
             name: "Query",
             key: key,
             value: value
         };
     };
-    var toConcatenatedNode = function toConcatenatedNode(values) {
+    var toConcatenatedNode = function(values) {
         if (values.length === 1) {
             return values[0];
         }
@@ -2666,7 +2605,7 @@ var Player = function() {
     var SINGLE_QUOTE = "'";
     var DOUBLE_QUOTE = '"';
     var BACK_TICK = "`";
-    var isIdentifierChar = function isIdentifierChar(char) {
+    var isIdentifierChar = function(char) {
         if (!char) {
             return false;
         }
@@ -2686,10 +2625,10 @@ var Player = function() {
         charCode === 125;
         return !matches;
     };
-    var parse = function parse(path) {
+    var parse = function(path) {
         var index = 1;
         var ch = path.charAt(0);
-        var next = function next(expected) {
+        var next = function(expected) {
             if (expected && ch !== expected) {
                 throw new Error("Expected char: ".concat(expected, " but got: ").concat(ch));
             }
@@ -2697,12 +2636,12 @@ var Player = function() {
             index += 1;
             return ch;
         };
-        var whitespace = function whitespace() {
+        var whitespace = function() {
             while(ch === " "){
                 next();
             }
         };
-        var identifier = function identifier() {
+        var identifier = function() {
             var allowBoolValue = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : false;
             if (!isIdentifierChar(ch)) {
                 return;
@@ -2728,7 +2667,7 @@ var Player = function() {
                 return toValue(value);
             }
         };
-        var expression = function expression() {
+        var expression = function() {
             if (ch === BACK_TICK) {
                 next(BACK_TICK);
                 var exp = ch;
@@ -2744,7 +2683,7 @@ var Player = function() {
                 }
             }
         };
-        var regex = function regex(match) {
+        var regex = function(match) {
             if (!(ch === null || ch === void 0 ? void 0 : ch.match(match))) {
                 return;
             }
@@ -2759,7 +2698,7 @@ var Player = function() {
                 return toValue(value);
             }
         };
-        var nestedPath = function nestedPath() {
+        var nestedPath = function() {
             if (ch === OPEN_CURL) {
                 next(OPEN_CURL);
                 next(OPEN_CURL);
@@ -2769,12 +2708,12 @@ var Player = function() {
                 return modelRef;
             }
         };
-        var simpleSegment = function simpleSegment() {
+        var simpleSegment = function() {
             var allowBoolValue = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : false;
-            var _ref, _nestedPath;
+            var _nestedPath, _ref;
             return (_ref = (_nestedPath = nestedPath()) !== null && _nestedPath !== void 0 ? _nestedPath : expression()) !== null && _ref !== void 0 ? _ref : identifier(allowBoolValue);
         };
-        var segment = function segment() {
+        var segment = function() {
             var segments = [];
             var nextSegment = simpleSegment();
             while(nextSegment !== void 0){
@@ -2786,7 +2725,7 @@ var Player = function() {
             }
             return toConcatenatedNode(segments);
         };
-        var optionallyQuotedSegment = function optionallyQuotedSegment() {
+        var optionallyQuotedSegment = function() {
             var allowBoolValue = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : false;
             whitespace();
             if (ch === SINGLE_QUOTE || ch === DOUBLE_QUOTE) {
@@ -2798,7 +2737,7 @@ var Player = function() {
             }
             return simpleSegment(allowBoolValue);
         };
-        var equals = function equals() {
+        var equals = function() {
             if (ch !== EQUALS) {
                 return false;
             }
@@ -2807,7 +2746,7 @@ var Player = function() {
             }
             return true;
         };
-        var parseBracket = function parseBracket() {
+        var parseBracket = function() {
             if (ch === OPEN_BRACKET) {
                 next(OPEN_BRACKET);
                 whitespace();
@@ -2829,7 +2768,7 @@ var Player = function() {
                 return value;
             }
         };
-        var parseSegmentAndBrackets = function parseSegmentAndBrackets() {
+        var parseSegmentAndBrackets = function() {
             var parsed = [];
             var firstSegment = segment();
             if (firstSegment) {
@@ -2846,7 +2785,7 @@ var Player = function() {
             }
             return parsed;
         };
-        var parsePath = function parsePath() {
+        var parsePath = function() {
             var parts = [];
             var nextSegment = parseSegmentAndBrackets();
             while(nextSegment !== void 0){
@@ -2960,7 +2899,6 @@ var Player = function() {
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/binding/resolver.ts
     var import_ts_nested_error = __toESM(require_nested_error());
     function resolveBindingAST(bindingPathNode, options, hooks) {
-        var _context_updates;
         var context = {
             updates: {},
             path: []
@@ -3000,8 +2938,8 @@ var Player = function() {
             }
         }
         function resolveNode(_node) {
-            var _ref;
-            var resolvedNode = (_ref = hooks === null || hooks === void 0 ? void 0 : hooks.beforeResolveNode.call(_node, _object_spread({}, context, options))) !== null && _ref !== void 0 ? _ref : _node;
+            var _hooks_beforeResolveNode_call;
+            var resolvedNode = (_hooks_beforeResolveNode_call = hooks === null || hooks === void 0 ? void 0 : hooks.beforeResolveNode.call(_node, _object_spread({}, context, options))) !== null && _hooks_beforeResolveNode_call !== void 0 ? _hooks_beforeResolveNode_call : _node;
             switch(resolvedNode.name){
                 case "Expression":
                 case "PathNode":
@@ -3037,6 +2975,7 @@ var Player = function() {
             }
         }
         bindingPathNode.path.forEach(resolveNode);
+        var _context_updates;
         return {
             path: context.path,
             updates: Object.keys((_context_updates = context.updates) !== null && _context_updates !== void 0 ? _context_updates : {}).length > 0 ? context.updates : void 0
@@ -3047,13 +2986,13 @@ var Player = function() {
     var BINDING_BRACKETS_REGEX = /[\s()*=`{}'"[\]]/;
     var LAZY_BINDING_REGEX = /^[^.]+(\..+)*$/;
     var DEFAULT_OPTIONS = {
-        get: function get() {
+        get: function() {
             throw new Error("Not Implemented");
         },
-        set: function set() {
+        set: function() {
             throw new Error("Not Implemented");
         },
-        evaluate: function evaluate() {
+        evaluate: function() {
             throw new Error("Not Implemented");
         }
     };
@@ -3076,18 +3015,18 @@ var Player = function() {
      * representation of that path.
      */ key: "normalizePath",
                 value: function normalizePath(path, resolveOptions) {
-                    var _this_parseCache_path;
                     if (!BINDING_BRACKETS_REGEX.test(path) && LAZY_BINDING_REGEX.test(path) && this.hooks.skipOptimization.call(path) !== true) {
                         return {
                             path: path.split("."),
                             updates: void 0
                         };
                     }
+                    var _this_parseCache_path;
                     var ast = (_this_parseCache_path = this.parseCache[path]) !== null && _this_parseCache_path !== void 0 ? _this_parseCache_path : parse(path);
                     this.parseCache[path] = ast;
                     if ((typeof ast === "undefined" ? "undefined" : _type_of(ast)) !== "object" || !(ast === null || ast === void 0 ? void 0 : ast.status)) {
-                        var _ref;
-                        throw new TypeError('Cannot normalize path "'.concat(path, '": ').concat((_ref = ast === null || ast === void 0 ? void 0 : ast.error) !== null && _ref !== void 0 ? _ref : "Unknown Error."));
+                        var _ast_error;
+                        throw new TypeError('Cannot normalize path "'.concat(path, '": ').concat((_ast_error = ast === null || ast === void 0 ? void 0 : ast.error) !== null && _ast_error !== void 0 ? _ast_error : "Unknown Error."));
                     }
                     try {
                         return resolveBindingAST(ast.path, resolveOptions, this.hooks);
@@ -3120,14 +3059,14 @@ var Player = function() {
                     var updates = {};
                     var joined = Array.isArray(rawBinding) ? rawBinding.join(".") : String(rawBinding);
                     var normalizeConfig = {
-                        getValue: function getValue(path) {
+                        getValue: function(path) {
                             var normalized2 = _this.normalizePath(path.join("."), normalizeConfig);
                             return options.get(_this.getBindingForNormalizedResult(normalized2));
                         },
-                        evaluate: function evaluate(exp) {
+                        evaluate: function(exp) {
                             return options.evaluate(exp);
                         },
-                        convertToPath: function convertToPath(path) {
+                        convertToPath: function(path) {
                             if (path === void 0) {
                                 throw new Error("Attempted to convert undefined value to binding path");
                             }
@@ -3193,9 +3132,9 @@ var Player = function() {
                 /** Grab all of the bindings that this depended on */ key: "getDependencies",
                 value: function getDependencies(name) {
                     if (name !== void 0) {
-                        var _ref;
                         var _this_namedDependencySets_name, _this_namedDependencySets;
-                        return (_ref = (_this_namedDependencySets = this.namedDependencySets) === null || _this_namedDependencySets === void 0 ? void 0 : (_this_namedDependencySets_name = _this_namedDependencySets[name]) === null || _this_namedDependencySets_name === void 0 ? void 0 : _this_namedDependencySets_name.readDeps) !== null && _ref !== void 0 ? _ref : /* @__PURE__ */ new Set();
+                        var _this_namedDependencySets_name_readDeps;
+                        return (_this_namedDependencySets_name_readDeps = (_this_namedDependencySets = this.namedDependencySets) === null || _this_namedDependencySets === void 0 ? void 0 : (_this_namedDependencySets_name = _this_namedDependencySets[name]) === null || _this_namedDependencySets_name === void 0 ? void 0 : _this_namedDependencySets_name.readDeps) !== null && _this_namedDependencySets_name_readDeps !== void 0 ? _this_namedDependencySets_name_readDeps : /* @__PURE__ */ new Set();
                     }
                     return this.readDeps;
                 }
@@ -3217,9 +3156,9 @@ var Player = function() {
                 /** Grab all of the bindings this wrote to */ key: "getModified",
                 value: function getModified(name) {
                     if (name !== void 0) {
-                        var _ref;
                         var _this_namedDependencySets_name, _this_namedDependencySets;
-                        return (_ref = (_this_namedDependencySets = this.namedDependencySets) === null || _this_namedDependencySets === void 0 ? void 0 : (_this_namedDependencySets_name = _this_namedDependencySets[name]) === null || _this_namedDependencySets_name === void 0 ? void 0 : _this_namedDependencySets_name.writeDeps) !== null && _ref !== void 0 ? _ref : /* @__PURE__ */ new Set();
+                        var _this_namedDependencySets_name_writeDeps;
+                        return (_this_namedDependencySets_name_writeDeps = (_this_namedDependencySets = this.namedDependencySets) === null || _this_namedDependencySets === void 0 ? void 0 : (_this_namedDependencySets_name = _this_namedDependencySets[name]) === null || _this_namedDependencySets_name === void 0 ? void 0 : _this_namedDependencySets_name.writeDeps) !== null && _this_namedDependencySets_name_writeDeps !== void 0 ? _this_namedDependencySets_name_writeDeps : /* @__PURE__ */ new Set();
                     }
                     return this.writeDeps;
                 }
@@ -3299,12 +3238,12 @@ var Player = function() {
                 key: "set",
                 value: function set(transaction, options, next) {
                     var _this = this;
-                    var _ref;
                     transaction.forEach(function(param) {
                         var _param = _sliced_to_array(param, 1), binding = _param[0];
                         return _this.addWriteDep(binding);
                     });
-                    return (_ref = next === null || next === void 0 ? void 0 : next.set(transaction, options)) !== null && _ref !== void 0 ? _ref : [];
+                    var _next_set;
+                    return (_next_set = next === null || next === void 0 ? void 0 : next.set(transaction, options)) !== null && _next_set !== void 0 ? _next_set : [];
                 }
             },
             {
@@ -3590,19 +3529,19 @@ var Player = function() {
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/expressions/evaluator-functions.ts
     var evaluator_functions_exports = {};
     __export(evaluator_functions_exports, {
-        conditional: function conditional1() {
+        conditional: function() {
             return conditional;
         },
-        deleteDataVal: function deleteDataVal1() {
+        deleteDataVal: function() {
             return deleteDataVal;
         },
-        getDataVal: function getDataVal1() {
+        getDataVal: function() {
             return getDataVal;
         },
-        setDataVal: function setDataVal1() {
+        setDataVal: function() {
             return setDataVal;
         },
-        waitFor: function waitFor1() {
+        waitFor: function() {
             return waitFor;
         }
     });
@@ -3615,7 +3554,7 @@ var Player = function() {
         return promise;
     }
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/expressions/evaluator-functions.ts
-    var setDataVal = function setDataVal(_context, binding, value) {
+    var setDataVal = function(_context, binding, value) {
         _context.model.set([
             [
                 binding,
@@ -3623,13 +3562,13 @@ var Player = function() {
             ]
         ]);
     };
-    var getDataVal = function getDataVal(_context, binding) {
+    var getDataVal = function(_context, binding) {
         return _context.model.get(binding);
     };
-    var deleteDataVal = function deleteDataVal(_context, binding) {
+    var deleteDataVal = function(_context, binding) {
         return _context.model.delete(binding);
     };
-    var conditional = function conditional(ctx, condition, ifTrue, ifFalse) {
+    var conditional = function(ctx, condition, ifTrue, ifFalse) {
         var testResult = ctx.evaluate(condition);
         if (isAwaitable(testResult)) {
             return testResult.awaitableThen(function(resolvedTest) {
@@ -3651,7 +3590,7 @@ var Player = function() {
         return null;
     };
     conditional.resolveParams = false;
-    var waitFor = function waitFor(ctx, promise) {
+    var waitFor = function(ctx, promise) {
         return makeAwaitable(promise);
     };
     function findClosestNodeAtPosition(node, position) {
@@ -3687,7 +3626,7 @@ var Player = function() {
                 }
             case "ConditionalExpression":
                 {
-                    var _ref, _findClosestNodeAtPosition2;
+                    var _findClosestNodeAtPosition2, _ref;
                     var checkObject1 = (_ref = (_findClosestNodeAtPosition2 = findClosestNodeAtPosition(node.test, position)) !== null && _findClosestNodeAtPosition2 !== void 0 ? _findClosestNodeAtPosition2 : findClosestNodeAtPosition(node.consequent, position)) !== null && _ref !== void 0 ? _ref : findClosestNodeAtPosition(node.alternate, position);
                     if (checkObject1) {
                         return checkObject1;
@@ -3734,11 +3673,11 @@ var Player = function() {
         }
     }
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/expressions/evaluator.ts
-    var andandOperator = function andandOperator(ctx, a, b, async) {
+    var andandOperator = function(ctx, a, b, async) {
         return LogicalOperators.and(ctx, a, b, async);
     };
     andandOperator.resolveParams = false;
-    var ororOperator = function ororOperator(ctx, a, b, async) {
+    var ororOperator = function(ctx, a, b, async) {
         return LogicalOperators.or(ctx, a, b, async);
     };
     ororOperator.resolveParams = false;
@@ -3864,7 +3803,7 @@ var Player = function() {
         }
     };
     var LogicalOperators = {
-        and: function and(ctx, leftNode, rightNode, async) {
+        and: function(ctx, leftNode, rightNode, async) {
             var leftResult = ctx.evaluate(leftNode);
             if (async && isAwaitable(leftResult)) {
                 return leftResult.awaitableThen(function(awaitedLeft) {
@@ -3875,7 +3814,7 @@ var Player = function() {
             }
             return leftResult && ctx.evaluate(rightNode);
         },
-        or: function or(ctx, leftNode, rightNode, async) {
+        or: function(ctx, leftNode, rightNode, async) {
             var leftResult = ctx.evaluate(leftNode);
             if (async && isAwaitable(leftResult)) {
                 return leftResult.awaitableThen(function(awaitedLeft) {
@@ -3913,10 +3852,10 @@ var Player = function() {
                 ]))
             };
             this.defaultHookOptions = _object_spread_props(_object_spread({}, defaultOptions), {
-                evaluate: function evaluate(expr) {
+                evaluate: function(expr) {
                     return _this.evaluate(expr, _this.defaultHookOptions);
                 },
-                resolveNode: function resolveNode(node) {
+                resolveNode: function(node) {
                     return _this._execAST(node, _this.defaultHookOptions);
                 }
             });
@@ -3936,12 +3875,12 @@ var Player = function() {
                 key: "evaluate",
                 value: function evaluate(expr, options) {
                     var _this = this;
-                    var _this_hooks_beforeEvaluate_call;
                     var resolvedOpts = this.hooks.resolveOptions.call(_object_spread_props(_object_spread({}, this.defaultHookOptions, options), {
-                        resolveNode: function resolveNode(node) {
+                        resolveNode: function(node) {
                             return _this._execAST(node, resolvedOpts);
                         }
                     }));
+                    var _this_hooks_beforeEvaluate_call;
                     var expression = (_this_hooks_beforeEvaluate_call = this.hooks.beforeEvaluate.call(expr, resolvedOpts)) !== null && _this_hooks_beforeEvaluate_call !== void 0 ? _this_hooks_beforeEvaluate_call : expr;
                     while(isObjectExpression(expression)){
                         expression = expression.value;
@@ -4065,11 +4004,11 @@ var Player = function() {
                 key: "_resolveNode",
                 value: function _resolveNode(_currentValue, node, options) {
                     var _this = this;
-                    var _options_async;
                     var resolveNode = options.resolveNode, model = options.model;
+                    var _options_async;
                     var isAsync = (_options_async = options.async) !== null && _options_async !== void 0 ? _options_async : false;
                     var expressionContext = _object_spread_props(_object_spread({}, options), {
-                        evaluate: function evaluate(expr) {
+                        evaluate: function(expr) {
                             return _this.evaluate(expr, options);
                         }
                     });
@@ -4389,7 +4328,7 @@ var Player = function() {
         return ConsoleLogger;
     }();
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/logger/noopLogger.ts
-    var noop = function noop() {};
+    var noop = function() {};
     var NoopLogger = function NoopLogger() {
         _class_call_check(this, NoopLogger);
         this.trace = noop;
@@ -4480,7 +4419,7 @@ var Player = function() {
         return ProxyLogger;
     }();
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/schema/schema.ts
-    var identify = function identify(val) {
+    var identify = function(val) {
         return val;
     };
     var SchemaController = /*#__PURE__*/ function() {
@@ -4568,7 +4507,6 @@ var Player = function() {
             {
                 key: "getApparentType",
                 value: function getApparentType(binding) {
-                    var _schemaType_validation, _baseType_validation;
                     var schemaType = this.getType(binding);
                     if (schemaType === void 0) {
                         return void 0;
@@ -4577,6 +4515,7 @@ var Player = function() {
                     if (baseType === void 0) {
                         return schemaType;
                     }
+                    var _schemaType_validation, _baseType_validation;
                     return _object_spread_props(_object_spread({}, baseType, schemaType), {
                         validation: _to_consumable_array((_schemaType_validation = schemaType.validation) !== null && _schemaType_validation !== void 0 ? _schemaType_validation : []).concat(_to_consumable_array((_baseType_validation = baseType.validation) !== null && _baseType_validation !== void 0 ? _baseType_validation : []))
                     });
@@ -4730,10 +4669,10 @@ var Player = function() {
             {
                 key: "get",
                 value: function get(binding, options, next) {
-                    var _ref;
                     var _this_shouldIncludeInvalid, _this;
                     var val = next === null || next === void 0 ? void 0 : next.get(binding, options);
-                    if ((_ref = (_this_shouldIncludeInvalid = (_this = this).shouldIncludeInvalid) === null || _this_shouldIncludeInvalid === void 0 ? void 0 : _this_shouldIncludeInvalid.call(_this, options)) !== null && _ref !== void 0 ? _ref : (options === null || options === void 0 ? void 0 : options.includeInvalid) === true) {
+                    var _this_shouldIncludeInvalid1;
+                    if ((_this_shouldIncludeInvalid1 = (_this_shouldIncludeInvalid = (_this = this).shouldIncludeInvalid) === null || _this_shouldIncludeInvalid === void 0 ? void 0 : _this_shouldIncludeInvalid.call(_this, options)) !== null && _this_shouldIncludeInvalid1 !== void 0 ? _this_shouldIncludeInvalid1 : (options === null || options === void 0 ? void 0 : options.includeInvalid) === true) {
                         this.shadowModelPaths.forEach(function(shadowValue, shadowBinding) {
                             if (shadowBinding === binding) {
                                 val = shadowValue;
@@ -4780,7 +4719,7 @@ var Player = function() {
         return ValidatorRegistry;
     }();
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/resolver/index.ts
-    var import_timm5 = __toESM(require_timm());
+    var import_timm6 = __toESM(require_timm());
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/dequal@2.0.3/node_modules/dequal/dist/index.mjs
     var has = Object.prototype.hasOwnProperty;
     function dequal(foo, bar) {
@@ -4942,12 +4881,11 @@ var Player = function() {
                         templateDepth: 0
                     };
                     var _this = this;
-                    var _this_hooks_onCreateASTNode_call;
                     var parsedNode = this.hooks.parseNode.call(obj, type, options);
                     if (parsedNode || parsedNode === null) {
                         return parsedNode;
                     }
-                    var parseLocalObject = function parseLocalObject1(currentValue, objToParse) {
+                    var parseLocalObject = function(currentValue, objToParse) {
                         var path = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : [];
                         if ((typeof objToParse === "undefined" ? "undefined" : _type_of(objToParse)) !== "object" || objToParse === null) {
                             return {
@@ -5017,30 +4955,2218 @@ var Player = function() {
                             child.value.parent = parent;
                         });
                     }
+                    var _this_hooks_onCreateASTNode_call;
                     return (_this_hooks_onCreateASTNode_call = this.hooks.onCreateASTNode.call(baseAst, obj)) !== null && _this_hooks_onCreateASTNode_call !== void 0 ? _this_hooks_onCreateASTNode_call : null;
                 }
             }
         ]);
         return Parser;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/resolver/index.ts
-    var withContext = function withContext(model) {
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/resolver/types.ts
+    var ResolverStage = /* @__PURE__ */ function(ResolverStage2) {
+        ResolverStage2["ResolveOptions"] = "resolveOptions";
+        ResolverStage2["SkipResolve"] = "skipResolve";
+        ResolverStage2["BeforeResolve"] = "beforeResolve";
+        ResolverStage2["Resolve"] = "resolve";
+        ResolverStage2["AfterResolve"] = "afterResolve";
+        ResolverStage2["AfterNodeUpdate"] = "afterNodeUpdate";
+        return ResolverStage2;
+    }(ResolverStage || {});
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/flow/flow.ts
+    var import_p_defer = __toESM(require_p_defer());
+    var FlowInstance = /*#__PURE__*/ function() {
+        function FlowInstance(id, flow, options) {
+            var _this = this;
+            _class_call_check(this, FlowInstance);
+            this.isTransitioning = false;
+            this.hooks = {
+                beforeStart: new SyncBailHook(),
+                onStart: new SyncHook(),
+                onEnd: new SyncHook(),
+                skipTransition: new SyncBailHook(),
+                beforeTransition: new SyncWaterfallHook(),
+                resolveTransitionNode: new SyncWaterfallHook(),
+                transition: new SyncHook(),
+                afterTransition: new SyncHook()
+            };
+            this.id = id;
+            this.flow = flow;
+            this.log = options === null || options === void 0 ? void 0 : options.logger;
+            this.history = [];
+            this.hooks.transition.tap("startPromise", function(_oldState, nextState) {
+                return _async_to_generator(function() {
+                    var newState;
+                    return _ts_generator(this, function(_state) {
+                        newState = nextState.value;
+                        if (this.flowPromise && newState.state_type === "END") {
+                            this.flowPromise.resolve(newState);
+                        }
+                        return [
+                            2
+                        ];
+                    });
+                }).call(_this);
+            });
+        }
+        _create_class(FlowInstance, [
+            {
+                key: "start",
+                value: /** Start the state machine */ function start() {
+                    return _async_to_generator(function() {
+                        var _this_log, initialState;
+                        return _ts_generator(this, function(_state) {
+                            if (this.flowPromise) {
+                                ;
+                                (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.warn("Already called start for flow");
+                                return [
+                                    2,
+                                    this.flowPromise.promise
+                                ];
+                            }
+                            this.flow = this.hooks.beforeStart.call(this.flow) || this.flow;
+                            if (this.flow.onStart) {
+                                this.hooks.onStart.call(this.flow.onStart);
+                            }
+                            initialState = this.flow.startState;
+                            if (!initialState) {
+                                return [
+                                    2,
+                                    Promise.reject(new Error("No 'startState' defined for flow"))
+                                ];
+                            }
+                            this.flowPromise = (0, import_p_defer.default)();
+                            this.pushHistory(initialState);
+                            return [
+                                2,
+                                this.flowPromise.promise
+                            ];
+                        });
+                    }).call(this);
+                }
+            },
+            {
+                /**
+     * Get the flow-level error transitions map
+     */ key: "getFlowErrorTransitions",
+                value: function getFlowErrorTransitions() {
+                    return this.flow.errorTransitions;
+                }
+            },
+            {
+                /**
+     * Helper to lookup a key in a map with wildcard fallback
+     */ key: "lookupInMap",
+                value: function lookupInMap(map, key) {
+                    if (!map) return void 0;
+                    return map[key] || map["*"];
+                }
+            },
+            {
+                /** Check if the flow has a transition for the given error type in its current state. */ key: "getErrorTransitionState",
+                value: function getErrorTransitionState(errorType) {
+                    var _this_currentState;
+                    if (((_this_currentState = this.currentState) === null || _this_currentState === void 0 ? void 0 : _this_currentState.value.state_type) === "END") {
+                        var _this_log;
+                        (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.warn("Cannot error transition from END state");
+                        return void 0;
+                    }
+                    if (this.currentState) {
+                        var nodeState = this.lookupInMap(this.currentState.value.errorTransitions, errorType);
+                        if (nodeState) {
+                            if (!Object.prototype.hasOwnProperty.call(this.flow, nodeState)) {
+                                var _this_log1;
+                                (_this_log1 = this.log) === null || _this_log1 === void 0 ? void 0 : _this_log1.debug('Node-level errorTransition references non-existent state "'.concat(nodeState, '", trying flow-level fallback'));
+                            } else {
+                                var _this_log2;
+                                (_this_log2 = this.log) === null || _this_log2 === void 0 ? void 0 : _this_log2.debug("Error transition (node-level) from ".concat(this.currentState.name, " to ").concat(nodeState, " using ").concat(errorType));
+                                return nodeState;
+                            }
+                        }
+                    }
+                    var flowState = this.lookupInMap(this.flow.errorTransitions, errorType);
+                    if (flowState) {
+                        if (!Object.prototype.hasOwnProperty.call(this.flow, flowState)) {
+                            var _this_log3;
+                            (_this_log3 = this.log) === null || _this_log3 === void 0 ? void 0 : _this_log3.debug('Flow-level errorTransition references non-existent state "'.concat(flowState, '"'));
+                        } else {
+                            var _this_log4;
+                            (_this_log4 = this.log) === null || _this_log4 === void 0 ? void 0 : _this_log4.debug("Error transition (flow-level) to ".concat(flowState, " using ").concat(errorType).concat(this.currentState ? " from ".concat(this.currentState.name) : ""));
+                            return flowState;
+                        }
+                    }
+                    return void 0;
+                }
+            },
+            {
+                /**
+     * Navigate using errorTransitions map.
+     * Tries node-level first, then falls back to flow-level.
+     * Bypasses validation hooks and expression resolution.
+     * @throws Error if errorTransitions references a non-existent state
+     */ key: "errorTransition",
+                value: function errorTransition(errorType) {
+                    var transitionState = this.getErrorTransitionState(errorType);
+                    if (transitionState === void 0) {
+                        var _this_log;
+                        (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.warn("No errorTransition found for ".concat(errorType, " (checked node and flow level)"));
+                        return;
+                    }
+                    this.pushHistory(transitionState);
+                }
+            },
+            {
+                key: "transition",
+                value: function transition(transitionValue, options) {
+                    var _this_currentState, _this_log;
+                    if (this.isTransitioning) {
+                        var _this_currentState1;
+                        throw new Error("Transitioning while ongoing transition from ".concat((_this_currentState1 = this.currentState) === null || _this_currentState1 === void 0 ? void 0 : _this_currentState1.name, " is in progress is not supported"));
+                    }
+                    if (((_this_currentState = this.currentState) === null || _this_currentState === void 0 ? void 0 : _this_currentState.value.state_type) === "END") {
+                        var _this_log1;
+                        (_this_log1 = this.log) === null || _this_log1 === void 0 ? void 0 : _this_log1.warn("Skipping transition using ".concat(transitionValue, ". Already at END state"));
+                        return;
+                    }
+                    if (this.currentState === void 0) {
+                        throw new Error("Cannot transition when there's no current state");
+                    }
+                    var currentState = this.currentState.value;
+                    if (options === null || options === void 0 ? void 0 : options.force) {
+                        var _this_log2;
+                        (_this_log2 = this.log) === null || _this_log2 === void 0 ? void 0 : _this_log2.debug("Forced transition. Skipping validation checks");
+                    } else {
+                        var skipTransition = this.hooks.skipTransition.call(this.currentState);
+                        if (skipTransition) {
+                            var _this_log3;
+                            (_this_log3 = this.log) === null || _this_log3 === void 0 ? void 0 : _this_log3.debug("Skipping transition from ".concat(this.currentState.name, " b/c hook told us to"));
+                            return;
+                        }
+                    }
+                    var state = this.hooks.beforeTransition.call(currentState, transitionValue);
+                    if (!("transitions" in state)) {
+                        throw new Error("No transitions defined for ".concat(this.currentState.value));
+                    }
+                    var transitions = state.transitions;
+                    var nextState = transitions[transitionValue] || transitions["*"];
+                    if (nextState === void 0) {
+                        var _this_log4;
+                        (_this_log4 = this.log) === null || _this_log4 === void 0 ? void 0 : _this_log4.warn("No transition from ".concat(this.currentState.name, " using ").concat(transitionValue, " or *"));
+                        return;
+                    }
+                    (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.debug("Transitioning from ".concat(this.currentState.name, " to ").concat(nextState, " using ").concat(transitionValue, " "));
+                    return this.pushHistory(nextState, options);
+                }
+            },
+            {
+                key: "pushHistory",
+                value: function pushHistory(stateName, options) {
+                    if (!Object.prototype.hasOwnProperty.call(this.flow, stateName)) {
+                        throw new Error("No flow definition for: ".concat(stateName, " was found."));
+                    }
+                    var nextState = this.flow[stateName];
+                    if (!this.flow[stateName] || (typeof nextState === "undefined" ? "undefined" : _type_of(nextState)) !== "object" || !("state_type" in nextState)) {
+                        var _this_log;
+                        (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.error("Flow doesn't contain any states named: ".concat(stateName));
+                        return;
+                    }
+                    var prevState = this.currentState;
+                    this.isTransitioning = true;
+                    nextState = this.hooks.resolveTransitionNode.call(nextState);
+                    var newCurrentState = {
+                        name: stateName,
+                        value: nextState
+                    };
+                    this.currentState = newCurrentState;
+                    this.history.push(stateName);
+                    if (newCurrentState.value.state_type === "END" && this.flow.onEnd) {
+                        this.hooks.onEnd.call(this.flow.onEnd);
+                    }
+                    this.hooks.transition.call(prevState, _object_spread({}, newCurrentState));
+                    this.isTransitioning = false;
+                    this.hooks.afterTransition.call(this);
+                }
+            }
+        ]);
+        return FlowInstance;
+    }();
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/flow/controller.ts
+    var FlowController = /*#__PURE__*/ function() {
+        function FlowController(navigation, options) {
+            _class_call_check(this, FlowController);
+            this.hooks = {
+                flow: new SyncHook()
+            };
+            this.navigation = navigation;
+            this.navStack = [];
+            this.log = options === null || options === void 0 ? void 0 : options.logger;
+            this.start = this.start.bind(this);
+            this.run = this.run.bind(this);
+            this.transition = this.transition.bind(this);
+            this.addNewFlow = this.addNewFlow.bind(this);
+        }
+        _create_class(FlowController, [
+            {
+                /** Navigate to another state in the state-machine */ key: "transition",
+                value: function transition(stateTransition, options) {
+                    if (this.current === void 0) {
+                        throw new Error("Not currently in a flow. Cannot transition.");
+                    }
+                    this.current.transition(stateTransition, options);
+                }
+            },
+            {
+                key: "addNewFlow",
+                value: function addNewFlow(flow) {
+                    this.navStack.push(flow);
+                    this.current = flow;
+                    this.hooks.flow.call(flow);
+                }
+            },
+            {
+                key: "run",
+                value: function run(startState) {
+                    return _async_to_generator(function() {
+                        var _this, _this_log, startFlow, flow, end, firstItem;
+                        return _ts_generator(this, function(_state) {
+                            switch(_state.label){
+                                case 0:
+                                    _this = this;
+                                    if (!Object.prototype.hasOwnProperty.call(this.navigation, startState)) {
+                                        return [
+                                            2,
+                                            Promise.reject(new Error("No flow defined for: ".concat(startState)))
+                                        ];
+                                    }
+                                    startFlow = this.navigation[startState];
+                                    if (startFlow === null || (typeof startFlow === "undefined" ? "undefined" : _type_of(startFlow)) !== "object") {
+                                        return [
+                                            2,
+                                            Promise.reject(new Error("Flow: ".concat(startState, " needs to be an object")))
+                                        ];
+                                    }
+                                    (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.debug("Starting flow: ".concat(startState));
+                                    flow = new FlowInstance(startState, startFlow, {
+                                        logger: this.log
+                                    });
+                                    this.addNewFlow(flow);
+                                    flow.hooks.afterTransition.tap("flow-controller", function(flowInstance) {
+                                        var _flowInstance_currentState;
+                                        if (((_flowInstance_currentState = flowInstance.currentState) === null || _flowInstance_currentState === void 0 ? void 0 : _flowInstance_currentState.value.state_type) === "FLOW") {
+                                            var _flowInstance_currentState1, _this_log;
+                                            var subflowId = (_flowInstance_currentState1 = flowInstance.currentState) === null || _flowInstance_currentState1 === void 0 ? void 0 : _flowInstance_currentState1.value.ref;
+                                            (_this_log = _this.log) === null || _this_log === void 0 ? void 0 : _this_log.debug("Loading subflow ".concat(subflowId));
+                                            _this.run(subflowId).then(function(subFlowEndState) {
+                                                var _this_log;
+                                                (_this_log = _this.log) === null || _this_log === void 0 ? void 0 : _this_log.debug("Subflow ended. Using outcome: ".concat(subFlowEndState.outcome));
+                                                flowInstance.transition(subFlowEndState === null || subFlowEndState === void 0 ? void 0 : subFlowEndState.outcome);
+                                            });
+                                        }
+                                    });
+                                    return [
+                                        4,
+                                        flow.start()
+                                    ];
+                                case 1:
+                                    end = _state.sent();
+                                    this.navStack.pop();
+                                    if (this.navStack.length > 0) {
+                                        firstItem = 0;
+                                        this.current = this.navStack[firstItem];
+                                    }
+                                    return [
+                                        2,
+                                        end
+                                    ];
+                            }
+                        });
+                    }).call(this);
+                }
+            },
+            {
+                key: "start",
+                value: function start() {
+                    return _async_to_generator(function() {
+                        return _ts_generator(this, function(_state) {
+                            if (!this.navigation.BEGIN) {
+                                return [
+                                    2,
+                                    Promise.reject(new Error("Must supply a BEGIN state"))
+                                ];
+                            }
+                            return [
+                                2,
+                                this.run(this.navigation.BEGIN)
+                            ];
+                        });
+                    }).call(this);
+                }
+            }
+        ]);
+        return FlowController;
+    }();
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/validation/controller.ts
+    var import_timm5 = __toESM(require_timm());
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/utils/replaceParams.ts
+    var ANY_CHAR_REGEX = /%([a-zA-Z]+)/g;
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/validation/binding-tracker.ts
+    var CONTEXT = "validation-binding-tracker";
+    var ValidationBindingTrackerViewPlugin = /*#__PURE__*/ function() {
+        function ValidationBindingTrackerViewPlugin(options) {
+            _class_call_check(this, ValidationBindingTrackerViewPlugin);
+            this.trackedBindings = /* @__PURE__ */ new Set();
+            this.options = options;
+        }
+        _create_class(ValidationBindingTrackerViewPlugin, [
+            {
+                /** Fetch the tracked bindings in the current view */ key: "getBindings",
+                value: function getBindings() {
+                    return this.trackedBindings;
+                }
+            },
+            {
+                /** Add a binding to the tracked set */ key: "trackBinding",
+                value: function trackBinding(binding) {
+                    var _this_options_callbacks_onAdd, _this_options_callbacks;
+                    if (this.trackedBindings.has(binding)) {
+                        return;
+                    }
+                    this.trackedBindings.add(binding);
+                    (_this_options_callbacks = this.options.callbacks) === null || _this_options_callbacks === void 0 ? void 0 : (_this_options_callbacks_onAdd = _this_options_callbacks.onAdd) === null || _this_options_callbacks_onAdd === void 0 ? void 0 : _this_options_callbacks_onAdd.call(_this_options_callbacks, binding);
+                }
+            },
+            {
+                /** Attach hooks to the given resolver */ key: "applyResolver",
+                value: function applyResolver(resolver) {
+                    var _this = this;
+                    this.trackedBindings.clear();
+                    var tracked = /* @__PURE__ */ new Map();
+                    var sections = /* @__PURE__ */ new Map();
+                    var lastViewUpdateChangeSet;
+                    var lastComputedBindingTree = /* @__PURE__ */ new Map();
+                    var currentBindingTree = /* @__PURE__ */ new Map();
+                    var lastSectionBindingTree = /* @__PURE__ */ new Map();
+                    var resolvedNodeMap = /* @__PURE__ */ new Map();
+                    resolver.hooks.beforeUpdate.tap(CONTEXT, function(changes) {
+                        lastViewUpdateChangeSet = changes;
+                    });
+                    resolver.hooks.skipResolve.tap(CONTEXT, function(shouldSkip, node) {
+                        var trackedBindingsForNode = lastComputedBindingTree.get(node);
+                        if (!shouldSkip || !lastViewUpdateChangeSet || !trackedBindingsForNode) {
+                            return shouldSkip;
+                        }
+                        var intersection = new Set(_to_consumable_array(lastViewUpdateChangeSet).filter(function(b) {
+                            return trackedBindingsForNode.has(b);
+                        }));
+                        return intersection.size === 0;
+                    });
+                    resolver.hooks.resolveOptions.tap(CONTEXT, function(options, node) {
+                        if (options.validation === void 0) {
+                            return options;
+                        }
+                        tracked.delete(node);
+                        var track = function(binding) {
+                            var _this_options_callbacks_onAdd, _this_options_callbacks;
+                            var parsed = isBinding(binding) ? binding : _this.options.parseBinding(binding);
+                            if (tracked.has(node)) {
+                                var _tracked_get;
+                                (_tracked_get = tracked.get(node)) === null || _tracked_get === void 0 ? void 0 : _tracked_get.add(parsed);
+                            } else {
+                                tracked.set(node, /* @__PURE__ */ new Set([
+                                    parsed
+                                ]));
+                            }
+                            var parent = node.parent;
+                            while(parent){
+                                if (sections.has(parent)) {
+                                    var _sections_get;
+                                    (_sections_get = sections.get(parent)) === null || _sections_get === void 0 ? void 0 : _sections_get.add(node);
+                                    break;
+                                } else {
+                                    parent = parent.parent;
+                                }
+                            }
+                            _this.trackedBindings.add(parsed);
+                            (_this_options_callbacks = _this.options.callbacks) === null || _this_options_callbacks === void 0 ? void 0 : (_this_options_callbacks_onAdd = _this_options_callbacks.onAdd) === null || _this_options_callbacks_onAdd === void 0 ? void 0 : _this_options_callbacks_onAdd.call(_this_options_callbacks, parsed);
+                        };
+                        return _object_spread_props(_object_spread({}, options), {
+                            validation: _object_spread_props(_object_spread({}, options.validation), {
+                                get: function(binding, getOptions) {
+                                    var _options_validation__getValidationForBinding, _options_validation;
+                                    if (getOptions === null || getOptions === void 0 ? void 0 : getOptions.track) {
+                                        track(binding);
+                                    }
+                                    var eows = (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : (_options_validation__getValidationForBinding = _options_validation._getValidationForBinding(binding)) === null || _options_validation__getValidationForBinding === void 0 ? void 0 : _options_validation__getValidationForBinding.getAll(getOptions);
+                                    var firstFieldEOW = eows === null || eows === void 0 ? void 0 : eows.find(function(eow) {
+                                        return eow.displayTarget === "field" || eow.displayTarget === void 0;
+                                    });
+                                    return firstFieldEOW;
+                                },
+                                getValidationsForBinding: function getValidationsForBinding(binding, getOptions) {
+                                    var _options_validation__getValidationForBinding, _options_validation;
+                                    if (getOptions === null || getOptions === void 0 ? void 0 : getOptions.track) {
+                                        track(binding);
+                                    }
+                                    var _options_validation__getValidationForBinding_getAll;
+                                    return (_options_validation__getValidationForBinding_getAll = (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : (_options_validation__getValidationForBinding = _options_validation._getValidationForBinding(binding)) === null || _options_validation__getValidationForBinding === void 0 ? void 0 : _options_validation__getValidationForBinding.getAll(getOptions)) !== null && _options_validation__getValidationForBinding_getAll !== void 0 ? _options_validation__getValidationForBinding_getAll : [];
+                                },
+                                getChildren: function(type) {
+                                    var _lastComputedBindingTree_get;
+                                    var validations = new Array();
+                                    (_lastComputedBindingTree_get = lastComputedBindingTree.get(node)) === null || _lastComputedBindingTree_get === void 0 ? void 0 : _lastComputedBindingTree_get.forEach(function(binding) {
+                                        var _options_validation__getValidationForBinding, _options_validation;
+                                        var eow = (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : (_options_validation__getValidationForBinding = _options_validation._getValidationForBinding(binding)) === null || _options_validation__getValidationForBinding === void 0 ? void 0 : _options_validation__getValidationForBinding.get();
+                                        if (eow && (type === void 0 || type === eow.displayTarget)) {
+                                            validations.push(eow);
+                                        }
+                                    });
+                                    return validations;
+                                },
+                                getValidationsForSection: function() {
+                                    var _lastSectionBindingTree_get;
+                                    var validations = new Array();
+                                    (_lastSectionBindingTree_get = lastSectionBindingTree.get(node)) === null || _lastSectionBindingTree_get === void 0 ? void 0 : _lastSectionBindingTree_get.forEach(function(binding) {
+                                        var _options_validation__getValidationForBinding, _options_validation;
+                                        var eow = (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : (_options_validation__getValidationForBinding = _options_validation._getValidationForBinding(binding)) === null || _options_validation__getValidationForBinding === void 0 ? void 0 : _options_validation__getValidationForBinding.get();
+                                        if (eow && eow.displayTarget === "section") {
+                                            validations.push(eow);
+                                        }
+                                    });
+                                    return validations;
+                                },
+                                register: function(registerOptions) {
+                                    if ((registerOptions === null || registerOptions === void 0 ? void 0 : registerOptions.type) === "section") {
+                                        if (!sections.has(node)) {
+                                            sections.set(node, /* @__PURE__ */ new Set());
+                                        }
+                                    }
+                                },
+                                track: track
+                            })
+                        });
+                    });
+                    resolver.hooks.afterNodeUpdate.tap(CONTEXT, function(originalNode, parent, update) {
+                        var updated = update.updated, resolvedNode = update.node;
+                        resolvedNodeMap.set(resolvedNode, originalNode);
+                        if (updated) {
+                            var newlyComputed = new Set(tracked.get(originalNode));
+                            if (resolvedNode.type === "multi-node" /* MultiNode */ ) {
+                                resolvedNode.values.forEach(function(value) {
+                                    var _currentBindingTree_get;
+                                    return (_currentBindingTree_get = currentBindingTree.get(value)) === null || _currentBindingTree_get === void 0 ? void 0 : _currentBindingTree_get.forEach(function(b) {
+                                        return newlyComputed.add(b);
+                                    });
+                                });
+                            }
+                            if ("children" in resolvedNode && resolvedNode.children) {
+                                resolvedNode.children.forEach(function(child) {
+                                    var _currentBindingTree_get;
+                                    (_currentBindingTree_get = currentBindingTree.get(child.value)) === null || _currentBindingTree_get === void 0 ? void 0 : _currentBindingTree_get.forEach(function(b) {
+                                        return newlyComputed.add(b);
+                                    });
+                                });
+                            }
+                            currentBindingTree.set(resolvedNode, newlyComputed);
+                        } else {
+                            var _lastComputedBindingTree_get;
+                            currentBindingTree.set(resolvedNode, (_lastComputedBindingTree_get = lastComputedBindingTree.get(originalNode)) !== null && _lastComputedBindingTree_get !== void 0 ? _lastComputedBindingTree_get : /* @__PURE__ */ new Set());
+                        }
+                        if (originalNode === resolver.root) {
+                            _this.trackedBindings = new Set(currentBindingTree.get(resolvedNode));
+                            lastComputedBindingTree.clear();
+                            currentBindingTree.forEach(function(value, key) {
+                                var node = resolvedNodeMap.get(key);
+                                if (node) {
+                                    lastComputedBindingTree.set(node, value);
+                                }
+                            });
+                            lastSectionBindingTree.clear();
+                            sections.forEach(function(nodeSet, sectionNode) {
+                                var temp = /* @__PURE__ */ new Set();
+                                nodeSet.forEach(function(n) {
+                                    var _tracked_get;
+                                    (_tracked_get = tracked.get(n)) === null || _tracked_get === void 0 ? void 0 : _tracked_get.forEach(temp.add, temp);
+                                });
+                                lastSectionBindingTree.set(sectionNode, temp);
+                            });
+                            tracked.clear();
+                            sections.clear();
+                            currentBindingTree = /* @__PURE__ */ new Map();
+                        }
+                    });
+                }
+            },
+            {
+                key: "apply",
+                value: function apply(view) {
+                    view.hooks.resolver.tap(CONTEXT, this.applyResolver.bind(this));
+                }
+            }
+        ]);
+        return ValidationBindingTrackerViewPlugin;
+    }();
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/validation/controller.ts
+    var SCHEMA_VALIDATION_PROVIDER_NAME = "schema";
+    var VIEW_VALIDATION_PROVIDER_NAME = "view";
+    var VALIDATION_PROVIDER_NAME_SYMBOL = Symbol.for("validation-provider-name");
+    var ValidatedBinding = /*#__PURE__*/ function() {
+        function ValidatedBinding(possibleValidations, onDismiss, log, weakBindings) {
+            var _this = this;
+            _class_call_check(this, ValidatedBinding);
+            this.applicableValidations = [];
+            this.validationsByState = {
+                load: [],
+                change: [],
+                navigation: []
+            };
+            this.onDismiss = onDismiss;
+            possibleValidations.forEach(function(vObj) {
+                var trigger = vObj.trigger;
+                if (_this.validationsByState[trigger]) {
+                    var statefulValidationObject = createStatefulValidationObject(vObj);
+                    _this.validationsByState[trigger].push(statefulValidationObject);
+                } else {
+                    log === null || log === void 0 ? void 0 : log.warn("Unknown validation trigger: ".concat(trigger));
+                }
+            });
+            this.weakBindings = weakBindings !== null && weakBindings !== void 0 ? weakBindings : /* @__PURE__ */ new Set();
+        }
+        _create_class(ValidatedBinding, [
+            {
+                key: "allValidations",
+                get: function get() {
+                    return Object.values(this.validationsByState).flat();
+                }
+            },
+            {
+                key: "checkIfBlocking",
+                value: function checkIfBlocking(statefulObj) {
+                    if (statefulObj.state === "active") {
+                        var isBlockingNavigation = statefulObj.isBlockingNavigation;
+                        return isBlockingNavigation;
+                    }
+                    return false;
+                }
+            },
+            {
+                key: "getAll",
+                value: function getAll() {
+                    var _this = this;
+                    return this.applicableValidations.reduce(function(all, statefulObj) {
+                        if (statefulObj.state === "active" && statefulObj.response) {
+                            all.push(_object_spread_props(_object_spread({}, statefulObj.response), {
+                                blocking: _this.checkIfBlocking(statefulObj)
+                            }));
+                        }
+                        return all;
+                    }, []);
+                }
+            },
+            {
+                key: "get",
+                value: function get() {
+                    var firstInvalid = this.applicableValidations.find(function(statefulObj) {
+                        return statefulObj.state === "active" && statefulObj.response;
+                    });
+                    if ((firstInvalid === null || firstInvalid === void 0 ? void 0 : firstInvalid.state) === "active") {
+                        return _object_spread_props(_object_spread({}, firstInvalid.response), {
+                            blocking: this.checkIfBlocking(firstInvalid)
+                        });
+                    }
+                }
+            },
+            {
+                key: "runApplicableValidations",
+                value: function runApplicableValidations(runner, canDismiss, phase) {
+                    var _this = this;
+                    this.applicableValidations = this.applicableValidations.map(function(originalValue) {
+                        if (originalValue.state === "dismissed") {
+                            return originalValue;
+                        }
+                        var _originalValue_value_blocking;
+                        var blocking = (_originalValue_value_blocking = originalValue.value.blocking) !== null && _originalValue_value_blocking !== void 0 ? _originalValue_value_blocking : originalValue.value.severity === "warning" && "once" || true;
+                        var obj = (0, import_timm5.setIn)(originalValue, [
+                            "value",
+                            "blocking"
+                        ], blocking);
+                        var isBlockingNavigation = blocking === true || blocking === "once" && !canDismiss;
+                        if (phase === "navigation" && obj.state === "active" && obj.value.blocking !== true) {
+                            if (obj.value.severity === "warning") {
+                                var warn = obj;
+                                if (warn.dismissable && warn.response.dismiss && (warn.response.blocking !== "once" || !warn.response.blocking)) {
+                                    warn.response.dismiss();
+                                } else {
+                                    if ((warn === null || warn === void 0 ? void 0 : warn.response.blocking) === "once") {
+                                        warn.response.blocking = false;
+                                    }
+                                    warn.dismissable = true;
+                                }
+                                return warn;
+                            }
+                        }
+                        var response = runner(obj.value);
+                        var _response_message, _obj_value_displayTarget;
+                        var newState = {
+                            type: obj.type,
+                            value: obj.value,
+                            state: response ? "active" : "none",
+                            isBlockingNavigation: isBlockingNavigation,
+                            dismissable: obj.value.severity === "warning" && phase === "navigation",
+                            response: response ? _object_spread_props(_object_spread({}, obj.value), {
+                                message: (_response_message = response.message) !== null && _response_message !== void 0 ? _response_message : "Something is broken",
+                                severity: obj.value.severity,
+                                displayTarget: (_obj_value_displayTarget = obj.value.displayTarget) !== null && _obj_value_displayTarget !== void 0 ? _obj_value_displayTarget : "field"
+                            }) : void 0
+                        };
+                        if (newState.state === "active" && obj.value.severity === "warning") {
+                            newState.response.dismiss = function() {
+                                var _this_onDismiss, _this1;
+                                newState.state = "dismissed";
+                                (_this_onDismiss = (_this1 = _this).onDismiss) === null || _this_onDismiss === void 0 ? void 0 : _this_onDismiss.call(_this1);
+                            };
+                        }
+                        return newState;
+                    });
+                }
+            },
+            {
+                key: "update",
+                value: function update(phase, canDismiss, runner) {
+                    var newApplicableValidations = [];
+                    if (phase === "load" && this.currentPhase !== void 0) {
+                        return;
+                    }
+                    if (this.currentPhase === "navigation" || phase === this.currentPhase) {
+                        this.runApplicableValidations(runner, canDismiss, phase);
+                        return;
+                    }
+                    if (phase === "load") {
+                        this.currentPhase = "load";
+                        this.applicableValidations = _to_consumable_array(this.validationsByState.load);
+                    } else if (phase === "change" && this.currentPhase === "load") {
+                        this.currentPhase = "change";
+                        this.applicableValidations = _to_consumable_array(this.applicableValidations).concat(_to_consumable_array(this.validationsByState.change));
+                    } else if (phase === "navigation" && (this.currentPhase === "load" || this.currentPhase === "change")) {
+                        this.applicableValidations.forEach(function(element) {
+                            if (!(element.type === "error" && element.state === "active" && element.isBlockingNavigation === false)) {
+                                newApplicableValidations.push(element);
+                            }
+                        });
+                        this.applicableValidations = _to_consumable_array(newApplicableValidations).concat(_to_consumable_array(this.validationsByState.navigation), _to_consumable_array(this.currentPhase === "load" ? this.validationsByState.change : []));
+                        this.currentPhase = "navigation";
+                    }
+                    this.runApplicableValidations(runner, canDismiss, phase);
+                }
+            }
+        ]);
+        return ValidatedBinding;
+    }();
+    var ValidationController = /*#__PURE__*/ function() {
+        function ValidationController(schema, options) {
+            _class_call_check(this, ValidationController);
+            this.hooks = {
+                /** A hook called to tap into the validator registry for adding more validators */ createValidatorRegistry: new SyncHook(),
+                /** A callback/event when a new validation is added to the view */ onAddValidation: new SyncWaterfallHook(),
+                /** The inverse of onAddValidation, this is called when a validation is removed from the list */ onRemoveValidation: new SyncWaterfallHook(),
+                resolveValidationProviders: new SyncWaterfallHook(),
+                /** A hook called when a binding is added to the tracker */ onTrackBinding: new SyncHook()
+            };
+            this.validations = /* @__PURE__ */ new Map();
+            this.weakBindingTracker = /* @__PURE__ */ new Set();
+            this.schema = schema;
+            this.options = options;
+            this.reset();
+        }
+        _create_class(ValidationController, [
+            {
+                key: "setOptions",
+                value: function setOptions(options) {
+                    this.options = options;
+                }
+            },
+            {
+                /** Return the middleware for the data-model to stop propagation of invalid data */ key: "getDataMiddleware",
+                value: function getDataMiddleware() {
+                    var _this = this;
+                    return [
+                        {
+                            set: function(transaction, options, next) {
+                                var _next_set;
+                                return (_next_set = next === null || next === void 0 ? void 0 : next.set(transaction, options)) !== null && _next_set !== void 0 ? _next_set : [];
+                            },
+                            get: function(binding, options, next) {
+                                return next === null || next === void 0 ? void 0 : next.get(binding, options);
+                            },
+                            delete: function(binding, options, next) {
+                                _this.validations = removeBindingAndChildrenFromMap(_this.validations, binding);
+                                return next === null || next === void 0 ? void 0 : next.delete(binding, options);
+                            }
+                        },
+                        new ValidationMiddleware(function(binding) {
+                            var _strongValidation_get;
+                            if (!_this.options) {
+                                return;
+                            }
+                            _this.updateValidationsForBinding(binding, "change", _this.options);
+                            var strongValidation = _this.getValidationForBinding(binding);
+                            if ((strongValidation === null || strongValidation === void 0 ? void 0 : (_strongValidation_get = strongValidation.get()) === null || _strongValidation_get === void 0 ? void 0 : _strongValidation_get.severity) === "error") {
+                                return strongValidation.get();
+                            }
+                            var newInvalidBindings = /* @__PURE__ */ new Set();
+                            _this.validations.forEach(function(weakValidation, strongBinding) {
+                                var _weakValidation_get;
+                                if (caresAboutDataChanges(/* @__PURE__ */ new Set([
+                                    binding
+                                ]), weakValidation.weakBindings) && (weakValidation === null || weakValidation === void 0 ? void 0 : (_weakValidation_get = weakValidation.get()) === null || _weakValidation_get === void 0 ? void 0 : _weakValidation_get.severity) === "error") {
+                                    weakValidation === null || weakValidation === void 0 ? void 0 : weakValidation.weakBindings.forEach(function(weakBinding) {
+                                        if (weakBinding === strongBinding) {
+                                            newInvalidBindings.add({
+                                                binding: weakBinding,
+                                                isStrong: true
+                                            });
+                                        } else {
+                                            newInvalidBindings.add({
+                                                binding: weakBinding,
+                                                isStrong: false
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                            if (newInvalidBindings.size > 0) {
+                                return newInvalidBindings;
+                            }
+                        }, {
+                            logger: new ProxyLogger(function() {
+                                var _this_options;
+                                return (_this_options = _this.options) === null || _this_options === void 0 ? void 0 : _this_options.logger;
+                            })
+                        })
+                    ];
+                }
+            },
+            {
+                key: "getValidationProviders",
+                value: function getValidationProviders() {
+                    var _this = this;
+                    if (this.providers) {
+                        return this.providers;
+                    }
+                    this.providers = this.hooks.resolveValidationProviders.call([
+                        {
+                            source: SCHEMA_VALIDATION_PROVIDER_NAME,
+                            provider: this.schema
+                        },
+                        {
+                            source: VIEW_VALIDATION_PROVIDER_NAME,
+                            provider: {
+                                getValidationsForBinding: function(binding) {
+                                    var _this_viewValidationProvider_getValidationsForBinding, _this_viewValidationProvider;
+                                    return (_this_viewValidationProvider = _this.viewValidationProvider) === null || _this_viewValidationProvider === void 0 ? void 0 : (_this_viewValidationProvider_getValidationsForBinding = _this_viewValidationProvider.getValidationsForBinding) === null || _this_viewValidationProvider_getValidationsForBinding === void 0 ? void 0 : _this_viewValidationProvider_getValidationsForBinding.call(_this_viewValidationProvider, binding);
+                                },
+                                getValidationsForView: function() {
+                                    var _this_viewValidationProvider_getValidationsForView, _this_viewValidationProvider;
+                                    return (_this_viewValidationProvider = _this.viewValidationProvider) === null || _this_viewValidationProvider === void 0 ? void 0 : (_this_viewValidationProvider_getValidationsForView = _this_viewValidationProvider.getValidationsForView) === null || _this_viewValidationProvider_getValidationsForView === void 0 ? void 0 : _this_viewValidationProvider_getValidationsForView.call(_this_viewValidationProvider);
+                                }
+                            }
+                        }
+                    ]);
+                    return this.providers;
+                }
+            },
+            {
+                key: "reset",
+                value: function reset() {
+                    this.validations.clear();
+                    this.tracker = void 0;
+                }
+            },
+            {
+                key: "onView",
+                value: function onView(view) {
+                    var _this = this;
+                    this.validations.clear();
+                    if (!this.options) {
+                        return;
+                    }
+                    var bindingTrackerPlugin = new ValidationBindingTrackerViewPlugin(_object_spread_props(_object_spread({}, this.options), {
+                        callbacks: {
+                            onAdd: function(binding) {
+                                if (!_this.options || _this.getValidationForBinding(binding) !== void 0) {
+                                    return;
+                                }
+                                var originalValue = _this.options.model.get(binding);
+                                var withoutDefault = _this.options.model.get(binding, {
+                                    ignoreDefaultValue: true
+                                });
+                                if (originalValue !== withoutDefault) {
+                                    _this.options.model.set([
+                                        [
+                                            binding,
+                                            originalValue
+                                        ]
+                                    ], {
+                                        silent: true
+                                    });
+                                }
+                                _this.updateValidationsForBinding(binding, "load", _this.options, function() {
+                                    view.update(/* @__PURE__ */ new Set([
+                                        binding
+                                    ]));
+                                });
+                                _this.hooks.onTrackBinding.call(binding);
+                            }
+                        }
+                    }));
+                    this.tracker = bindingTrackerPlugin;
+                    this.viewValidationProvider = view;
+                    bindingTrackerPlugin.apply(view);
+                }
+            },
+            {
+                key: "updateValidationsForBinding",
+                value: function updateValidationsForBinding(binding, trigger, validationContext, onDismiss) {
+                    var _this = this;
+                    var context = validationContext !== null && validationContext !== void 0 ? validationContext : this.options;
+                    if (!context) {
+                        throw new Error("Context is required for executing validations");
+                    }
+                    if (trigger === "load") {
+                        var _this_options;
+                        var possibleValidations = this.getValidationProviders().reduce(function(vals, provider) {
+                            var _vals;
+                            var _provider_provider_getValidationsForBinding, _provider_provider_getValidationsForBinding1, _provider_provider;
+                            var _provider_provider_getValidationsForBinding_map;
+                            (_vals = vals).push.apply(_vals, _to_consumable_array((_provider_provider_getValidationsForBinding_map = (_provider_provider_getValidationsForBinding1 = (_provider_provider = provider.provider).getValidationsForBinding) === null || _provider_provider_getValidationsForBinding1 === void 0 ? void 0 : (_provider_provider_getValidationsForBinding = _provider_provider_getValidationsForBinding1.call(_provider_provider, binding)) === null || _provider_provider_getValidationsForBinding === void 0 ? void 0 : _provider_provider_getValidationsForBinding.map(function(valObj) {
+                                return _object_spread_props(_object_spread({}, valObj), _define_property({}, VALIDATION_PROVIDER_NAME_SYMBOL, provider.source));
+                            })) !== null && _provider_provider_getValidationsForBinding_map !== void 0 ? _provider_provider_getValidationsForBinding_map : []));
+                            return vals;
+                        }, []);
+                        if (possibleValidations.length === 0) {
+                            return;
+                        }
+                        this.validations.set(binding, new ValidatedBinding(possibleValidations, onDismiss, (_this_options = this.options) === null || _this_options === void 0 ? void 0 : _this_options.logger));
+                    }
+                    var trackedValidations = this.validations.get(binding);
+                    trackedValidations === null || trackedValidations === void 0 ? void 0 : trackedValidations.update(trigger, true, function(validationObj) {
+                        var response = _this.validationRunner(validationObj, binding, context);
+                        if (_this.weakBindingTracker.size > 0) {
+                            var t2 = _this.validations.get(binding);
+                            _this.weakBindingTracker.forEach(function(b) {
+                                return t2.weakBindings.add(b);
+                            });
+                        }
+                        return response ? {
+                            message: response.message
+                        } : void 0;
+                    });
+                    if (trigger !== "load") {
+                        this.validations.forEach(function(validation, vBinding) {
+                            if (vBinding !== binding && caresAboutDataChanges(/* @__PURE__ */ new Set([
+                                binding
+                            ]), validation.weakBindings)) {
+                                validation.update(trigger, true, function(validationObj) {
+                                    var response = _this.validationRunner(validationObj, vBinding, context);
+                                    return response ? {
+                                        message: response.message
+                                    } : void 0;
+                                });
+                            }
+                        });
+                    }
+                }
+            },
+            {
+                key: "validationRunner",
+                value: function validationRunner(validationObj, binding) {
+                    var context = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : this.options;
+                    if (!context) {
+                        throw new Error("No context provided to validation runner");
+                    }
+                    var _validationObj_handler;
+                    var handler = (_validationObj_handler = validationObj.handler) !== null && _validationObj_handler !== void 0 ? _validationObj_handler : this.getValidator(validationObj.type);
+                    var weakBindings = /* @__PURE__ */ new Set();
+                    var model = {
+                        get: function get(b, options) {
+                            weakBindings.add(isBinding(b) ? binding : context.parseBinding(b));
+                            return context.model.get(b, _object_spread_props(_object_spread({}, options), {
+                                includeInvalid: true
+                            }));
+                        },
+                        set: context.model.set,
+                        delete: context.model.delete
+                    };
+                    var result = handler === null || handler === void 0 ? void 0 : handler(_object_spread_props(_object_spread({}, context), {
+                        evaluate: function(exp) {
+                            var options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {
+                                model: model
+                            };
+                            return context.evaluate(exp, options);
+                        },
+                        model: model,
+                        validation: validationObj,
+                        schemaType: this.schema.getType(binding)
+                    }), context.model.get(binding, {
+                        includeInvalid: true,
+                        formatted: validationObj.dataTarget === "formatted"
+                    }), validationObj);
+                    this.weakBindingTracker = weakBindings;
+                    if (result) {
+                        var message = result.message;
+                        var parameters = result.parameters;
+                        if (validationObj.message) {
+                            message = resolveDataRefs(validationObj.message, {
+                                model: model,
+                                evaluate: context.evaluate
+                            });
+                            if (parameters) {
+                                message = replaceParams(message, parameters);
+                            }
+                        }
+                        return {
+                            message: message
+                        };
+                    }
+                }
+            },
+            {
+                key: "updateValidationsForView",
+                value: function updateValidationsForView(trigger) {
+                    var _this = this;
+                    var isNavigationTrigger = trigger === "navigation";
+                    var lastActiveBindings = this.activeBindings;
+                    var updateValidations = function(dismissValidations) {
+                        _this.getBindings().forEach(function(binding) {
+                            var _this_validations_get;
+                            (_this_validations_get = _this.validations.get(binding)) === null || _this_validations_get === void 0 ? void 0 : _this_validations_get.update(trigger, dismissValidations, function(obj) {
+                                if (!_this.options) {
+                                    return;
+                                }
+                                return _this.validationRunner(obj, binding, _this.options);
+                            });
+                        });
+                    };
+                    updateValidations(!isNavigationTrigger);
+                    if (isNavigationTrigger) {
+                        var activeBindings = this.activeBindings;
+                        if (isSubset(activeBindings, lastActiveBindings)) {
+                            updateValidations(true);
+                        }
+                    }
+                }
+            },
+            {
+                key: "activeBindings",
+                get: function get() {
+                    var _this = this;
+                    return new Set(Array.from(this.getBindings()).filter(function(b) {
+                        var _this_validations_get;
+                        return ((_this_validations_get = _this.validations.get(b)) === null || _this_validations_get === void 0 ? void 0 : _this_validations_get.get()) !== void 0;
+                    }));
+                }
+            },
+            {
+                key: "getValidator",
+                value: function getValidator(type) {
+                    if (this.validatorRegistry) {
+                        return this.validatorRegistry.get(type);
+                    }
+                    var registry = new ValidatorRegistry();
+                    this.hooks.createValidatorRegistry.call(registry);
+                    this.validatorRegistry = registry;
+                    return registry.get(type);
+                }
+            },
+            {
+                key: "getBindings",
+                value: function getBindings() {
+                    var _this_tracker;
+                    var _this_tracker_getBindings;
+                    return (_this_tracker_getBindings = (_this_tracker = this.tracker) === null || _this_tracker === void 0 ? void 0 : _this_tracker.getBindings()) !== null && _this_tracker_getBindings !== void 0 ? _this_tracker_getBindings : /* @__PURE__ */ new Set();
+                }
+            },
+            {
+                key: "trackBinding",
+                value: function trackBinding(binding) {
+                    var _this_tracker;
+                    (_this_tracker = this.tracker) === null || _this_tracker === void 0 ? void 0 : _this_tracker.trackBinding(binding);
+                }
+            },
+            {
+                /** Executes all known validations for the tracked bindings using the given model */ key: "validateView",
+                value: function validateView() {
+                    var _this = this;
+                    var trigger = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : "navigation";
+                    this.updateValidationsForView(trigger);
+                    var validations = /* @__PURE__ */ new Map();
+                    var canTransition = true;
+                    this.getBindings().forEach(function(b) {
+                        var _this_getValidationForBinding;
+                        var allValidations = (_this_getValidationForBinding = _this.getValidationForBinding(b)) === null || _this_getValidationForBinding === void 0 ? void 0 : _this_getValidationForBinding.getAll();
+                        allValidations === null || allValidations === void 0 ? void 0 : allValidations.forEach(function(v) {
+                            if (trigger === "navigation" && v.blocking) {
+                                var _this_options;
+                                (_this_options = _this.options) === null || _this_options === void 0 ? void 0 : _this_options.logger.debug("Validation on binding: ".concat(b.asString(), " is preventing navigation. ").concat(JSON.stringify(v)));
+                                canTransition = false;
+                            }
+                            if (!validations.has(b)) {
+                                validations.set(b, v);
+                            }
+                        });
+                    });
+                    return {
+                        canTransition: canTransition,
+                        validations: validations.size ? validations : void 0
+                    };
+                }
+            },
+            {
+                /** Get the current tracked validation for the given binding */ key: "getValidationForBinding",
+                value: function getValidationForBinding(binding) {
+                    return this.validations.get(binding);
+                }
+            },
+            {
+                key: "forView",
+                value: function forView(parser) {
+                    var _this = this;
+                    return {
+                        _getValidationForBinding: function(binding) {
+                            return _this.getValidationForBinding(isBinding(binding) ? binding : parser(binding));
+                        },
+                        getAll: function() {
+                            var bindings = _this.getBindings();
+                            if (bindings.size === 0) {
+                                return void 0;
+                            }
+                            var validationMapping = /* @__PURE__ */ new Map();
+                            bindings.forEach(function(b) {
+                                var _this_getValidationForBinding;
+                                var validation = (_this_getValidationForBinding = _this.getValidationForBinding(b)) === null || _this_getValidationForBinding === void 0 ? void 0 : _this_getValidationForBinding.get();
+                                if (validation) {
+                                    validationMapping.set(b, validation);
+                                }
+                            });
+                            return validationMapping.size === 0 ? void 0 : validationMapping;
+                        },
+                        get: function get() {
+                            throw new Error("Error Access be provided by the view plugin");
+                        },
+                        getValidationsForBinding: function getValidationsForBinding() {
+                            throw new Error("Error rollup should be provided by the view plugin");
+                        },
+                        getChildren: function getChildren() {
+                            throw new Error("Error rollup should be provided by the view plugin");
+                        },
+                        getValidationsForSection: function getValidationsForSection() {
+                            throw new Error("Error rollup should be provided by the view plugin");
+                        },
+                        track: function() {
+                            throw new Error("Tracking should be provided by the view plugin");
+                        },
+                        register: function() {
+                            throw new Error("Section functionality should be provided by the view plugin");
+                        },
+                        type: function(binding) {
+                            return _this.schema.getType(isBinding(binding) ? binding : parser(binding));
+                        }
+                    };
+                }
+            }
+        ]);
+        return ValidationController;
+    }();
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/view/controller.ts
+    var import_queue_microtask = __toESM(require_queue_microtask());
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/fast-sort@3.4.1/node_modules/fast-sort/dist/sort.mjs
+    var castComparer = function castComparer(comparer) {
+        return function(a, b, order) {
+            return comparer(a, b, order) * order;
+        };
+    };
+    var throwInvalidConfigErrorIfTrue = function throwInvalidConfigErrorIfTrue(condition, context) {
+        if (condition) throw Error("Invalid sort config: " + context);
+    };
+    var unpackObjectSorter = function unpackObjectSorter(sortByObj) {
+        var _a = sortByObj || {}, asc = _a.asc, desc = _a.desc;
+        var order = asc ? 1 : -1;
+        var sortBy = asc || desc;
+        throwInvalidConfigErrorIfTrue(!sortBy, "Expected `asc` or `desc` property");
+        throwInvalidConfigErrorIfTrue(asc && desc, "Ambiguous object with `asc` and `desc` config properties");
+        var comparer = sortByObj.comparer && castComparer(sortByObj.comparer);
         return {
-            get: function get(binding, options) {
+            order: order,
+            sortBy: sortBy,
+            comparer: comparer
+        };
+    };
+    var multiPropertySorterProvider = function multiPropertySorterProvider(defaultComparer2) {
+        return function multiPropertySorter(sortBy, sortByArr, depth, order, comparer, a, b) {
+            var valA;
+            var valB;
+            if (typeof sortBy === "string") {
+                valA = a[sortBy];
+                valB = b[sortBy];
+            } else if (typeof sortBy === "function") {
+                valA = sortBy(a);
+                valB = sortBy(b);
+            } else {
+                var objectSorterConfig = unpackObjectSorter(sortBy);
+                return multiPropertySorter(objectSorterConfig.sortBy, sortByArr, depth, objectSorterConfig.order, objectSorterConfig.comparer || defaultComparer2, a, b);
+            }
+            var equality = comparer(valA, valB, order);
+            if ((equality === 0 || valA == null && valB == null) && sortByArr.length > depth) {
+                return multiPropertySorter(sortByArr[depth], sortByArr, depth + 1, order, comparer, a, b);
+            }
+            return equality;
+        };
+    };
+    function getSortStrategy(sortBy, comparer, order) {
+        if (sortBy === void 0 || sortBy === true) {
+            return function(a, b) {
+                return comparer(a, b, order);
+            };
+        }
+        if (typeof sortBy === "string") {
+            throwInvalidConfigErrorIfTrue(sortBy.includes("."), "String syntax not allowed for nested properties.");
+            return function(a, b) {
+                return comparer(a[sortBy], b[sortBy], order);
+            };
+        }
+        if (typeof sortBy === "function") {
+            return function(a, b) {
+                return comparer(sortBy(a), sortBy(b), order);
+            };
+        }
+        if (Array.isArray(sortBy)) {
+            var multiPropSorter_1 = multiPropertySorterProvider(comparer);
+            return function(a, b) {
+                return multiPropSorter_1(sortBy[0], sortBy, 1, order, comparer, a, b);
+            };
+        }
+        var objectSorterConfig = unpackObjectSorter(sortBy);
+        return getSortStrategy(objectSorterConfig.sortBy, objectSorterConfig.comparer || comparer, objectSorterConfig.order);
+    }
+    var sortArray = function sortArray(order, ctx, sortBy, comparer) {
+        var _a;
+        if (!Array.isArray(ctx)) {
+            return ctx;
+        }
+        if (Array.isArray(sortBy) && sortBy.length < 2) {
+            _a = sortBy, sortBy = _a[0];
+        }
+        return ctx.sort(getSortStrategy(sortBy, comparer, order));
+    };
+    var defaultComparer = function defaultComparer(a, b, order) {
+        if (a == null) return order;
+        if (b == null) return -order;
+        if ((typeof a === "undefined" ? "undefined" : _type_of(a)) !== (typeof b === "undefined" ? "undefined" : _type_of(b))) {
+            return (typeof a === "undefined" ? "undefined" : _type_of(a)) < (typeof b === "undefined" ? "undefined" : _type_of(b)) ? -1 : 1;
+        }
+        if (a < b) return -1;
+        if (a > b) return 1;
+        return 0;
+    };
+    var sort = createNewSortInstance({
+        comparer: defaultComparer
+    });
+    var inPlaceSort = createNewSortInstance({
+        comparer: defaultComparer,
+        inPlaceSorting: true
+    });
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
+    function traverseObj(object) {
+        var path = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [], pairs = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : /* @__PURE__ */ new Map();
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = Object.keys(object)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                var key = _step.value;
+                var val = object[key];
+                var nestedPath = _to_consumable_array(path).concat([
+                    key
+                ]);
+                if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object" && val !== null) {
+                    traverseObj(val, nestedPath, pairs);
+                } else {
+                    pairs.set(nestedPath, val);
+                }
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+        return pairs;
+    }
+    var Registry = /*#__PURE__*/ function() {
+        function Registry(initialSet, logger) {
+            var _this = this;
+            _class_call_check(this, Registry);
+            this.store = [];
+            this.logger = logger;
+            initialSet === null || initialSet === void 0 ? void 0 : initialSet.forEach(function(param) {
+                var _param = _sliced_to_array(param, 2), match = _param[0], value = _param[1];
+                _this.set(match, value);
+            });
+        }
+        _create_class(Registry, [
+            {
+                /**
+     * Add match -> value mapping to the registry
+     *
+     * If an entry with the same specificity and matching key already exists, it will be replaced
+     * and a debug log will be emitted (if a logger is configured).
+     *
+     * @param match - The key to match against (can be a primitive or object)
+     * @param value - The value to associate with this key
+     */ key: "set",
+                value: function set(match, value) {
+                    var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createObjectMatcher(match) : createBasicMatcher(match);
+                    var existingIndex = this.store.findIndex(function(entry) {
+                        return entry.matcher(match) && matcher(entry.key);
+                    });
+                    if (existingIndex !== -1) {
+                        var _this_logger_debug, _this_logger;
+                        this.store.splice(existingIndex, 1);
+                        (_this_logger = this.logger) === null || _this_logger === void 0 ? void 0 : (_this_logger_debug = _this_logger.debug) === null || _this_logger_debug === void 0 ? void 0 : _this_logger_debug.call(_this_logger, "Registry: Replacing existing entry for key ", match);
+                    }
+                    this.store.push({
+                        key: match,
+                        value: value,
+                        matcher: matcher
+                    });
+                    this.store = sort(this.store).desc(function(entry) {
+                        return entry.matcher.count;
+                    });
+                }
+            },
+            {
+                /**
+     * Fetch the best match in the registry
+     *
+     * Searches for the most specific entry that matches the given query.
+     * The registry is sorted by specificity (matcher.count) in descending order,
+     * so we iterate forward to find the highest specificity match first.
+     *
+     * @param query - The query object to match against registered keys
+     * @returns The value associated with the best matching key, or undefined if no match found
+     */ key: "get",
+                value: function get(query) {
+                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                    try {
+                        for(var _iterator = this.store[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                            var entry = _step.value;
+                            if (entry.matcher(query)) {
+                                return entry.value;
+                            }
+                        }
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally{
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                _iterator.return();
+                            }
+                        } finally{
+                            if (_didIteratorError) {
+                                throw _iteratorError;
+                            }
+                        }
+                    }
+                    return void 0;
+                }
+            },
+            {
+                /** Loop over all entries and run callback */ key: "forEach",
+                value: function forEach(callbackfn) {
+                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                    try {
+                        for(var _iterator = this.store[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                            var entry = _step.value;
+                            callbackfn(entry);
+                        }
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally{
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                _iterator.return();
+                            }
+                        } finally{
+                            if (_didIteratorError) {
+                                throw _iteratorError;
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                /** Reset the items in the registry */ key: "clear",
+                value: function clear() {
+                    this.store = [];
+                }
+            },
+            {
+                /** Check if the registry is empty*/ key: "isRegistryEmpty",
+                value: function isRegistryEmpty() {
+                    return this.store.length === 0;
+                }
+            }
+        ]);
+        return Registry;
+    }();
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/view/controller.ts
+    var mergeSets = function(setA, setB) {
+        var _setA_values, _setB_values;
+        return /* @__PURE__ */ new Set(_to_consumable_array((_setA_values = setA === null || setA === void 0 ? void 0 : setA.values()) !== null && _setA_values !== void 0 ? _setA_values : []).concat(_to_consumable_array((_setB_values = setB === null || setB === void 0 ? void 0 : setB.values()) !== null && _setB_values !== void 0 ? _setB_values : [])));
+    };
+    var ViewController = /*#__PURE__*/ function() {
+        function ViewController(initialViews, options) {
+            var _this = this;
+            var _this1 = this;
+            _class_call_check(this, ViewController);
+            this.hooks = {
+                resolveView: new SyncWaterfallHook(),
+                view: new SyncHook()
+            };
+            this.transformRegistry = new Registry();
+            this.optimizeUpdates = true;
+            this.viewOptions = options;
+            this.viewMap = initialViews.reduce(function(viewMap, view) {
+                viewMap[view.id] = view;
+                return viewMap;
+            }, {});
+            options.flowController.hooks.flow.tap("viewController", function(flow) {
+                flow.hooks.transition.tap("viewController", function(_oldState, newState) {
+                    if (newState.value.state_type === "VIEW") {
+                        _this.onView(newState.value);
+                    } else {
+                        _this.currentView = void 0;
+                    }
+                });
+            });
+            var update = function(updates) {
+                var silent = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : false;
+                if (_this1.currentView) {
+                    if (_this1.optimizeUpdates) {
+                        _this1.queueUpdate(updates, void 0, silent);
+                    } else {
+                        _this1.updateView();
+                    }
+                }
+            };
+            options.model.hooks.onUpdate.tap("viewController", function(updates, updateOptions) {
+                var _updateOptions_silent;
+                update(new Set(updates.map(function(t2) {
+                    return t2.binding;
+                })), (_updateOptions_silent = updateOptions === null || updateOptions === void 0 ? void 0 : updateOptions.silent) !== null && _updateOptions_silent !== void 0 ? _updateOptions_silent : false);
+            });
+            options.model.hooks.onDelete.tap("viewController", function(binding) {
+                var parentBinding = binding.parent();
+                var property = binding.key();
+                if (typeof property === "number" && parentBinding) {
+                    update(/* @__PURE__ */ new Set([
+                        parentBinding
+                    ]));
+                } else {
+                    update(/* @__PURE__ */ new Set([
+                        binding
+                    ]));
+                }
+            });
+            this.viewPlugins = this.createViewPlugins();
+        }
+        _create_class(ViewController, [
+            {
+                key: "queueUpdate",
+                value: function queueUpdate(bindings, nodes) {
+                    var _this = this;
+                    var silent = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : false;
+                    if (!this.pendingUpdate) {
+                        this.pendingUpdate = {
+                            scheduled: false
+                        };
+                    }
+                    this.pendingUpdate = _object_spread_props(_object_spread({}, this.pendingUpdate), {
+                        changedBindings: mergeSets(this.pendingUpdate.changedBindings, bindings),
+                        changedNodes: mergeSets(this.pendingUpdate.changedNodes, nodes)
+                    });
+                    if (!this.pendingUpdate.scheduled && !silent) {
+                        this.pendingUpdate.scheduled = true;
+                        (0, import_queue_microtask.default)(function() {
+                            var _this_pendingUpdate;
+                            var _ref = (_this_pendingUpdate = _this.pendingUpdate) !== null && _this_pendingUpdate !== void 0 ? _this_pendingUpdate : {}, changedBindings = _ref.changedBindings, changedNodes = _ref.changedNodes;
+                            _this.pendingUpdate = void 0;
+                            _this.updateView(changedBindings, changedNodes);
+                        });
+                    }
+                }
+            },
+            {
+                key: "updateView",
+                value: function updateView(changedBindings, changedNodes) {
+                    try {
+                        var _this_currentView;
+                        (_this_currentView = this.currentView) === null || _this_currentView === void 0 ? void 0 : _this_currentView.update(changedBindings, changedNodes);
+                    } catch (exception) {
+                        var err = _instanceof(exception, Error) ? exception : new Error(String(exception));
+                        this.queueUpdate(changedBindings, changedNodes, true);
+                        this.viewOptions.errorController.captureError(err);
+                    }
+                }
+            },
+            {
+                key: "getViewForRef",
+                value: function getViewForRef(viewRef) {
+                    var _this = this;
+                    if (this.viewMap[viewRef]) {
+                        return this.viewMap[viewRef];
+                    }
+                    var matchingViewId = Object.keys(this.viewMap).find(function(possibleViewIdMatch) {
+                        return viewRef === resolveDataRefsInString(possibleViewIdMatch, {
+                            model: _this.viewOptions.model,
+                            evaluate: _this.viewOptions.evaluator.evaluate
+                        });
+                    });
+                    if (matchingViewId && this.viewMap[matchingViewId]) {
+                        return this.viewMap[matchingViewId];
+                    }
+                }
+            },
+            {
+                key: "onView",
+                value: function onView(state) {
+                    var viewId = state.ref;
+                    var source = this.hooks.resolveView.call(this.getViewForRef(viewId), viewId, state);
+                    if (!source) {
+                        throw new Error("No view with id ".concat(viewId));
+                    }
+                    var view = new ViewInstance(source, this.viewOptions);
+                    this.currentView = view;
+                    this.applyViewPlugins(view);
+                    this.hooks.view.call(view);
+                    this.updateView();
+                }
+            },
+            {
+                key: "applyViewPlugins",
+                value: function applyViewPlugins(view) {
+                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                    try {
+                        for(var _iterator = this.viewPlugins[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                            var plugin = _step.value;
+                            plugin.apply(view);
+                        }
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally{
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                _iterator.return();
+                            }
+                        } finally{
+                            if (_didIteratorError) {
+                                throw _iteratorError;
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                key: "createViewPlugins",
+                value: function createViewPlugins() {
+                    var pluginOptions = toNodeResolveOptions(this.viewOptions);
+                    return [
+                        new AssetPlugin(),
+                        new SwitchPlugin(pluginOptions),
+                        new ApplicabilityPlugin(),
+                        new AssetTransformCorePlugin(this.transformRegistry),
+                        new StringResolverPlugin(),
+                        new TemplatePlugin(pluginOptions),
+                        new MultiNodePlugin()
+                    ];
+                }
+            },
+            {
+                /** Marks all AST nodes in `nodes` as changed, triggering the view to update and re-resolve these nodes. View updates are triggered asynchronously and many calls to this in a short time will batch into a single update.
+     *
+     * NOTE: In most cases view updates are handled automatically by changes to data or any other built-in functionality that would require a view update. Only call this function if absolutely necessary.
+     */ key: "updateViewAST",
+                value: function updateViewAST(nodes) {
+                    this.queueUpdate(void 0, nodes);
+                }
+            }
+        ]);
+        return ViewController;
+    }();
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/view/store.ts
+    var LocalStateStore = /*#__PURE__*/ function() {
+        function LocalStateStore(onUpdate) {
+            _class_call_check(this, LocalStateStore);
+            this.updateCallback = onUpdate;
+            this.state = /* @__PURE__ */ new Map();
+        }
+        _create_class(LocalStateStore, [
+            {
+                key: "removeKey",
+                value: function removeKey(key) {
+                    this.state.delete(key);
+                }
+            },
+            {
+                key: "reset",
+                value: function reset() {
+                    this.state.clear();
+                }
+            },
+            {
+                key: "useSharedState",
+                value: function useSharedState(key) {
+                    var _this = this;
+                    return function(initialState) {
+                        if (!_this.state.has(key)) {
+                            _this.state.set(key, initialState);
+                        }
+                        return [
+                            _this.state.get(key),
+                            function(newState) {
+                                var current = _this.state.get(key);
+                                _this.state.set(key, newState);
+                                if (current !== newState) {
+                                    var _this_updateCallback, _this1;
+                                    (_this_updateCallback = (_this1 = _this).updateCallback) === null || _this_updateCallback === void 0 ? void 0 : _this_updateCallback.call(_this1);
+                                }
+                            }
+                        ];
+                    };
+                }
+            },
+            {
+                key: "getLocalStateFunction",
+                value: function getLocalStateFunction(key, countKey) {
+                    var _this = this;
+                    return function(initialState) {
+                        if (!_this.state.has(key)) {
+                            _this.state.set(key, []);
+                        }
+                        if (!_this.state.has(countKey)) {
+                            _this.state.set(countKey, 0);
+                        }
+                        var localState = _this.state.get(key);
+                        var oldCount = _this.state.get(countKey);
+                        _this.state.set(countKey, oldCount + 1);
+                        if (localState.length <= oldCount) {
+                            localState.push(initialState);
+                        }
+                        var value = localState[oldCount];
+                        return [
+                            value,
+                            function(newState) {
+                                var oldValue = localState[oldCount];
+                                localState[oldCount] = newState;
+                                if (oldValue !== newState) {
+                                    var _this_updateCallback, _this1;
+                                    (_this_updateCallback = (_this1 = _this).updateCallback) === null || _this_updateCallback === void 0 ? void 0 : _this_updateCallback.call(_this1);
+                                }
+                            }
+                        ];
+                    };
+                }
+            }
+        ]);
+        return LocalStateStore;
+    }();
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/data/utils.ts
+    var ReadOnlyDataController = /*#__PURE__*/ function() {
+        function ReadOnlyDataController(controller) {
+            _class_call_check(this, ReadOnlyDataController);
+            this.controller = controller;
+        }
+        _create_class(ReadOnlyDataController, [
+            {
+                key: "get",
+                value: function get(binding, options) {
+                    return this.controller.get(binding, options);
+                }
+            }
+        ]);
+        return ReadOnlyDataController;
+    }();
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/data/controller.ts
+    var DataController = /*#__PURE__*/ function() {
+        function DataController(model, options) {
+            _class_call_check(this, DataController);
+            this.hooks = {
+                resolve: new SyncWaterfallHook(),
+                resolveDataStages: new SyncWaterfallHook(),
+                // On any set or get of an undefined value, redirect the value to be the default
+                resolveDefaultValue: new SyncBailHook(),
+                onDelete: new SyncHook(),
+                onSet: new SyncHook(),
+                onGet: new SyncHook(),
+                onUpdate: new SyncHook(),
+                format: new SyncWaterfallHook(),
+                deformat: new SyncWaterfallHook(),
+                serialize: new SyncWaterfallHook()
+            };
+            this.logger = options.logger;
+            var middleware = options.middleware || [];
+            this.baseMiddleware = [
+                new LocalModel(model)
+            ].concat(_to_consumable_array(middleware));
+            this.trash = /* @__PURE__ */ new Set();
+            this.pathResolver = options.pathResolver;
+        }
+        _create_class(DataController, [
+            {
+                key: "getModel",
+                value: function getModel() {
+                    if (!this.model) {
+                        var stages = this.hooks.resolveDataStages.call(this.baseMiddleware);
+                        var model = new PipelinedDataModel();
+                        model.setMiddleware(stages);
+                        this.model = model;
+                    }
+                    return this.model;
+                }
+            },
+            {
+                key: "resolveDataValue",
+                value: function resolveDataValue(binding, value, deformat) {
+                    if (deformat) {
+                        return this.hooks.deformat.call(value, binding);
+                    }
+                    return value;
+                }
+            },
+            {
+                key: "set",
+                value: function set(transaction, options) {
+                    var _this = this;
+                    var normalizedTransaction = [];
+                    if (Array.isArray(transaction)) {
+                        normalizedTransaction = transaction.map(function(param) {
+                            var _param = _sliced_to_array(param, 2), binding = _param[0], value = _param[1];
+                            var parsed = _this.pathResolver.parse(binding);
+                            return [
+                                parsed,
+                                _this.resolveDataValue(parsed, value, Boolean(options === null || options === void 0 ? void 0 : options.formatted))
+                            ];
+                        });
+                    } else {
+                        normalizedTransaction = Object.keys(transaction).map(function(binding) {
+                            var parsed = _this.pathResolver.parse(binding);
+                            var val = transaction[binding];
+                            return [
+                                parsed,
+                                _this.resolveDataValue(parsed, val, Boolean(options === null || options === void 0 ? void 0 : options.formatted))
+                            ];
+                        });
+                    }
+                    var setUpdates = normalizedTransaction.reduce(function(updates, param) {
+                        var _param = _sliced_to_array(param, 2), binding = _param[0], newVal = _param[1];
+                        var oldVal = _this.get(binding, {
+                            includeInvalid: true
+                        });
+                        var update = {
+                            binding: binding,
+                            newValue: newVal,
+                            oldValue: oldVal
+                        };
+                        if (dequal(oldVal, newVal)) {
+                            var _this_logger;
+                            (_this_logger = _this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.debug("Skipping update for path: ".concat(binding.asString(), ". Value was unchanged: ").concat(oldVal));
+                        } else {
+                            var _this_logger1;
+                            updates.push(update);
+                            (_this_logger1 = _this.logger) === null || _this_logger1 === void 0 ? void 0 : _this_logger1.debug("Setting path: ".concat(binding.asString(), " from: ").concat(oldVal, " to: ").concat(newVal));
+                        }
+                        return updates;
+                    }, []);
+                    var result = this.getModel().set(normalizedTransaction, options);
+                    var setUpdateBindings = new Set(setUpdates.map(function(su) {
+                        return su.binding;
+                    }));
+                    result.forEach(function(tr) {
+                        if (!setUpdateBindings.has(tr.binding) && (tr.force === true || !dequal(tr.oldValue, tr.newValue))) {
+                            var _this_logger;
+                            (_this_logger = _this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.debug("Path: ".concat(tr.binding.asString(), " was changed from: ").concat(tr.oldValue, " to: ").concat(tr.newValue));
+                            setUpdates.push(tr);
+                        }
+                    });
+                    this.hooks.onSet.call(normalizedTransaction);
+                    if (setUpdates.length > 0) {
+                        this.hooks.onUpdate.call(setUpdates, options);
+                    }
+                    return result;
+                }
+            },
+            {
+                key: "resolve",
+                value: function resolve(binding, readOnly) {
+                    return Array.isArray(binding) || typeof binding === "string" ? this.pathResolver.parse(binding, {
+                        readOnly: readOnly
+                    }) : binding;
+                }
+            },
+            {
+                key: "get",
+                value: function get(binding, options) {
+                    var resolved = _instanceof(binding, BindingInstance) ? binding : this.resolve(binding, true);
+                    var result = this.getModel().get(resolved, options);
+                    if (result === void 0 && !(options === null || options === void 0 ? void 0 : options.ignoreDefaultValue)) {
+                        var defaultVal = this.hooks.resolveDefaultValue.call(resolved);
+                        if (defaultVal !== result) {
+                            result = defaultVal;
+                        }
+                    }
+                    if (options === null || options === void 0 ? void 0 : options.formatted) {
+                        result = this.hooks.format.call(result, resolved);
+                    } else if ((options === null || options === void 0 ? void 0 : options.formatted) === false) {
+                        result = this.hooks.deformat.call(result, resolved);
+                    }
+                    this.hooks.onGet.call(binding, result);
+                    return result;
+                }
+            },
+            {
+                key: "delete",
+                value: function _delete(binding, options) {
+                    if (typeof binding !== "string" && !Array.isArray(binding) && !_instanceof(binding, BindingInstance)) {
+                        throw new Error("Invalid arguments: delete expects a data path (string)");
+                    }
+                    var resolved = _instanceof(binding, BindingInstance) ? binding : this.resolve(binding, false);
+                    var parentBinding = resolved.parent();
+                    var property = resolved.key();
+                    var parentValue = this.get(parentBinding);
+                    var existedBeforeDelete = (typeof parentValue === "undefined" ? "undefined" : _type_of(parentValue)) === "object" && parentValue !== null && Object.prototype.hasOwnProperty.call(parentValue, property);
+                    this.getModel().delete(resolved, options);
+                    if (existedBeforeDelete && !this.get(resolved)) {
+                        this.trash.add(resolved);
+                    }
+                    this.hooks.onDelete.call(resolved);
+                }
+            },
+            {
+                key: "serialize",
+                value: function serialize() {
+                    return this.hooks.serialize.call(this.get(""));
+                }
+            },
+            {
+                key: "makeReadOnly",
+                value: function makeReadOnly() {
+                    return new ReadOnlyDataController(this);
+                }
+            }
+        ]);
+        return DataController;
+    }();
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/constants/utils.ts
+    function flatten(obj) {
+        var roots = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [], sep = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : ".";
+        return Object.keys(obj).reduce(function(memo, prop) {
+            return _object_spread({}, memo, Object.prototype.toString.call(obj[prop]) === "[object Object]" ? // keep working if value is an object
+            flatten(obj[prop], roots.concat([
+                prop
+            ])) : _define_property({}, roots.concat([
+                prop
+            ]).join(sep), obj[prop]));
+        }, {});
+    }
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/constants/index.ts
+    var ConstantsController = /*#__PURE__*/ function() {
+        function ConstantsController() {
+            _class_call_check(this, ConstantsController);
+            this.store = /* @__PURE__ */ new Map();
+            this.tempStore = /* @__PURE__ */ new Map();
+        }
+        _create_class(ConstantsController, [
+            {
+                key: "addConstants",
+                value: function addConstants(data, namespace) {
+                    if (this.store.has(namespace)) {
+                        var _this_store_get;
+                        (_this_store_get = this.store.get(namespace)) === null || _this_store_get === void 0 ? void 0 : _this_store_get.set(objectToBatchSet(data));
+                    } else {
+                        this.store.set(namespace, new LocalModel(data));
+                    }
+                }
+            },
+            {
+                key: "getConstants",
+                value: function getConstants(key, namespace, fallback) {
+                    var _this_tempStore_get, _this_store_get;
+                    var path = new BindingInstance(key);
+                    var _this_tempStore_get_get, _ref;
+                    return (_ref = (_this_tempStore_get_get = (_this_tempStore_get = this.tempStore.get(namespace)) === null || _this_tempStore_get === void 0 ? void 0 : _this_tempStore_get.get(path)) !== null && _this_tempStore_get_get !== void 0 ? _this_tempStore_get_get : (_this_store_get = this.store.get(namespace)) === null || _this_store_get === void 0 ? void 0 : _this_store_get.get(path)) !== null && _ref !== void 0 ? _ref : fallback;
+                }
+            },
+            {
+                key: "setTemporaryValues",
+                value: function setTemporaryValues(data, namespace) {
+                    if (this.tempStore.has(namespace)) {
+                        var _this_tempStore_get;
+                        (_this_tempStore_get = this.tempStore.get(namespace)) === null || _this_tempStore_get === void 0 ? void 0 : _this_tempStore_get.set(objectToBatchSet(data));
+                    } else {
+                        this.tempStore.set(namespace, new LocalModel(data));
+                    }
+                }
+            },
+            {
+                key: "clearTemporaryValues",
+                value: function clearTemporaryValues(namespace) {
+                    if (namespace) {
+                        var _this_tempStore_get;
+                        (_this_tempStore_get = this.tempStore.get(namespace)) === null || _this_tempStore_get === void 0 ? void 0 : _this_tempStore_get.reset();
+                    } else {
+                        this.tempStore.forEach(function(value) {
+                            value.reset();
+                        });
+                    }
+                }
+            }
+        ]);
+        return ConstantsController;
+    }();
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/error/middleware.ts
+    var ERROR_BINDING_PREFIX = "errorState";
+    var isErrorBinding = function(binding) {
+        return binding.asArray()[0] === ERROR_BINDING_PREFIX;
+    };
+    var ErrorStateMiddleware = /*#__PURE__*/ function() {
+        function ErrorStateMiddleware(options) {
+            _class_call_check(this, ErrorStateMiddleware);
+            this.name = "error-state-middleware";
+            // Internal model for error state to avoid data serialization
+            this.dataModel = new LocalModel();
+            this.logger = options.logger;
+            this.writeSymbol = options.writeSymbol;
+        }
+        _create_class(ErrorStateMiddleware, [
+            {
+                key: "set",
+                value: function set(transaction, options, next) {
+                    var _this = this;
+                    var filteredTransaction = [];
+                    var errorTransaction = [];
+                    transaction.forEach(function(transaction2) {
+                        var _transaction2 = _sliced_to_array(transaction2, 1), binding = _transaction2[0];
+                        var targetArray = isErrorBinding(binding) ? errorTransaction : filteredTransaction;
+                        targetArray.push(transaction2);
+                    });
+                    var _next_set;
+                    var nonErrorResults = (_next_set = next === null || next === void 0 ? void 0 : next.set(filteredTransaction, options)) !== null && _next_set !== void 0 ? _next_set : [];
+                    var errorResults = (options === null || options === void 0 ? void 0 : options.writeSymbol) === this.writeSymbol ? this.dataModel.set(errorTransaction) : errorTransaction.map(function(transaction2) {
+                        var _this_logger;
+                        var _transaction2 = _sliced_to_array(transaction2, 1), binding = _transaction2[0];
+                        (_this_logger = _this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.warn("[ErrorStateMiddleware] Blocked write to protected path: ".concat(binding.asString()));
+                        var oldValue = next === null || next === void 0 ? void 0 : next.get(binding, options);
+                        return {
+                            binding: binding,
+                            oldValue: oldValue,
+                            newValue: oldValue,
+                            // Keep old value
+                            force: false
+                        };
+                    });
+                    return _to_consumable_array(nonErrorResults).concat(_to_consumable_array(errorResults));
+                }
+            },
+            {
+                key: "get",
+                value: function get(binding, options, next) {
+                    return isErrorBinding(binding) ? this.dataModel.get(binding) : next === null || next === void 0 ? void 0 : next.get(binding, options);
+                }
+            },
+            {
+                key: "delete",
+                value: function _delete(binding, options, next) {
+                    if (!isErrorBinding(binding)) {
+                        next === null || next === void 0 ? void 0 : next.delete(binding, options);
+                        return;
+                    }
+                    if ((options === null || options === void 0 ? void 0 : options.writeSymbol) !== this.writeSymbol) {
+                        var _this_logger;
+                        (_this_logger = this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.warn("[ErrorStateMiddleware] Blocked delete of protected path: ".concat(binding.asString()));
+                        return;
+                    }
+                    this.dataModel.delete(binding);
+                }
+            }
+        ]);
+        return ErrorStateMiddleware;
+    }();
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/error/types.ts
+    var ErrorSeverity = /* @__PURE__ */ function(ErrorSeverity2) {
+        ErrorSeverity2["FATAL"] = "fatal";
+        ErrorSeverity2["ERROR"] = "error";
+        ErrorSeverity2["WARNING"] = "warning";
+        return ErrorSeverity2;
+    }(ErrorSeverity || {});
+    var ErrorTypes = {
+        EXPRESSION: "expression",
+        BINDING: "binding",
+        VIEW: "view",
+        ASSET: "asset",
+        NAVIGATION: "navigation",
+        VALIDATION: "validation",
+        DATA: "data",
+        SCHEMA: "schema",
+        NETWORK: "network",
+        PLUGIN: "plugin",
+        RENDER: "render",
+        EXTERNAL_STATE: "externalState"
+    };
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/error/utils/isErrorWithMetadata.ts
+    var SEVERITY_SET = new Set(Object.values(ErrorSeverity));
+    var isErrorWithMetadata = function(error) {
+        if (!("type" in error) || typeof error.type !== "string") {
+            return false;
+        }
+        if ("severity" in error && error.severity !== void 0 && (typeof error.severity !== "string" || !SEVERITY_SET.has(error.severity))) {
+            return false;
+        }
+        return !("metadata" in error) || error.metadata === void 0 || _type_of(error.metadata) === "object" && error.metadata !== null && !Array.isArray(error.metadata);
+    };
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/error/utils/makeJsonStringifyReplacer.ts
+    var makeJsonStringifyReplacer = function() {
+        var cache = /* @__PURE__ */ new Set();
+        return function(_, value) {
+            if ((typeof value === "undefined" ? "undefined" : _type_of(value)) === "object" && value !== null) {
+                if (cache.has(value)) {
+                    return "[CIRCULAR]";
+                }
+                cache.add(value);
+            }
+            return value;
+        };
+    };
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/error/controller.ts
+    var errorControllerWriteSymbol = Symbol("errorControllerWrite");
+    var ErrorController = /*#__PURE__*/ function() {
+        function ErrorController(options) {
+            _class_call_check(this, ErrorController);
+            this.hooks = {
+                onError: new SyncBailHook()
+            };
+            /**
+       * Complete history of all captured errors in chronological order
+       * Newest errors are APPENDED to the end of the array
+       */ this.errorHistory = [];
+            this.options = options;
+            this.middleware = new ErrorStateMiddleware({
+                logger: options.logger,
+                writeSymbol: errorControllerWriteSymbol
+            });
+        }
+        _create_class(ErrorController, [
+            {
+                /**
+     * Get the middleware for protecting errorState
+     * This should be added to DataController's middleware array
+     */ key: "getDataMiddleware",
+                value: function getDataMiddleware() {
+                    return this.middleware;
+                }
+            },
+            {
+                /**
+     * Set the DataController after initialization
+     */ key: "setOptions",
+                value: function setOptions(options) {
+                    this.options.model = options.model;
+                }
+            },
+            {
+                /**
+     * Capture an error and try to recover. Errors implementing the `PlayerErrorMetadata` interface will be added to history, fire hooks and update data model. As a fallback, all errors will try to trigger an errorTransition. If the error does not have a `type` property, it will default to only using the wildcard navigation.
+     */ key: "captureError",
+                value: function captureError(error) {
+                    if (!isErrorWithMetadata(error)) {
+                        this.options.logger.debug("[ErrorController] Captured error: ".concat(error.message, "\n"), "Cannot determine optional error metadata, attempting default error navigation...");
+                        return this.tryNavigateToErrorState(error, "*");
+                    }
+                    this.errorHistory.push(error);
+                    this.currentError = error;
+                    this.options.logger.debug("[ErrorController] Captured error: ".concat(error.message), JSON.stringify({
+                        errorType: error.type,
+                        severity: error.severity,
+                        metadata: error.metadata
+                    }, makeJsonStringifyReplacer()));
+                    var _this_hooks_onError_call;
+                    var shouldSkip = (_this_hooks_onError_call = this.hooks.onError.call(error)) !== null && _this_hooks_onError_call !== void 0 ? _this_hooks_onError_call : false;
+                    if (shouldSkip) {
+                        this.options.logger.debug("[ErrorController] Error state navigation skipped by plugin");
+                        return true;
+                    }
+                    this.setErrorInDataModel(error);
+                    return this.tryNavigateToErrorState(error, error.type);
+                }
+            },
+            {
+                /**
+     * Navigate to error state using errorTransitions.
+     * Uses errorTransition() which handles node-level and flow-level fallback internally.
+     */ key: "tryNavigateToErrorState",
+                value: function tryNavigateToErrorState(error, transition) {
+                    var flowInstance = this.options.flow.current;
+                    if (!flowInstance) {
+                        this.options.logger.warn("[ErrorController] No active flow instance for error navigation");
+                        return false;
+                    }
+                    if (flowInstance.getErrorTransitionState(transition) === void 0) {
+                        this.options.fail(error);
+                        return false;
+                    }
+                    try {
+                        flowInstance.errorTransition(transition);
+                        return true;
+                    } catch (e) {
+                        this.options.logger.error("[ErrorController] Error transition failed with unexpected error: ".concat(e));
+                        this.options.logger.debug("[ErrorController] Rejecting flow with error");
+                        this.options.fail(error);
+                        return false;
+                    }
+                }
+            },
+            {
+                /**
+     * Get most recent error
+     */ key: "getCurrentError",
+                value: function getCurrentError() {
+                    return this.currentError;
+                }
+            },
+            {
+                /**
+     * Get error history (read-only)
+     */ key: "getErrors",
+                value: function getErrors() {
+                    return this.errorHistory;
+                }
+            },
+            {
+                /**
+     * Clear all errors (history + current + data model)
+     */ key: "clearErrors",
+                value: function clearErrors() {
+                    this.errorHistory = [];
+                    this.currentError = void 0;
+                    this.deleteErrorFromDataModel();
+                    this.options.logger.debug("[ErrorController] All errors cleared");
+                }
+            },
+            {
+                /**
+     * Clear only current error and remove from data model, preserve history
+     */ key: "clearCurrentError",
+                value: function clearCurrentError() {
+                    this.currentError = void 0;
+                    this.deleteErrorFromDataModel();
+                    this.options.logger.debug("[ErrorController] Current error cleared");
+                }
+            },
+            {
+                /**
+     * Write error to data model errorState
+     */ key: "setErrorInDataModel",
+                value: function setErrorInDataModel(playerError) {
+                    if (!this.options.model) {
+                        this.options.logger.warn("[ErrorController] No DataController available");
+                        return;
+                    }
+                    try {
+                        var type = playerError.type, severity = playerError.severity, metadata = playerError.metadata, name = playerError.name, message = playerError.message;
+                        this.options.model.set([
+                            [
+                                "errorState",
+                                _object_spread({
+                                    message: message,
+                                    name: name,
+                                    errorType: type,
+                                    severity: severity
+                                }, metadata)
+                            ]
+                        ], {
+                            writeSymbol: errorControllerWriteSymbol
+                        });
+                        this.options.logger.debug("[ErrorController] Error set in data model at 'data.errorState'");
+                    } catch (e) {
+                        this.options.logger.error("[ErrorController] Failed to set error in data model", e);
+                    }
+                }
+            },
+            {
+                /**
+     * Remove errorState from data model
+     */ key: "deleteErrorFromDataModel",
+                value: function deleteErrorFromDataModel() {
+                    if (!this.options.model) {
+                        return;
+                    }
+                    try {
+                        this.options.model.delete("errorState", {
+                            writeSymbol: errorControllerWriteSymbol
+                        });
+                        this.options.logger.debug("[ErrorController] errorState deleted from data model");
+                    } catch (e) {
+                        this.options.logger.error("[ErrorController] Failed to delete errorState from data model", e);
+                    }
+                }
+            }
+        ]);
+        return ErrorController;
+    }();
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/resolver/ResolverError.ts
+    var ResolverError = /*#__PURE__*/ function(Error1) {
+        _inherits(ResolverError, Error1);
+        function ResolverError(cause, stage, node) {
+            _class_call_check(this, ResolverError);
+            var _this;
+            _this = _call_super(this, ResolverError, [
+                "An error in the resolver occurred at stage '".concat(stage, "'")
+            ]);
+            _this.cause = cause;
+            _this.stage = stage;
+            _this.type = ErrorTypes.VIEW;
+            _this.severity = "error" /* ERROR */ ;
+            _this.metadata = {
+                node: node
+            };
+            return _this;
+        }
+        return ResolverError;
+    }(_wrap_native_super(Error));
+    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/resolver/index.ts
+    var withContext = function(model) {
+        return {
+            get: function(binding, options) {
                 return model.get(binding, _object_spread({
                     context: {
                         model: model
                     }
                 }, options));
             },
-            set: function set(transaction, options) {
+            set: function(transaction, options) {
                 return model.set(transaction, _object_spread({
                     context: {
                         model: model
                     }
                 }, options));
             },
-            delete: function _delete(binding, options) {
+            delete: function(binding, options) {
                 return model.delete(binding, _object_spread({
                     context: {
                         model: model
@@ -5079,16 +7205,16 @@ var Player = function() {
             {
                 key: "update",
                 value: function update(dataChanges, nodeChanges) {
-                    var _ref;
                     this.hooks.beforeUpdate.call(dataChanges);
                     var resolveCache = /* @__PURE__ */ new Map();
                     this.idCache.clear();
                     var prevASTMap = new Map(this.ASTMap);
                     this.ASTMap.clear();
                     var realNodeChanges = /* @__PURE__ */ new Set();
+                    var _nodeChanges_values;
                     var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
                     try {
-                        for(var _iterator = ((_ref = nodeChanges === null || nodeChanges === void 0 ? void 0 : nodeChanges.values()) !== null && _ref !== void 0 ? _ref : [])[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                        for(var _iterator = ((_nodeChanges_values = nodeChanges === null || nodeChanges === void 0 ? void 0 : nodeChanges.values()) !== null && _nodeChanges_values !== void 0 ? _nodeChanges_values : [])[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
                             var node = _step.value;
                             var current = node;
                             while(current){
@@ -5156,7 +7282,7 @@ var Player = function() {
             {
                 key: "cloneNode",
                 value: function cloneNode(node) {
-                    var clonedNode = (0, import_timm5.clone)(node);
+                    var clonedNode = (0, import_timm6.clone)(node);
                     Object.keys(clonedNode).forEach(function(key) {
                         if (key === "parent") return;
                         var value = clonedNode[key];
@@ -5171,38 +7297,47 @@ var Player = function() {
                 key: "computeTree",
                 value: function computeTree(node, rawParent, dataChanges, cacheUpdate, options, partiallyResolvedParent, prevASTMap, nodeChanges) {
                     var _this = this;
-                    var _this_hooks_beforeResolve_call;
                     var dependencyModel = new DependencyModel(options.data.model);
                     dependencyModel.trackSubset("core");
                     var depModelWithParser = withContext(withParser(dependencyModel, this.options.parseBinding));
-                    var resolveOptions = this.hooks.resolveOptions.call(_object_spread_props(_object_spread({}, options), {
+                    var resolveOptions = _object_spread_props(_object_spread({}, options), {
                         data: _object_spread_props(_object_spread({}, options.data), {
                             model: depModelWithParser
                         }),
-                        evaluate: function evaluate(exp) {
+                        evaluate: function(exp) {
                             return _this.options.evaluator.evaluate(exp, {
                                 model: depModelWithParser
                             });
                         },
                         node: node
-                    }), node);
+                    });
+                    try {
+                        resolveOptions = this.hooks.resolveOptions.call(resolveOptions, node);
+                    } catch (err) {
+                        throw new ResolverError(err, "resolveOptions" /* ResolveOptions */ , node);
+                    }
                     var previousResult = this.getPreviousResult(node);
                     var previousDeps = previousResult === null || previousResult === void 0 ? void 0 : previousResult.dependencies;
                     var isChanged = nodeChanges.has(node);
                     var dataChanged = caresAboutDataChanges(dataChanges, previousDeps);
-                    var shouldUseLastValue = this.hooks.skipResolve.call(!dataChanged && !isChanged, node, resolveOptions);
+                    var shouldUseLastValue = !dataChanged && !isChanged;
+                    try {
+                        shouldUseLastValue = this.hooks.skipResolve.call(shouldUseLastValue, node, resolveOptions);
+                    } catch (err) {
+                        throw new ResolverError(err, "skipResolve" /* SkipResolve */ , node);
+                    }
                     if (previousResult && shouldUseLastValue) {
                         var update2 = _object_spread_props(_object_spread({}, previousResult), {
                             updated: false
                         });
-                        var repopulateASTMapFromCache = function repopulateASTMapFromCache1(resolvedNode, AST, ASTParent) {
+                        var repopulateASTMapFromCache = function(resolvedNode, AST, ASTParent) {
                             var resolvedASTLocal = resolvedNode.node;
                             _this.ASTMap.set(resolvedASTLocal, AST);
                             var resolvedUpdate = _object_spread_props(_object_spread({}, resolvedNode), {
                                 updated: false
                             });
                             cacheUpdate.set(AST, resolvedUpdate);
-                            var handleChildNode = function handleChildNode(childNode) {
+                            var handleChildNode = function(childNode) {
                                 var _prevASTMap_get;
                                 var originalChildNode = (_prevASTMap_get = prevASTMap.get(childNode)) !== null && _prevASTMap_get !== void 0 ? _prevASTMap_get : childNode;
                                 var previousChildResult = _this.getPreviousResult(originalChildNode);
@@ -5218,22 +7353,36 @@ var Player = function() {
                             } else if (resolvedASTLocal.type === "multi-node" /* MultiNode */ ) {
                                 resolvedASTLocal.values.forEach(handleChildNode);
                             }
-                            _this.hooks.afterNodeUpdate.call(AST, ASTParent, resolvedUpdate);
+                            try {
+                                _this.hooks.afterNodeUpdate.call(AST, ASTParent, resolvedUpdate);
+                            } catch (err) {
+                                throw new ResolverError(err, "afterNodeUpdate" /* AfterNodeUpdate */ , node);
+                            }
                         };
                         previousResult.node.parent = partiallyResolvedParent;
                         repopulateASTMapFromCache(previousResult, node, rawParent);
                         return update2;
                     }
-                    var clonedNode = _object_spread_props(_object_spread({}, this.cloneNode(node)), {
+                    var resolvedAST = _object_spread_props(_object_spread({}, this.cloneNode(node)), {
                         parent: partiallyResolvedParent
                     });
-                    var resolvedAST = (_this_hooks_beforeResolve_call = this.hooks.beforeResolve.call(clonedNode, resolveOptions)) !== null && _this_hooks_beforeResolve_call !== void 0 ? _this_hooks_beforeResolve_call : {
-                        type: "empty" /* Empty */ 
-                    };
+                    try {
+                        var _this_hooks_beforeResolve_call;
+                        resolvedAST = (_this_hooks_beforeResolve_call = this.hooks.beforeResolve.call(resolvedAST, resolveOptions)) !== null && _this_hooks_beforeResolve_call !== void 0 ? _this_hooks_beforeResolve_call : {
+                            type: "empty" /* Empty */ 
+                        };
+                    } catch (err) {
+                        throw new ResolverError(err, "beforeResolve" /* BeforeResolve */ , node);
+                    }
                     resolvedAST.parent = partiallyResolvedParent;
                     resolveOptions.node = resolvedAST;
                     this.ASTMap.set(resolvedAST, node);
-                    var resolved = this.hooks.resolve.call(void 0, resolvedAST, resolveOptions);
+                    var resolved = void 0;
+                    try {
+                        resolved = this.hooks.resolve.call(void 0, resolvedAST, resolveOptions);
+                    } catch (err) {
+                        throw new ResolverError(err, "resolve" /* Resolve */ , node);
+                    }
                     var updated = !dequal(previousResult === null || previousResult === void 0 ? void 0 : previousResult.value, resolved);
                     if (previousResult && !updated) {
                         resolved = previousResult === null || previousResult === void 0 ? void 0 : previousResult.value;
@@ -5250,10 +7399,10 @@ var Player = function() {
                             });
                             if (childValue) {
                                 if (childNode.type === "multi-node" /* MultiNode */  && !childNode.override) {
-                                    var arr = (0, import_timm5.addLast)(dlv_es_default(resolved, child.path, []), childValue);
-                                    resolved = (0, import_timm5.setIn)(resolved, child.path, arr);
+                                    var arr = (0, import_timm6.addLast)(dlv_es_default(resolved, child.path, []), childValue);
+                                    resolved = (0, import_timm6.setIn)(resolved, child.path, arr);
                                 } else {
-                                    resolved = (0, import_timm5.setIn)(resolved, child.path, childValue);
+                                    resolved = (0, import_timm6.setIn)(resolved, child.path, childValue);
                                 }
                             }
                             updated = updated || childUpdated;
@@ -5285,18 +7434,26 @@ var Player = function() {
                     if (previousResult && !updated) {
                         resolved = previousResult === null || previousResult === void 0 ? void 0 : previousResult.value;
                     }
-                    resolved = this.hooks.afterResolve.call(resolved, resolvedAST, _object_spread_props(_object_spread({}, resolveOptions), {
-                        getDependencies: function getDependencies(scope) {
-                            return dependencyModel.getDependencies(scope);
-                        }
-                    }));
+                    try {
+                        resolved = this.hooks.afterResolve.call(resolved, resolvedAST, _object_spread_props(_object_spread({}, resolveOptions), {
+                            getDependencies: function(scope) {
+                                return dependencyModel.getDependencies(scope);
+                            }
+                        }));
+                    } catch (err) {
+                        throw new ResolverError(err, "afterResolve" /* AfterResolve */ , node);
+                    }
                     var update = {
                         node: resolvedAST,
                         updated: updated,
                         value: resolved,
                         dependencies: /* @__PURE__ */ new Set(_to_consumable_array(dependencyModel.getDependencies()).concat(_to_consumable_array(childDependencies)))
                     };
-                    this.hooks.afterNodeUpdate.call(node, rawParent, update);
+                    try {
+                        this.hooks.afterNodeUpdate.call(node, rawParent, update);
+                    } catch (err) {
+                        throw new ResolverError(err, "afterNodeUpdate" /* AfterNodeUpdate */ , node);
+                    }
                     cacheUpdate.set(node, update);
                     return update;
                 }
@@ -5728,8 +7885,8 @@ var Player = function() {
         return TemplatePlugin;
     }();
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/plugins/string-resolver.ts
-    var import_timm6 = __toESM(require_timm());
-    var createPatternMatcher = function createPatternMatcher(start, end) {
+    var import_timm7 = __toESM(require_timm());
+    var createPatternMatcher = function(start, end) {
         return function(testStr) {
             var startLocation = testStr.indexOf(start);
             if (startLocation === -1) {
@@ -5764,23 +7921,23 @@ var Player = function() {
                 newVal = resolveString(val, resolveOptions);
             }
             if (newVal !== val) {
-                newNode = (0, import_timm6.set)(newNode, key, newVal);
+                newNode = (0, import_timm7.set)(newNode, key, newVal);
             }
         });
         return newNode;
     }
-    var findBasePath = function findBasePath1(node, resolver) {
+    var findBasePath = function(node, resolver) {
         var parentNode = node.parent;
         if (!parentNode) {
             return [];
         }
         if ("children" in parentNode) {
-            var _ref;
             var _parentNode_children_find, _parentNode_children;
             var original = resolver.getSourceNode(node);
-            return (_ref = (_parentNode_children = parentNode.children) === null || _parentNode_children === void 0 ? void 0 : (_parentNode_children_find = _parentNode_children.find(function(child) {
+            var _parentNode_children_find_path;
+            return (_parentNode_children_find_path = (_parentNode_children = parentNode.children) === null || _parentNode_children === void 0 ? void 0 : (_parentNode_children_find = _parentNode_children.find(function(child) {
                 return child.value === original;
-            })) === null || _parentNode_children_find === void 0 ? void 0 : _parentNode_children_find.path) !== null && _ref !== void 0 ? _ref : [];
+            })) === null || _parentNode_children_find === void 0 ? void 0 : _parentNode_children_find.path) !== null && _parentNode_children_find_path !== void 0 ? _parentNode_children_find_path : [];
         }
         if (parentNode.type !== "multi-node" /* MultiNode */ ) {
             return [];
@@ -5805,9 +7962,9 @@ var Player = function() {
                             var _node_parent, _node_parent_parent, _node_parent1, _node_parent_parent1, _node_parent2, _node_parent_parent_value;
                             var propsToSkip;
                             if (node.type === "asset" /* Asset */  || node.type === "view" /* View */ ) {
-                                var _ref;
                                 var _node_plugins_stringResolver, _node_plugins, _node_value;
-                                propsToSkip = new Set((_ref = (_node_plugins = node.plugins) === null || _node_plugins === void 0 ? void 0 : (_node_plugins_stringResolver = _node_plugins.stringResolver) === null || _node_plugins_stringResolver === void 0 ? void 0 : _node_plugins_stringResolver.propertiesToSkip) !== null && _ref !== void 0 ? _ref : [
+                                var _node_plugins_stringResolver_propertiesToSkip;
+                                propsToSkip = new Set((_node_plugins_stringResolver_propertiesToSkip = (_node_plugins = node.plugins) === null || _node_plugins === void 0 ? void 0 : (_node_plugins_stringResolver = _node_plugins.stringResolver) === null || _node_plugins_stringResolver === void 0 ? void 0 : _node_plugins_stringResolver.propertiesToSkip) !== null && _node_plugins_stringResolver_propertiesToSkip !== void 0 ? _node_plugins_stringResolver_propertiesToSkip : [
                                     "exp"
                                 ]);
                                 if ((_node_value = node.value) === null || _node_value === void 0 ? void 0 : _node_value.id) {
@@ -5842,7 +7999,7 @@ var Player = function() {
         return StringResolverPlugin;
     }();
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/plugins/applicability.ts
-    var import_timm7 = __toESM(require_timm());
+    var import_timm8 = __toESM(require_timm());
     var ApplicabilityPlugin = /*#__PURE__*/ function() {
         function ApplicabilityPlugin() {
             _class_call_check(this, ApplicabilityPlugin);
@@ -5876,7 +8033,7 @@ var Player = function() {
                     var _this = this;
                     parser.hooks.parseNode.tap("applicability", function(obj, nodeType, options, childOptions) {
                         if (_this.isApplicability(obj)) {
-                            var parsedApplicability = parser.parseObject((0, import_timm7.omit)(obj, "applicability"), nodeType, options);
+                            var parsedApplicability = parser.parseObject((0, import_timm8.omit)(obj, "applicability"), nodeType, options);
                             if (!parsedApplicability) {
                                 return childOptions ? [] : null;
                             }
@@ -6130,83 +8287,6 @@ var Player = function() {
         ]);
         return AssetPlugin;
     }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/view/store.ts
-    var LocalStateStore = /*#__PURE__*/ function() {
-        function LocalStateStore(onUpdate) {
-            _class_call_check(this, LocalStateStore);
-            this.updateCallback = onUpdate;
-            this.state = /* @__PURE__ */ new Map();
-        }
-        _create_class(LocalStateStore, [
-            {
-                key: "removeKey",
-                value: function removeKey(key) {
-                    this.state.delete(key);
-                }
-            },
-            {
-                key: "reset",
-                value: function reset() {
-                    this.state.clear();
-                }
-            },
-            {
-                key: "useSharedState",
-                value: function useSharedState(key) {
-                    var _this = this;
-                    return function(initialState) {
-                        if (!_this.state.has(key)) {
-                            _this.state.set(key, initialState);
-                        }
-                        return [
-                            _this.state.get(key),
-                            function(newState) {
-                                var current = _this.state.get(key);
-                                _this.state.set(key, newState);
-                                if (current !== newState) {
-                                    var _this_updateCallback, _this1;
-                                    (_this_updateCallback = (_this1 = _this).updateCallback) === null || _this_updateCallback === void 0 ? void 0 : _this_updateCallback.call(_this1);
-                                }
-                            }
-                        ];
-                    };
-                }
-            },
-            {
-                key: "getLocalStateFunction",
-                value: function getLocalStateFunction(key, countKey) {
-                    var _this = this;
-                    return function(initialState) {
-                        if (!_this.state.has(key)) {
-                            _this.state.set(key, []);
-                        }
-                        if (!_this.state.has(countKey)) {
-                            _this.state.set(countKey, 0);
-                        }
-                        var localState = _this.state.get(key);
-                        var oldCount = _this.state.get(countKey);
-                        _this.state.set(countKey, oldCount + 1);
-                        if (localState.length <= oldCount) {
-                            localState.push(initialState);
-                        }
-                        var value = localState[oldCount];
-                        return [
-                            value,
-                            function(newState) {
-                                var oldValue = localState[oldCount];
-                                localState[oldCount] = newState;
-                                if (oldValue !== newState) {
-                                    var _this_updateCallback, _this1;
-                                    (_this_updateCallback = (_this1 = _this).updateCallback) === null || _this_updateCallback === void 0 ? void 0 : _this_updateCallback.call(_this1);
-                                }
-                            }
-                        ];
-                    };
-                }
-            }
-        ]);
-        return LocalStateStore;
-    }();
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/view/plugins/asset-transform.ts
     function findUp(node, target) {
         if (node === target) {
@@ -6235,11 +8315,11 @@ var Player = function() {
                     this.stateStore.clear();
                     view.hooks.resolver.tap("asset-transform", function(resolver) {
                         var lastUpdatedNode;
-                        var updateState = function updateState(node) {
+                        var updateState = function(node) {
                             lastUpdatedNode = node;
                             view.update(/* @__PURE__ */ new Set());
                         };
-                        var getStore = function getStore(node, stepKey) {
+                        var getStore = function(node, stepKey) {
                             var store;
                             var countKey = stepKey === _this.resolveSymbol ? _this.resolveCountSymbol : _this.beforeResolveCountSymbol;
                             var storedState = _this.stateStore.get(node);
@@ -6253,10 +8333,10 @@ var Player = function() {
                                 _this.stateStore.set(node, store);
                             }
                             return {
-                                useSharedState: function useSharedState(key) {
+                                useSharedState: function(key) {
                                     return store.useSharedState(key);
                                 },
-                                useLocalState: function useLocalState(initialState) {
+                                useLocalState: function(initialState) {
                                     return store.getLocalStateFunction(stepKey, countKey)(initialState);
                                 }
                             };
@@ -6308,1609 +8388,6 @@ var Player = function() {
     var import_timm9 = __toESM(require_timm());
     var import_p_defer2 = __toESM(require_p_defer());
     var import_queue_microtask2 = __toESM(require_queue_microtask());
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/flow/flow.ts
-    var import_p_defer = __toESM(require_p_defer());
-    var FlowInstance = /*#__PURE__*/ function() {
-        function FlowInstance(id, flow, options) {
-            var _this = this;
-            _class_call_check(this, FlowInstance);
-            this.isTransitioning = false;
-            this.hooks = {
-                beforeStart: new SyncBailHook(),
-                onStart: new SyncHook(),
-                onEnd: new SyncHook(),
-                skipTransition: new SyncBailHook(),
-                beforeTransition: new SyncWaterfallHook(),
-                resolveTransitionNode: new SyncWaterfallHook(),
-                transition: new SyncHook(),
-                afterTransition: new SyncHook()
-            };
-            this.id = id;
-            this.flow = flow;
-            this.log = options === null || options === void 0 ? void 0 : options.logger;
-            this.history = [];
-            this.hooks.transition.tap("startPromise", function(_oldState, nextState) {
-                return _async_to_generator(function() {
-                    var newState;
-                    return _ts_generator(this, function(_state) {
-                        newState = nextState.value;
-                        if (this.flowPromise && newState.state_type === "END") {
-                            this.flowPromise.resolve(newState);
-                        }
-                        return [
-                            2
-                        ];
-                    });
-                }).call(_this);
-            });
-        }
-        _create_class(FlowInstance, [
-            {
-                key: "start",
-                value: /** Start the state machine */ function start() {
-                    return _async_to_generator(function() {
-                        var _this_log, initialState;
-                        return _ts_generator(this, function(_state) {
-                            if (this.flowPromise) {
-                                ;
-                                (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.warn("Already called start for flow");
-                                return [
-                                    2,
-                                    this.flowPromise.promise
-                                ];
-                            }
-                            this.flow = this.hooks.beforeStart.call(this.flow) || this.flow;
-                            if (this.flow.onStart) {
-                                this.hooks.onStart.call(this.flow.onStart);
-                            }
-                            initialState = this.flow.startState;
-                            if (!initialState) {
-                                return [
-                                    2,
-                                    Promise.reject(new Error("No 'startState' defined for flow"))
-                                ];
-                            }
-                            this.flowPromise = (0, import_p_defer.default)();
-                            this.pushHistory(initialState);
-                            return [
-                                2,
-                                this.flowPromise.promise
-                            ];
-                        });
-                    }).call(this);
-                }
-            },
-            {
-                key: "transition",
-                value: function transition(transitionValue, options) {
-                    var _this_currentState, _this_log;
-                    if (this.isTransitioning) {
-                        var _this_currentState1;
-                        throw new Error("Transitioning while ongoing transition from ".concat((_this_currentState1 = this.currentState) === null || _this_currentState1 === void 0 ? void 0 : _this_currentState1.name, " is in progress is not supported"));
-                    }
-                    if (((_this_currentState = this.currentState) === null || _this_currentState === void 0 ? void 0 : _this_currentState.value.state_type) === "END") {
-                        var _this_log1;
-                        (_this_log1 = this.log) === null || _this_log1 === void 0 ? void 0 : _this_log1.warn("Skipping transition using ".concat(transitionValue, ". Already at and END state"));
-                        return;
-                    }
-                    if (this.currentState === void 0) {
-                        throw new Error("Cannot transition when there's no current state");
-                    }
-                    if (options === null || options === void 0 ? void 0 : options.force) {
-                        var _this_log2;
-                        (_this_log2 = this.log) === null || _this_log2 === void 0 ? void 0 : _this_log2.debug("Forced transition. Skipping validation checks");
-                    } else {
-                        var skipTransition = this.hooks.skipTransition.call(this.currentState);
-                        if (skipTransition) {
-                            var _this_log3;
-                            (_this_log3 = this.log) === null || _this_log3 === void 0 ? void 0 : _this_log3.debug("Skipping transition from ".concat(this.currentState.name, " b/c hook told us to"));
-                            return;
-                        }
-                    }
-                    var state = this.hooks.beforeTransition.call(this.currentState.value, transitionValue);
-                    if (!("transitions" in state)) {
-                        throw new Error("No transitions defined for ".concat(this.currentState.value));
-                    }
-                    var transitions = state.transitions;
-                    var nextState = transitions[transitionValue] || transitions["*"];
-                    if (nextState === void 0) {
-                        var _this_log4;
-                        (_this_log4 = this.log) === null || _this_log4 === void 0 ? void 0 : _this_log4.warn("No transition from ".concat(this.currentState.name, " using ").concat(transitionValue, " or *"));
-                        return;
-                    }
-                    (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.debug("Transitioning from ".concat(this.currentState.name, " to ").concat(nextState, " using ").concat(transitionValue, " "));
-                    return this.pushHistory(nextState, options);
-                }
-            },
-            {
-                key: "pushHistory",
-                value: function pushHistory(stateName, options) {
-                    if (!Object.prototype.hasOwnProperty.call(this.flow, stateName)) {
-                        throw new Error("No flow definition for: ".concat(stateName, " was found."));
-                    }
-                    var nextState = this.flow[stateName];
-                    if (!this.flow[stateName] || (typeof nextState === "undefined" ? "undefined" : _type_of(nextState)) !== "object" || !("state_type" in nextState)) {
-                        var _this_log;
-                        (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.error("Flow doesn't contain any states named: ".concat(stateName));
-                        return;
-                    }
-                    var prevState = this.currentState;
-                    this.isTransitioning = true;
-                    nextState = this.hooks.resolveTransitionNode.call(nextState);
-                    var newCurrentState = {
-                        name: stateName,
-                        value: nextState
-                    };
-                    this.currentState = newCurrentState;
-                    this.history.push(stateName);
-                    if (newCurrentState.value.state_type === "END" && this.flow.onEnd) {
-                        this.hooks.onEnd.call(this.flow.onEnd);
-                    }
-                    this.hooks.transition.call(prevState, _object_spread({}, newCurrentState));
-                    this.isTransitioning = false;
-                    this.hooks.afterTransition.call(this);
-                }
-            }
-        ]);
-        return FlowInstance;
-    }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/flow/controller.ts
-    var FlowController = /*#__PURE__*/ function() {
-        function FlowController(navigation, options) {
-            _class_call_check(this, FlowController);
-            this.hooks = {
-                flow: new SyncHook()
-            };
-            this.navigation = navigation;
-            this.navStack = [];
-            this.log = options === null || options === void 0 ? void 0 : options.logger;
-            this.start = this.start.bind(this);
-            this.run = this.run.bind(this);
-            this.transition = this.transition.bind(this);
-            this.addNewFlow = this.addNewFlow.bind(this);
-        }
-        _create_class(FlowController, [
-            {
-                /** Navigate to another state in the state-machine */ key: "transition",
-                value: function transition(stateTransition, options) {
-                    if (this.current === void 0) {
-                        throw new Error("Not currently in a flow. Cannot transition.");
-                    }
-                    this.current.transition(stateTransition, options);
-                }
-            },
-            {
-                key: "addNewFlow",
-                value: function addNewFlow(flow) {
-                    this.navStack.push(flow);
-                    this.current = flow;
-                    this.hooks.flow.call(flow);
-                }
-            },
-            {
-                key: "run",
-                value: function run(startState) {
-                    return _async_to_generator(function() {
-                        var _this, _this_log, startFlow, flow, end, firstItem;
-                        return _ts_generator(this, function(_state) {
-                            switch(_state.label){
-                                case 0:
-                                    _this = this;
-                                    if (!Object.prototype.hasOwnProperty.call(this.navigation, startState)) {
-                                        return [
-                                            2,
-                                            Promise.reject(new Error("No flow defined for: ".concat(startState)))
-                                        ];
-                                    }
-                                    startFlow = this.navigation[startState];
-                                    if (startFlow === null || (typeof startFlow === "undefined" ? "undefined" : _type_of(startFlow)) !== "object") {
-                                        return [
-                                            2,
-                                            Promise.reject(new Error("Flow: ".concat(startState, " needs to be an object")))
-                                        ];
-                                    }
-                                    (_this_log = this.log) === null || _this_log === void 0 ? void 0 : _this_log.debug("Starting flow: ".concat(startState));
-                                    flow = new FlowInstance(startState, startFlow, {
-                                        logger: this.log
-                                    });
-                                    this.addNewFlow(flow);
-                                    flow.hooks.afterTransition.tap("flow-controller", function(flowInstance) {
-                                        var _flowInstance_currentState;
-                                        if (((_flowInstance_currentState = flowInstance.currentState) === null || _flowInstance_currentState === void 0 ? void 0 : _flowInstance_currentState.value.state_type) === "FLOW") {
-                                            var _flowInstance_currentState1, _this_log;
-                                            var subflowId = (_flowInstance_currentState1 = flowInstance.currentState) === null || _flowInstance_currentState1 === void 0 ? void 0 : _flowInstance_currentState1.value.ref;
-                                            (_this_log = _this.log) === null || _this_log === void 0 ? void 0 : _this_log.debug("Loading subflow ".concat(subflowId));
-                                            _this.run(subflowId).then(function(subFlowEndState) {
-                                                var _this_log;
-                                                (_this_log = _this.log) === null || _this_log === void 0 ? void 0 : _this_log.debug("Subflow ended. Using outcome: ".concat(subFlowEndState.outcome));
-                                                flowInstance.transition(subFlowEndState === null || subFlowEndState === void 0 ? void 0 : subFlowEndState.outcome);
-                                            });
-                                        }
-                                    });
-                                    return [
-                                        4,
-                                        flow.start()
-                                    ];
-                                case 1:
-                                    end = _state.sent();
-                                    this.navStack.pop();
-                                    if (this.navStack.length > 0) {
-                                        firstItem = 0;
-                                        this.current = this.navStack[firstItem];
-                                    }
-                                    return [
-                                        2,
-                                        end
-                                    ];
-                            }
-                        });
-                    }).call(this);
-                }
-            },
-            {
-                key: "start",
-                value: function start() {
-                    return _async_to_generator(function() {
-                        return _ts_generator(this, function(_state) {
-                            if (!this.navigation.BEGIN) {
-                                return [
-                                    2,
-                                    Promise.reject(new Error("Must supply a BEGIN state"))
-                                ];
-                            }
-                            return [
-                                2,
-                                this.run(this.navigation.BEGIN)
-                            ];
-                        });
-                    }).call(this);
-                }
-            }
-        ]);
-        return FlowController;
-    }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/validation/controller.ts
-    var import_timm8 = __toESM(require_timm());
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/utils/replaceParams.ts
-    var ANY_CHAR_REGEX = /%([a-zA-Z]+)/g;
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/validation/binding-tracker.ts
-    var CONTEXT = "validation-binding-tracker";
-    var ValidationBindingTrackerViewPlugin = /*#__PURE__*/ function() {
-        function ValidationBindingTrackerViewPlugin(options) {
-            _class_call_check(this, ValidationBindingTrackerViewPlugin);
-            this.trackedBindings = /* @__PURE__ */ new Set();
-            this.options = options;
-        }
-        _create_class(ValidationBindingTrackerViewPlugin, [
-            {
-                /** Fetch the tracked bindings in the current view */ key: "getBindings",
-                value: function getBindings() {
-                    return this.trackedBindings;
-                }
-            },
-            {
-                /** Add a binding to the tracked set */ key: "trackBinding",
-                value: function trackBinding(binding) {
-                    var _this_options_callbacks_onAdd, _this_options_callbacks;
-                    if (this.trackedBindings.has(binding)) {
-                        return;
-                    }
-                    this.trackedBindings.add(binding);
-                    (_this_options_callbacks = this.options.callbacks) === null || _this_options_callbacks === void 0 ? void 0 : (_this_options_callbacks_onAdd = _this_options_callbacks.onAdd) === null || _this_options_callbacks_onAdd === void 0 ? void 0 : _this_options_callbacks_onAdd.call(_this_options_callbacks, binding);
-                }
-            },
-            {
-                /** Attach hooks to the given resolver */ key: "applyResolver",
-                value: function applyResolver(resolver) {
-                    var _this = this;
-                    this.trackedBindings.clear();
-                    var tracked = /* @__PURE__ */ new Map();
-                    var sections = /* @__PURE__ */ new Map();
-                    var lastViewUpdateChangeSet;
-                    var lastComputedBindingTree = /* @__PURE__ */ new Map();
-                    var currentBindingTree = /* @__PURE__ */ new Map();
-                    var lastSectionBindingTree = /* @__PURE__ */ new Map();
-                    var resolvedNodeMap = /* @__PURE__ */ new Map();
-                    resolver.hooks.beforeUpdate.tap(CONTEXT, function(changes) {
-                        lastViewUpdateChangeSet = changes;
-                    });
-                    resolver.hooks.skipResolve.tap(CONTEXT, function(shouldSkip, node) {
-                        var trackedBindingsForNode = lastComputedBindingTree.get(node);
-                        if (!shouldSkip || !lastViewUpdateChangeSet || !trackedBindingsForNode) {
-                            return shouldSkip;
-                        }
-                        var intersection = new Set(_to_consumable_array(lastViewUpdateChangeSet).filter(function(b) {
-                            return trackedBindingsForNode.has(b);
-                        }));
-                        return intersection.size === 0;
-                    });
-                    resolver.hooks.resolveOptions.tap(CONTEXT, function(options, node) {
-                        if (options.validation === void 0) {
-                            return options;
-                        }
-                        tracked.delete(node);
-                        var track = function track(binding) {
-                            var _this_options_callbacks_onAdd, _this_options_callbacks;
-                            var parsed = isBinding(binding) ? binding : _this.options.parseBinding(binding);
-                            if (tracked.has(node)) {
-                                var _tracked_get;
-                                (_tracked_get = tracked.get(node)) === null || _tracked_get === void 0 ? void 0 : _tracked_get.add(parsed);
-                            } else {
-                                tracked.set(node, /* @__PURE__ */ new Set([
-                                    parsed
-                                ]));
-                            }
-                            var parent = node.parent;
-                            while(parent){
-                                if (sections.has(parent)) {
-                                    var _sections_get;
-                                    (_sections_get = sections.get(parent)) === null || _sections_get === void 0 ? void 0 : _sections_get.add(node);
-                                    break;
-                                } else {
-                                    parent = parent.parent;
-                                }
-                            }
-                            _this.trackedBindings.add(parsed);
-                            (_this_options_callbacks = _this.options.callbacks) === null || _this_options_callbacks === void 0 ? void 0 : (_this_options_callbacks_onAdd = _this_options_callbacks.onAdd) === null || _this_options_callbacks_onAdd === void 0 ? void 0 : _this_options_callbacks_onAdd.call(_this_options_callbacks, parsed);
-                        };
-                        return _object_spread_props(_object_spread({}, options), {
-                            validation: _object_spread_props(_object_spread({}, options.validation), {
-                                get: function get(binding, getOptions) {
-                                    var _options_validation__getValidationForBinding, _options_validation;
-                                    if (getOptions === null || getOptions === void 0 ? void 0 : getOptions.track) {
-                                        track(binding);
-                                    }
-                                    var eows = (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : (_options_validation__getValidationForBinding = _options_validation._getValidationForBinding(binding)) === null || _options_validation__getValidationForBinding === void 0 ? void 0 : _options_validation__getValidationForBinding.getAll(getOptions);
-                                    var firstFieldEOW = eows === null || eows === void 0 ? void 0 : eows.find(function(eow) {
-                                        return eow.displayTarget === "field" || eow.displayTarget === void 0;
-                                    });
-                                    return firstFieldEOW;
-                                },
-                                getValidationsForBinding: function getValidationsForBinding(binding, getOptions) {
-                                    var _ref;
-                                    var _options_validation__getValidationForBinding, _options_validation;
-                                    if (getOptions === null || getOptions === void 0 ? void 0 : getOptions.track) {
-                                        track(binding);
-                                    }
-                                    return (_ref = (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : (_options_validation__getValidationForBinding = _options_validation._getValidationForBinding(binding)) === null || _options_validation__getValidationForBinding === void 0 ? void 0 : _options_validation__getValidationForBinding.getAll(getOptions)) !== null && _ref !== void 0 ? _ref : [];
-                                },
-                                getChildren: function getChildren(type) {
-                                    var _lastComputedBindingTree_get;
-                                    var validations = new Array();
-                                    (_lastComputedBindingTree_get = lastComputedBindingTree.get(node)) === null || _lastComputedBindingTree_get === void 0 ? void 0 : _lastComputedBindingTree_get.forEach(function(binding) {
-                                        var _options_validation__getValidationForBinding, _options_validation;
-                                        var eow = (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : (_options_validation__getValidationForBinding = _options_validation._getValidationForBinding(binding)) === null || _options_validation__getValidationForBinding === void 0 ? void 0 : _options_validation__getValidationForBinding.get();
-                                        if (eow && (type === void 0 || type === eow.displayTarget)) {
-                                            validations.push(eow);
-                                        }
-                                    });
-                                    return validations;
-                                },
-                                getValidationsForSection: function getValidationsForSection() {
-                                    var _lastSectionBindingTree_get;
-                                    var validations = new Array();
-                                    (_lastSectionBindingTree_get = lastSectionBindingTree.get(node)) === null || _lastSectionBindingTree_get === void 0 ? void 0 : _lastSectionBindingTree_get.forEach(function(binding) {
-                                        var _options_validation__getValidationForBinding, _options_validation;
-                                        var eow = (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : (_options_validation__getValidationForBinding = _options_validation._getValidationForBinding(binding)) === null || _options_validation__getValidationForBinding === void 0 ? void 0 : _options_validation__getValidationForBinding.get();
-                                        if (eow && eow.displayTarget === "section") {
-                                            validations.push(eow);
-                                        }
-                                    });
-                                    return validations;
-                                },
-                                register: function register(registerOptions) {
-                                    if ((registerOptions === null || registerOptions === void 0 ? void 0 : registerOptions.type) === "section") {
-                                        if (!sections.has(node)) {
-                                            sections.set(node, /* @__PURE__ */ new Set());
-                                        }
-                                    }
-                                },
-                                track: track
-                            })
-                        });
-                    });
-                    resolver.hooks.afterNodeUpdate.tap(CONTEXT, function(originalNode, parent, update) {
-                        var updated = update.updated, resolvedNode = update.node;
-                        resolvedNodeMap.set(resolvedNode, originalNode);
-                        if (updated) {
-                            var newlyComputed = new Set(tracked.get(originalNode));
-                            if (resolvedNode.type === "multi-node" /* MultiNode */ ) {
-                                resolvedNode.values.forEach(function(value) {
-                                    var _currentBindingTree_get;
-                                    return (_currentBindingTree_get = currentBindingTree.get(value)) === null || _currentBindingTree_get === void 0 ? void 0 : _currentBindingTree_get.forEach(function(b) {
-                                        return newlyComputed.add(b);
-                                    });
-                                });
-                            }
-                            if ("children" in resolvedNode && resolvedNode.children) {
-                                resolvedNode.children.forEach(function(child) {
-                                    var _currentBindingTree_get;
-                                    (_currentBindingTree_get = currentBindingTree.get(child.value)) === null || _currentBindingTree_get === void 0 ? void 0 : _currentBindingTree_get.forEach(function(b) {
-                                        return newlyComputed.add(b);
-                                    });
-                                });
-                            }
-                            currentBindingTree.set(resolvedNode, newlyComputed);
-                        } else {
-                            var _lastComputedBindingTree_get;
-                            currentBindingTree.set(resolvedNode, (_lastComputedBindingTree_get = lastComputedBindingTree.get(originalNode)) !== null && _lastComputedBindingTree_get !== void 0 ? _lastComputedBindingTree_get : /* @__PURE__ */ new Set());
-                        }
-                        if (originalNode === resolver.root) {
-                            _this.trackedBindings = new Set(currentBindingTree.get(resolvedNode));
-                            lastComputedBindingTree.clear();
-                            currentBindingTree.forEach(function(value, key) {
-                                var node = resolvedNodeMap.get(key);
-                                if (node) {
-                                    lastComputedBindingTree.set(node, value);
-                                }
-                            });
-                            lastSectionBindingTree.clear();
-                            sections.forEach(function(nodeSet, sectionNode) {
-                                var temp = /* @__PURE__ */ new Set();
-                                nodeSet.forEach(function(n) {
-                                    var _tracked_get;
-                                    (_tracked_get = tracked.get(n)) === null || _tracked_get === void 0 ? void 0 : _tracked_get.forEach(temp.add, temp);
-                                });
-                                lastSectionBindingTree.set(sectionNode, temp);
-                            });
-                            tracked.clear();
-                            sections.clear();
-                            currentBindingTree = /* @__PURE__ */ new Map();
-                        }
-                    });
-                }
-            },
-            {
-                key: "apply",
-                value: function apply(view) {
-                    view.hooks.resolver.tap(CONTEXT, this.applyResolver.bind(this));
-                }
-            }
-        ]);
-        return ValidationBindingTrackerViewPlugin;
-    }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/validation/controller.ts
-    var SCHEMA_VALIDATION_PROVIDER_NAME = "schema";
-    var VIEW_VALIDATION_PROVIDER_NAME = "view";
-    var VALIDATION_PROVIDER_NAME_SYMBOL = Symbol.for("validation-provider-name");
-    var ValidatedBinding = /*#__PURE__*/ function() {
-        function ValidatedBinding(possibleValidations, onDismiss, log, weakBindings) {
-            var _this = this;
-            _class_call_check(this, ValidatedBinding);
-            this.applicableValidations = [];
-            this.validationsByState = {
-                load: [],
-                change: [],
-                navigation: []
-            };
-            this.onDismiss = onDismiss;
-            possibleValidations.forEach(function(vObj) {
-                var trigger = vObj.trigger;
-                if (_this.validationsByState[trigger]) {
-                    var statefulValidationObject = createStatefulValidationObject(vObj);
-                    _this.validationsByState[trigger].push(statefulValidationObject);
-                } else {
-                    log === null || log === void 0 ? void 0 : log.warn("Unknown validation trigger: ".concat(trigger));
-                }
-            });
-            this.weakBindings = weakBindings !== null && weakBindings !== void 0 ? weakBindings : /* @__PURE__ */ new Set();
-        }
-        _create_class(ValidatedBinding, [
-            {
-                key: "allValidations",
-                get: function get() {
-                    return Object.values(this.validationsByState).flat();
-                }
-            },
-            {
-                key: "checkIfBlocking",
-                value: function checkIfBlocking(statefulObj) {
-                    if (statefulObj.state === "active") {
-                        var isBlockingNavigation = statefulObj.isBlockingNavigation;
-                        return isBlockingNavigation;
-                    }
-                    return false;
-                }
-            },
-            {
-                key: "getAll",
-                value: function getAll() {
-                    var _this = this;
-                    return this.applicableValidations.reduce(function(all, statefulObj) {
-                        if (statefulObj.state === "active" && statefulObj.response) {
-                            all.push(_object_spread_props(_object_spread({}, statefulObj.response), {
-                                blocking: _this.checkIfBlocking(statefulObj)
-                            }));
-                        }
-                        return all;
-                    }, []);
-                }
-            },
-            {
-                key: "get",
-                value: function get() {
-                    var firstInvalid = this.applicableValidations.find(function(statefulObj) {
-                        return statefulObj.state === "active" && statefulObj.response;
-                    });
-                    if ((firstInvalid === null || firstInvalid === void 0 ? void 0 : firstInvalid.state) === "active") {
-                        return _object_spread_props(_object_spread({}, firstInvalid.response), {
-                            blocking: this.checkIfBlocking(firstInvalid)
-                        });
-                    }
-                }
-            },
-            {
-                key: "runApplicableValidations",
-                value: function runApplicableValidations(runner, canDismiss, phase) {
-                    var _this = this;
-                    this.applicableValidations = this.applicableValidations.map(function(originalValue) {
-                        var _originalValue_value_blocking, _response_message, _obj_value_displayTarget;
-                        if (originalValue.state === "dismissed") {
-                            return originalValue;
-                        }
-                        var blocking = (_originalValue_value_blocking = originalValue.value.blocking) !== null && _originalValue_value_blocking !== void 0 ? _originalValue_value_blocking : originalValue.value.severity === "warning" && "once" || true;
-                        var obj = (0, import_timm8.setIn)(originalValue, [
-                            "value",
-                            "blocking"
-                        ], blocking);
-                        var isBlockingNavigation = blocking === true || blocking === "once" && !canDismiss;
-                        if (phase === "navigation" && obj.state === "active" && obj.value.blocking !== true) {
-                            if (obj.value.severity === "warning") {
-                                var warn = obj;
-                                if (warn.dismissable && warn.response.dismiss && (warn.response.blocking !== "once" || !warn.response.blocking)) {
-                                    warn.response.dismiss();
-                                } else {
-                                    if ((warn === null || warn === void 0 ? void 0 : warn.response.blocking) === "once") {
-                                        warn.response.blocking = false;
-                                    }
-                                    warn.dismissable = true;
-                                }
-                                return warn;
-                            }
-                        }
-                        var response = runner(obj.value);
-                        var newState = {
-                            type: obj.type,
-                            value: obj.value,
-                            state: response ? "active" : "none",
-                            isBlockingNavigation: isBlockingNavigation,
-                            dismissable: obj.value.severity === "warning" && phase === "navigation",
-                            response: response ? _object_spread_props(_object_spread({}, obj.value), {
-                                message: (_response_message = response.message) !== null && _response_message !== void 0 ? _response_message : "Something is broken",
-                                severity: obj.value.severity,
-                                displayTarget: (_obj_value_displayTarget = obj.value.displayTarget) !== null && _obj_value_displayTarget !== void 0 ? _obj_value_displayTarget : "field"
-                            }) : void 0
-                        };
-                        if (newState.state === "active" && obj.value.severity === "warning") {
-                            newState.response.dismiss = function() {
-                                var _this_onDismiss, _this1;
-                                newState.state = "dismissed";
-                                (_this_onDismiss = (_this1 = _this).onDismiss) === null || _this_onDismiss === void 0 ? void 0 : _this_onDismiss.call(_this1);
-                            };
-                        }
-                        return newState;
-                    });
-                }
-            },
-            {
-                key: "update",
-                value: function update(phase, canDismiss, runner) {
-                    var newApplicableValidations = [];
-                    if (phase === "load" && this.currentPhase !== void 0) {
-                        return;
-                    }
-                    if (this.currentPhase === "navigation" || phase === this.currentPhase) {
-                        this.runApplicableValidations(runner, canDismiss, phase);
-                        return;
-                    }
-                    if (phase === "load") {
-                        this.currentPhase = "load";
-                        this.applicableValidations = _to_consumable_array(this.validationsByState.load);
-                    } else if (phase === "change" && this.currentPhase === "load") {
-                        this.currentPhase = "change";
-                        this.applicableValidations = _to_consumable_array(this.applicableValidations).concat(_to_consumable_array(this.validationsByState.change));
-                    } else if (phase === "navigation" && (this.currentPhase === "load" || this.currentPhase === "change")) {
-                        this.applicableValidations.forEach(function(element) {
-                            if (!(element.type === "error" && element.state === "active" && element.isBlockingNavigation === false)) {
-                                newApplicableValidations.push(element);
-                            }
-                        });
-                        this.applicableValidations = _to_consumable_array(newApplicableValidations).concat(_to_consumable_array(this.validationsByState.navigation), _to_consumable_array(this.currentPhase === "load" ? this.validationsByState.change : []));
-                        this.currentPhase = "navigation";
-                    }
-                    this.runApplicableValidations(runner, canDismiss, phase);
-                }
-            }
-        ]);
-        return ValidatedBinding;
-    }();
-    var ValidationController = /*#__PURE__*/ function() {
-        function ValidationController(schema, options) {
-            _class_call_check(this, ValidationController);
-            this.hooks = {
-                /** A hook called to tap into the validator registry for adding more validators */ createValidatorRegistry: new SyncHook(),
-                /** A callback/event when a new validation is added to the view */ onAddValidation: new SyncWaterfallHook(),
-                /** The inverse of onAddValidation, this is called when a validation is removed from the list */ onRemoveValidation: new SyncWaterfallHook(),
-                resolveValidationProviders: new SyncWaterfallHook(),
-                /** A hook called when a binding is added to the tracker */ onTrackBinding: new SyncHook()
-            };
-            this.validations = /* @__PURE__ */ new Map();
-            this.weakBindingTracker = /* @__PURE__ */ new Set();
-            this.schema = schema;
-            this.options = options;
-            this.reset();
-        }
-        _create_class(ValidationController, [
-            {
-                key: "setOptions",
-                value: function setOptions(options) {
-                    this.options = options;
-                }
-            },
-            {
-                /** Return the middleware for the data-model to stop propagation of invalid data */ key: "getDataMiddleware",
-                value: function getDataMiddleware() {
-                    var _this = this;
-                    return [
-                        {
-                            set: function set(transaction, options, next) {
-                                var _ref;
-                                return (_ref = next === null || next === void 0 ? void 0 : next.set(transaction, options)) !== null && _ref !== void 0 ? _ref : [];
-                            },
-                            get: function get(binding, options, next) {
-                                return next === null || next === void 0 ? void 0 : next.get(binding, options);
-                            },
-                            delete: function _delete(binding, options, next) {
-                                _this.validations = removeBindingAndChildrenFromMap(_this.validations, binding);
-                                return next === null || next === void 0 ? void 0 : next.delete(binding, options);
-                            }
-                        },
-                        new ValidationMiddleware(function(binding) {
-                            var _strongValidation_get;
-                            if (!_this.options) {
-                                return;
-                            }
-                            _this.updateValidationsForBinding(binding, "change", _this.options);
-                            var strongValidation = _this.getValidationForBinding(binding);
-                            if ((strongValidation === null || strongValidation === void 0 ? void 0 : (_strongValidation_get = strongValidation.get()) === null || _strongValidation_get === void 0 ? void 0 : _strongValidation_get.severity) === "error") {
-                                return strongValidation.get();
-                            }
-                            var newInvalidBindings = /* @__PURE__ */ new Set();
-                            _this.validations.forEach(function(weakValidation, strongBinding) {
-                                var _weakValidation_get;
-                                if (caresAboutDataChanges(/* @__PURE__ */ new Set([
-                                    binding
-                                ]), weakValidation.weakBindings) && (weakValidation === null || weakValidation === void 0 ? void 0 : (_weakValidation_get = weakValidation.get()) === null || _weakValidation_get === void 0 ? void 0 : _weakValidation_get.severity) === "error") {
-                                    weakValidation === null || weakValidation === void 0 ? void 0 : weakValidation.weakBindings.forEach(function(weakBinding) {
-                                        if (weakBinding === strongBinding) {
-                                            newInvalidBindings.add({
-                                                binding: weakBinding,
-                                                isStrong: true
-                                            });
-                                        } else {
-                                            newInvalidBindings.add({
-                                                binding: weakBinding,
-                                                isStrong: false
-                                            });
-                                        }
-                                    });
-                                }
-                            });
-                            if (newInvalidBindings.size > 0) {
-                                return newInvalidBindings;
-                            }
-                        }, {
-                            logger: new ProxyLogger(function() {
-                                var _this_options;
-                                return (_this_options = _this.options) === null || _this_options === void 0 ? void 0 : _this_options.logger;
-                            })
-                        })
-                    ];
-                }
-            },
-            {
-                key: "getValidationProviders",
-                value: function getValidationProviders() {
-                    var _this = this;
-                    if (this.providers) {
-                        return this.providers;
-                    }
-                    this.providers = this.hooks.resolveValidationProviders.call([
-                        {
-                            source: SCHEMA_VALIDATION_PROVIDER_NAME,
-                            provider: this.schema
-                        },
-                        {
-                            source: VIEW_VALIDATION_PROVIDER_NAME,
-                            provider: {
-                                getValidationsForBinding: function getValidationsForBinding(binding) {
-                                    var _this_viewValidationProvider_getValidationsForBinding, _this_viewValidationProvider;
-                                    return (_this_viewValidationProvider = _this.viewValidationProvider) === null || _this_viewValidationProvider === void 0 ? void 0 : (_this_viewValidationProvider_getValidationsForBinding = _this_viewValidationProvider.getValidationsForBinding) === null || _this_viewValidationProvider_getValidationsForBinding === void 0 ? void 0 : _this_viewValidationProvider_getValidationsForBinding.call(_this_viewValidationProvider, binding);
-                                },
-                                getValidationsForView: function getValidationsForView() {
-                                    var _this_viewValidationProvider_getValidationsForView, _this_viewValidationProvider;
-                                    return (_this_viewValidationProvider = _this.viewValidationProvider) === null || _this_viewValidationProvider === void 0 ? void 0 : (_this_viewValidationProvider_getValidationsForView = _this_viewValidationProvider.getValidationsForView) === null || _this_viewValidationProvider_getValidationsForView === void 0 ? void 0 : _this_viewValidationProvider_getValidationsForView.call(_this_viewValidationProvider);
-                                }
-                            }
-                        }
-                    ]);
-                    return this.providers;
-                }
-            },
-            {
-                key: "reset",
-                value: function reset() {
-                    this.validations.clear();
-                    this.tracker = void 0;
-                }
-            },
-            {
-                key: "onView",
-                value: function onView(view) {
-                    var _this = this;
-                    this.validations.clear();
-                    if (!this.options) {
-                        return;
-                    }
-                    var bindingTrackerPlugin = new ValidationBindingTrackerViewPlugin(_object_spread_props(_object_spread({}, this.options), {
-                        callbacks: {
-                            onAdd: function onAdd(binding) {
-                                if (!_this.options || _this.getValidationForBinding(binding) !== void 0) {
-                                    return;
-                                }
-                                var originalValue = _this.options.model.get(binding);
-                                var withoutDefault = _this.options.model.get(binding, {
-                                    ignoreDefaultValue: true
-                                });
-                                if (originalValue !== withoutDefault) {
-                                    _this.options.model.set([
-                                        [
-                                            binding,
-                                            originalValue
-                                        ]
-                                    ], {
-                                        silent: true
-                                    });
-                                }
-                                _this.updateValidationsForBinding(binding, "load", _this.options, function() {
-                                    view.update(/* @__PURE__ */ new Set([
-                                        binding
-                                    ]));
-                                });
-                                _this.hooks.onTrackBinding.call(binding);
-                            }
-                        }
-                    }));
-                    this.tracker = bindingTrackerPlugin;
-                    this.viewValidationProvider = view;
-                    bindingTrackerPlugin.apply(view);
-                }
-            },
-            {
-                key: "updateValidationsForBinding",
-                value: function updateValidationsForBinding(binding, trigger, validationContext, onDismiss) {
-                    var _this = this;
-                    var context = validationContext !== null && validationContext !== void 0 ? validationContext : this.options;
-                    if (!context) {
-                        throw new Error("Context is required for executing validations");
-                    }
-                    if (trigger === "load") {
-                        var _this_options;
-                        var possibleValidations = this.getValidationProviders().reduce(function(vals, provider) {
-                            var _vals;
-                            var _ref;
-                            var _provider_provider_getValidationsForBinding, _provider_provider_getValidationsForBinding1, _provider_provider;
-                            (_vals = vals).push.apply(_vals, _to_consumable_array((_ref = (_provider_provider_getValidationsForBinding1 = (_provider_provider = provider.provider).getValidationsForBinding) === null || _provider_provider_getValidationsForBinding1 === void 0 ? void 0 : (_provider_provider_getValidationsForBinding = _provider_provider_getValidationsForBinding1.call(_provider_provider, binding)) === null || _provider_provider_getValidationsForBinding === void 0 ? void 0 : _provider_provider_getValidationsForBinding.map(function(valObj) {
-                                return _object_spread_props(_object_spread({}, valObj), _define_property({}, VALIDATION_PROVIDER_NAME_SYMBOL, provider.source));
-                            })) !== null && _ref !== void 0 ? _ref : []));
-                            return vals;
-                        }, []);
-                        if (possibleValidations.length === 0) {
-                            return;
-                        }
-                        this.validations.set(binding, new ValidatedBinding(possibleValidations, onDismiss, (_this_options = this.options) === null || _this_options === void 0 ? void 0 : _this_options.logger));
-                    }
-                    var trackedValidations = this.validations.get(binding);
-                    trackedValidations === null || trackedValidations === void 0 ? void 0 : trackedValidations.update(trigger, true, function(validationObj) {
-                        var response = _this.validationRunner(validationObj, binding, context);
-                        if (_this.weakBindingTracker.size > 0) {
-                            var t2 = _this.validations.get(binding);
-                            _this.weakBindingTracker.forEach(function(b) {
-                                return t2.weakBindings.add(b);
-                            });
-                        }
-                        return response ? {
-                            message: response.message
-                        } : void 0;
-                    });
-                    if (trigger !== "load") {
-                        this.validations.forEach(function(validation, vBinding) {
-                            if (vBinding !== binding && caresAboutDataChanges(/* @__PURE__ */ new Set([
-                                binding
-                            ]), validation.weakBindings)) {
-                                validation.update(trigger, true, function(validationObj) {
-                                    var response = _this.validationRunner(validationObj, vBinding, context);
-                                    return response ? {
-                                        message: response.message
-                                    } : void 0;
-                                });
-                            }
-                        });
-                    }
-                }
-            },
-            {
-                key: "validationRunner",
-                value: function validationRunner(validationObj, binding) {
-                    var context = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : this.options;
-                    var _validationObj_handler;
-                    if (!context) {
-                        throw new Error("No context provided to validation runner");
-                    }
-                    var handler = (_validationObj_handler = validationObj.handler) !== null && _validationObj_handler !== void 0 ? _validationObj_handler : this.getValidator(validationObj.type);
-                    var weakBindings = /* @__PURE__ */ new Set();
-                    var model = {
-                        get: function get(b, options) {
-                            weakBindings.add(isBinding(b) ? binding : context.parseBinding(b));
-                            return context.model.get(b, _object_spread_props(_object_spread({}, options), {
-                                includeInvalid: true
-                            }));
-                        },
-                        set: context.model.set,
-                        delete: context.model.delete
-                    };
-                    var result = handler === null || handler === void 0 ? void 0 : handler(_object_spread_props(_object_spread({}, context), {
-                        evaluate: function evaluate(exp) {
-                            var options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {
-                                model: model
-                            };
-                            return context.evaluate(exp, options);
-                        },
-                        model: model,
-                        validation: validationObj,
-                        schemaType: this.schema.getType(binding)
-                    }), context.model.get(binding, {
-                        includeInvalid: true,
-                        formatted: validationObj.dataTarget === "formatted"
-                    }), validationObj);
-                    this.weakBindingTracker = weakBindings;
-                    if (result) {
-                        var message = result.message;
-                        var parameters = result.parameters;
-                        if (validationObj.message) {
-                            message = resolveDataRefs(validationObj.message, {
-                                model: model,
-                                evaluate: context.evaluate
-                            });
-                            if (parameters) {
-                                message = replaceParams(message, parameters);
-                            }
-                        }
-                        return {
-                            message: message
-                        };
-                    }
-                }
-            },
-            {
-                key: "updateValidationsForView",
-                value: function updateValidationsForView(trigger) {
-                    var _this = this;
-                    var isNavigationTrigger = trigger === "navigation";
-                    var lastActiveBindings = this.activeBindings;
-                    var updateValidations = function updateValidations(dismissValidations) {
-                        _this.getBindings().forEach(function(binding) {
-                            var _this_validations_get;
-                            (_this_validations_get = _this.validations.get(binding)) === null || _this_validations_get === void 0 ? void 0 : _this_validations_get.update(trigger, dismissValidations, function(obj) {
-                                if (!_this.options) {
-                                    return;
-                                }
-                                return _this.validationRunner(obj, binding, _this.options);
-                            });
-                        });
-                    };
-                    updateValidations(!isNavigationTrigger);
-                    if (isNavigationTrigger) {
-                        var activeBindings = this.activeBindings;
-                        if (isSubset(activeBindings, lastActiveBindings)) {
-                            updateValidations(true);
-                        }
-                    }
-                }
-            },
-            {
-                key: "activeBindings",
-                get: function get() {
-                    var _this = this;
-                    return new Set(Array.from(this.getBindings()).filter(function(b) {
-                        var _this_validations_get;
-                        return ((_this_validations_get = _this.validations.get(b)) === null || _this_validations_get === void 0 ? void 0 : _this_validations_get.get()) !== void 0;
-                    }));
-                }
-            },
-            {
-                key: "getValidator",
-                value: function getValidator(type) {
-                    if (this.validatorRegistry) {
-                        return this.validatorRegistry.get(type);
-                    }
-                    var registry = new ValidatorRegistry();
-                    this.hooks.createValidatorRegistry.call(registry);
-                    this.validatorRegistry = registry;
-                    return registry.get(type);
-                }
-            },
-            {
-                key: "getBindings",
-                value: function getBindings() {
-                    var _ref;
-                    var _this_tracker;
-                    return (_ref = (_this_tracker = this.tracker) === null || _this_tracker === void 0 ? void 0 : _this_tracker.getBindings()) !== null && _ref !== void 0 ? _ref : /* @__PURE__ */ new Set();
-                }
-            },
-            {
-                key: "trackBinding",
-                value: function trackBinding(binding) {
-                    var _this_tracker;
-                    (_this_tracker = this.tracker) === null || _this_tracker === void 0 ? void 0 : _this_tracker.trackBinding(binding);
-                }
-            },
-            {
-                /** Executes all known validations for the tracked bindings using the given model */ key: "validateView",
-                value: function validateView() {
-                    var _this = this;
-                    var trigger = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : "navigation";
-                    this.updateValidationsForView(trigger);
-                    var validations = /* @__PURE__ */ new Map();
-                    var canTransition = true;
-                    this.getBindings().forEach(function(b) {
-                        var _this_getValidationForBinding;
-                        var allValidations = (_this_getValidationForBinding = _this.getValidationForBinding(b)) === null || _this_getValidationForBinding === void 0 ? void 0 : _this_getValidationForBinding.getAll();
-                        allValidations === null || allValidations === void 0 ? void 0 : allValidations.forEach(function(v) {
-                            if (trigger === "navigation" && v.blocking) {
-                                var _this_options;
-                                (_this_options = _this.options) === null || _this_options === void 0 ? void 0 : _this_options.logger.debug("Validation on binding: ".concat(b.asString(), " is preventing navigation. ").concat(JSON.stringify(v)));
-                                canTransition = false;
-                            }
-                            if (!validations.has(b)) {
-                                validations.set(b, v);
-                            }
-                        });
-                    });
-                    return {
-                        canTransition: canTransition,
-                        validations: validations.size ? validations : void 0
-                    };
-                }
-            },
-            {
-                /** Get the current tracked validation for the given binding */ key: "getValidationForBinding",
-                value: function getValidationForBinding(binding) {
-                    return this.validations.get(binding);
-                }
-            },
-            {
-                key: "forView",
-                value: function forView(parser) {
-                    var _this = this;
-                    return {
-                        _getValidationForBinding: function _getValidationForBinding(binding) {
-                            return _this.getValidationForBinding(isBinding(binding) ? binding : parser(binding));
-                        },
-                        getAll: function getAll() {
-                            var bindings = _this.getBindings();
-                            if (bindings.size === 0) {
-                                return void 0;
-                            }
-                            var validationMapping = /* @__PURE__ */ new Map();
-                            bindings.forEach(function(b) {
-                                var _this_getValidationForBinding;
-                                var validation = (_this_getValidationForBinding = _this.getValidationForBinding(b)) === null || _this_getValidationForBinding === void 0 ? void 0 : _this_getValidationForBinding.get();
-                                if (validation) {
-                                    validationMapping.set(b, validation);
-                                }
-                            });
-                            return validationMapping.size === 0 ? void 0 : validationMapping;
-                        },
-                        get: function get() {
-                            throw new Error("Error Access be provided by the view plugin");
-                        },
-                        getValidationsForBinding: function getValidationsForBinding() {
-                            throw new Error("Error rollup should be provided by the view plugin");
-                        },
-                        getChildren: function getChildren() {
-                            throw new Error("Error rollup should be provided by the view plugin");
-                        },
-                        getValidationsForSection: function getValidationsForSection() {
-                            throw new Error("Error rollup should be provided by the view plugin");
-                        },
-                        track: function track() {
-                            throw new Error("Tracking should be provided by the view plugin");
-                        },
-                        register: function register() {
-                            throw new Error("Section functionality should be provided by the view plugin");
-                        },
-                        type: function type(binding) {
-                            return _this.schema.getType(isBinding(binding) ? binding : parser(binding));
-                        }
-                    };
-                }
-            }
-        ]);
-        return ValidationController;
-    }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/view/controller.ts
-    var import_queue_microtask = __toESM(require_queue_microtask());
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
-    var import_sorted_array = __toESM(require_sorted_array(), 1);
-    function traverseObj(object) {
-        var path = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [], pairs = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : /* @__PURE__ */ new Map();
-        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-        try {
-            for(var _iterator = Object.keys(object)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                var key = _step.value;
-                var val = object[key];
-                var nestedPath = _to_consumable_array(path).concat([
-                    key
-                ]);
-                if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object") {
-                    traverseObj(val, nestedPath, pairs);
-                } else {
-                    pairs.set(nestedPath, val);
-                }
-            }
-        } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-        } finally{
-            try {
-                if (!_iteratorNormalCompletion && _iterator.return != null) {
-                    _iterator.return();
-                }
-            } finally{
-                if (_didIteratorError) {
-                    throw _iteratorError;
-                }
-            }
-        }
-        return pairs;
-    }
-    var createSortedArray = function createSortedArray() {
-        return new import_sorted_array.default([], function(c) {
-            return c.matcher.count;
-        });
-    };
-    var Registry = /*#__PURE__*/ function() {
-        function Registry(initialSet) {
-            var _this = this;
-            _class_call_check(this, Registry);
-            this.store = createSortedArray();
-            initialSet === null || initialSet === void 0 ? void 0 : initialSet.forEach(function(param) {
-                var _param = _sliced_to_array(param, 2), match = _param[0], value = _param[1];
-                _this.set(match, value);
-            });
-        }
-        _create_class(Registry, [
-            {
-                /** Add match -> value mapping to the registry */ key: "set",
-                value: function set(match, value) {
-                    var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createObjectMatcher(match) : createBasicMatcher(match);
-                    this.store.insert({
-                        key: match,
-                        value: value,
-                        matcher: matcher
-                    });
-                }
-            },
-            {
-                /** Fetch the best match in the registry */ key: "get",
-                value: function get(query) {
-                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                    try {
-                        for(var _iterator = this.store.array[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                            var entry = _step.value;
-                            if (entry.matcher(query)) {
-                                return entry.value;
-                            }
-                        }
-                    } catch (err) {
-                        _didIteratorError = true;
-                        _iteratorError = err;
-                    } finally{
-                        try {
-                            if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                _iterator.return();
-                            }
-                        } finally{
-                            if (_didIteratorError) {
-                                throw _iteratorError;
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                /** Loop over all entries and run callback */ key: "forEach",
-                value: function forEach(callbackfn) {
-                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                    try {
-                        for(var _iterator = this.store.array[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                            var entry = _step.value;
-                            callbackfn(entry);
-                        }
-                    } catch (err) {
-                        _didIteratorError = true;
-                        _iteratorError = err;
-                    } finally{
-                        try {
-                            if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                _iterator.return();
-                            }
-                        } finally{
-                            if (_didIteratorError) {
-                                throw _iteratorError;
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                /** Reset the items in the registry */ key: "clear",
-                value: function clear() {
-                    this.store = createSortedArray();
-                }
-            },
-            {
-                /** Check if the registry is empty*/ key: "isRegistryEmpty",
-                value: function isRegistryEmpty() {
-                    return this.store.array.length === 0;
-                }
-            }
-        ]);
-        return Registry;
-    }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/view/controller.ts
-    var mergeSets = function mergeSets(setA, setB) {
-        var _ref, _ref1;
-        return /* @__PURE__ */ new Set(_to_consumable_array((_ref = setA === null || setA === void 0 ? void 0 : setA.values()) !== null && _ref !== void 0 ? _ref : []).concat(_to_consumable_array((_ref1 = setB === null || setB === void 0 ? void 0 : setB.values()) !== null && _ref1 !== void 0 ? _ref1 : [])));
-    };
-    var ViewController = /*#__PURE__*/ function() {
-        function ViewController(initialViews, options) {
-            var _this = this;
-            var _this1 = this;
-            _class_call_check(this, ViewController);
-            this.hooks = {
-                resolveView: new SyncWaterfallHook(),
-                view: new SyncHook()
-            };
-            this.transformRegistry = new Registry();
-            this.optimizeUpdates = true;
-            this.viewOptions = options;
-            this.viewMap = initialViews.reduce(function(viewMap, view) {
-                viewMap[view.id] = view;
-                return viewMap;
-            }, {});
-            options.flowController.hooks.flow.tap("viewController", function(flow) {
-                flow.hooks.transition.tap("viewController", function(_oldState, newState) {
-                    if (newState.value.state_type === "VIEW") {
-                        _this.onView(newState.value);
-                    } else {
-                        _this.currentView = void 0;
-                    }
-                });
-            });
-            var update = function update(updates) {
-                var silent = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : false;
-                if (_this1.currentView) {
-                    if (_this1.optimizeUpdates) {
-                        _this1.queueUpdate(updates, void 0, silent);
-                    } else {
-                        _this1.currentView.update();
-                    }
-                }
-            };
-            options.model.hooks.onUpdate.tap("viewController", function(updates, updateOptions) {
-                var _ref;
-                update(new Set(updates.map(function(t2) {
-                    return t2.binding;
-                })), (_ref = updateOptions === null || updateOptions === void 0 ? void 0 : updateOptions.silent) !== null && _ref !== void 0 ? _ref : false);
-            });
-            options.model.hooks.onDelete.tap("viewController", function(binding) {
-                var parentBinding = binding.parent();
-                var property = binding.key();
-                if (typeof property === "number" && parentBinding) {
-                    update(/* @__PURE__ */ new Set([
-                        parentBinding
-                    ]));
-                } else {
-                    update(/* @__PURE__ */ new Set([
-                        binding
-                    ]));
-                }
-            });
-            this.viewPlugins = this.createViewPlugins();
-        }
-        _create_class(ViewController, [
-            {
-                key: "queueUpdate",
-                value: function queueUpdate(bindings, nodes) {
-                    var _this = this;
-                    var silent = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : false;
-                    if (!this.pendingUpdate) {
-                        this.pendingUpdate = {
-                            scheduled: false
-                        };
-                    }
-                    this.pendingUpdate = _object_spread_props(_object_spread({}, this.pendingUpdate), {
-                        changedBindings: mergeSets(this.pendingUpdate.changedBindings, bindings),
-                        changedNodes: mergeSets(this.pendingUpdate.changedNodes, nodes)
-                    });
-                    if (!this.pendingUpdate.scheduled && !silent) {
-                        this.pendingUpdate.scheduled = true;
-                        (0, import_queue_microtask.default)(function() {
-                            var _this_pendingUpdate;
-                            var _this_currentView;
-                            var _ref = (_this_pendingUpdate = _this.pendingUpdate) !== null && _this_pendingUpdate !== void 0 ? _this_pendingUpdate : {}, changedBindings = _ref.changedBindings, changedNodes = _ref.changedNodes;
-                            _this.pendingUpdate = void 0;
-                            (_this_currentView = _this.currentView) === null || _this_currentView === void 0 ? void 0 : _this_currentView.update(changedBindings, changedNodes);
-                        });
-                    }
-                }
-            },
-            {
-                key: "getViewForRef",
-                value: function getViewForRef(viewRef) {
-                    var _this = this;
-                    if (this.viewMap[viewRef]) {
-                        return this.viewMap[viewRef];
-                    }
-                    var matchingViewId = Object.keys(this.viewMap).find(function(possibleViewIdMatch) {
-                        return viewRef === resolveDataRefsInString(possibleViewIdMatch, {
-                            model: _this.viewOptions.model,
-                            evaluate: _this.viewOptions.evaluator.evaluate
-                        });
-                    });
-                    if (matchingViewId && this.viewMap[matchingViewId]) {
-                        return this.viewMap[matchingViewId];
-                    }
-                }
-            },
-            {
-                key: "onView",
-                value: function onView(state) {
-                    var viewId = state.ref;
-                    var source = this.hooks.resolveView.call(this.getViewForRef(viewId), viewId, state);
-                    if (!source) {
-                        throw new Error("No view with id ".concat(viewId));
-                    }
-                    var view = new ViewInstance(source, this.viewOptions);
-                    this.currentView = view;
-                    this.applyViewPlugins(view);
-                    this.hooks.view.call(view);
-                    view.update();
-                }
-            },
-            {
-                key: "applyViewPlugins",
-                value: function applyViewPlugins(view) {
-                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                    try {
-                        for(var _iterator = this.viewPlugins[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                            var plugin = _step.value;
-                            plugin.apply(view);
-                        }
-                    } catch (err) {
-                        _didIteratorError = true;
-                        _iteratorError = err;
-                    } finally{
-                        try {
-                            if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                _iterator.return();
-                            }
-                        } finally{
-                            if (_didIteratorError) {
-                                throw _iteratorError;
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                key: "createViewPlugins",
-                value: function createViewPlugins() {
-                    var pluginOptions = toNodeResolveOptions(this.viewOptions);
-                    return [
-                        new AssetPlugin(),
-                        new SwitchPlugin(pluginOptions),
-                        new ApplicabilityPlugin(),
-                        new AssetTransformCorePlugin(this.transformRegistry),
-                        new StringResolverPlugin(),
-                        new TemplatePlugin(pluginOptions),
-                        new MultiNodePlugin()
-                    ];
-                }
-            },
-            {
-                /** Marks all AST nodes in `nodes` as changed, triggering the view to update and re-resolve these nodes. View updates are triggered asynchronously and many calls to this in a short time will batch into a single update.
-     *
-     * NOTE: In most cases view updates are handled automatically by changes to data or any other built-in functionality that would require a view update. Only call this function if absolutely necessary.
-     */ key: "updateViewAST",
-                value: function updateViewAST(nodes) {
-                    this.queueUpdate(void 0, nodes);
-                }
-            }
-        ]);
-        return ViewController;
-    }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/data/utils.ts
-    var ReadOnlyDataController = /*#__PURE__*/ function() {
-        function ReadOnlyDataController(controller, logger) {
-            _class_call_check(this, ReadOnlyDataController);
-            this.controller = controller;
-            this.logger = logger;
-        }
-        _create_class(ReadOnlyDataController, [
-            {
-                key: "get",
-                value: function get(binding, options) {
-                    return this.controller.get(binding, options);
-                }
-            },
-            {
-                key: "set",
-                value: function set(transaction, options) {
-                    var _this_logger;
-                    (_this_logger = this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.error("Error: Tried to set in a read only instance of the DataController");
-                    return [];
-                }
-            },
-            {
-                key: "delete",
-                value: function _delete(binding, options) {
-                    var _this_logger;
-                    (_this_logger = this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.error("Error: Tried to delete in a read only instance of the DataController");
-                }
-            }
-        ]);
-        return ReadOnlyDataController;
-    }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/data/controller.ts
-    var DataController = /*#__PURE__*/ function() {
-        function DataController(model, options) {
-            _class_call_check(this, DataController);
-            this.hooks = {
-                resolve: new SyncWaterfallHook(),
-                resolveDataStages: new SyncWaterfallHook(),
-                // On any set or get of an undefined value, redirect the value to be the default
-                resolveDefaultValue: new SyncBailHook(),
-                onDelete: new SyncHook(),
-                onSet: new SyncHook(),
-                onGet: new SyncHook(),
-                onUpdate: new SyncHook(),
-                format: new SyncWaterfallHook(),
-                deformat: new SyncWaterfallHook(),
-                serialize: new SyncWaterfallHook()
-            };
-            this.logger = options.logger;
-            var middleware = options.middleware || [];
-            this.baseMiddleware = [
-                new LocalModel(model)
-            ].concat(_to_consumable_array(middleware));
-            this.trash = /* @__PURE__ */ new Set();
-            this.pathResolver = options.pathResolver;
-        }
-        _create_class(DataController, [
-            {
-                key: "getModel",
-                value: function getModel() {
-                    if (!this.model) {
-                        var stages = this.hooks.resolveDataStages.call(this.baseMiddleware);
-                        var model = new PipelinedDataModel();
-                        model.setMiddleware(stages);
-                        this.model = model;
-                    }
-                    return this.model;
-                }
-            },
-            {
-                key: "resolveDataValue",
-                value: function resolveDataValue(binding, value, deformat) {
-                    if (deformat) {
-                        return this.hooks.deformat.call(value, binding);
-                    }
-                    return value;
-                }
-            },
-            {
-                key: "set",
-                value: function set(transaction, options) {
-                    var _this = this;
-                    var normalizedTransaction = [];
-                    if (Array.isArray(transaction)) {
-                        normalizedTransaction = transaction.map(function(param) {
-                            var _param = _sliced_to_array(param, 2), binding = _param[0], value = _param[1];
-                            var parsed = _this.pathResolver.parse(binding);
-                            return [
-                                parsed,
-                                _this.resolveDataValue(parsed, value, Boolean(options === null || options === void 0 ? void 0 : options.formatted))
-                            ];
-                        });
-                    } else {
-                        normalizedTransaction = Object.keys(transaction).map(function(binding) {
-                            var parsed = _this.pathResolver.parse(binding);
-                            var val = transaction[binding];
-                            return [
-                                parsed,
-                                _this.resolveDataValue(parsed, val, Boolean(options === null || options === void 0 ? void 0 : options.formatted))
-                            ];
-                        });
-                    }
-                    var setUpdates = normalizedTransaction.reduce(function(updates, param) {
-                        var _param = _sliced_to_array(param, 2), binding = _param[0], newVal = _param[1];
-                        var oldVal = _this.get(binding, {
-                            includeInvalid: true
-                        });
-                        var update = {
-                            binding: binding,
-                            newValue: newVal,
-                            oldValue: oldVal
-                        };
-                        if (dequal(oldVal, newVal)) {
-                            var _this_logger;
-                            (_this_logger = _this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.debug("Skipping update for path: ".concat(binding.asString(), ". Value was unchanged: ").concat(oldVal));
-                        } else {
-                            var _this_logger1;
-                            updates.push(update);
-                            (_this_logger1 = _this.logger) === null || _this_logger1 === void 0 ? void 0 : _this_logger1.debug("Setting path: ".concat(binding.asString(), " from: ").concat(oldVal, " to: ").concat(newVal));
-                        }
-                        return updates;
-                    }, []);
-                    var result = this.getModel().set(normalizedTransaction, options);
-                    var setUpdateBindings = new Set(setUpdates.map(function(su) {
-                        return su.binding;
-                    }));
-                    result.forEach(function(tr) {
-                        if (!setUpdateBindings.has(tr.binding) && (tr.force === true || !dequal(tr.oldValue, tr.newValue))) {
-                            var _this_logger;
-                            (_this_logger = _this.logger) === null || _this_logger === void 0 ? void 0 : _this_logger.debug("Path: ".concat(tr.binding.asString(), " was changed from: ").concat(tr.oldValue, " to: ").concat(tr.newValue));
-                            setUpdates.push(tr);
-                        }
-                    });
-                    this.hooks.onSet.call(normalizedTransaction);
-                    if (setUpdates.length > 0) {
-                        this.hooks.onUpdate.call(setUpdates, options);
-                    }
-                    return result;
-                }
-            },
-            {
-                key: "resolve",
-                value: function resolve(binding, readOnly) {
-                    return Array.isArray(binding) || typeof binding === "string" ? this.pathResolver.parse(binding, {
-                        readOnly: readOnly
-                    }) : binding;
-                }
-            },
-            {
-                key: "get",
-                value: function get(binding, options) {
-                    var resolved = _instanceof(binding, BindingInstance) ? binding : this.resolve(binding, true);
-                    var result = this.getModel().get(resolved, options);
-                    if (result === void 0 && !(options === null || options === void 0 ? void 0 : options.ignoreDefaultValue)) {
-                        var defaultVal = this.hooks.resolveDefaultValue.call(resolved);
-                        if (defaultVal !== result) {
-                            result = defaultVal;
-                        }
-                    }
-                    if (options === null || options === void 0 ? void 0 : options.formatted) {
-                        result = this.hooks.format.call(result, resolved);
-                    } else if ((options === null || options === void 0 ? void 0 : options.formatted) === false) {
-                        result = this.hooks.deformat.call(result, resolved);
-                    }
-                    this.hooks.onGet.call(binding, result);
-                    return result;
-                }
-            },
-            {
-                key: "delete",
-                value: function _delete(binding, options) {
-                    if (typeof binding !== "string" && !Array.isArray(binding) && !_instanceof(binding, BindingInstance)) {
-                        throw new Error("Invalid arguments: delete expects a data path (string)");
-                    }
-                    var resolved = _instanceof(binding, BindingInstance) ? binding : this.resolve(binding, false);
-                    var parentBinding = resolved.parent();
-                    var property = resolved.key();
-                    var parentValue = this.get(parentBinding);
-                    var existedBeforeDelete = (typeof parentValue === "undefined" ? "undefined" : _type_of(parentValue)) === "object" && parentValue !== null && Object.prototype.hasOwnProperty.call(parentValue, property);
-                    this.getModel().delete(resolved, options);
-                    if (existedBeforeDelete && !this.get(resolved)) {
-                        this.trash.add(resolved);
-                    }
-                    this.hooks.onDelete.call(resolved);
-                }
-            },
-            {
-                key: "serialize",
-                value: function serialize() {
-                    return this.hooks.serialize.call(this.get(""));
-                }
-            },
-            {
-                key: "makeReadOnly",
-                value: function makeReadOnly() {
-                    return new ReadOnlyDataController(this, this.logger);
-                }
-            }
-        ]);
-        return DataController;
-    }();
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/constants/utils.ts
-    function flatten(obj) {
-        var roots = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [], sep = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : ".";
-        return Object.keys(obj).reduce(function(memo, prop) {
-            return _object_spread({}, memo, Object.prototype.toString.call(obj[prop]) === "[object Object]" ? // keep working if value is an object
-            flatten(obj[prop], roots.concat([
-                prop
-            ])) : _define_property({}, roots.concat([
-                prop
-            ]).join(sep), obj[prop]));
-        }, {});
-    }
-    // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/controllers/constants/index.ts
-    var ConstantsController = /*#__PURE__*/ function() {
-        function ConstantsController() {
-            _class_call_check(this, ConstantsController);
-            this.store = /* @__PURE__ */ new Map();
-            this.tempStore = /* @__PURE__ */ new Map();
-        }
-        _create_class(ConstantsController, [
-            {
-                key: "addConstants",
-                value: function addConstants(data, namespace) {
-                    if (this.store.has(namespace)) {
-                        var _this_store_get;
-                        (_this_store_get = this.store.get(namespace)) === null || _this_store_get === void 0 ? void 0 : _this_store_get.set(objectToBatchSet(data));
-                    } else {
-                        this.store.set(namespace, new LocalModel(data));
-                    }
-                }
-            },
-            {
-                key: "getConstants",
-                value: function getConstants(key, namespace, fallback) {
-                    var _ref, _ref1;
-                    var _this_tempStore_get, _this_store_get;
-                    var path = new BindingInstance(key);
-                    return (_ref = (_ref1 = (_this_tempStore_get = this.tempStore.get(namespace)) === null || _this_tempStore_get === void 0 ? void 0 : _this_tempStore_get.get(path)) !== null && _ref1 !== void 0 ? _ref1 : (_this_store_get = this.store.get(namespace)) === null || _this_store_get === void 0 ? void 0 : _this_store_get.get(path)) !== null && _ref !== void 0 ? _ref : fallback;
-                }
-            },
-            {
-                key: "setTemporaryValues",
-                value: function setTemporaryValues(data, namespace) {
-                    if (this.tempStore.has(namespace)) {
-                        var _this_tempStore_get;
-                        (_this_tempStore_get = this.tempStore.get(namespace)) === null || _this_tempStore_get === void 0 ? void 0 : _this_tempStore_get.set(objectToBatchSet(data));
-                    } else {
-                        this.tempStore.set(namespace, new LocalModel(data));
-                    }
-                }
-            },
-            {
-                key: "clearTemporaryValues",
-                value: function clearTemporaryValues(namespace) {
-                    if (namespace) {
-                        var _this_tempStore_get;
-                        (_this_tempStore_get = this.tempStore.get(namespace)) === null || _this_tempStore_get === void 0 ? void 0 : _this_tempStore_get.reset();
-                    } else {
-                        this.tempStore.forEach(function(value) {
-                            value.reset();
-                        });
-                    }
-                }
-            }
-        ]);
-        return ConstantsController;
-    }();
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/plugins/flow-exp-plugin.ts
     var FlowExpPlugin = /*#__PURE__*/ function() {
         function FlowExpPlugin() {
@@ -7923,7 +8400,7 @@ var Player = function() {
                 value: function apply(player) {
                     var _this = this;
                     var expressionEvaluator;
-                    var handleEval = function handleEval(exp) {
+                    var handleEval = function(exp) {
                         if (exp) {
                             if ((typeof exp === "undefined" ? "undefined" : _type_of(exp)) === "object" && "exp" in exp) {
                                 expressionEvaluator === null || expressionEvaluator === void 0 ? void 0 : expressionEvaluator.evaluate(exp.exp);
@@ -7944,7 +8421,7 @@ var Player = function() {
                                 return handleEval(exp);
                             });
                             flow.hooks.resolveTransitionNode.intercept({
-                                call: function call(nextState) {
+                                call: function(nextState) {
                                     if (nextState === null || nextState === void 0 ? void 0 : nextState.onStart) {
                                         handleEval(nextState.onStart);
                                     }
@@ -7958,13 +8435,13 @@ var Player = function() {
         return FlowExpPlugin;
     }();
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/plugins/default-exp-plugin.ts
-    var createFormatFunction = function createFormatFunction(schema) {
-        var handler = function handler(ctx, value, formatName) {
-            var _ref;
+    var createFormatFunction = function(schema) {
+        var handler = function(ctx, value, formatName) {
             var _schema_getFormatterForType;
-            return (_ref = (_schema_getFormatterForType = schema.getFormatterForType({
+            var _schema_getFormatterForType_format;
+            return (_schema_getFormatterForType_format = (_schema_getFormatterForType = schema.getFormatterForType({
                 type: formatName
-            })) === null || _schema_getFormatterForType === void 0 ? void 0 : _schema_getFormatterForType.format(value)) !== null && _ref !== void 0 ? _ref : value;
+            })) === null || _schema_getFormatterForType === void 0 ? void 0 : _schema_getFormatterForType.format(value)) !== null && _schema_getFormatterForType_format !== void 0 ? _schema_getFormatterForType_format : value;
         };
         return handler;
     };
@@ -8018,8 +8495,8 @@ var Player = function() {
         status: "not-started"
     };
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/player.ts
-    var PLAYER_VERSION = true ? "0.15.3" : "unknown";
-    var COMMIT = true ? "635ec38f97e5afa4d5f7ff4ddd3e4f7a6fbe0988" : "unknown";
+    var PLAYER_VERSION = true ? "0.15.4--canary.881.37385" : "unknown";
+    var COMMIT = true ? "b139e69374bc1b7f35ddd797a0f005be4b0e26e6" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player(config) {
             var _this = this;
@@ -8037,6 +8514,7 @@ var Player = function() {
                 schema: new SyncHook(),
                 validationController: new SyncHook(),
                 bindingParser: new SyncHook(),
+                errorController: new SyncHook(),
                 state: new SyncHook(),
                 onStart: new SyncHook(),
                 onEnd: new SyncHook(),
@@ -8134,13 +8612,13 @@ var Player = function() {
                     var expressionEvaluator;
                     var dataController;
                     var pathResolver = new BindingParser({
-                        get: function get(binding) {
+                        get: function(binding) {
                             return dataController.get(binding);
                         },
-                        set: function set(transaction) {
+                        set: function(transaction) {
                             return dataController.set(transaction);
                         },
-                        evaluate: function evaluate(expression) {
+                        evaluate: function(expression) {
                             return expressionEvaluator.evaluate(expression);
                         }
                     });
@@ -8151,9 +8629,17 @@ var Player = function() {
                     this.hooks.schema.call(schema);
                     var validationController = new ValidationController(schema);
                     this.hooks.validationController.call(validationController);
+                    var errorController = new ErrorController({
+                        logger: this.logger,
+                        flow: flowController,
+                        fail: flowResultDeferred.reject
+                    });
+                    this.hooks.errorController.call(errorController);
                     dataController = new DataController(userFlow.data, {
                         pathResolver: pathResolver,
-                        middleware: validationController.getDataMiddleware(),
+                        middleware: _to_consumable_array(validationController.getDataMiddleware()).concat([
+                            errorController.getDataMiddleware()
+                        ]),
                         logger: this.logger
                     });
                     dataController.hooks.format.tap("player", function(value, binding) {
@@ -8167,6 +8653,9 @@ var Player = function() {
                     dataController.hooks.resolveDefaultValue.tap("player", function(binding) {
                         var _schema_getApparentType;
                         return (_schema_getApparentType = schema.getApparentType(binding)) === null || _schema_getApparentType === void 0 ? void 0 : _schema_getApparentType.default;
+                    });
+                    errorController.setOptions({
+                        model: dataController
                     });
                     var viewController;
                     expressionEvaluator = new ExpressionEvaluator({
@@ -8284,27 +8773,28 @@ var Player = function() {
                         transition: flowController.transition,
                         model: dataController,
                         utils: {
-                            findPlugin: function findPlugin(pluginSymbol) {
+                            findPlugin: function(pluginSymbol) {
                                 return _this.findPlugin(pluginSymbol);
                             }
                         },
                         logger: this.logger,
                         flowController: flowController,
                         schema: schema,
-                        format: function format(binding, value) {
+                        format: function(binding, value) {
                             var formatter = schema.getFormatter(binding);
                             return (formatter === null || formatter === void 0 ? void 0 : formatter.format) ? formatter.format(value) : value;
                         },
-                        formatValue: function formatValue(ref, value) {
+                        formatValue: function(ref, value) {
                             var formatter = schema.getFormatterForType(ref);
                             return (formatter === null || formatter === void 0 ? void 0 : formatter.format) ? formatter.format(value) : value;
                         },
                         validation: _object_spread_props(_object_spread({}, validationController.forView(parseBinding)), {
-                            type: function type(b) {
+                            type: function(b) {
                                 return schema.getType(parseBinding(b));
                             }
                         }),
-                        constants: this.constantsController
+                        constants: this.constantsController,
+                        errorController: errorController
                     });
                     viewController.hooks.view.tap("player", function(view) {
                         validationController.onView(view);
@@ -8312,7 +8802,7 @@ var Player = function() {
                     });
                     this.hooks.viewController.call(viewController);
                     return {
-                        start: function start() {
+                        start: function() {
                             flowController.start().then(function(endState) {
                                 var flowResult = {
                                     endState: resolveStrings(endState, false),
@@ -8336,7 +8826,8 @@ var Player = function() {
                                 schema: schema,
                                 expression: expressionEvaluator,
                                 binding: pathResolver,
-                                validation: validationController
+                                validation: validationController,
+                                error: errorController
                             },
                             fail: flowResultDeferred.reject,
                             flow: userFlow,
@@ -8349,13 +8840,13 @@ var Player = function() {
                 key: "start",
                 value: function start(payload) {
                     return _async_to_generator(function() {
-                        var _this, _ref, ref, maybeUpdateState, _this_setupFlow, state, start, endProps, _tmp, error, errorState;
+                        var _this, _payload_id, ref, maybeUpdateState, _this_setupFlow, state, start, endProps, _tmp, error, errorState;
                         return _ts_generator(this, function(_state) {
                             switch(_state.label){
                                 case 0:
                                     _this = this;
-                                    ref = Symbol((_ref = payload === null || payload === void 0 ? void 0 : payload.id) !== null && _ref !== void 0 ? _ref : "payload");
-                                    maybeUpdateState = function maybeUpdateState(newState) {
+                                    ref = Symbol((_payload_id = payload === null || payload === void 0 ? void 0 : payload.id) !== null && _payload_id !== void 0 ? _payload_id : "payload");
+                                    maybeUpdateState = function(newState) {
                                         if (_this.state.ref !== ref) {
                                             _this.logger.warn("Received update for a flow that's not the current one");
                                             return newState;
