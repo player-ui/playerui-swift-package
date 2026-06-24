@@ -385,51 +385,7 @@ function _ts_generator(thisArg, body) {
         };
     }
 }
-var CheckPathPlugin = function() {
-    var equalToOrIn = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/tapable-ts@0.2.4/node_modules/tapable-ts/dist/hooks.mjs
-    function equalToOrIn(value, check) {
-        if (Array.isArray(check)) {
-            return check.includes(value);
-        }
-        return check === value;
-    };
-    var callTap = function callTap(tap, args, ctx) {
-        var _tap;
-        if (tap.context) {
-            var _tap1;
-            return (_tap1 = tap).callback.apply(_tap1, [
-                ctx
-            ].concat(_to_consumable_array(args)));
-        }
-        return (_tap = tap).callback.apply(_tap, _to_consumable_array(args));
-    };
-    var dlv_es_default = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/dlv@1.1.3/node_modules/dlv/dist/dlv.es.js
-    function dlv_es_default(t2, e, l, n, r) {
-        for(e = e.split ? e.split(".") : e, n = 0; n < e.length; n++)t2 = t2 ? t2[e[n]] : r;
-        return t2 === r ? l : t2;
-    };
-    var find = function find(iter, tar, key) {
-        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-        try {
-            for(var _iterator = iter.keys()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                key = _step.value;
-                if (dequal(key, tar)) return key;
-            }
-        } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-        } finally{
-            try {
-                if (!_iteratorNormalCompletion && _iterator.return != null) {
-                    _iterator.return();
-                }
-            } finally{
-                if (_didIteratorError) {
-                    throw _iteratorError;
-                }
-            }
-        }
-    };
+var ExternalStatePlugin = function() {
     var createNewSortInstance = function createNewSortInstance(opts) {
         var comparer = castComparer(opts.comparer);
         return function(arrayToSort) {
@@ -446,6 +402,11 @@ var CheckPathPlugin = function() {
                 }
             };
         };
+    };
+    var dlv_es_default = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/dlv@1.1.3/node_modules/dlv/dist/dlv.es.js
+    function dlv_es_default(t2, e, l, n, r) {
+        for(e = e.split ? e.split(".") : e, n = 0; n < e.length; n++)t2 = t2 ? t2[e[n]] : r;
+        return t2 === r ? l : t2;
     };
     var createObjectMatcher = function createObjectMatcher(partialObj) {
         var pairs = traverseObj(partialObj);
@@ -484,6 +445,45 @@ var CheckPathPlugin = function() {
         };
         matcher.count = 1;
         return matcher;
+    };
+    var equalToOrIn = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/tapable-ts@0.2.4/node_modules/tapable-ts/dist/hooks.mjs
+    function equalToOrIn(value, check) {
+        if (Array.isArray(check)) {
+            return check.includes(value);
+        }
+        return check === value;
+    };
+    var callTap = function callTap(tap, args, ctx) {
+        var _tap;
+        if (tap.context) {
+            var _tap1;
+            return (_tap1 = tap).callback.apply(_tap1, [
+                ctx
+            ].concat(_to_consumable_array(args)));
+        }
+        return (_tap = tap).callback.apply(_tap, _to_consumable_array(args));
+    };
+    var find = function find(iter, tar, key) {
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = iter.keys()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                key = _step.value;
+                if (dequal(key, tar)) return key;
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
     };
     var isBinding = function isBinding(binding) {
         return !(typeof binding === "string" || Array.isArray(binding));
@@ -1512,27 +1512,12 @@ var CheckPathPlugin = function() {
             evaluate: resolveOptions.evaluate
         }) : str;
     };
-    var createMatcher = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/check-path/core/src/index.ts
-    function createMatcher(match) {
-        if (typeof match === "string" || typeof match === "number") {
-            return createObjectMatcher({
-                type: match
-            });
-        }
-        if (typeof match === "function") {
-            return match;
-        }
-        return createObjectMatcher(match);
+    var isExternal = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/external-state/core/src/index.ts
+    function isExternal(state) {
+        return state.state_type === "EXTERNAL";
     };
-    var getParent = function getParent(node, viewInfo) {
-        var working = node;
-        while(working.parent && working.parent.type !== NodeType.Asset && working.parent.type !== NodeType.View){
-            working = working.parent;
-        }
-        var parent = working.parent;
-        if (parent && (parent.type === NodeType.Asset || parent.type === NodeType.View)) {
-            return parent;
-        }
+    var isInProgress = function isInProgress(state) {
+        return state.status === "in-progress";
     };
     var __create = Object.create;
     var __defProp = Object.defineProperty;
@@ -2022,13 +2007,266 @@ var CheckPathPlugin = function() {
             };
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/check-path/core/src/index.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/external-state/core/src/index.ts
     var src_exports = {};
     __export(src_exports, {
-        CheckPathPlugin: function() {
-            return CheckPathPlugin;
+        ExternalStateError: function() {
+            return ExternalStateError;
+        },
+        ExternalStatePlugin: function() {
+            return ExternalStatePlugin;
         }
     });
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/fast-sort@3.4.1/node_modules/fast-sort/dist/sort.mjs
+    var castComparer = function castComparer(comparer) {
+        return function(a, b, order) {
+            return comparer(a, b, order) * order;
+        };
+    };
+    var throwInvalidConfigErrorIfTrue = function throwInvalidConfigErrorIfTrue(condition, context) {
+        if (condition) throw Error("Invalid sort config: " + context);
+    };
+    var unpackObjectSorter = function unpackObjectSorter(sortByObj) {
+        var _a = sortByObj || {}, asc = _a.asc, desc = _a.desc;
+        var order = asc ? 1 : -1;
+        var sortBy = asc || desc;
+        throwInvalidConfigErrorIfTrue(!sortBy, "Expected `asc` or `desc` property");
+        throwInvalidConfigErrorIfTrue(asc && desc, "Ambiguous object with `asc` and `desc` config properties");
+        var comparer = sortByObj.comparer && castComparer(sortByObj.comparer);
+        return {
+            order: order,
+            sortBy: sortBy,
+            comparer: comparer
+        };
+    };
+    var multiPropertySorterProvider = function multiPropertySorterProvider(defaultComparer2) {
+        return function multiPropertySorter(sortBy, sortByArr, depth, order, comparer, a, b) {
+            var valA;
+            var valB;
+            if (typeof sortBy === "string") {
+                valA = a[sortBy];
+                valB = b[sortBy];
+            } else if (typeof sortBy === "function") {
+                valA = sortBy(a);
+                valB = sortBy(b);
+            } else {
+                var objectSorterConfig = unpackObjectSorter(sortBy);
+                return multiPropertySorter(objectSorterConfig.sortBy, sortByArr, depth, objectSorterConfig.order, objectSorterConfig.comparer || defaultComparer2, a, b);
+            }
+            var equality = comparer(valA, valB, order);
+            if ((equality === 0 || valA == null && valB == null) && sortByArr.length > depth) {
+                return multiPropertySorter(sortByArr[depth], sortByArr, depth + 1, order, comparer, a, b);
+            }
+            return equality;
+        };
+    };
+    function getSortStrategy(sortBy, comparer, order) {
+        if (sortBy === void 0 || sortBy === true) {
+            return function(a, b) {
+                return comparer(a, b, order);
+            };
+        }
+        if (typeof sortBy === "string") {
+            throwInvalidConfigErrorIfTrue(sortBy.includes("."), "String syntax not allowed for nested properties.");
+            return function(a, b) {
+                return comparer(a[sortBy], b[sortBy], order);
+            };
+        }
+        if (typeof sortBy === "function") {
+            return function(a, b) {
+                return comparer(sortBy(a), sortBy(b), order);
+            };
+        }
+        if (Array.isArray(sortBy)) {
+            var multiPropSorter_1 = multiPropertySorterProvider(comparer);
+            return function(a, b) {
+                return multiPropSorter_1(sortBy[0], sortBy, 1, order, comparer, a, b);
+            };
+        }
+        var objectSorterConfig = unpackObjectSorter(sortBy);
+        return getSortStrategy(objectSorterConfig.sortBy, objectSorterConfig.comparer || comparer, objectSorterConfig.order);
+    }
+    var sortArray = function sortArray(order, ctx, sortBy, comparer) {
+        var _a;
+        if (!Array.isArray(ctx)) {
+            return ctx;
+        }
+        if (Array.isArray(sortBy) && sortBy.length < 2) {
+            _a = sortBy, sortBy = _a[0];
+        }
+        return ctx.sort(getSortStrategy(sortBy, comparer, order));
+    };
+    var defaultComparer = function defaultComparer(a, b, order) {
+        if (a == null) return order;
+        if (b == null) return -order;
+        if ((typeof a === "undefined" ? "undefined" : _type_of(a)) !== (typeof b === "undefined" ? "undefined" : _type_of(b))) {
+            return (typeof a === "undefined" ? "undefined" : _type_of(a)) < (typeof b === "undefined" ? "undefined" : _type_of(b)) ? -1 : 1;
+        }
+        if (a < b) return -1;
+        if (a > b) return 1;
+        return 0;
+    };
+    var sort = createNewSortInstance({
+        comparer: defaultComparer
+    });
+    var inPlaceSort = createNewSortInstance({
+        comparer: defaultComparer,
+        inPlaceSorting: true
+    });
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
+    function traverseObj(object) {
+        var path = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [], pairs = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : /* @__PURE__ */ new Map();
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = Object.keys(object)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                var key = _step.value;
+                var val = object[key];
+                var nestedPath = _to_consumable_array(path).concat([
+                    key
+                ]);
+                if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object" && val !== null) {
+                    traverseObj(val, nestedPath, pairs);
+                } else {
+                    pairs.set(nestedPath, val);
+                }
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+        return pairs;
+    }
+    var Registry = /*#__PURE__*/ function() {
+        function Registry(initialSet, logger) {
+            var _this = this;
+            _class_call_check(this, Registry);
+            this.store = [];
+            this.logger = logger;
+            initialSet === null || initialSet === void 0 ? void 0 : initialSet.forEach(function(param) {
+                var _param = _sliced_to_array(param, 2), match = _param[0], value = _param[1];
+                _this.set(match, value);
+            });
+        }
+        _create_class(Registry, [
+            {
+                /**
+     * Add match -> value mapping to the registry
+     *
+     * If an entry with the same specificity and matching key already exists, it will be replaced
+     * and a debug log will be emitted (if a logger is configured).
+     *
+     * @param match - The key to match against (can be a primitive or object)
+     * @param value - The value to associate with this key
+     */ key: "set",
+                value: function set(match, value) {
+                    var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createObjectMatcher(match) : createBasicMatcher(match);
+                    var existingIndex = this.store.findIndex(function(entry) {
+                        return entry.matcher(match) && matcher(entry.key);
+                    });
+                    if (existingIndex !== -1) {
+                        var _this_logger_debug, _this_logger;
+                        this.store.splice(existingIndex, 1);
+                        (_this_logger = this.logger) === null || _this_logger === void 0 ? void 0 : (_this_logger_debug = _this_logger.debug) === null || _this_logger_debug === void 0 ? void 0 : _this_logger_debug.call(_this_logger, "Registry: Replacing existing entry for key ", match);
+                    }
+                    this.store.push({
+                        key: match,
+                        value: value,
+                        matcher: matcher
+                    });
+                    this.store = sort(this.store).desc(function(entry) {
+                        return entry.matcher.count;
+                    });
+                }
+            },
+            {
+                /**
+     * Fetch the best match in the registry
+     *
+     * Searches for the most specific entry that matches the given query.
+     * The registry is sorted by specificity (matcher.count) in descending order,
+     * so we iterate forward to find the highest specificity match first.
+     *
+     * @param query - The query object to match against registered keys
+     * @returns The value associated with the best matching key, or undefined if no match found
+     */ key: "get",
+                value: function get(query) {
+                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                    try {
+                        for(var _iterator = this.store[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                            var entry = _step.value;
+                            if (entry.matcher(query)) {
+                                return entry.value;
+                            }
+                        }
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally{
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                _iterator.return();
+                            }
+                        } finally{
+                            if (_didIteratorError) {
+                                throw _iteratorError;
+                            }
+                        }
+                    }
+                    return void 0;
+                }
+            },
+            {
+                /** Loop over all entries and run callback */ key: "forEach",
+                value: function forEach(callbackfn) {
+                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                    try {
+                        for(var _iterator = this.store[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                            var entry = _step.value;
+                            callbackfn(entry);
+                        }
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally{
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                _iterator.return();
+                            }
+                        } finally{
+                            if (_didIteratorError) {
+                                throw _iteratorError;
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                /** Reset the items in the registry */ key: "clear",
+                value: function clear() {
+                    this.store = [];
+                }
+            },
+            {
+                /** Check if the registry is empty*/ key: "isRegistryEmpty",
+                value: function isRegistryEmpty() {
+                    return this.store.length === 0;
+                }
+            }
+        ]);
+        return Registry;
+    }();
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/external-state/core/src/symbols.ts
+    var ExternalStatePluginSymbol = Symbol.for("@player-ui/ExternalStatePlugin");
     var InterceptionManager = /*#__PURE__*/ function() {
         function InterceptionManager() {
             _class_call_check(this, InterceptionManager);
@@ -2317,7 +2555,6 @@ var CheckPathPlugin = function() {
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_ts_nested_error = __toESM(require_nested_error(), 1);
     var import_ts_nested_error2 = __toESM(require_nested_error(), 1);
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_timm = __toESM(require_timm(), 1);
     var import_ts_nested_error3 = __toESM(require_nested_error(), 1);
     var import_timm2 = __toESM(require_timm(), 1);
@@ -2432,255 +2669,6 @@ var CheckPathPlugin = function() {
     var import_p_defer = __toESM(require_p_defer(), 1);
     var import_timm6 = __toESM(require_timm(), 1);
     var import_queue_microtask = __toESM(require_queue_microtask(), 1);
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/fast-sort@3.4.1/node_modules/fast-sort/dist/sort.mjs
-    var castComparer = function castComparer(comparer) {
-        return function(a, b, order) {
-            return comparer(a, b, order) * order;
-        };
-    };
-    var throwInvalidConfigErrorIfTrue = function throwInvalidConfigErrorIfTrue(condition, context) {
-        if (condition) throw Error("Invalid sort config: " + context);
-    };
-    var unpackObjectSorter = function unpackObjectSorter(sortByObj) {
-        var _a = sortByObj || {}, asc = _a.asc, desc = _a.desc;
-        var order = asc ? 1 : -1;
-        var sortBy = asc || desc;
-        throwInvalidConfigErrorIfTrue(!sortBy, "Expected `asc` or `desc` property");
-        throwInvalidConfigErrorIfTrue(asc && desc, "Ambiguous object with `asc` and `desc` config properties");
-        var comparer = sortByObj.comparer && castComparer(sortByObj.comparer);
-        return {
-            order: order,
-            sortBy: sortBy,
-            comparer: comparer
-        };
-    };
-    var multiPropertySorterProvider = function multiPropertySorterProvider(defaultComparer2) {
-        return function multiPropertySorter(sortBy, sortByArr, depth, order, comparer, a, b) {
-            var valA;
-            var valB;
-            if (typeof sortBy === "string") {
-                valA = a[sortBy];
-                valB = b[sortBy];
-            } else if (typeof sortBy === "function") {
-                valA = sortBy(a);
-                valB = sortBy(b);
-            } else {
-                var objectSorterConfig = unpackObjectSorter(sortBy);
-                return multiPropertySorter(objectSorterConfig.sortBy, sortByArr, depth, objectSorterConfig.order, objectSorterConfig.comparer || defaultComparer2, a, b);
-            }
-            var equality = comparer(valA, valB, order);
-            if ((equality === 0 || valA == null && valB == null) && sortByArr.length > depth) {
-                return multiPropertySorter(sortByArr[depth], sortByArr, depth + 1, order, comparer, a, b);
-            }
-            return equality;
-        };
-    };
-    function getSortStrategy(sortBy, comparer, order) {
-        if (sortBy === void 0 || sortBy === true) {
-            return function(a, b) {
-                return comparer(a, b, order);
-            };
-        }
-        if (typeof sortBy === "string") {
-            throwInvalidConfigErrorIfTrue(sortBy.includes("."), "String syntax not allowed for nested properties.");
-            return function(a, b) {
-                return comparer(a[sortBy], b[sortBy], order);
-            };
-        }
-        if (typeof sortBy === "function") {
-            return function(a, b) {
-                return comparer(sortBy(a), sortBy(b), order);
-            };
-        }
-        if (Array.isArray(sortBy)) {
-            var multiPropSorter_1 = multiPropertySorterProvider(comparer);
-            return function(a, b) {
-                return multiPropSorter_1(sortBy[0], sortBy, 1, order, comparer, a, b);
-            };
-        }
-        var objectSorterConfig = unpackObjectSorter(sortBy);
-        return getSortStrategy(objectSorterConfig.sortBy, objectSorterConfig.comparer || comparer, objectSorterConfig.order);
-    }
-    var sortArray = function sortArray(order, ctx, sortBy, comparer) {
-        var _a;
-        if (!Array.isArray(ctx)) {
-            return ctx;
-        }
-        if (Array.isArray(sortBy) && sortBy.length < 2) {
-            _a = sortBy, sortBy = _a[0];
-        }
-        return ctx.sort(getSortStrategy(sortBy, comparer, order));
-    };
-    var defaultComparer = function defaultComparer(a, b, order) {
-        if (a == null) return order;
-        if (b == null) return -order;
-        if ((typeof a === "undefined" ? "undefined" : _type_of(a)) !== (typeof b === "undefined" ? "undefined" : _type_of(b))) {
-            return (typeof a === "undefined" ? "undefined" : _type_of(a)) < (typeof b === "undefined" ? "undefined" : _type_of(b)) ? -1 : 1;
-        }
-        if (a < b) return -1;
-        if (a > b) return 1;
-        return 0;
-    };
-    var sort = createNewSortInstance({
-        comparer: defaultComparer
-    });
-    var inPlaceSort = createNewSortInstance({
-        comparer: defaultComparer,
-        inPlaceSorting: true
-    });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
-    function traverseObj(object) {
-        var path = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [], pairs = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : /* @__PURE__ */ new Map();
-        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-        try {
-            for(var _iterator = Object.keys(object)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                var key = _step.value;
-                var val = object[key];
-                var nestedPath = _to_consumable_array(path).concat([
-                    key
-                ]);
-                if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object" && val !== null) {
-                    traverseObj(val, nestedPath, pairs);
-                } else {
-                    pairs.set(nestedPath, val);
-                }
-            }
-        } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-        } finally{
-            try {
-                if (!_iteratorNormalCompletion && _iterator.return != null) {
-                    _iterator.return();
-                }
-            } finally{
-                if (_didIteratorError) {
-                    throw _iteratorError;
-                }
-            }
-        }
-        return pairs;
-    }
-    var Registry = /*#__PURE__*/ function() {
-        function Registry(initialSet, logger) {
-            var _this = this;
-            _class_call_check(this, Registry);
-            this.store = [];
-            this.logger = logger;
-            initialSet === null || initialSet === void 0 ? void 0 : initialSet.forEach(function(param) {
-                var _param = _sliced_to_array(param, 2), match = _param[0], value = _param[1];
-                _this.set(match, value);
-            });
-        }
-        _create_class(Registry, [
-            {
-                /**
-     * Add match -> value mapping to the registry
-     *
-     * If an entry with the same specificity and matching key already exists, it will be replaced
-     * and a debug log will be emitted (if a logger is configured).
-     *
-     * @param match - The key to match against (can be a primitive or object)
-     * @param value - The value to associate with this key
-     */ key: "set",
-                value: function set(match, value) {
-                    var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createObjectMatcher(match) : createBasicMatcher(match);
-                    var existingIndex = this.store.findIndex(function(entry) {
-                        return entry.matcher(match) && matcher(entry.key);
-                    });
-                    if (existingIndex !== -1) {
-                        var _this_logger_debug, _this_logger;
-                        this.store.splice(existingIndex, 1);
-                        (_this_logger = this.logger) === null || _this_logger === void 0 ? void 0 : (_this_logger_debug = _this_logger.debug) === null || _this_logger_debug === void 0 ? void 0 : _this_logger_debug.call(_this_logger, "Registry: Replacing existing entry for key ", match);
-                    }
-                    this.store.push({
-                        key: match,
-                        value: value,
-                        matcher: matcher
-                    });
-                    this.store = sort(this.store).desc(function(entry) {
-                        return entry.matcher.count;
-                    });
-                }
-            },
-            {
-                /**
-     * Fetch the best match in the registry
-     *
-     * Searches for the most specific entry that matches the given query.
-     * The registry is sorted by specificity (matcher.count) in descending order,
-     * so we iterate forward to find the highest specificity match first.
-     *
-     * @param query - The query object to match against registered keys
-     * @returns The value associated with the best matching key, or undefined if no match found
-     */ key: "get",
-                value: function get(query) {
-                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                    try {
-                        for(var _iterator = this.store[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                            var entry = _step.value;
-                            if (entry.matcher(query)) {
-                                return entry.value;
-                            }
-                        }
-                    } catch (err) {
-                        _didIteratorError = true;
-                        _iteratorError = err;
-                    } finally{
-                        try {
-                            if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                _iterator.return();
-                            }
-                        } finally{
-                            if (_didIteratorError) {
-                                throw _iteratorError;
-                            }
-                        }
-                    }
-                    return void 0;
-                }
-            },
-            {
-                /** Loop over all entries and run callback */ key: "forEach",
-                value: function forEach(callbackfn) {
-                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                    try {
-                        for(var _iterator = this.store[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                            var entry = _step.value;
-                            callbackfn(entry);
-                        }
-                    } catch (err) {
-                        _didIteratorError = true;
-                        _iteratorError = err;
-                    } finally{
-                        try {
-                            if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                _iterator.return();
-                            }
-                        } finally{
-                            if (_didIteratorError) {
-                                throw _iteratorError;
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                /** Reset the items in the registry */ key: "clear",
-                value: function clear() {
-                    this.store = [];
-                }
-            },
-            {
-                /** Check if the registry is empty*/ key: "isRegistryEmpty",
-                value: function isRegistryEmpty() {
-                    return this.store.length === 0;
-                }
-            }
-        ]);
-        return Registry;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_timm7 = __toESM(require_timm(), 1);
     var import_timm8 = __toESM(require_timm(), 1);
     var import_timm9 = __toESM(require_timm(), 1);
@@ -4630,19 +4618,6 @@ var CheckPathPlugin = function() {
         ]);
         return ValidatorRegistry;
     }();
-    var NodeType = /* @__PURE__ */ function(NodeType2) {
-        NodeType2["Asset"] = "asset";
-        NodeType2["View"] = "view";
-        NodeType2["Applicability"] = "applicability";
-        NodeType2["Template"] = "template";
-        NodeType2["Value"] = "value";
-        NodeType2["MultiNode"] = "multi-node";
-        NodeType2["Switch"] = "switch";
-        NodeType2["Async"] = "async";
-        NodeType2["Unknown"] = "unknown";
-        NodeType2["Empty"] = "empty";
-        return NodeType2;
-    }(NodeType || {});
     var EMPTY_NODE = {
         type: "empty"
     };
@@ -8292,294 +8267,220 @@ var CheckPathPlugin = function() {
         version: PLAYER_VERSION,
         commit: COMMIT
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/check-path/core/src/symbols.ts
-    var CheckPathPluginSymbol = Symbol.for("CheckPathPlugin");
-    var CheckPathPlugin = /*#__PURE__*/ function() {
-        function CheckPathPlugin() {
-            _class_call_check(this, CheckPathPlugin);
-            this.name = "check-path";
-            this.symbol = CheckPathPluginSymbol;
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/external-state/core/src/ExternalStateError.ts
+    var ExternalStateError = /*#__PURE__*/ function(Error1) {
+        _inherits(_ExternalStateError, Error1);
+        function _ExternalStateError(message, metadata) {
+            _class_call_check(this, _ExternalStateError);
+            var _this;
+            _this = _call_super(this, _ExternalStateError, [
+                message
+            ]);
+            _this.type = ErrorTypes.EXTERNAL_STATE;
+            _this.severity = ErrorSeverity.ERROR;
+            _this.metadata = metadata;
+            return _this;
         }
-        _create_class(CheckPathPlugin, [
+        _create_class(_ExternalStateError, null, [
+            {
+                key: "missingHandler",
+                value: /** No handler was registered for the EXTERNAL state's ref. */ function missingHandler(ref) {
+                    return new _ExternalStateError('No handler found for external state with ref: "'.concat(ref, '". Ensure a handler is registered for this state.'), {
+                        ref: ref,
+                        reason: "missing-handler"
+                    });
+                }
+            },
+            {
+                key: "missingTransitionValue",
+                value: /** A handler ran but returned no transition value. */ function missingTransitionValue(ref) {
+                    return new _ExternalStateError('Handler for external state with ref: "'.concat(ref, '" did not return a transition value. Ensure the handler returns the name of a valid transition.'), {
+                        ref: ref,
+                        reason: "missing-transition-value"
+                    });
+                }
+            }
+        ]);
+        return _ExternalStateError;
+    }(_wrap_native_super(Error));
+    var _ExternalStatePlugin = /*#__PURE__*/ function() {
+        function _ExternalStatePlugin(handlers) {
+            _class_call_check(this, _ExternalStatePlugin);
+            this.name = "ExternalStatePlugin";
+            this.symbol = _ExternalStatePlugin.Symbol;
+            this.handlers = handlers;
+        }
+        _create_class(_ExternalStatePlugin, [
             {
                 key: "apply",
                 value: function apply(player) {
                     var _this = this;
-                    player.hooks.viewController.tap(this.name, function(viewController) {
-                        viewController.hooks.view.tap(_this.name, function(view) {
-                            view.hooks.resolver.tap(_this.name, function(resolver) {
-                                var viewInfo = {
-                                    resolvedMap: /* @__PURE__ */ new Map(),
-                                    assetIdMap: /* @__PURE__ */ new Map(),
-                                    resolver: resolver
-                                };
-                                _this.viewInfo = viewInfo;
-                                resolver.hooks.afterResolve.tap(_this.name, function(value, node) {
-                                    var sourceNode = _this.getSourceAssetNode(node);
-                                    if (sourceNode) {
-                                        viewInfo.resolvedMap.set(sourceNode, {
-                                            resolved: node,
-                                            value: value
-                                        });
-                                        if (node.type === NodeType.Asset || node.type === NodeType.View) {
-                                            var id = dlv_es_default(value, "id");
-                                            if (id) {
-                                                viewInfo.assetIdMap.set(id, node);
-                                            }
-                                        }
-                                    }
-                                    return value;
-                                });
+                    var isFirstInstance = this.createRegistry(player);
+                    this.registerHandlers(player);
+                    if (!isFirstInstance) {
+                        return;
+                    }
+                    player.hooks.errorController.tap(this.name, function(errorController) {
+                        _this.errorController = errorController;
+                    });
+                    player.hooks.flowController.tap(this.name, function(flowController) {
+                        flowController.hooks.flow.tap(_this.name, function(flow) {
+                            flow.hooks.afterTransition.tap(_this.name, function(flowInstance) {
+                                _this.handleAfterTransition(player, flowInstance);
                             });
                         });
                     });
                 }
             },
             {
-                /**
-     * Starts at the asset with the given id, and walks backwards _up_ the tree until it finds a match for the parent
-     *
-     * @param id - The id of the asset to _start_ at
-     * @param query - A means of matching a parent asset
-     * @returns - The parent object if a match is found, else undefined
-     */ key: "getParent",
-                value: function getParent1(id, query) {
-                    var _this_viewInfo;
-                    var assetNode = (_this_viewInfo = this.viewInfo) === null || _this_viewInfo === void 0 ? void 0 : _this_viewInfo.assetIdMap.get(id);
-                    if (!assetNode || !this.viewInfo) {
-                        return void 0;
-                    }
-                    var potentialMatch = getParent(assetNode);
-                    if (query === void 0) {
-                        if (potentialMatch) {
-                            return this.getAssetFromAssetNode(potentialMatch);
-                        }
-                        return;
-                    }
-                    var queryArray = Array.isArray(query) ? _to_consumable_array(query) : [
-                        query
-                    ];
-                    var parentQuery = queryArray.shift();
-                    var depth = 0;
-                    while(potentialMatch && parentQuery){
-                        if (depth++ >= 50) {
-                            throw new Error("Recursion depth exceeded. Check for cycles in the AST graph");
-                        }
-                        var matcher = createMatcher(parentQuery);
-                        var resolved = this.getAssetFromAssetNode(potentialMatch);
-                        if (resolved && matcher(resolved)) {
-                            if (queryArray.length === 0) {
-                                return resolved;
+                key: "handleAfterTransition",
+                value: /**
+     * Resolve an EXTERNAL state transition.
+     */ function handleAfterTransition(player, flowInstance) {
+                    return _async_to_generator(function() {
+                        var toState, currentState, _this_registry, _latestState_controllers_flow_current_currentState, _latestState_controllers_flow_current, handler, transitionValue, latestState, error;
+                        return _ts_generator(this, function(_state) {
+                            switch(_state.label){
+                                case 0:
+                                    toState = flowInstance.currentState;
+                                    currentState = player.getState();
+                                    if (!toState || !toState.value || !isExternal(toState.value) || !isInProgress(currentState)) {
+                                        return [
+                                            2
+                                        ];
+                                    }
+                                    _state.label = 1;
+                                case 1:
+                                    _state.trys.push([
+                                        1,
+                                        3,
+                                        ,
+                                        4
+                                    ]);
+                                    handler = (_this_registry = this.registry) === null || _this_registry === void 0 ? void 0 : _this_registry.get(toState.value);
+                                    if (!handler) {
+                                        this.reportError(player, ExternalStateError.missingHandler(toState.value.ref));
+                                        return [
+                                            2
+                                        ];
+                                    }
+                                    return [
+                                        4,
+                                        handler(toState.value, currentState.controllers)
+                                    ];
+                                case 2:
+                                    transitionValue = _state.sent();
+                                    if (!transitionValue) {
+                                        this.reportError(player, ExternalStateError.missingTransitionValue(toState.value.ref));
+                                        return [
+                                            2
+                                        ];
+                                    }
+                                    latestState = player.getState();
+                                    if (isInProgress(latestState) && ((_latestState_controllers_flow_current = latestState.controllers.flow.current) === null || _latestState_controllers_flow_current === void 0 ? void 0 : (_latestState_controllers_flow_current_currentState = _latestState_controllers_flow_current.currentState) === null || _latestState_controllers_flow_current_currentState === void 0 ? void 0 : _latestState_controllers_flow_current_currentState.name) === toState.name) {
+                                        latestState.controllers.flow.transition(transitionValue);
+                                    } else {
+                                        player.logger.warn("External state resolved with [".concat(transitionValue, "], but Player already navigated away from [").concat(toState.name, "]"));
+                                    }
+                                    return [
+                                        3,
+                                        4
+                                    ];
+                                case 3:
+                                    error = _state.sent();
+                                    if (_instanceof(error, Error)) {
+                                        currentState.fail(error);
+                                    }
+                                    return [
+                                        3,
+                                        4
+                                    ];
+                                case 4:
+                                    return [
+                                        2
+                                    ];
                             }
-                            parentQuery = queryArray.shift();
-                        }
-                        potentialMatch = getParent(potentialMatch);
-                    }
-                    return void 0;
+                        });
+                    }).call(this);
                 }
             },
             {
                 /**
-     * Returns the property that the asset resides on relative to it's parent
-     *
-     * @param id - The id of the asset to _start_ at
-     * @returns - The property name or undefined if no parent was found
-     */ key: "getParentProp",
-                value: function getParentProp(id) {
-                    var _this_viewInfo;
-                    var assetNode = (_this_viewInfo = this.viewInfo) === null || _this_viewInfo === void 0 ? void 0 : _this_viewInfo.assetIdMap.get(id);
-                    if (!assetNode || !this.viewInfo) {
+     * Report an ExternalStateError via the errorController.
+     */ key: "reportError",
+                value: function reportError(player, error) {
+                    if (!this.errorController) {
+                        player.logger.error("".concat(error.message, " (errorController was unexpectedly undefined; it should always be set by the time this code runs)"));
                         return;
                     }
-                    var working = assetNode;
-                    var parent;
-                    while(working){
-                        parent = working === null || working === void 0 ? void 0 : working.parent;
-                        if (parent && (parent.type === NodeType.Asset || parent.type === NodeType.View)) {
-                            break;
-                        }
-                        working = working === null || working === void 0 ? void 0 : working.parent;
-                    }
-                    if (parent && "children" in parent) {
-                        var _parent_children, _childProp_path;
-                        var childProp = (_parent_children = parent.children) === null || _parent_children === void 0 ? void 0 : _parent_children.find(function(child) {
-                            return child.value === working;
-                        });
-                        return childProp === null || childProp === void 0 ? void 0 : (_childProp_path = childProp.path) === null || _childProp_path === void 0 ? void 0 : _childProp_path[0];
-                    }
-                    return void 0;
-                }
-            },
-            {
-                /** Given a node, return itself, or the nested asset if the node is an applicability node */ key: "getSourceAssetNode",
-                value: function getSourceAssetNode(node) {
-                    var _this_viewInfo;
-                    var sourceNode = (_this_viewInfo = this.viewInfo) === null || _this_viewInfo === void 0 ? void 0 : _this_viewInfo.resolver.getSourceNode(node);
-                    if ((sourceNode === null || sourceNode === void 0 ? void 0 : sourceNode.type) === "applicability") {
-                        sourceNode = sourceNode.value;
-                    }
-                    return sourceNode;
+                    this.errorController.captureError(error);
                 }
             },
             {
                 /**
-     * Given the starting node, check to verify that the supplied queries are relevant to the current asset's parents.
+     * Create or share the registry for this plugin instance.
      *
-     * @param id - The id of the asset to _start_ at
-     * @returns - true if the context applies, false if it doesn't
-     */ key: "hasParentContext",
-                value: function hasParentContext(id, query) {
-                    return Boolean(this.getParent(id, query));
-                }
-            },
-            {
-                /** Search the node for any matching paths in the graph that match the query  */ key: "findChildPath",
-                value: function findChildPath(node, query) {
-                    var _this = this;
-                    var includeSelfMatch = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : true;
-                    var _node_children;
-                    if (query.length === 0) {
-                        return true;
-                    }
-                    var _query = _to_array(query), first = _query[0], rest = _query.slice(1);
-                    var matcher = createMatcher(first);
-                    if (node.type === NodeType.Asset || node.type === NodeType.View || node.type === NodeType.Applicability) {
-                        var resolvedValue = this.getResolvedValue(node);
-                        var _ref;
-                        var includesSelf = (_ref = includeSelfMatch && matcher(resolvedValue)) !== null && _ref !== void 0 ? _ref : false;
-                        var childQuery = includesSelf ? rest : query;
-                        if (childQuery.length === 0 && includesSelf) {
-                            return true;
-                        }
-                        var children = node.type === NodeType.Applicability ? node.value.children : node.children;
-                        if (childQuery.length && (!children || children.length === 0)) {
-                            return false;
-                        }
-                        if (children === null || children === void 0 ? void 0 : children.some(function(childNode) {
-                            return _this.findChildPath(childNode.value, childQuery);
-                        })) {
-                            return true;
-                        }
-                    } else if (node.type === NodeType.MultiNode && node.values.some(function(childNode) {
-                        return _this.findChildPath(childNode, query);
-                    })) {
-                        return true;
-                    } else if ("children" in node && ((_node_children = node.children) === null || _node_children === void 0 ? void 0 : _node_children.some(function(childNode) {
-                        return _this.findChildPath(childNode.value, query);
-                    }))) {
-                        return true;
-                    }
-                    return false;
-                }
-            },
-            {
-                /**
-     * Given the starting node, check to verify that the supplied queries are relevant to the current asset's children.
-     *
-     * @param id - The id of the asset to _start_ at
-     * @returns - true if the context applies, false if it doesn't
-     */ key: "hasChildContext",
-                value: function hasChildContext(id, query) {
-                    var _this_viewInfo;
-                    var assetNode = (_this_viewInfo = this.viewInfo) === null || _this_viewInfo === void 0 ? void 0 : _this_viewInfo.assetIdMap.get(id);
-                    var queryArray = Array.isArray(query) ? _to_consumable_array(query) : [
-                        query
-                    ];
-                    if (!assetNode) {
+     * Uses the Player's plugin registry to find if another instance of ExternalStatePlugin
+     * has already been registered. If found, this instance will share that plugin's registry.
+     * Otherwise, this instance creates a new registry.
+     */ key: "createRegistry",
+                value: function createRegistry(player) {
+                    var existing = player.findPlugin(ExternalStatePluginSymbol);
+                    if (existing && existing !== this) {
+                        this.registry = existing.registry;
                         return false;
                     }
-                    return this.findChildPath(assetNode, queryArray, false);
-                }
-            },
-            {
-                /** Get the asset represented by id */ key: "getAsset",
-                value: function getAsset(id) {
-                    var _this_viewInfo;
-                    var assetNode = (_this_viewInfo = this.viewInfo) === null || _this_viewInfo === void 0 ? void 0 : _this_viewInfo.assetIdMap.get(id);
-                    if (!assetNode) return;
-                    return this.getAssetFromAssetNode(assetNode);
+                    this.registry = new Registry(void 0, player.logger);
+                    return true;
                 }
             },
             {
                 /**
-     * Gets the value for an asset from an asset node
-     */ key: "getAssetFromAssetNode",
-                value: function getAssetFromAssetNode(assetNode) {
-                    var _this_viewInfo_resolvedMap_get, _this_viewInfo;
-                    var sourceNode = this.getSourceAssetNode(assetNode);
-                    if (!sourceNode) return;
-                    return (_this_viewInfo = this.viewInfo) === null || _this_viewInfo === void 0 ? void 0 : (_this_viewInfo_resolvedMap_get = _this_viewInfo.resolvedMap.get(sourceNode)) === null || _this_viewInfo_resolvedMap_get === void 0 ? void 0 : _this_viewInfo_resolvedMap_get.value;
-                }
-            },
-            {
-                /**
-     * Get the path of the asset in the view upto
-     * the asset that matches the query or to the view if no query is provided
-     */ key: "getPath",
-                value: function getPath(id, query) {
-                    var _this = this;
-                    var _this_viewInfo;
-                    var assetNode = (_this_viewInfo = this.viewInfo) === null || _this_viewInfo === void 0 ? void 0 : _this_viewInfo.assetIdMap.get(id);
-                    if (!assetNode || !this.viewInfo) {
-                        return;
-                    }
-                    var path = [];
-                    var queryArray = [];
-                    if (query) {
-                        queryArray = Array.isArray(query) ? _to_consumable_array(query) : [
-                            query
-                        ];
-                    }
-                    var parentQuery = queryArray.shift();
-                    var working = assetNode;
-                    var findWorkingChild = function(parent) {
-                        var _parent_children;
-                        return (_parent_children = parent.children) === null || _parent_children === void 0 ? void 0 : _parent_children.find(function(n) {
-                            return n.value === working;
-                        });
-                    };
-                    while(working !== void 0){
-                        var parent = working.parent;
-                        if (parent) {
-                            if (parent.type === NodeType.MultiNode) {
-                                var index = parent.values.indexOf(working);
-                                if (index !== -1) {
-                                    var actualIndex = index - parent.values.slice(0, index).reduce(function(undefCount, next) {
-                                        return _this.getResolvedValue(next) === void 0 ? undefCount + 1 : undefCount;
-                                    }, 0);
-                                    path = [
-                                        actualIndex
-                                    ].concat(_to_consumable_array(path));
-                                }
-                            } else if ("children" in parent) {
-                                var childProp = findWorkingChild(parent);
-                                var _childProp_path;
-                                path = _to_consumable_array((_childProp_path = childProp === null || childProp === void 0 ? void 0 : childProp.path) !== null && _childProp_path !== void 0 ? _childProp_path : []).concat(_to_consumable_array(path));
+     * Register this plugin's handlers to the shared registry.
+     *
+     * If a handler with the same specificity already exists, it will be replaced
+     * and a debug log will be emitted (accessible via player.logger.debug).
+     */ key: "registerHandlers",
+                value: function registerHandlers(player) {
+                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                    try {
+                        for(var _iterator = this.handlers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                            var handler = _step.value;
+                            var _handler_match, _this_registry;
+                            if ((_handler_match = handler.match) === null || _handler_match === void 0 ? void 0 : _handler_match.ref) {
+                                var _handler_match1;
+                                player.logger.warn("An ExternalStateHandler contains a superfluous 'match.ref' property. 'match.ref' will be ignored. 'ref' will be used instead. Handler: ".concat(JSON.stringify({
+                                    ref: handler.ref,
+                                    match: handler.match
+                                })));
+                                (_handler_match1 = handler.match) === null || _handler_match1 === void 0 ? true : delete _handler_match1["ref"];
+                                continue;
                             }
-                            if (parentQuery) {
-                                var matcher = createMatcher(parentQuery);
-                                if (matcher(this.getResolvedValue(parent))) {
-                                    parentQuery = queryArray.shift();
-                                    if (!parentQuery) return path;
-                                }
+                            (_this_registry = this.registry) === null || _this_registry === void 0 ? void 0 : _this_registry.set(_object_spread({
+                                ref: handler.ref
+                            }, handler.match), handler.handlerFunction);
+                        }
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally{
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                _iterator.return();
+                            }
+                        } finally{
+                            if (_didIteratorError) {
+                                throw _iteratorError;
                             }
                         }
-                        working = working.parent;
                     }
-                    return parentQuery ? void 0 : path;
-                }
-            },
-            {
-                key: "getResolvedValue",
-                value: function getResolvedValue(node) {
-                    var _this_viewInfo_resolvedMap_get, _this_viewInfo;
-                    var sourceNode = this.getSourceAssetNode(node);
-                    return (_this_viewInfo = this.viewInfo) === null || _this_viewInfo === void 0 ? void 0 : (_this_viewInfo_resolvedMap_get = _this_viewInfo.resolvedMap.get(sourceNode !== null && sourceNode !== void 0 ? sourceNode : node)) === null || _this_viewInfo_resolvedMap_get === void 0 ? void 0 : _this_viewInfo_resolvedMap_get.value;
                 }
             }
         ]);
-        return CheckPathPlugin;
+        return _ExternalStatePlugin;
     }();
+    /** Symbol used to identify and find existing instances of this plugin */ _ExternalStatePlugin.Symbol = ExternalStatePluginSymbol;
+    var ExternalStatePlugin = _ExternalStatePlugin;
     return __toCommonJS(src_exports);
 }(); /*! Bundled license information:
 
