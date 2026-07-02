@@ -385,7 +385,51 @@ function _ts_generator(thisArg, body) {
         };
     }
 }
-var ReferenceAssetsPlugin = function() {
+var A2UIPlugin = function() {
+    var equalToOrIn = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/tapable-ts@0.2.4/node_modules/tapable-ts/dist/hooks.mjs
+    function equalToOrIn(value, check) {
+        if (Array.isArray(check)) {
+            return check.includes(value);
+        }
+        return check === value;
+    };
+    var callTap = function callTap(tap, args, ctx) {
+        var _tap;
+        if (tap.context) {
+            var _tap1;
+            return (_tap1 = tap).callback.apply(_tap1, [
+                ctx
+            ].concat(_to_consumable_array(args)));
+        }
+        return (_tap = tap).callback.apply(_tap, _to_consumable_array(args));
+    };
+    var dlv_es_default = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/dlv@1.1.3/node_modules/dlv/dist/dlv.es.js
+    function dlv_es_default(t2, e, l, n, r) {
+        for(e = e.split ? e.split(".") : e, n = 0; n < e.length; n++)t2 = t2 ? t2[e[n]] : r;
+        return t2 === r ? l : t2;
+    };
+    var find = function find(iter, tar, key) {
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = iter.keys()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                key = _step.value;
+                if (dequal(key, tar)) return key;
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+    };
     var createNewSortInstance = function createNewSortInstance(opts) {
         var comparer = castComparer(opts.comparer);
         return function(arrayToSort) {
@@ -402,11 +446,6 @@ var ReferenceAssetsPlugin = function() {
                 }
             };
         };
-    };
-    var dlv_es_default = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/dlv@1.1.3/node_modules/dlv/dist/dlv.es.js
-    function dlv_es_default(t2, e, l, n, r) {
-        for(e = e.split ? e.split(".") : e, n = 0; n < e.length; n++)t2 = t2 ? t2[e[n]] : r;
-        return t2 === r ? l : t2;
     };
     var createObjectMatcher = function createObjectMatcher(partialObj) {
         var pairs = traverseObj(partialObj);
@@ -445,137 +484,6 @@ var ReferenceAssetsPlugin = function() {
         };
         matcher.count = 1;
         return matcher;
-    };
-    var composeTransforms = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+asset-transform-plugin@0.0.0/node_modules/@player-ui/asset-transform-plugin/dist/index.mjs
-    function composeTransforms() {
-        for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
-            args[_key] = arguments[_key];
-        }
-        var _args_reverse = _to_array(args.reverse()), fn = _args_reverse[0], fns = _args_reverse.slice(1);
-        return function(asset, options, store) {
-            var value = fn(asset, options, store);
-            if (!fns.length) {
-                return value;
-            }
-            return fns.reduce(function(prevValue, current) {
-                return current(prevValue, options, store);
-            }, value);
-        };
-    };
-    var composeBefore = function composeBefore() {
-        for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
-            args[_key] = arguments[_key];
-        }
-        return {
-            beforeResolve: composeTransforms.apply(void 0, _to_consumable_array(args))
-        };
-    };
-    var compose = function compose() {
-        for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
-            args[_key] = arguments[_key];
-        }
-        var beforeResolveFns = [];
-        var resolveFns = [];
-        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-        try {
-            for(var _iterator = args[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                var arg = _step.value;
-                if (typeof arg === "function") {
-                    resolveFns.push(arg);
-                } else {
-                    if (arg === null || arg === void 0 ? void 0 : arg.resolve) {
-                        resolveFns.push(arg.resolve);
-                    }
-                    if (arg === null || arg === void 0 ? void 0 : arg.beforeResolve) {
-                        beforeResolveFns.push(arg.beforeResolve);
-                    }
-                }
-            }
-        } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-        } finally{
-            try {
-                if (!_iteratorNormalCompletion && _iterator.return != null) {
-                    _iterator.return();
-                }
-            } finally{
-                if (_didIteratorError) {
-                    throw _iteratorError;
-                }
-            }
-        }
-        return {
-            beforeResolve: beforeResolveFns.length ? composeTransforms.apply(void 0, _to_consumable_array(beforeResolveFns)) : void 0,
-            resolve: resolveFns.length ? composeTransforms.apply(void 0, _to_consumable_array(resolveFns)) : void 0
-        };
-    };
-    var maybeCompose = function maybeCompose(maybeFn) {
-        if ((typeof maybeFn === "undefined" ? "undefined" : _type_of(maybeFn)) === "object") {
-            return maybeFn;
-        }
-        return compose(maybeFn);
-    };
-    var cleanupTransformRegistry = function cleanupTransformRegistry(maybeRegistry) {
-        if (Array.isArray(maybeRegistry)) {
-            var wrappedTransforms = maybeRegistry.map(function(param) {
-                var _param = _sliced_to_array(param, 2), key = _param[0], value = _param[1];
-                return [
-                    key,
-                    maybeCompose(value)
-                ];
-            });
-            return new Registry(wrappedTransforms);
-        }
-        var registry = new Registry();
-        maybeRegistry.forEach(function(param) {
-            var key = param.key, value = param.value;
-            registry.set(key, maybeCompose(value));
-        });
-        return registry;
-    };
-    var isBackAction = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/action/transform.ts
-    function isBackAction(action) {
-        return action.value === "Prev";
-    };
-    var equalToOrIn = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/tapable-ts@0.2.4/node_modules/tapable-ts/dist/hooks.mjs
-    function equalToOrIn(value, check) {
-        if (Array.isArray(check)) {
-            return check.includes(value);
-        }
-        return check === value;
-    };
-    var callTap = function callTap(tap, args, ctx) {
-        var _tap;
-        if (tap.context) {
-            var _tap1;
-            return (_tap1 = tap).callback.apply(_tap1, [
-                ctx
-            ].concat(_to_consumable_array(args)));
-        }
-        return (_tap = tap).callback.apply(_tap, _to_consumable_array(args));
-    };
-    var find = function find(iter, tar, key) {
-        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-        try {
-            for(var _iterator = iter.keys()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                key = _step.value;
-                if (dequal(key, tar)) return key;
-            }
-        } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-        } finally{
-            try {
-                if (!_iteratorNormalCompletion && _iterator.return != null) {
-                    _iterator.return();
-                }
-            } finally{
-                if (_didIteratorError) {
-                    throw _iteratorError;
-                }
-            }
-        }
     };
     var isBinding = function isBinding(binding) {
         return !(typeof binding === "string" || Array.isArray(binding));
@@ -763,7 +671,7 @@ var ReferenceAssetsPlugin = function() {
         var strictMode = (_options_strict = options === null || options === void 0 ? void 0 : options.strict) !== null && _options_strict !== void 0 ? _options_strict : true;
         var charAtFunc = expr.charAt;
         var charCodeAtFunc = expr.charCodeAt;
-        var length3 = expr.length;
+        var length2 = expr.length;
         var index = 0;
         var getLocation = function(startChar) {
             return {
@@ -790,7 +698,7 @@ var ReferenceAssetsPlugin = function() {
             var chCode;
             var startCharIndex = index;
             ++index;
-            while(index < length3){
+            while(index < length2){
                 gobbleSpaces();
                 chCode = exprICode(index);
                 if (chCode === CCURL_CODE) {
@@ -851,7 +759,7 @@ var ReferenceAssetsPlugin = function() {
             var test = gobbleBinaryExpression();
             gobbleSpaces();
             var startCharIndex = index;
-            if (index < length3 && exprICode(index) === QUMARK_CODE) {
+            if (index < length2 && exprICode(index) === QUMARK_CODE) {
                 index++;
                 var consequent = gobbleExpression();
                 if (!consequent) {
@@ -1029,7 +937,7 @@ var ReferenceAssetsPlugin = function() {
             var str = "";
             var closed = false;
             var startCharIndex = index;
-            while(index < length3){
+            while(index < length2){
                 var ch = exprI(index++);
                 if (ch === quote) {
                     closed = true;
@@ -1079,7 +987,7 @@ var ReferenceAssetsPlugin = function() {
             var openBraceCount = 1;
             var startCharIndex = index;
             index += 2;
-            while(index < length3){
+            while(index < length2){
                 var ch = exprI(index++);
                 if (ch === "}" && exprICode(index) === CCURL_CODE) {
                     index++;
@@ -1115,7 +1023,7 @@ var ReferenceAssetsPlugin = function() {
             } else {
                 throwError("Unexpected ".concat(exprI(index)), index);
             }
-            while(index < length3){
+            while(index < length2){
                 ch = exprICode(index);
                 if (isIdentifierPart(ch)) {
                     index++;
@@ -1151,7 +1059,7 @@ var ReferenceAssetsPlugin = function() {
             var args = [];
             var charIndex;
             var node;
-            while(index < length3){
+            while(index < length2){
                 gobbleSpaces();
                 charIndex = exprICode(index);
                 if (charIndex === termination) {
@@ -1242,7 +1150,7 @@ var ReferenceAssetsPlugin = function() {
         }
         var nodes = [];
         try {
-            while(index < length3){
+            while(index < length2){
                 var chIndex = exprICode(index);
                 if (chIndex === SEMCOL_CODE || chIndex === COMMA_CODE) {
                     index++;
@@ -1251,7 +1159,7 @@ var ReferenceAssetsPlugin = function() {
                 var node = gobbleExpression();
                 if (node) {
                     nodes.push(node);
-                } else if (strictMode && index < length3) {
+                } else if (strictMode && index < length2) {
                     throwError('Unexpected "'.concat(exprI(index), '"'), index);
                 }
             }
@@ -1290,14 +1198,6 @@ var ReferenceAssetsPlugin = function() {
     var collateAwaitable = function collateAwaitable(promises) {
         var result = Promise.all(promises);
         return makeAwaitable(result);
-    };
-    var withoutContext = function withoutContext(fn) {
-        return function(_context) {
-            for(var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++){
-                args[_key - 1] = arguments[_key];
-            }
-            return fn.apply(void 0, _to_consumable_array(args));
-        };
     };
     var isObjectExpression = function isObjectExpression(expr) {
         if (isExpressionNode(expr)) {
@@ -1612,34 +1512,513 @@ var ReferenceAssetsPlugin = function() {
             evaluate: resolveOptions.evaluate
         }) : str;
     };
-    var skipNullish = function skipNullish(validationFn) {
-        return function(context, value, options) {
-            if (value === null || value === void 0) {
+    var composeTransforms = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+asset-transform-plugin@0.0.0/node_modules/@player-ui/asset-transform-plugin/dist/index.mjs
+    function composeTransforms() {
+        for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
+            args[_key] = arguments[_key];
+        }
+        var _args_reverse = _to_array(args.reverse()), fn = _args_reverse[0], fns = _args_reverse.slice(1);
+        return function(asset, options, store) {
+            var value = fn(asset, options, store);
+            if (!fns.length) {
+                return value;
+            }
+            return fns.reduce(function(prevValue, current) {
+                return current(prevValue, options, store);
+            }, value);
+        };
+    };
+    var composeBefore = function composeBefore() {
+        for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
+            args[_key] = arguments[_key];
+        }
+        return {
+            beforeResolve: composeTransforms.apply(void 0, _to_consumable_array(args))
+        };
+    };
+    var compose = function compose() {
+        for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
+            args[_key] = arguments[_key];
+        }
+        var beforeResolveFns = [];
+        var resolveFns = [];
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = args[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                var arg = _step.value;
+                if (typeof arg === "function") {
+                    resolveFns.push(arg);
+                } else {
+                    if (arg === null || arg === void 0 ? void 0 : arg.resolve) {
+                        resolveFns.push(arg.resolve);
+                    }
+                    if (arg === null || arg === void 0 ? void 0 : arg.beforeResolve) {
+                        beforeResolveFns.push(arg.beforeResolve);
+                    }
+                }
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+        return {
+            beforeResolve: beforeResolveFns.length ? composeTransforms.apply(void 0, _to_consumable_array(beforeResolveFns)) : void 0,
+            resolve: resolveFns.length ? composeTransforms.apply(void 0, _to_consumable_array(resolveFns)) : void 0
+        };
+    };
+    var maybeCompose = function maybeCompose(maybeFn) {
+        if ((typeof maybeFn === "undefined" ? "undefined" : _type_of(maybeFn)) === "object") {
+            return maybeFn;
+        }
+        return compose(maybeFn);
+    };
+    var cleanupTransformRegistry = function cleanupTransformRegistry(maybeRegistry) {
+        if (Array.isArray(maybeRegistry)) {
+            var wrappedTransforms = maybeRegistry.map(function(param) {
+                var _param = _sliced_to_array(param, 2), key = _param[0], value = _param[1];
+                return [
+                    key,
+                    maybeCompose(value)
+                ];
+            });
+            return new Registry(wrappedTransforms);
+        }
+        var registry = new Registry();
+        maybeRegistry.forEach(function(param) {
+            var key = param.key, value = param.value;
+            registry.set(key, maybeCompose(value));
+        });
+        return registry;
+    };
+    var pickNumberLocaleAndOptions = function pickNumberLocaleAndOptions(a, b) {
+        if (typeof a === "string") return {
+            locale: a,
+            options: b
+        };
+        if (a && (typeof a === "undefined" ? "undefined" : _type_of(a)) === "object") return {
+            locale: void 0,
+            options: a
+        };
+        return {
+            locale: void 0,
+            options: b
+        };
+    };
+    var pointerToBinding = function pointerToBinding(pointer) {
+        if (!pointer || pointer === "/") return "";
+        var absolute = pointer.startsWith("/");
+        var raw = absolute ? pointer.slice(1) : pointer;
+        var segments = raw.split("/").map(decodeSegment);
+        var out = "";
+        for(var i = 0; i < segments.length; i++){
+            var seg = segments[i];
+            if (NUMERIC_SEGMENT.test(seg)) {
+                out += "[".concat(seg, "]");
+            } else {
+                out += i === 0 ? seg : ".".concat(seg);
+            }
+        }
+        return out;
+    };
+    var bindingToSegments = function bindingToSegments(binding) {
+        if (!binding) return [];
+        var segments = [];
+        var parts = binding.split(".");
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = parts[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                var part = _step.value;
+                var match = part.match(/^([^[]+)((?:\[\d+\])*)$/);
+                if (!match) {
+                    segments.push(part);
+                    continue;
+                }
+                var _match = _sliced_to_array(match, 3), name = _match[1], arrays = _match[2];
+                if (name) segments.push(name);
+                if (arrays) {
+                    var _segments;
+                    var _arrays_match;
+                    var arrayMatches = (_arrays_match = arrays.match(/\[\d+\]/g)) !== null && _arrays_match !== void 0 ? _arrays_match : [];
+                    (_segments = segments).push.apply(_segments, _to_consumable_array(arrayMatches));
+                }
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+        return segments;
+    };
+    var interpolatePointers = function interpolatePointers(input) {
+        return input.replace(/\$\{([^}]+)\}/g, function(_, pointer) {
+            return "{{".concat(pointerToBinding(pointer), "}}");
+        });
+    };
+    var translateFunctionCall = function translateFunctionCall(call, logger) {
+        if (call.call === "formatString") {
+            var _call_args;
+            var value = (_call_args = call.args) === null || _call_args === void 0 ? void 0 : _call_args.value;
+            if (typeof value === "string") return interpolatePointers(value);
+            logger === null || logger === void 0 ? void 0 : logger.warn("[a2ui] formatString received non-string 'value' arg; emitting expression form");
+        }
+        var argList = renderArgList(call.args);
+        if (call.call === "formatString") {
+            return "@[formatString(".concat(argList, ")]@");
+        }
+        return "@[".concat(call.call, "(").concat(argList, ")]@");
+    };
+    var renderArgList = function renderArgList(args) {
+        if (!args) return "";
+        return Object.values(args).map(renderArg).join(", ");
+    };
+    var newBuilder = function newBuilder() {
+        return {
+            schema: {
+                ROOT: {}
+            },
+            knownTypes: /* @__PURE__ */ new Set([
+                "ROOT"
+            ])
+        };
+    };
+    var findBoundPath = function findBoundPath(component, logger) {
+        var lookupProp = INPUT_BINDING_PROPS[component.component];
+        if (lookupProp) {
+            var prop = component[lookupProp];
+            if (isPathRef(prop)) return prop.path;
+        }
+        var pathRefs = collectPathRefs(component);
+        if (pathRefs.length === 1) return pathRefs[0];
+        if (pathRefs.length > 1) {
+            logger === null || logger === void 0 ? void 0 : logger.warn("[a2ui] Component '".concat(component.id, "' (").concat(component.component, ") has checks but multiple {path} refs; skipping schema synthesis for this component"));
+        } else {
+            logger === null || logger === void 0 ? void 0 : logger.warn("[a2ui] Component '".concat(component.id, "' (").concat(component.component, ") has checks but no bound path could be determined; skipping"));
+        }
+        return void 0;
+    };
+    var collectPathRefs = function collectPathRefs(component) {
+        var found = [];
+        var walk = function(v) {
+            if (!v || (typeof v === "undefined" ? "undefined" : _type_of(v)) !== "object") return;
+            if (Array.isArray(v)) {
+                v.forEach(walk);
                 return;
             }
-            return validationFn(context, value, options);
-        };
-    };
-    var toNum = function toNum(val, coerceTo0) {
-        if (typeof val === "number") {
-            return val;
-        }
-        if (typeof val === "string" && val.length > 0) {
-            var newVal = val.trim();
-            newVal = newVal.replace(/,/g, "");
-            newVal = newVal.replace(/[¥£$€]/, "");
-            var nVal = Number(newVal);
-            return newVal.match(/^0[xbo]/i) || isNaN(nVal) ? void 0 : nVal;
-        }
-        return coerceTo0 ? 0 : void 0;
-    };
-    var ifString = function ifString(fn) {
-        return function(arg) {
-            if (typeof arg === "string") {
-                return fn(arg);
+            if (isPathRef(v)) {
+                found.push(v.path);
+                return;
             }
-            return arg;
+            Object.values(v).forEach(walk);
         };
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = Object.entries(component)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                var _step_value = _sliced_to_array(_step.value, 2), k = _step_value[0], v = _step_value[1];
+                if (k === "id" || k === "component" || k === "checks" || k === "action") {
+                    continue;
+                }
+                walk(v);
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+        return found;
+    };
+    var translateCheck = function translateCheck(check, logger) {
+        var _check_args;
+        var type = CHECK_TO_VALIDATOR[check.call];
+        if (!type) {
+            logger === null || logger === void 0 ? void 0 : logger.warn("[a2ui] Unknown validation check '".concat(check.call, "'; dropping"));
+            return void 0;
+        }
+        var ref = {
+            type: type,
+            severity: "error"
+        };
+        if (check.message) ref.message = check.message;
+        if (check.call === "regex" && ((_check_args = check.args) === null || _check_args === void 0 ? void 0 : _check_args.pattern)) {
+            ref.regex = unwrapLiteral(check.args.pattern);
+        }
+        if (check.call === "length") {
+            var _check_args1, _check_args2;
+            if (((_check_args1 = check.args) === null || _check_args1 === void 0 ? void 0 : _check_args1.min) !== void 0) ref.min = unwrapLiteral(check.args.min);
+            if (((_check_args2 = check.args) === null || _check_args2 === void 0 ? void 0 : _check_args2.max) !== void 0) ref.max = unwrapLiteral(check.args.max);
+        }
+        return ref;
+    };
+    var unwrapLiteral = function unwrapLiteral(value) {
+        if (typeof value === "string" || typeof value === "number" || typeof value === "boolean" || value === null) {
+            return value;
+        }
+        return value;
+    };
+    var installAtPath = function installAtPath(builder, binding, leafType, validations, logger) {
+        var segments = bindingToSegments(binding).filter(function(s) {
+            return !s.startsWith("[");
+        });
+        if (segments.length === 0) {
+            logger === null || logger === void 0 ? void 0 : logger.warn("[a2ui] Cannot install schema validation at empty path; skipping");
+            return;
+        }
+        var currentNode = builder.schema.ROOT;
+        var ownerPath = [];
+        for(var i = 0; i < segments.length - 1; i++){
+            var seg = segments[i];
+            ownerPath.push(seg);
+            var typeName = "".concat(TYPE_PREFIX).concat(ownerPath.join("_"));
+            var existing = currentNode[seg];
+            if (!existing) {
+                currentNode[seg] = {
+                    type: typeName
+                };
+            } else if (existing.type !== typeName) {}
+            var ref = currentNode[seg].type;
+            if (!builder.schema[ref]) {
+                builder.schema[ref] = {};
+                builder.knownTypes.add(ref);
+            }
+            currentNode = builder.schema[ref];
+        }
+        var leafSeg = segments[segments.length - 1];
+        var existingLeaf = currentNode[leafSeg];
+        if (existingLeaf) {
+            var _existingLeaf_validation;
+            var merged = _object_spread_props(_object_spread({}, existingLeaf), {
+                type: pickLeafType(existingLeaf.type, leafType),
+                validation: _to_consumable_array((_existingLeaf_validation = existingLeaf.validation) !== null && _existingLeaf_validation !== void 0 ? _existingLeaf_validation : []).concat(_to_consumable_array(validations))
+            });
+            currentNode[leafSeg] = merged;
+        } else {
+            currentNode[leafSeg] = {
+                type: leafType,
+                validation: validations
+            };
+        }
+    };
+    var pickLeafType = function pickLeafType(existing, incoming) {
+        if (incoming !== "string") return incoming;
+        return existing;
+    };
+    var defaultLeafType = function defaultLeafType(component, checks) {
+        if (component.component === "CheckBox") return "boolean";
+        if (checks.some(function(c) {
+            return c.call === "numeric";
+        })) return "number";
+        return "string";
+    };
+    var synthesizeSchema = function synthesizeSchema(components, logger) {
+        var builder = newBuilder();
+        var found = false;
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = components[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                var component = _step.value;
+                if (!component.checks || component.checks.length === 0) continue;
+                var pointer = findBoundPath(component, logger);
+                if (!pointer) continue;
+                var binding = pointerToBinding(pointer);
+                if (!binding) continue;
+                var validations = component.checks.map(function(c) {
+                    return translateCheck(c, logger);
+                }).filter(function(v) {
+                    return v !== void 0;
+                });
+                if (validations.length === 0) continue;
+                installAtPath(builder, binding, defaultLeafType(component, component.checks), validations, logger);
+                found = true;
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+        return found ? builder.schema : void 0;
+    };
+    var resolveAndInline = function resolveAndInline(id, ctx, templateScope) {
+        var component = ctx.byId.get(id);
+        if (!component) {
+            throw new Error("[a2ui] Component reference '".concat(id, "' could not be resolved in the snapshot."));
+        }
+        return inlineComponent(component, ctx, templateScope);
+    };
+    var wrapInlined = function wrapInlined(asset) {
+        return {
+            asset: asset
+        };
+    };
+    var scopedBinding = function scopedBinding(pointer, scope) {
+        if (!pointer || pointer === "/") return scope !== null && scope !== void 0 ? scope : "";
+        if (pointer.startsWith("/")) return pointerToBinding(pointer);
+        if (!scope) return pointerToBinding(pointer);
+        var relative = pointerToBinding(pointer);
+        return relative ? "".concat(scope, "._index_.").concat(relative) : "".concat(scope, "._index_");
+    };
+    var scopedPointer = function scopedPointer(pointer, scope) {
+        if (pointer.startsWith("/")) return pointer;
+        return "/".concat(scope, "/_index_/").concat(pointer);
+    };
+    var translateAction = function translateAction(action, ctx) {
+        if ("event" in action) {
+            var _action_event = action.event, name = _action_event.name, context = _action_event.context;
+            ctx.eventNames.add(name);
+            var result = {
+                value: name
+            };
+            if (context && Object.keys(context).length > 0) {
+                result.exp = buildContextWriteExpressions(context);
+            }
+            return result;
+        }
+        return {
+            exp: translateFunctionCall(action.functionCall, ctx.logger)
+        };
+    };
+    var buildContextWriteExpressions = function buildContextWriteExpressions(context) {
+        return Object.entries(context).map(function(param) {
+            var _param = _sliced_to_array(param, 2), key = _param[0], value = _param[1];
+            var lhs = "{{".concat(A2UI_EVENT_CONTEXT_NAMESPACE, ".").concat(key, "}}");
+            return "".concat(lhs, " = ").concat(renderRhs(value));
+        });
+    };
+    var buildNavigation = function buildNavigation(surfaceId, eventNames) {
+        var view = {
+            state_type: "VIEW",
+            ref: surfaceId,
+            transitions: {
+                "*": "END_Done"
+            }
+        };
+        var endStates = {
+            END_Done: {
+                state_type: "END",
+                outcome: "done"
+            }
+        };
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = eventNames[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                var name = _step.value;
+                var endName = "END_".concat(name);
+                view.transitions[name] = endName;
+                endStates[endName] = {
+                    state_type: "END",
+                    outcome: name
+                };
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+        var flow = _object_spread({
+            startState: "VIEW_1",
+            VIEW_1: view
+        }, endStates);
+        return {
+            BEGIN: "FLOW_1",
+            FLOW_1: flow
+        };
+    };
+    var adaptA2UIToFlow = function adaptA2UIToFlow(snapshot, logger) {
+        if (!snapshot || !Array.isArray(snapshot.components)) {
+            throw new Error("[a2ui] snapshot.components must be an array");
+        }
+        var byId = /* @__PURE__ */ new Map();
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = snapshot.components[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                var component = _step.value;
+                if (!(component === null || component === void 0 ? void 0 : component.id)) {
+                    throw new Error("[a2ui] every component must have an id");
+                }
+                byId.set(component.id, component);
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+        var root = byId.get("root");
+        if (!root) {
+            throw new Error("[a2ui] snapshot must contain a component with id 'root'");
+        }
+        var ctx = {
+            byId: byId,
+            inProgress: /* @__PURE__ */ new Set(),
+            eventNames: /* @__PURE__ */ new Set(),
+            logger: logger
+        };
+        var rootAsset = inlineComponent(root, ctx);
+        rootAsset.id = snapshot.surfaceId;
+        var schema = synthesizeSchema(snapshot.components, logger);
+        var _snapshot_data;
+        var flow = {
+            id: snapshot.surfaceId,
+            views: [
+                rootAsset
+            ],
+            data: (_snapshot_data = snapshot.data) !== null && _snapshot_data !== void 0 ? _snapshot_data : {},
+            navigation: buildNavigation(snapshot.surfaceId, ctx.eventNames)
+        };
+        if (schema) flow.schema = schema;
+        return flow;
     };
     var __create = Object.create;
     var __defProp = Object.defineProperty;
@@ -1860,7 +2239,7 @@ var ReferenceAssetsPlugin = function() {
                 }
                 return out;
             }
-            function isObject(o) {
+            function isObject2(o) {
                 return o != null && (typeof o === "undefined" ? "undefined" : _type_of(o)) === "object";
             }
             function addLast2(array, val) {
@@ -1933,7 +2312,7 @@ var ReferenceAssetsPlugin = function() {
                 if (idx === path.length - 1) {
                     newValue = val;
                 } else {
-                    var nestedObj = isObject(obj) && isObject(obj[key]) ? obj[key] : typeof path[idx + 1] === "number" ? [] : {};
+                    var nestedObj = isObject2(obj) && isObject2(obj[key]) ? obj[key] : typeof path[idx + 1] === "number" ? [] : {};
                     newValue = doSetIn(nestedObj, path, val, idx + 1);
                 }
                 return set2(obj, key, newValue);
@@ -2063,7 +2442,7 @@ var ReferenceAssetsPlugin = function() {
                         var key = keys[j];
                         if (fAddDefaults && out[key] !== void 0) continue;
                         var nextVal = obj[key];
-                        if (fDeep && isObject(out[key]) && isObject(nextVal)) {
+                        if (fDeep && isObject2(out[key]) && isObject2(nextVal)) {
                             nextVal = doMerge(fAddDefaults, fDeep, out[key], nextVal);
                         }
                         if (nextVal === void 0 || nextVal === out[key]) continue;
@@ -2129,465 +2508,115 @@ var ReferenceAssetsPlugin = function() {
             };
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/index.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/index.ts
     var src_exports = {};
     __export(src_exports, {
-        ReferenceAssetsPlugin: function() {
-            return ReferenceAssetsPlugin;
+        A2UIContentPlugin: function() {
+            return A2UIContentPlugin;
         },
-        actionTransform: function() {
-            return actionTransform;
+        A2UIExpressionsPlugin: function() {
+            return A2UIExpressionsPlugin;
         },
-        chatMessageTransform: function() {
-            return chatMessageTransform;
+        A2UIPlugin: function() {
+            return A2UIPlugin;
         },
-        choiceTransform: function() {
-            return choiceTransform;
+        A2UITransformPlugin: function() {
+            return A2UITransformPlugin;
         },
-        expPropTransform: function() {
-            return expPropTransform;
+        A2UI_EVENT_CONTEXT_NAMESPACE: function() {
+            return A2UI_EVENT_CONTEXT_NAMESPACE;
         },
-        imageTransform: function() {
-            return imageTransform;
+        a2uiExpressions: function() {
+            return a2uiExpressions;
         },
-        infoTransform: function() {
-            return infoTransform;
+        adaptA2UIToFlow: function() {
+            return adaptA2UIToFlow;
         },
-        inputTransform: function() {
-            return inputTransform;
+        and: function() {
+            return and;
         },
-        isBackAction: function() {
-            return isBackAction;
+        buttonTransform: function() {
+            return buttonTransform;
         },
-        transform: function() {
-            return transform2;
+        checkBoxTransform: function() {
+            return checkBoxTransform;
+        },
+        choicePickerTransform: function() {
+            return choicePickerTransform;
+        },
+        dateTimeInputTransform: function() {
+            return dateTimeInputTransform;
+        },
+        email: function() {
+            return email;
+        },
+        formatCurrency: function() {
+            return formatCurrency;
+        },
+        formatDate: function() {
+            return formatDate;
+        },
+        formatNumber: function() {
+            return formatNumber;
+        },
+        formatString: function() {
+            return formatString;
+        },
+        interpolatePointers: function() {
+            return interpolatePointers;
+        },
+        isFunctionCall: function() {
+            return isFunctionCall;
+        },
+        isPathRef: function() {
+            return isPathRef;
+        },
+        length: function() {
+            return length;
+        },
+        not: function() {
+            return not;
+        },
+        numeric: function() {
+            return numeric;
+        },
+        openUrl: function() {
+            return openUrl;
+        },
+        or: function() {
+            return or;
+        },
+        pluralize: function() {
+            return pluralize;
+        },
+        pointerToBinding: function() {
+            return pointerToBinding;
+        },
+        regex: function() {
+            return regex;
+        },
+        required: function() {
+            return required;
+        },
+        sliderTransform: function() {
+            return sliderTransform;
+        },
+        synthesizeSchema: function() {
+            return synthesizeSchema;
+        },
+        textFieldTransform: function() {
+            return textFieldTransform;
+        },
+        textTransform: function() {
+            return textTransform;
+        },
+        translateDynamicValue: function() {
+            return translateDynamicValue;
+        },
+        translateFunctionCall: function() {
+            return translateFunctionCall;
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/input/transform.ts
-    var inputTransform = function(asset, options) {
-        var _options_validation, _options_validation1;
-        return _object_spread_props(_object_spread({}, asset), {
-            format: function format(val) {
-                if (asset.binding === void 0) {
-                    return val;
-                }
-                return options.data.format(asset.binding, val);
-            },
-            set: function set(val) {
-                if (asset.binding === void 0) {
-                    return;
-                }
-                return options.data.model.set([
-                    [
-                        asset.binding,
-                        val
-                    ]
-                ], {
-                    formatted: true
-                });
-            },
-            value: asset.binding === void 0 ? "" : options.data.model.get(asset.binding, {
-                includeInvalid: true,
-                formatted: true
-            }),
-            validation: asset.binding === void 0 ? void 0 : (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : _options_validation.get(asset.binding, {
-                track: true
-            }),
-            dataType: asset.binding === void 0 ? void 0 : (_options_validation1 = options.validation) === null || _options_validation1 === void 0 ? void 0 : _options_validation1.type(asset.binding)
-        });
-    };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/fast-sort@3.4.1/node_modules/fast-sort/dist/sort.mjs
-    var castComparer = function castComparer(comparer) {
-        return function(a, b, order) {
-            return comparer(a, b, order) * order;
-        };
-    };
-    var throwInvalidConfigErrorIfTrue = function throwInvalidConfigErrorIfTrue(condition, context) {
-        if (condition) throw Error("Invalid sort config: " + context);
-    };
-    var unpackObjectSorter = function unpackObjectSorter(sortByObj) {
-        var _a = sortByObj || {}, asc = _a.asc, desc = _a.desc;
-        var order = asc ? 1 : -1;
-        var sortBy = asc || desc;
-        throwInvalidConfigErrorIfTrue(!sortBy, "Expected `asc` or `desc` property");
-        throwInvalidConfigErrorIfTrue(asc && desc, "Ambiguous object with `asc` and `desc` config properties");
-        var comparer = sortByObj.comparer && castComparer(sortByObj.comparer);
-        return {
-            order: order,
-            sortBy: sortBy,
-            comparer: comparer
-        };
-    };
-    var multiPropertySorterProvider = function multiPropertySorterProvider(defaultComparer2) {
-        return function multiPropertySorter(sortBy, sortByArr, depth, order, comparer, a, b) {
-            var valA;
-            var valB;
-            if (typeof sortBy === "string") {
-                valA = a[sortBy];
-                valB = b[sortBy];
-            } else if (typeof sortBy === "function") {
-                valA = sortBy(a);
-                valB = sortBy(b);
-            } else {
-                var objectSorterConfig = unpackObjectSorter(sortBy);
-                return multiPropertySorter(objectSorterConfig.sortBy, sortByArr, depth, objectSorterConfig.order, objectSorterConfig.comparer || defaultComparer2, a, b);
-            }
-            var equality = comparer(valA, valB, order);
-            if ((equality === 0 || valA == null && valB == null) && sortByArr.length > depth) {
-                return multiPropertySorter(sortByArr[depth], sortByArr, depth + 1, order, comparer, a, b);
-            }
-            return equality;
-        };
-    };
-    function getSortStrategy(sortBy, comparer, order) {
-        if (sortBy === void 0 || sortBy === true) {
-            return function(a, b) {
-                return comparer(a, b, order);
-            };
-        }
-        if (typeof sortBy === "string") {
-            throwInvalidConfigErrorIfTrue(sortBy.includes("."), "String syntax not allowed for nested properties.");
-            return function(a, b) {
-                return comparer(a[sortBy], b[sortBy], order);
-            };
-        }
-        if (typeof sortBy === "function") {
-            return function(a, b) {
-                return comparer(sortBy(a), sortBy(b), order);
-            };
-        }
-        if (Array.isArray(sortBy)) {
-            var multiPropSorter_1 = multiPropertySorterProvider(comparer);
-            return function(a, b) {
-                return multiPropSorter_1(sortBy[0], sortBy, 1, order, comparer, a, b);
-            };
-        }
-        var objectSorterConfig = unpackObjectSorter(sortBy);
-        return getSortStrategy(objectSorterConfig.sortBy, objectSorterConfig.comparer || comparer, objectSorterConfig.order);
-    }
-    var sortArray = function sortArray(order, ctx, sortBy, comparer) {
-        var _a;
-        if (!Array.isArray(ctx)) {
-            return ctx;
-        }
-        if (Array.isArray(sortBy) && sortBy.length < 2) {
-            _a = sortBy, sortBy = _a[0];
-        }
-        return ctx.sort(getSortStrategy(sortBy, comparer, order));
-    };
-    var defaultComparer = function defaultComparer(a, b, order) {
-        if (a == null) return order;
-        if (b == null) return -order;
-        if ((typeof a === "undefined" ? "undefined" : _type_of(a)) !== (typeof b === "undefined" ? "undefined" : _type_of(b))) {
-            return (typeof a === "undefined" ? "undefined" : _type_of(a)) < (typeof b === "undefined" ? "undefined" : _type_of(b)) ? -1 : 1;
-        }
-        if (a < b) return -1;
-        if (a > b) return 1;
-        return 0;
-    };
-    var sort = createNewSortInstance({
-        comparer: defaultComparer
-    });
-    var inPlaceSort = createNewSortInstance({
-        comparer: defaultComparer,
-        inPlaceSorting: true
-    });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
-    function traverseObj(object) {
-        var path = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [], pairs = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : /* @__PURE__ */ new Map();
-        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-        try {
-            for(var _iterator = Object.keys(object)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                var key = _step.value;
-                var val = object[key];
-                var nestedPath = _to_consumable_array(path).concat([
-                    key
-                ]);
-                if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object" && val !== null) {
-                    traverseObj(val, nestedPath, pairs);
-                } else {
-                    pairs.set(nestedPath, val);
-                }
-            }
-        } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-        } finally{
-            try {
-                if (!_iteratorNormalCompletion && _iterator.return != null) {
-                    _iterator.return();
-                }
-            } finally{
-                if (_didIteratorError) {
-                    throw _iteratorError;
-                }
-            }
-        }
-        return pairs;
-    }
-    var Registry = /*#__PURE__*/ function() {
-        function Registry(initialSet, logger) {
-            var _this = this;
-            _class_call_check(this, Registry);
-            this.store = [];
-            this.logger = logger;
-            initialSet === null || initialSet === void 0 ? void 0 : initialSet.forEach(function(param) {
-                var _param = _sliced_to_array(param, 2), match = _param[0], value = _param[1];
-                _this.set(match, value);
-            });
-        }
-        _create_class(Registry, [
-            {
-                /**
-     * Add match -> value mapping to the registry
-     *
-     * If an entry with the same specificity and matching key already exists, it will be replaced
-     * and a debug log will be emitted (if a logger is configured).
-     *
-     * @param match - The key to match against (can be a primitive or object)
-     * @param value - The value to associate with this key
-     */ key: "set",
-                value: function set(match, value) {
-                    var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createObjectMatcher(match) : createBasicMatcher(match);
-                    var existingIndex = this.store.findIndex(function(entry) {
-                        return entry.matcher(match) && matcher(entry.key);
-                    });
-                    if (existingIndex !== -1) {
-                        var _this_logger_debug, _this_logger;
-                        this.store.splice(existingIndex, 1);
-                        (_this_logger = this.logger) === null || _this_logger === void 0 ? void 0 : (_this_logger_debug = _this_logger.debug) === null || _this_logger_debug === void 0 ? void 0 : _this_logger_debug.call(_this_logger, "Registry: Replacing existing entry for key ", match);
-                    }
-                    this.store.push({
-                        key: match,
-                        value: value,
-                        matcher: matcher
-                    });
-                    this.store = sort(this.store).desc(function(entry) {
-                        return entry.matcher.count;
-                    });
-                }
-            },
-            {
-                /**
-     * Fetch the best match in the registry
-     *
-     * Searches for the most specific entry that matches the given query.
-     * The registry is sorted by specificity (matcher.count) in descending order,
-     * so we iterate forward to find the highest specificity match first.
-     *
-     * @param query - The query object to match against registered keys
-     * @returns The value associated with the best matching key, or undefined if no match found
-     */ key: "get",
-                value: function get(query) {
-                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                    try {
-                        for(var _iterator = this.store[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                            var entry = _step.value;
-                            if (entry.matcher(query)) {
-                                return entry.value;
-                            }
-                        }
-                    } catch (err) {
-                        _didIteratorError = true;
-                        _iteratorError = err;
-                    } finally{
-                        try {
-                            if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                _iterator.return();
-                            }
-                        } finally{
-                            if (_didIteratorError) {
-                                throw _iteratorError;
-                            }
-                        }
-                    }
-                    return void 0;
-                }
-            },
-            {
-                /** Loop over all entries and run callback */ key: "forEach",
-                value: function forEach(callbackfn) {
-                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                    try {
-                        for(var _iterator = this.store[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                            var entry = _step.value;
-                            callbackfn(entry);
-                        }
-                    } catch (err) {
-                        _didIteratorError = true;
-                        _iteratorError = err;
-                    } finally{
-                        try {
-                            if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                _iterator.return();
-                            }
-                        } finally{
-                            if (_didIteratorError) {
-                                throw _iteratorError;
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                /** Reset the items in the registry */ key: "clear",
-                value: function clear() {
-                    this.store = [];
-                }
-            },
-            {
-                /** Check if the registry is empty*/ key: "isRegistryEmpty",
-                value: function isRegistryEmpty() {
-                    return this.store.length === 0;
-                }
-            }
-        ]);
-        return Registry;
-    }();
-    var AssetTransformPlugin = /*#__PURE__*/ function() {
-        function AssetTransformPlugin(transforms) {
-            _class_call_check(this, AssetTransformPlugin);
-            this.name = "asset-transform";
-            this.registry = cleanupTransformRegistry(transforms);
-        }
-        _create_class(AssetTransformPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    var _this = this;
-                    player.hooks.viewController.tap(this.name, function(vc) {
-                        _this.registry.forEach(function(param) {
-                            var key = param.key, value = param.value;
-                            return vc.transformRegistry.set(key, maybeCompose(value));
-                        });
-                    });
-                }
-            }
-        ]);
-        return AssetTransformPlugin;
-    }();
-    var transform = function(action, options) {
-        return _object_spread_props(_object_spread({}, action), {
-            run: function run() {
-                if (action.exp) {
-                    options.evaluate(action.exp);
-                }
-                if (action.value) {
-                    var _action_metaData, _options_transition;
-                    var skipValidation = (_action_metaData = action.metaData) === null || _action_metaData === void 0 ? void 0 : _action_metaData.skipValidation;
-                    (_options_transition = options.transition) === null || _options_transition === void 0 ? void 0 : _options_transition.call(options, action.value, {
-                        force: skipValidation
-                    });
-                }
-            }
-        });
-    };
-    var backIconTransform = function(action) {
-        var _action_metaData;
-        if (isBackAction(action) && (action === null || action === void 0 ? void 0 : (_action_metaData = action.metaData) === null || _action_metaData === void 0 ? void 0 : _action_metaData.role) === void 0) {
-            return _object_spread_props(_object_spread({}, action), {
-                metaData: _object_spread_props(_object_spread({}, action === null || action === void 0 ? void 0 : action.metaData), {
-                    role: "back"
-                })
-            });
-        }
-        return action;
-    };
-    var expPropTransform = function(asset) {
-        var _asset_plugins_stringResolver, _asset_plugins, _asset_plugins1, _asset_plugins_stringResolver1, _asset_plugins2;
-        var skipArray = (_asset_plugins = asset.plugins) === null || _asset_plugins === void 0 ? void 0 : (_asset_plugins_stringResolver = _asset_plugins.stringResolver) === null || _asset_plugins_stringResolver === void 0 ? void 0 : _asset_plugins_stringResolver.propertiesToSkip;
-        if (skipArray && skipArray.indexOf("exp") > 1) {
-            return asset;
-        }
-        var _asset_plugins_stringResolver_propertiesToSkip;
-        return _object_spread_props(_object_spread({}, asset), {
-            plugins: _object_spread_props(_object_spread({}, asset.plugins), {
-                stringResolver: _object_spread_props(_object_spread({}, asset === null || asset === void 0 ? void 0 : (_asset_plugins1 = asset.plugins) === null || _asset_plugins1 === void 0 ? void 0 : _asset_plugins1.stringResolver), {
-                    propertiesToSkip: _to_consumable_array((_asset_plugins_stringResolver_propertiesToSkip = (_asset_plugins2 = asset.plugins) === null || _asset_plugins2 === void 0 ? void 0 : (_asset_plugins_stringResolver1 = _asset_plugins2.stringResolver) === null || _asset_plugins_stringResolver1 === void 0 ? void 0 : _asset_plugins_stringResolver1.propertiesToSkip) !== null && _asset_plugins_stringResolver_propertiesToSkip !== void 0 ? _asset_plugins_stringResolver_propertiesToSkip : []).concat([
-                        "exp"
-                    ])
-                })
-            })
-        });
-    };
-    var actionTransform = compose(transform, backIconTransform, composeBefore(expPropTransform));
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/info/transform.ts
-    var infoTransform = function(infoAsset) {
-        var actions = infoAsset === null || infoAsset === void 0 ? void 0 : infoAsset.actions;
-        var segmentedActions = actions === null || actions === void 0 ? void 0 : actions.reduce(function(segmentedActionsArray, action) {
-            segmentedActionsArray[isBackAction(action.asset) ? "prev" : "next"].push(action);
-            return segmentedActionsArray;
-        }, {
-            next: [],
-            prev: []
-        });
-        return _object_spread_props(_object_spread({}, infoAsset), {
-            segmentedActions: segmentedActions
-        });
-    };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/image/transform.ts
-    var getImageAlt = function(props) {
-        var metaData = props.metaData, placeholder = props.placeholder;
-        if (metaData.accessibility) return metaData.accessibility;
-        if (placeholder) return placeholder;
-        return "Image";
-    };
-    var imageTransform = function(props) {
-        var altText = getImageAlt(props);
-        var newImage = _object_spread_props(_object_spread({}, props), {
-            altText: altText
-        });
-        return newImage;
-    };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/choice/transform.ts
-    var choiceTransform = function(asset, options) {
-        var _options_validation, _options_validation1;
-        var items = asset.items, binding = asset.binding, rest = _object_without_properties(asset, [
-            "items",
-            "binding"
-        ]);
-        var assetHasBinding = binding !== void 0;
-        var currentValue = assetHasBinding ? options.data.model.get(binding, {
-            includeInvalid: true
-        }) : void 0;
-        var resetValue = function() {
-            if (assetHasBinding) {
-                return options.data.model.set([
-                    [
-                        binding,
-                        null
-                    ]
-                ]);
-            }
-        };
-        var transformedChoiceItems = (items || []).map(function(item, index) {
-            var _item_id;
-            return _object_spread_props(_object_spread({}, item), {
-                id: (_item_id = item.id) !== null && _item_id !== void 0 ? _item_id : "".concat(asset.id, "-choice-").concat(index),
-                select: function select() {
-                    if (assetHasBinding) {
-                        return options.data.model.set([
-                            [
-                                binding,
-                                item.value
-                            ]
-                        ]);
-                    }
-                },
-                unselect: resetValue
-            });
-        });
-        return _object_spread_props(_object_spread({}, rest), {
-            binding: binding,
-            clearSelection: resetValue,
-            items: transformedChoiceItems,
-            value: currentValue,
-            validation: assetHasBinding ? (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : _options_validation.get(binding, {
-                track: true
-            }) : void 0,
-            dataType: assetHasBinding ? (_options_validation1 = options.validation) === null || _options_validation1 === void 0 ? void 0 : _options_validation1.type(binding) : void 0
-        });
-    };
     var InterceptionManager = /*#__PURE__*/ function() {
         function InterceptionManager() {
             _class_call_check(this, InterceptionManager);
@@ -2955,6 +2984,7 @@ var ReferenceAssetsPlugin = function() {
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_ts_nested_error = __toESM(require_nested_error(), 1);
     var import_ts_nested_error2 = __toESM(require_nested_error(), 1);
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_timm = __toESM(require_timm(), 1);
     var import_ts_nested_error3 = __toESM(require_nested_error(), 1);
     var import_timm2 = __toESM(require_timm(), 1);
@@ -3069,6 +3099,255 @@ var ReferenceAssetsPlugin = function() {
     var import_p_defer = __toESM(require_p_defer(), 1);
     var import_timm6 = __toESM(require_timm(), 1);
     var import_queue_microtask = __toESM(require_queue_microtask(), 1);
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/fast-sort@3.4.1/node_modules/fast-sort/dist/sort.mjs
+    var castComparer = function castComparer(comparer) {
+        return function(a, b, order) {
+            return comparer(a, b, order) * order;
+        };
+    };
+    var throwInvalidConfigErrorIfTrue = function throwInvalidConfigErrorIfTrue(condition, context) {
+        if (condition) throw Error("Invalid sort config: " + context);
+    };
+    var unpackObjectSorter = function unpackObjectSorter(sortByObj) {
+        var _a = sortByObj || {}, asc = _a.asc, desc = _a.desc;
+        var order = asc ? 1 : -1;
+        var sortBy = asc || desc;
+        throwInvalidConfigErrorIfTrue(!sortBy, "Expected `asc` or `desc` property");
+        throwInvalidConfigErrorIfTrue(asc && desc, "Ambiguous object with `asc` and `desc` config properties");
+        var comparer = sortByObj.comparer && castComparer(sortByObj.comparer);
+        return {
+            order: order,
+            sortBy: sortBy,
+            comparer: comparer
+        };
+    };
+    var multiPropertySorterProvider = function multiPropertySorterProvider(defaultComparer2) {
+        return function multiPropertySorter(sortBy, sortByArr, depth, order, comparer, a, b) {
+            var valA;
+            var valB;
+            if (typeof sortBy === "string") {
+                valA = a[sortBy];
+                valB = b[sortBy];
+            } else if (typeof sortBy === "function") {
+                valA = sortBy(a);
+                valB = sortBy(b);
+            } else {
+                var objectSorterConfig = unpackObjectSorter(sortBy);
+                return multiPropertySorter(objectSorterConfig.sortBy, sortByArr, depth, objectSorterConfig.order, objectSorterConfig.comparer || defaultComparer2, a, b);
+            }
+            var equality = comparer(valA, valB, order);
+            if ((equality === 0 || valA == null && valB == null) && sortByArr.length > depth) {
+                return multiPropertySorter(sortByArr[depth], sortByArr, depth + 1, order, comparer, a, b);
+            }
+            return equality;
+        };
+    };
+    function getSortStrategy(sortBy, comparer, order) {
+        if (sortBy === void 0 || sortBy === true) {
+            return function(a, b) {
+                return comparer(a, b, order);
+            };
+        }
+        if (typeof sortBy === "string") {
+            throwInvalidConfigErrorIfTrue(sortBy.includes("."), "String syntax not allowed for nested properties.");
+            return function(a, b) {
+                return comparer(a[sortBy], b[sortBy], order);
+            };
+        }
+        if (typeof sortBy === "function") {
+            return function(a, b) {
+                return comparer(sortBy(a), sortBy(b), order);
+            };
+        }
+        if (Array.isArray(sortBy)) {
+            var multiPropSorter_1 = multiPropertySorterProvider(comparer);
+            return function(a, b) {
+                return multiPropSorter_1(sortBy[0], sortBy, 1, order, comparer, a, b);
+            };
+        }
+        var objectSorterConfig = unpackObjectSorter(sortBy);
+        return getSortStrategy(objectSorterConfig.sortBy, objectSorterConfig.comparer || comparer, objectSorterConfig.order);
+    }
+    var sortArray = function sortArray(order, ctx, sortBy, comparer) {
+        var _a;
+        if (!Array.isArray(ctx)) {
+            return ctx;
+        }
+        if (Array.isArray(sortBy) && sortBy.length < 2) {
+            _a = sortBy, sortBy = _a[0];
+        }
+        return ctx.sort(getSortStrategy(sortBy, comparer, order));
+    };
+    var defaultComparer = function defaultComparer(a, b, order) {
+        if (a == null) return order;
+        if (b == null) return -order;
+        if ((typeof a === "undefined" ? "undefined" : _type_of(a)) !== (typeof b === "undefined" ? "undefined" : _type_of(b))) {
+            return (typeof a === "undefined" ? "undefined" : _type_of(a)) < (typeof b === "undefined" ? "undefined" : _type_of(b)) ? -1 : 1;
+        }
+        if (a < b) return -1;
+        if (a > b) return 1;
+        return 0;
+    };
+    var sort = createNewSortInstance({
+        comparer: defaultComparer
+    });
+    var inPlaceSort = createNewSortInstance({
+        comparer: defaultComparer,
+        inPlaceSorting: true
+    });
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
+    function traverseObj(object) {
+        var path = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [], pairs = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : /* @__PURE__ */ new Map();
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = Object.keys(object)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                var key = _step.value;
+                var val = object[key];
+                var nestedPath = _to_consumable_array(path).concat([
+                    key
+                ]);
+                if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object" && val !== null) {
+                    traverseObj(val, nestedPath, pairs);
+                } else {
+                    pairs.set(nestedPath, val);
+                }
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+        return pairs;
+    }
+    var Registry = /*#__PURE__*/ function() {
+        function Registry(initialSet, logger) {
+            var _this = this;
+            _class_call_check(this, Registry);
+            this.store = [];
+            this.logger = logger;
+            initialSet === null || initialSet === void 0 ? void 0 : initialSet.forEach(function(param) {
+                var _param = _sliced_to_array(param, 2), match = _param[0], value = _param[1];
+                _this.set(match, value);
+            });
+        }
+        _create_class(Registry, [
+            {
+                /**
+     * Add match -> value mapping to the registry
+     *
+     * If an entry with the same specificity and matching key already exists, it will be replaced
+     * and a debug log will be emitted (if a logger is configured).
+     *
+     * @param match - The key to match against (can be a primitive or object)
+     * @param value - The value to associate with this key
+     */ key: "set",
+                value: function set(match, value) {
+                    var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createObjectMatcher(match) : createBasicMatcher(match);
+                    var existingIndex = this.store.findIndex(function(entry) {
+                        return entry.matcher(match) && matcher(entry.key);
+                    });
+                    if (existingIndex !== -1) {
+                        var _this_logger_debug, _this_logger;
+                        this.store.splice(existingIndex, 1);
+                        (_this_logger = this.logger) === null || _this_logger === void 0 ? void 0 : (_this_logger_debug = _this_logger.debug) === null || _this_logger_debug === void 0 ? void 0 : _this_logger_debug.call(_this_logger, "Registry: Replacing existing entry for key ", match);
+                    }
+                    this.store.push({
+                        key: match,
+                        value: value,
+                        matcher: matcher
+                    });
+                    this.store = sort(this.store).desc(function(entry) {
+                        return entry.matcher.count;
+                    });
+                }
+            },
+            {
+                /**
+     * Fetch the best match in the registry
+     *
+     * Searches for the most specific entry that matches the given query.
+     * The registry is sorted by specificity (matcher.count) in descending order,
+     * so we iterate forward to find the highest specificity match first.
+     *
+     * @param query - The query object to match against registered keys
+     * @returns The value associated with the best matching key, or undefined if no match found
+     */ key: "get",
+                value: function get(query) {
+                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                    try {
+                        for(var _iterator = this.store[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                            var entry = _step.value;
+                            if (entry.matcher(query)) {
+                                return entry.value;
+                            }
+                        }
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally{
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                _iterator.return();
+                            }
+                        } finally{
+                            if (_didIteratorError) {
+                                throw _iteratorError;
+                            }
+                        }
+                    }
+                    return void 0;
+                }
+            },
+            {
+                /** Loop over all entries and run callback */ key: "forEach",
+                value: function forEach(callbackfn) {
+                    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+                    try {
+                        for(var _iterator = this.store[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                            var entry = _step.value;
+                            callbackfn(entry);
+                        }
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally{
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return != null) {
+                                _iterator.return();
+                            }
+                        } finally{
+                            if (_didIteratorError) {
+                                throw _iteratorError;
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                /** Reset the items in the registry */ key: "clear",
+                value: function clear() {
+                    this.store = [];
+                }
+            },
+            {
+                /** Check if the registry is empty*/ key: "isRegistryEmpty",
+                value: function isRegistryEmpty() {
+                    return this.store.length === 0;
+                }
+            }
+        ]);
+        return Registry;
+    }();
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_timm7 = __toESM(require_timm(), 1);
     var import_timm8 = __toESM(require_timm(), 1);
     var import_timm9 = __toESM(require_timm(), 1);
@@ -3186,7 +3465,7 @@ var ReferenceAssetsPlugin = function() {
                 return toValue(value);
             }
         };
-        var expression2 = function() {
+        var expression = function() {
             if (ch === BACK_TICK) {
                 next(BACK_TICK);
                 var exp = ch;
@@ -3230,7 +3509,7 @@ var ReferenceAssetsPlugin = function() {
         var simpleSegment = function() {
             var allowBoolValue = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : false;
             var _nestedPath, _ref;
-            return (_ref = (_nestedPath = nestedPath()) !== null && _nestedPath !== void 0 ? _nestedPath : expression2()) !== null && _ref !== void 0 ? _ref : identifier(allowBoolValue);
+            return (_ref = (_nestedPath = nestedPath()) !== null && _nestedPath !== void 0 ? _nestedPath : expression()) !== null && _ref !== void 0 ? _ref : identifier(allowBoolValue);
         };
         var segment = function() {
             var segments = [];
@@ -3340,8 +3619,8 @@ var ReferenceAssetsPlugin = function() {
                 return new _BindingInstance(rawBinding);
             };
             _class_call_check(this, _BindingInstance);
-            var split2 = Array.isArray(raw) ? raw : raw.split(".");
-            this.split = split2.map(function(segment) {
+            var split = Array.isArray(raw) ? raw : raw.split(".");
+            this.split = split.map(function(segment) {
                 if (typeof segment === "number") {
                     return segment;
                 }
@@ -3497,6 +3776,7 @@ var ReferenceAssetsPlugin = function() {
             updates: Object.keys((_context_updates = context.updates) !== null && _context_updates !== void 0 ? _context_updates : {}).length > 0 ? context.updates : void 0
         };
     }
+    var SIMPLE_BINDING_REGEX = /^[\w\-@]+(\.[\w\-@]+)*$/;
     var BINDING_BRACKETS_REGEX = /[\s()*=`{}'"[\]]/;
     var LAZY_BINDING_REGEX = /^[^.]+(\..+)*$/;
     var DEFAULT_OPTIONS = {
@@ -4264,22 +4544,22 @@ var ReferenceAssetsPlugin = function() {
                         }
                     }));
                     var _this_hooks_beforeEvaluate_call;
-                    var expression2 = (_this_hooks_beforeEvaluate_call = this.hooks.beforeEvaluate.call(expr, resolvedOpts)) !== null && _this_hooks_beforeEvaluate_call !== void 0 ? _this_hooks_beforeEvaluate_call : expr;
-                    while(isObjectExpression(expression2)){
-                        expression2 = expression2.value;
+                    var expression = (_this_hooks_beforeEvaluate_call = this.hooks.beforeEvaluate.call(expr, resolvedOpts)) !== null && _this_hooks_beforeEvaluate_call !== void 0 ? _this_hooks_beforeEvaluate_call : expr;
+                    while(isObjectExpression(expression)){
+                        expression = expression.value;
                     }
-                    if (typeof expression2 === "number" || typeof expression2 === "boolean" || expression2 === void 0 || expression2 === null) {
-                        return expression2;
+                    if (typeof expression === "number" || typeof expression === "boolean" || expression === void 0 || expression === null) {
+                        return expression;
                     }
-                    if (isExpressionNode(expression2)) {
-                        return this._execAST(expression2, resolvedOpts);
+                    if (isExpressionNode(expression)) {
+                        return this._execAST(expression, resolvedOpts);
                     }
-                    if (Array.isArray(expression2)) {
-                        return expression2.reduce(function(_nothing, exp) {
+                    if (Array.isArray(expression)) {
+                        return expression.reduce(function(_nothing, exp) {
                             return _this.evaluate(exp, options);
                         }, null);
                     }
-                    return this._execString(String(expression2), resolvedOpts);
+                    return this._execString(String(expression), resolvedOpts);
                 }
             },
             {
@@ -7485,134 +7765,6 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return ViewInstance;
     }();
-    var Builder = /*#__PURE__*/ function() {
-        function _Builder() {
-            _class_call_check(this, _Builder);
-        }
-        _create_class(_Builder, null, [
-            {
-                key: "asset",
-                value: /**
-     * Creates an asset node
-     *
-     * @param value - the value to put in the asset node
-     */ function asset(value) {
-                    return {
-                        type: "asset",
-                        value: value
-                    };
-                }
-            },
-            {
-                key: "assetWrapper",
-                value: function assetWrapper(value) {
-                    var valueNode = _Builder.value();
-                    _Builder.addChild(valueNode, "asset", value);
-                    return valueNode;
-                }
-            },
-            {
-                key: "value",
-                value: /**
-     * Creates a value node
-     *
-     * @param v - The object to put in the value node
-     */ function value(v) {
-                    return {
-                        type: "value",
-                        value: v
-                    };
-                }
-            },
-            {
-                key: "multiNode",
-                value: /**
-     * Creates a multiNode and associates the multiNode as the parent
-     * of all the value nodes
-     *
-     * @param values - the value, applicability or async nodes to put in the multinode
-     */ function multiNode() {
-                    for(var _len = arguments.length, values = new Array(_len), _key = 0; _key < _len; _key++){
-                        values[_key] = arguments[_key];
-                    }
-                    var m = {
-                        type: "multi-node",
-                        override: true,
-                        values: values
-                    };
-                    values.forEach(function(v) {
-                        v.parent = m;
-                    });
-                    return m;
-                }
-            },
-            {
-                key: "asyncNode",
-                value: /**
-     * Creates an async node
-     *
-     * @param id - the id of async node. It should be identical for each async node
-     */ function asyncNode(id) {
-                    var flatten2 = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true, onValueReceived = arguments.length > 2 ? arguments[2] : void 0;
-                    return {
-                        id: id,
-                        type: "async",
-                        flatten: flatten2,
-                        onValueReceived: onValueReceived,
-                        value: {
-                            type: "value",
-                            value: {
-                                id: id
-                            }
-                        }
-                    };
-                }
-            },
-            {
-                key: "addChild",
-                value: /**
-     * Adds a child node to a node
-     *
-     * @param node - The node to add a child to
-     * @param path - The path at which to add the child
-     * @param child - The child node
-     */ function addChild(node, path, child) {
-                    child.parent = node;
-                    var newChild = {
-                        path: Array.isArray(path) ? path : [
-                            path
-                        ],
-                        value: child
-                    };
-                    node.children = node.children || [];
-                    node.children.push(newChild);
-                    return node;
-                }
-            },
-            {
-                key: "updateChildrenByPath",
-                value: /**
-     * Updates children of a node of the same path and preserves order
-     *
-     * @param node - The node to update children for
-     * @param pathToMatch - The path to match against child paths
-     * @param mapFn - Function to transform matching children
-     */ function updateChildrenByPath(node, pathToMatch, updateFn) {
-                    if (!node.children) return node;
-                    var updatedChildren = node.children.map(function(child) {
-                        return(// Check if paths match exactly
-                        child.path.join() === pathToMatch.join() ? _object_spread_props(_object_spread({}, child), {
-                            value: updateFn(child)
-                        }) : child);
-                    });
-                    return _object_spread_props(_object_spread({}, node), {
-                        children: updatedChildren
-                    });
-                }
-            }
-        ]);
-        return _Builder;
-    }();
     var templateSymbol = Symbol("template");
     var TemplatePlugin = /*#__PURE__*/ function() {
         function TemplatePlugin(options) {
@@ -7651,12 +7803,12 @@ var ReferenceAssetsPlugin = function() {
                         var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
                         try {
                             for(var _iterator = templateSubstitutions[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                                var _step_value = _step.value, expression2 = _step_value.expression, value = _step_value.value;
+                                var _step_value = _step.value, expression = _step_value.expression, value = _step_value.value;
                                 var flags = "g";
-                                if ((typeof expression2 === "undefined" ? "undefined" : _type_of(expression2)) === "object") {
-                                    flags = "".concat(expression2.flags).concat(expression2.global ? "" : "g");
+                                if ((typeof expression === "undefined" ? "undefined" : _type_of(expression)) === "object") {
+                                    flags = "".concat(expression.flags).concat(expression.global ? "" : "g");
                                 }
-                                templateStr = templateStr.replace(new RegExp(expression2, flags), value);
+                                templateStr = templateStr.replace(new RegExp(expression, flags), value);
                             }
                         } catch (err) {
                             _didIteratorError = true;
@@ -8237,11 +8389,11 @@ var ReferenceAssetsPlugin = function() {
                         };
                         resolver.hooks.beforeResolve.tap("asset-transform", function(node, options) {
                             if (node && (node.type === "asset" || node.type === "view")) {
-                                var transform3 = _this.registry.get(node.value);
-                                if (transform3 === null || transform3 === void 0 ? void 0 : transform3.beforeResolve) {
+                                var transform2 = _this.registry.get(node.value);
+                                if (transform2 === null || transform2 === void 0 ? void 0 : transform2.beforeResolve) {
                                     var _options_node;
                                     var store = getStore((_options_node = options.node) !== null && _options_node !== void 0 ? _options_node : node, _this.beforeResolveSymbol);
-                                    return transform3.beforeResolve(node, options, store);
+                                    return transform2.beforeResolve(node, options, store);
                                 }
                             }
                             return node;
@@ -8265,10 +8417,10 @@ var ReferenceAssetsPlugin = function() {
                             if (!originalNode) {
                                 return value;
                             }
-                            var transform3 = _this.registry.get(value);
-                            if (transform3 === null || transform3 === void 0 ? void 0 : transform3.resolve) {
+                            var transform2 = _this.registry.get(value);
+                            if (transform2 === null || transform2 === void 0 ? void 0 : transform2.resolve) {
                                 var store = getStore(originalNode, _this.resolveSymbol);
-                                return transform3 === null || transform3 === void 0 ? void 0 : transform3.resolve(value, options, store);
+                                return transform2 === null || transform2 === void 0 ? void 0 : transform2.resolve(value, options, store);
                             }
                             return value;
                         });
@@ -8505,8 +8657,8 @@ var ReferenceAssetsPlugin = function() {
                         set: function(transaction) {
                             return dataController.set(transaction);
                         },
-                        evaluate: function(expression2) {
-                            return expressionEvaluator.evaluate(expression2);
+                        evaluate: function(expression) {
+                            return expressionEvaluator.evaluate(expression);
                         }
                     });
                     this.hooks.bindingParser.call(pathResolver);
@@ -8814,6 +8966,322 @@ var ReferenceAssetsPlugin = function() {
         version: PLAYER_VERSION,
         commit: COMMIT
     };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/assets/text/transform.ts
+    var textTransform = function(asset, options) {
+        var text = asset.text;
+        if (asset.text && SIMPLE_BINDING_REGEX.test(asset.text)) {
+            try {
+                var _options_data_model_get;
+                text = (_options_data_model_get = options.data.model.get(asset.text)) !== null && _options_data_model_get !== void 0 ? _options_data_model_get : asset.text;
+            } catch (e) {
+                text = asset.text;
+            }
+        }
+        return _object_spread_props(_object_spread({}, asset), {
+            text: text
+        });
+    };
+    var AssetTransformPlugin = /*#__PURE__*/ function() {
+        function AssetTransformPlugin(transforms) {
+            _class_call_check(this, AssetTransformPlugin);
+            this.name = "asset-transform";
+            this.registry = cleanupTransformRegistry(transforms);
+        }
+        _create_class(AssetTransformPlugin, [
+            {
+                key: "apply",
+                value: function apply(player) {
+                    var _this = this;
+                    player.hooks.viewController.tap(this.name, function(vc) {
+                        _this.registry.forEach(function(param) {
+                            var key = param.key, value = param.value;
+                            return vc.transformRegistry.set(key, maybeCompose(value));
+                        });
+                    });
+                }
+            }
+        ]);
+        return AssetTransformPlugin;
+    }();
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/assets/button/transform.ts
+    var transform = function(button, options) {
+        return _object_spread_props(_object_spread({}, button), {
+            run: function run() {
+                if (button.exp) {
+                    options.evaluate(button.exp);
+                }
+                if (button.value) {
+                    var _options_transition;
+                    (_options_transition = options.transition) === null || _options_transition === void 0 ? void 0 : _options_transition.call(options, button.value);
+                }
+            }
+        });
+    };
+    var expPropTransform = function(asset) {
+        var _asset_plugins_stringResolver, _asset_plugins, _asset_plugins1, _asset_plugins_stringResolver1, _asset_plugins2;
+        var skipArray = (_asset_plugins = asset.plugins) === null || _asset_plugins === void 0 ? void 0 : (_asset_plugins_stringResolver = _asset_plugins.stringResolver) === null || _asset_plugins_stringResolver === void 0 ? void 0 : _asset_plugins_stringResolver.propertiesToSkip;
+        if (skipArray && skipArray.indexOf("exp") > -1) return asset;
+        var _asset_plugins_stringResolver_propertiesToSkip;
+        return _object_spread_props(_object_spread({}, asset), {
+            plugins: _object_spread_props(_object_spread({}, asset.plugins), {
+                stringResolver: _object_spread_props(_object_spread({}, asset === null || asset === void 0 ? void 0 : (_asset_plugins1 = asset.plugins) === null || _asset_plugins1 === void 0 ? void 0 : _asset_plugins1.stringResolver), {
+                    propertiesToSkip: _to_consumable_array((_asset_plugins_stringResolver_propertiesToSkip = (_asset_plugins2 = asset.plugins) === null || _asset_plugins2 === void 0 ? void 0 : (_asset_plugins_stringResolver1 = _asset_plugins2.stringResolver) === null || _asset_plugins_stringResolver1 === void 0 ? void 0 : _asset_plugins_stringResolver1.propertiesToSkip) !== null && _asset_plugins_stringResolver_propertiesToSkip !== void 0 ? _asset_plugins_stringResolver_propertiesToSkip : []).concat([
+                        "exp"
+                    ])
+                })
+            })
+        });
+    };
+    var buttonTransform = compose(transform, composeBefore(expPropTransform));
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/assets/text-field/transform.ts
+    var textFieldTransform = function(asset, options) {
+        var _options_validation, _options_validation1;
+        var binding = asset.value;
+        return _object_spread_props(_object_spread({}, asset), {
+            currentValue: binding === void 0 ? "" : options.data.model.get(binding, {
+                includeInvalid: true,
+                formatted: true
+            }),
+            set: function set(newValue) {
+                if (binding === void 0) return;
+                options.data.model.set([
+                    [
+                        binding,
+                        newValue
+                    ]
+                ], {
+                    formatted: true
+                });
+            },
+            format: function format(newValue) {
+                if (binding === void 0) return newValue;
+                return options.data.format(binding, newValue);
+            },
+            validation: binding === void 0 ? void 0 : (_options_validation = options.validation) === null || _options_validation === void 0 ? void 0 : _options_validation.get(binding, {
+                track: true
+            }),
+            dataType: binding === void 0 ? void 0 : (_options_validation1 = options.validation) === null || _options_validation1 === void 0 ? void 0 : _options_validation1.type(binding)
+        });
+    };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/assets/check-box/transform.ts
+    var checkBoxTransform = function(asset, options) {
+        var binding = asset.value;
+        return _object_spread_props(_object_spread({}, asset), {
+            currentValue: binding === void 0 ? false : Boolean(options.data.model.get(binding, {
+                includeInvalid: true
+            })),
+            set: function set(newValue) {
+                if (binding === void 0) return;
+                options.data.model.set([
+                    [
+                        binding,
+                        newValue
+                    ]
+                ]);
+            }
+        });
+    };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/assets/slider/transform.ts
+    var sliderTransform = function(asset, options) {
+        var binding = asset.value;
+        var _asset_minValue;
+        var fallback = (_asset_minValue = asset.minValue) !== null && _asset_minValue !== void 0 ? _asset_minValue : 0;
+        var _options_data_model_get;
+        return _object_spread_props(_object_spread({}, asset), {
+            currentValue: binding === void 0 ? fallback : Number((_options_data_model_get = options.data.model.get(binding, {
+                includeInvalid: true
+            })) !== null && _options_data_model_get !== void 0 ? _options_data_model_get : fallback),
+            set: function set(newValue) {
+                if (binding === void 0) return;
+                options.data.model.set([
+                    [
+                        binding,
+                        newValue
+                    ]
+                ]);
+            }
+        });
+    };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/assets/date-time-input/transform.ts
+    var dateTimeInputTransform = function(asset, options) {
+        var binding = asset.value;
+        var _options_data_model_get;
+        return _object_spread_props(_object_spread({}, asset), {
+            currentValue: binding === void 0 ? "" : (_options_data_model_get = options.data.model.get(binding, {
+                includeInvalid: true
+            })) !== null && _options_data_model_get !== void 0 ? _options_data_model_get : "",
+            set: function set(newValue) {
+                if (binding === void 0) return;
+                options.data.model.set([
+                    [
+                        binding,
+                        newValue
+                    ]
+                ]);
+            }
+        });
+    };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/assets/choice-picker/transform.ts
+    var choicePickerTransform = function(asset, options) {
+        var binding = asset.selections;
+        var raw = binding === void 0 ? [] : options.data.model.get(binding, {
+            includeInvalid: true
+        });
+        return _object_spread_props(_object_spread({}, asset), {
+            currentValue: Array.isArray(raw) ? raw : [],
+            set: function set(newValue) {
+                if (binding === void 0) return;
+                options.data.model.set([
+                    [
+                        binding,
+                        newValue
+                    ]
+                ]);
+            }
+        });
+    };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/expressions/validation.ts
+    var required = function(_ctx, value) {
+        if (value === null || value === void 0) return false;
+        if (typeof value === "string") return value.length > 0;
+        if (Array.isArray(value)) return value.length > 0;
+        return true;
+    };
+    var regex = function(_ctx, value, pattern) {
+        if (value === null || value === void 0 || !pattern) return false;
+        try {
+            return new RegExp(pattern).test(String(value));
+        } catch (e) {
+            return false;
+        }
+    };
+    var length = function(_ctx, value, min, max) {
+        if (value === null || value === void 0) return false;
+        var len = String(value).length;
+        var lo = typeof min === "number" ? min : -Infinity;
+        var hi = typeof max === "number" ? max : Infinity;
+        return len >= lo && len <= hi;
+    };
+    var numeric = function(_ctx, value, min, max) {
+        var n = Number(value);
+        if (Number.isNaN(n)) return false;
+        var lo = typeof min === "number" ? min : -Infinity;
+        var hi = typeof max === "number" ? max : Infinity;
+        return n >= lo && n <= hi;
+    };
+    var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    var email = function(_ctx, value) {
+        if (typeof value !== "string") return false;
+        return EMAIL_RE.test(value);
+    };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/expressions/format.ts
+    var formatString = function(_ctx) {
+        for(var _len = arguments.length, parts = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++){
+            parts[_key - 1] = arguments[_key];
+        }
+        return parts.map(function(p) {
+            return p === null || p === void 0 ? "" : String(p);
+        }).join("");
+    };
+    var formatNumber = function(_ctx, value, a, b) {
+        var n = Number(value);
+        if (Number.isNaN(n)) return String(value !== null && value !== void 0 ? value : "");
+        var _pickNumberLocaleAndOptions = pickNumberLocaleAndOptions(a, b), locale = _pickNumberLocaleAndOptions.locale, options = _pickNumberLocaleAndOptions.options;
+        return new Intl.NumberFormat(locale, options).format(n);
+    };
+    var formatCurrency = function(_ctx, value, currency, locale) {
+        var n = Number(value);
+        if (Number.isNaN(n) || !currency) return String(value !== null && value !== void 0 ? value : "");
+        return new Intl.NumberFormat(locale, {
+            style: "currency",
+            currency: currency
+        }).format(n);
+    };
+    var DATE_STYLE_MAP = {
+        short: {
+            dateStyle: "short"
+        },
+        medium: {
+            dateStyle: "medium"
+        },
+        long: {
+            dateStyle: "long"
+        },
+        full: {
+            dateStyle: "full"
+        }
+    };
+    var formatDate = function(_ctx, value, pattern, locale) {
+        var date = _instanceof(value, Date) ? value : new Date(value);
+        if (Number.isNaN(date.getTime())) return String(value !== null && value !== void 0 ? value : "");
+        var options = pattern ? DATE_STYLE_MAP[pattern] : void 0;
+        return new Intl.DateTimeFormat(locale, options).format(date);
+    };
+    var pluralize = function(_ctx, count, options) {
+        var n = Number(count);
+        if (!options || (typeof options === "undefined" ? "undefined" : _type_of(options)) !== "object" || Number.isNaN(n)) return "";
+        var category = new Intl.PluralRules(options.locale).select(n);
+        var _options_category, _ref, _ref1;
+        return (_ref1 = (_ref = (_options_category = options[category]) !== null && _options_category !== void 0 ? _options_category : options.other) !== null && _ref !== void 0 ? _ref : options.default) !== null && _ref1 !== void 0 ? _ref1 : "";
+    };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/expressions/action.ts
+    var openUrl = function(_ctx, url, target) {
+        if (typeof window === "undefined" || !url) return;
+        window.open(String(url), target !== null && target !== void 0 ? target : "_blank", "noopener,noreferrer");
+    };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/expressions/logic.ts
+    var and = function(_ctx) {
+        for(var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++){
+            args[_key - 1] = arguments[_key];
+        }
+        return args.every(Boolean);
+    };
+    var or = function(_ctx) {
+        for(var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++){
+            args[_key - 1] = arguments[_key];
+        }
+        return args.some(Boolean);
+    };
+    var not = function(_ctx, value) {
+        return !value;
+    };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/expressions/index.ts
+    var a2uiExpressions = {
+        required: required,
+        regex: regex,
+        length: length,
+        numeric: numeric,
+        email: email,
+        formatString: formatString,
+        formatNumber: formatNumber,
+        formatCurrency: formatCurrency,
+        formatDate: formatDate,
+        pluralize: pluralize,
+        openUrl: openUrl,
+        and: and,
+        or: or,
+        not: not
+    };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+meta-plugin@0.0.0/node_modules/@player-ui/meta-plugin/dist/index.mjs
+    var MetaPlugin = /*#__PURE__*/ function() {
+        function MetaPlugin() {
+            var plugins = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : [];
+            _class_call_check(this, MetaPlugin);
+            this.name = "meta-plugin";
+            this.plugins = plugins;
+        }
+        _create_class(MetaPlugin, [
+            {
+                key: "apply",
+                value: function apply(player) {
+                    this.plugins.forEach(function(plugin) {
+                        return player.registerPlugin(plugin);
+                    });
+                }
+            }
+        ]);
+        return MetaPlugin;
+    }();
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+async-node-plugin@0.0.0/node_modules/@player-ui/async-node-plugin/dist/index.mjs
     var import_queue_microtask3 = __toESM(require_queue_microtask(), 1);
     var ASYNC_ERROR_TYPE = "ASYNC-PLUGIN";
@@ -8835,104 +9303,6 @@ var ReferenceAssetsPlugin = function() {
         }
         return AsyncNodeError;
     }(_wrap_native_super(Error));
-    var getMatchValue = function(pathA, pathB) {
-        if (pathA.length > pathB.length) {
-            return 0;
-        }
-        var matchCount = 0;
-        for(var i = 0; i < pathA.length; i++){
-            if (pathA[i] === pathB[i]) {
-                matchCount++;
-            } else {
-                return 0;
-            }
-        }
-        return matchCount;
-    };
-    var extractNodeFromPath = function(node, path) {
-        if (path === void 0 || path.length === 0) {
-            return node;
-        }
-        if (!("children" in node && node.children)) {
-            return void 0;
-        }
-        var matchResult = 0;
-        var bestMatch;
-        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-        try {
-            for(var _iterator = node.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                var child = _step.value;
-                var matchValue = getMatchValue(child.path, path);
-                if (matchValue > matchResult) {
-                    matchResult = matchValue;
-                    bestMatch = child;
-                }
-            }
-        } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-        } finally{
-            try {
-                if (!_iteratorNormalCompletion && _iterator.return != null) {
-                    _iterator.return();
-                }
-            } finally{
-                if (_didIteratorError) {
-                    throw _iteratorError;
-                }
-            }
-        }
-        if (!bestMatch) {
-            return void 0;
-        }
-        if (matchResult >= path.length) {
-            return bestMatch.value;
-        }
-        return extractNodeFromPath(bestMatch.value, path.slice(matchResult));
-    };
-    var traverseAndReplace = function(node, replaceFn) {
-        if (node.type === NodeType.MultiNode) {
-            var index = 0;
-            while(index < node.values.length){
-                var child = node.values[index];
-                if (!child) {
-                    index++;
-                    continue;
-                }
-                var result = replaceFn(child);
-                if (result.type === NodeType.MultiNode) {
-                    node.values = _to_consumable_array(node.values.slice(0, index)).concat(_to_consumable_array(result.values), _to_consumable_array(node.values.slice(index + 1)));
-                } else {
-                    node.values[index] = result;
-                    index++;
-                }
-            }
-            return node;
-        }
-        return replaceFn(node);
-    };
-    var unwrapAsset = function(node) {
-        var _node_children;
-        if (node.type !== NodeType.Value) {
-            return node;
-        }
-        var child = (_node_children = node.children) === null || _node_children === void 0 ? void 0 : _node_children.find(function(x) {
-            return x.path.length === 1 && x.path[0] === "asset";
-        });
-        if (!child) {
-            return node;
-        }
-        return child.value;
-    };
-    var requiresAssetWrapper = function(node) {
-        if (node.type === NodeType.Asset) {
-            return true;
-        }
-        if (node.type !== NodeType.Applicability) {
-            return false;
-        }
-        return node.value.type === NodeType.Asset;
-    };
     var isAsyncPlayerError = function(error) {
         return error.type === ASYNC_ERROR_TYPE;
     };
@@ -8957,62 +9327,6 @@ var ReferenceAssetsPlugin = function() {
             return (_context_asyncNodeCache_get = context.asyncNodeCache.get(playerError.metadata.node.id)) === null || _context_asyncNodeCache_get === void 0 ? void 0 : _context_asyncNodeCache_get.asyncNode;
         }
         return void 0;
-    };
-    var defaultGetNodeId = function(node) {
-        return "async-".concat(node.value.id);
-    };
-    var createAsyncTransform = function(options) {
-        var transformAssetType = options.transformAssetType, wrapperAssetType = options.wrapperAssetType, getNestedAsset = options.getNestedAsset, _options_getAsyncNodeId = options.getAsyncNodeId, getAsyncNodeId = _options_getAsyncNodeId === void 0 ? defaultGetNodeId : _options_getAsyncNodeId, _options_path = options.path, path = _options_path === void 0 ? [
-            "values"
-        ] : _options_path, tmp = options.flatten, flatten2 = tmp === void 0 ? true : tmp, _options_asyncNodePosition = options.asyncNodePosition, asyncNodePosition = _options_asyncNodePosition === void 0 ? "append" : _options_asyncNodePosition;
-        var replaceNode = function(node) {
-            var unwrapped = unwrapAsset(node);
-            if (unwrapped.type !== NodeType.Asset || unwrapped.value.type !== transformAssetType) {
-                return node;
-            }
-            var transformed = asyncTransform2(unwrapped);
-            var _extractNodeFromPath;
-            return (_extractNodeFromPath = extractNodeFromPath(transformed, path)) !== null && _extractNodeFromPath !== void 0 ? _extractNodeFromPath : node;
-        };
-        var replacer = function(node) {
-            return traverseAndReplace(node, replaceNode);
-        };
-        var asyncTransform2 = function(node) {
-            var _Builder;
-            var id = getAsyncNodeId(node);
-            var asset = getNestedAsset === null || getNestedAsset === void 0 ? void 0 : getNestedAsset(node);
-            var replaceFunction = flatten2 ? replacer : void 0;
-            var asyncNode = Builder.asyncNode(id, flatten2, replaceFunction);
-            var values = [
-                asyncNode
-            ];
-            if (asset) {
-                var otherValues = [];
-                if (requiresAssetWrapper(asset)) {
-                    otherValues.push(Builder.assetWrapper(asset));
-                } else if (asset.type === NodeType.MultiNode) {
-                    var _otherValues;
-                    (_otherValues = otherValues).push.apply(_otherValues, _to_consumable_array(asset.values));
-                } else {
-                    otherValues.push(asset);
-                }
-                if (asyncNodePosition === "append") {
-                    var _values;
-                    (_values = values).unshift.apply(_values, _to_consumable_array(otherValues));
-                } else {
-                    var _values1;
-                    (_values1 = values).push.apply(_values1, _to_consumable_array(otherValues));
-                }
-            }
-            var multiNode = (_Builder = Builder).multiNode.apply(_Builder, _to_consumable_array(values));
-            var wrapperAsset = Builder.asset({
-                id: wrapperAssetType + "-" + id,
-                type: wrapperAssetType
-            });
-            Builder.addChild(wrapperAsset, path, multiNode);
-            return wrapperAsset;
-        };
-        return asyncTransform2;
     };
     var AsyncNodePluginSymbol = Symbol.for("AsyncNodePlugin");
     var _AsyncNodePlugin = /*#__PURE__*/ function() {
@@ -9470,35 +9784,353 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return AsyncNodePluginPlugin;
     }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/chat-message/transform.ts
-    var transform2 = createAsyncTransform({
-        transformAssetType: "chat-message",
-        wrapperAssetType: "collection",
-        getNestedAsset: function(node) {
-            var _node_children_, _node_children;
-            return (_node_children = node.children) === null || _node_children === void 0 ? void 0 : (_node_children_ = _node_children[0]) === null || _node_children_ === void 0 ? void 0 : _node_children_.value;
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/a2ui/types.ts
+    var A2UI_EVENT_CONTEXT_NAMESPACE = "agent.event.context";
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/a2ui/binding.ts
+    var NUMERIC_SEGMENT = /^(0|[1-9]\d*)$/;
+    var decodeSegment = function(segment) {
+        return segment.replace(/~1/g, "/").replace(/~0/g, "~");
+    };
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/a2ui/dynamic.ts
+    var isObject = function(v) {
+        return (typeof v === "undefined" ? "undefined" : _type_of(v)) === "object" && v !== null && !Array.isArray(v);
+    };
+    var isPathRef = function(v) {
+        return isObject(v) && typeof v.path === "string" && Object.keys(v).length === 1;
+    };
+    var isFunctionCall = function(v) {
+        return isObject(v) && typeof v.call === "string";
+    };
+    function translateDynamicValue(value, logger) {
+        if (value === null || value === void 0) return value;
+        if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+            return value;
         }
-    });
-    var chatMessageTransform = compose(composeBefore(transform2));
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+meta-plugin@0.0.0/node_modules/@player-ui/meta-plugin/dist/index.mjs
-    var MetaPlugin = /*#__PURE__*/ function() {
-        function MetaPlugin() {
-            var plugins = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : [];
-            _class_call_check(this, MetaPlugin);
-            this.name = "meta-plugin";
-            this.plugins = plugins;
+        if (Array.isArray(value)) {
+            return value.map(function(v) {
+                return translateDynamicValue(v, logger);
+            });
         }
-        _create_class(MetaPlugin, [
+        if (isPathRef(value)) {
+            return pointerToBinding(value.path);
+        }
+        if (isFunctionCall(value)) {
+            return translateFunctionCall(value, logger);
+        }
+        var out = {};
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = Object.entries(value)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                var _step_value = _sliced_to_array(_step.value, 2), k = _step_value[0], v = _step_value[1];
+                out[k] = translateDynamicValue(v, logger);
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+        return out;
+    }
+    function renderArg(value) {
+        if (value === null) return "null";
+        if (value === void 0) return "null";
+        if (typeof value === "boolean") return String(value);
+        if (typeof value === "number") return String(value);
+        if (typeof value === "string") return JSON.stringify(value);
+        if (Array.isArray(value)) {
+            return "[".concat(value.map(renderArg).join(", "), "]");
+        }
+        if (isPathRef(value)) {
+            return "{{".concat(pointerToBinding(value.path), "}}");
+        }
+        if (isFunctionCall(value)) {
+            var inner = translateFunctionCall(value);
+            return inner.replace(/^@\[/, "").replace(/\]@$/, "");
+        }
+        return JSON.stringify(value);
+    }
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/a2ui/schema.ts
+    var INPUT_BINDING_PROPS = {
+        TextField: "text",
+        CheckBox: "checked",
+        DateTimeInput: "value",
+        ChoicePicker: "value",
+        Slider: "value"
+    };
+    var CHECK_TO_VALIDATOR = {
+        required: "required",
+        regex: "regex",
+        email: "email",
+        length: "length",
+        numeric: "numeric"
+    };
+    var TYPE_PREFIX = "T_";
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/a2ui/adapter.ts
+    var STRUCTURAL_KEYS = /* @__PURE__ */ new Set([
+        "id",
+        "component",
+        "child",
+        "children",
+        "checks",
+        "action"
+    ]);
+    function inlineComponent(component, ctx, templateScope) {
+        if (ctx.inProgress.has(component.id)) {
+            throw new Error("[a2ui] Component cycle detected at id '".concat(component.id, "'. A2UI requires the component graph to be a tree."));
+        }
+        ctx.inProgress.add(component.id);
+        var asset = {
+            id: component.id,
+            type: component.component
+        };
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = Object.entries(component)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                var _step_value = _sliced_to_array(_step.value, 2), key = _step_value[0], value = _step_value[1];
+                if (STRUCTURAL_KEYS.has(key)) continue;
+                asset[key] = translatePropValue(value, templateScope, ctx, key);
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+        if (typeof component.child === "string") {
+            var childId = component.child;
+            asset.child = wrapInlined(resolveAndInline(childId, ctx, templateScope));
+        }
+        if (component.children) {
+            if (Array.isArray(component.children)) {
+                asset.children = component.children.map(function(id) {
+                    return wrapInlined(resolveAndInline(id, ctx, templateScope));
+                });
+            } else {
+                var _component_children = component.children, path = _component_children.path, componentId = _component_children.componentId;
+                var data = scopedBinding(path, templateScope);
+                var templateComponent = ctx.byId.get(componentId);
+                if (!templateComponent) {
+                    throw new Error("[a2ui] Templated children reference unknown componentId '".concat(componentId, "' on component '").concat(component.id, "'."));
+                }
+                var templated = inlineComponent(_object_spread_props(_object_spread({}, templateComponent), {
+                    id: "".concat(templateComponent.id, "-_index_")
+                }), ctx, data);
+                asset.template = [
+                    {
+                        data: data,
+                        output: "children",
+                        value: {
+                            asset: templated
+                        }
+                    }
+                ];
+            }
+        }
+        if (component.action) {
+            Object.assign(asset, translateAction(component.action, ctx));
+        }
+        ctx.inProgress.delete(component.id);
+        return asset;
+    }
+    var CHILD_KEY_RE = /(?:^|[a-z])Child$|^child$/;
+    var CHILDREN_KEY_RE = /(?:^|[a-z])Children$|^children$/;
+    function translatePropValue(value, templateScope, ctx, parentKey) {
+        if (value === null || value === void 0) return value;
+        if (parentKey && CHILD_KEY_RE.test(parentKey) && typeof value === "string") {
+            return wrapInlined(resolveAndInline(value, ctx, templateScope));
+        }
+        if (parentKey && CHILDREN_KEY_RE.test(parentKey)) {
+            if (Array.isArray(value) && value.every(function(v) {
+                return typeof v === "string";
+            })) {
+                return value.map(function(id) {
+                    return wrapInlined(resolveAndInline(id, ctx, templateScope));
+                });
+            }
+            if ((typeof value === "undefined" ? "undefined" : _type_of(value)) === "object" && value !== null && !Array.isArray(value) && "componentId" in value) {
+                var _ctx_logger;
+                (_ctx_logger = ctx.logger) === null || _ctx_logger === void 0 ? void 0 : _ctx_logger.warn("[a2ui] Templated children are only supported at top-level 'children'; '".concat(parentKey, "' will be left unresolved."));
+            }
+        }
+        if ((typeof value === "undefined" ? "undefined" : _type_of(value)) !== "object") return value;
+        if (Array.isArray(value)) {
+            return value.map(function(v) {
+                return translatePropValue(v, templateScope, ctx, void 0);
+            });
+        }
+        if (isPathRef(value)) {
+            return scopedBinding(value.path, templateScope);
+        }
+        if (isFunctionCall(value)) {
+            if (templateScope) {
+                return translateFunctionCall(rewritePathsInCall(value, templateScope), ctx.logger);
+            }
+            return translateFunctionCall(value, ctx.logger);
+        }
+        var out = {};
+        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+        try {
+            for(var _iterator = Object.entries(value)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                var _step_value = _sliced_to_array(_step.value, 2), k = _step_value[0], v = _step_value[1];
+                out[k] = translatePropValue(v, templateScope, ctx, k);
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally{
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return != null) {
+                    _iterator.return();
+                }
+            } finally{
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+        return out;
+    }
+    function rewritePathsInCall(value, scope) {
+        if (!value || (typeof value === "undefined" ? "undefined" : _type_of(value)) !== "object") return value;
+        if (Array.isArray(value)) {
+            return value.map(function(v) {
+                return rewritePathsInCall(v, scope);
+            });
+        }
+        if (isPathRef(value)) {
+            return {
+                path: scopedPointer(value.path, scope)
+            };
+        }
+        if (isFunctionCall(value)) {
+            return _object_spread_props(_object_spread({}, value), {
+                args: value.args ? Object.fromEntries(Object.entries(value.args).map(function(param) {
+                    var _param = _sliced_to_array(param, 2), k = _param[0], v = _param[1];
+                    return [
+                        k,
+                        rewritePathsInCall(v, scope)
+                    ];
+                })) : value.args
+            });
+        }
+        return Object.fromEntries(Object.entries(value).map(function(param) {
+            var _param = _sliced_to_array(param, 2), k = _param[0], v = _param[1];
+            return [
+                k,
+                rewritePathsInCall(v, scope)
+            ];
+        }));
+    }
+    function renderRhs(value) {
+        if (value === null || value === void 0) return "null";
+        if (typeof value === "boolean") return String(value);
+        if (typeof value === "number") return String(value);
+        if (typeof value === "string") return JSON.stringify(value);
+        if (Array.isArray(value)) {
+            return "[".concat(value.map(renderRhs).join(", "), "]");
+        }
+        if (isPathRef(value)) {
+            return "{{".concat(pointerToBinding(value.path), "}}");
+        }
+        if (isFunctionCall(value)) {
+            return translateFunctionCall(value).replace(/^@\[/, "").replace(/\]@$/, "");
+        }
+        return JSON.stringify(value);
+    }
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/plugins/a2ui-content-plugin.ts
+    var A2UIContentPlugin = /*#__PURE__*/ function() {
+        function A2UIContentPlugin() {
+            _class_call_check(this, A2UIContentPlugin);
+            this.name = "a2ui-content";
+        }
+        _create_class(A2UIContentPlugin, [
             {
                 key: "apply",
                 value: function apply(player) {
-                    this.plugins.forEach(function(plugin) {
-                        return player.registerPlugin(plugin);
+                    player.hooks.transformContent.tap("a2ui-content", function(content, meta) {
+                        if (meta.format !== "a2ui") return content;
+                        return adaptA2UIToFlow(content, player.logger);
                     });
                 }
             }
         ]);
-        return MetaPlugin;
+        return A2UIContentPlugin;
+    }();
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/plugins/a2ui-transform-plugin.ts
+    var A2UITransformPlugin = /*#__PURE__*/ function() {
+        function A2UITransformPlugin() {
+            _class_call_check(this, A2UITransformPlugin);
+            this.name = "a2ui-transforms";
+        }
+        _create_class(A2UITransformPlugin, [
+            {
+                key: "apply",
+                value: function apply(player) {
+                    player.registerPlugin(new AssetTransformPlugin([
+                        [
+                            {
+                                type: "Button"
+                            },
+                            buttonTransform
+                        ],
+                        [
+                            {
+                                type: "TextField"
+                            },
+                            textFieldTransform
+                        ],
+                        [
+                            {
+                                type: "CheckBox"
+                            },
+                            checkBoxTransform
+                        ],
+                        [
+                            {
+                                type: "Slider"
+                            },
+                            sliderTransform
+                        ],
+                        [
+                            {
+                                type: "DateTimeInput"
+                            },
+                            dateTimeInputTransform
+                        ],
+                        [
+                            {
+                                type: "ChoicePicker"
+                            },
+                            choicePickerTransform
+                        ],
+                        [
+                            {
+                                type: "Text"
+                            },
+                            textTransform
+                        ]
+                    ]));
+                }
+            }
+        ]);
+        return A2UITransformPlugin;
     }();
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+expression-plugin@0.0.0/node_modules/@player-ui/expression-plugin/dist/index.mjs
     var ExpressionPlugin = /*#__PURE__*/ function() {
@@ -9522,1375 +10154,39 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return ExpressionPlugin;
     }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugins/chat-ui-demo-plugin.ts
-    var isInChatDemo = function(node) {
-        var _node_parent_parent, _node_parent, _node_parent_parent1, _node_parent1;
-        if (((_node_parent = node.parent) === null || _node_parent === void 0 ? void 0 : (_node_parent_parent = _node_parent.parent) === null || _node_parent_parent === void 0 ? void 0 : _node_parent_parent.type) === NodeType.View && node.parent.parent.value.id === "chat-view") {
-            return true;
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/plugins/a2ui-expressions-plugin.ts
+    var A2UIExpressionsPlugin = /*#__PURE__*/ function() {
+        function A2UIExpressionsPlugin() {
+            _class_call_check(this, A2UIExpressionsPlugin);
+            this.name = "a2ui-expressions";
         }
-        return ((_node_parent1 = node.parent) === null || _node_parent1 === void 0 ? void 0 : (_node_parent_parent1 = _node_parent1.parent) === null || _node_parent_parent1 === void 0 ? void 0 : _node_parent_parent1.type) === NodeType.Asset && node.parent.parent.value.id.startsWith("collection-async-chat-demo");
-    };
-    var createContentFromMessage = function(message, id) {
-        return {
-            asset: {
-                type: "chat-message",
-                id: id,
-                value: {
-                    asset: {
-                        type: "text",
-                        id: "".concat(id, "-value"),
-                        value: message
-                    }
-                }
-            }
-        };
-    };
-    var createBrokenRenderContent = function(id) {
-        return {
-            asset: {
-                id: id,
-                type: "input",
-                binding: "binding",
-                label: 100
-            }
-        };
-    };
-    var createBrokenTransformContent = function(id) {
-        return {
-            asset: {
-                id: id,
-                type: "input",
-                binding: {
-                    prop: "value"
-                }
-            }
-        };
-    };
-    var ChatUiDemoPlugin = /*#__PURE__*/ function() {
-        function ChatUiDemoPlugin() {
-            _class_call_check(this, ChatUiDemoPlugin);
-            this.name = "chat-ui-demo-plugin";
-        }
-        _create_class(ChatUiDemoPlugin, [
+        _create_class(A2UIExpressionsPlugin, [
             {
                 key: "apply",
                 value: function apply(player) {
-                    var asyncNodePlugin = player.findPlugin(AsyncNodePlugin.Symbol);
-                    if (!asyncNodePlugin) {
-                        player.logger.warn("Failed to apply '".concat(this.name, "'. Reason: Could not find AsyncNodePlugin."));
-                        return;
-                    }
-                    var deferredPromises = {};
-                    var allPromiseKeys = [];
-                    var counter = 0;
-                    var sendMessage = function(context, nodeId, getContent) {
-                        if (nodeId && !(nodeId in deferredPromises)) {
-                            var _context_logger;
-                            (_context_logger = context.logger) === null || _context_logger === void 0 ? void 0 : _context_logger.warn("'send' expression called with unrecognized id '".concat(nodeId, "'"));
-                            return;
-                        }
-                        if (!nodeId && allPromiseKeys.length === 0) {
-                            var _context_logger1;
-                            (_context_logger1 = context.logger) === null || _context_logger1 === void 0 ? void 0 : _context_logger1.warn("'send' called with no waiting async nodes");
-                            return;
-                        }
-                        var keys = nodeId ? [
-                            nodeId
-                        ] : allPromiseKeys;
-                        var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                        try {
-                            for(var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                                var id = _step.value;
-                                var resolveFunction = deferredPromises[id];
-                                resolveFunction === null || resolveFunction === void 0 ? void 0 : resolveFunction(getContent === null || getContent === void 0 ? void 0 : getContent());
-                                delete deferredPromises[id];
-                            }
-                        } catch (err) {
-                            _didIteratorError = true;
-                            _iteratorError = err;
-                        } finally{
-                            try {
-                                if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                    _iterator.return();
-                                }
-                            } finally{
-                                if (_didIteratorError) {
-                                    throw _iteratorError;
-                                }
-                            }
-                        }
-                        if (nodeId) {
-                            var index = allPromiseKeys.indexOf(nodeId);
-                            allPromiseKeys.splice(index, 1);
-                        } else {
-                            allPromiseKeys = [];
-                        }
-                    };
-                    asyncNodePlugin.hooks.onAsyncNode.tap(this.name, function(node) {
-                        if (!isInChatDemo(node)) {
-                            return Promise.resolve(void 0);
-                        }
-                        return new Promise(function(res) {
-                            deferredPromises[node.id] = res;
-                            allPromiseKeys.push(node.id);
-                        });
-                    });
-                    var sendRealMessage = function(context, message, nodeId) {
-                        return sendMessage(context, nodeId, function() {
-                            return createContentFromMessage(message, "chat-demo-".concat(counter++));
-                        });
-                    };
-                    var sendBrokenMessage = function(context, _, nodeId) {
-                        return sendMessage(context, nodeId, function() {
-                            return createBrokenRenderContent("chat-demo-".concat(counter++));
-                        });
-                    };
-                    var sendBrokenTransformMessage = function(context, _, nodeId) {
-                        return sendMessage(context, nodeId, function() {
-                            return createBrokenTransformContent("chat-demo-".concat(counter++));
-                        });
-                    };
-                    player.hooks.view.tap(this.name, function(_) {
-                        deferredPromises = {};
-                        allPromiseKeys = [];
-                        counter = 0;
-                    });
-                    var expressionPlugin = new ExpressionPlugin(/* @__PURE__ */ new Map([
-                        [
-                            "send",
-                            sendRealMessage
-                        ],
-                        [
-                            "sendBroken",
-                            sendBrokenMessage
-                        ],
-                        [
-                            "sendBrokenTransform",
-                            sendBrokenTransformMessage
-                        ]
-                    ]));
-                    player.registerPlugin(expressionPlugin);
+                    player.registerPlugin(new ExpressionPlugin(new Map(Object.entries(a2uiExpressions))));
                 }
             }
         ]);
-        return ChatUiDemoPlugin;
+        return A2UIExpressionsPlugin;
     }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugins/reference-assets-transform-plugin.ts
-    var ReferenceAssetsTransformPlugin = /*#__PURE__*/ function() {
-        function ReferenceAssetsTransformPlugin() {
-            _class_call_check(this, ReferenceAssetsTransformPlugin);
-            this.name = "reference-assets-transforms";
-        }
-        _create_class(ReferenceAssetsTransformPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    player.registerPlugin(new AssetTransformPlugin([
-                        [
-                            {
-                                type: "action"
-                            },
-                            actionTransform
-                        ],
-                        [
-                            {
-                                type: "input"
-                            },
-                            inputTransform
-                        ],
-                        [
-                            {
-                                type: "image"
-                            },
-                            imageTransform
-                        ],
-                        [
-                            {
-                                type: "info"
-                            },
-                            infoTransform
-                        ],
-                        [
-                            {
-                                type: "choice"
-                            },
-                            choiceTransform
-                        ],
-                        [
-                            {
-                                type: "chat-message"
-                            },
-                            chatMessageTransform
-                        ]
-                    ]));
-                }
-            }
-        ]);
-        return ReferenceAssetsTransformPlugin;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugins/error-recovery-plugin.ts
-    var ErrorRecoveryPlugin = /*#__PURE__*/ function() {
-        function ErrorRecoveryPlugin() {
-            _class_call_check(this, ErrorRecoveryPlugin);
-            this.name = "ErrorRecoveryPlugin";
-        }
-        _create_class(ErrorRecoveryPlugin, [
-            {
-                /** */ key: "apply",
-                value: function apply(player) {
-                    var _this = this;
-                    player.applyTo(AsyncNodePlugin.Symbol, function(plugin) {
-                        plugin.hooks.onAsyncNodeError.tap(_this.name, function(err, node) {
-                            var _playerState_controllers_view_currentView;
-                            var playerState = player.getState();
-                            if (playerState.status !== "in-progress") {
-                                return;
-                            }
-                            var viewId = (_playerState_controllers_view_currentView = playerState.controllers.view.currentView) === null || _playerState_controllers_view_currentView === void 0 ? void 0 : _playerState_controllers_view_currentView.initialView.id;
-                            if (viewId !== "chat-view") {
-                                return;
-                            }
-                            return {
-                                asset: {
-                                    type: "chat-message",
-                                    id: "".concat(node.id, "-recovery"),
-                                    value: {
-                                        asset: {
-                                            id: "".concat(node.id, "-recovery-text"),
-                                            type: "text",
-                                            value: "Something went wrong, please try again."
-                                        }
-                                    }
-                                }
-                            };
-                        });
-                    });
-                }
-            }
-        ]);
-        return ErrorRecoveryPlugin;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+types-provider-plugin@0.0.0/node_modules/@player-ui/types-provider-plugin/dist/index.mjs
-    var TypesProviderPlugin = /*#__PURE__*/ function() {
-        function TypesProviderPlugin(config) {
-            _class_call_check(this, TypesProviderPlugin);
-            this.name = "TypesProviderPlugin";
-            this.config = config;
-        }
-        _create_class(TypesProviderPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    var _this = this;
-                    player.hooks.schema.tap(this.name, function(schema) {
-                        if (_this.config.types) {
-                            schema.addDataTypes(_this.config.types);
-                        }
-                        if (_this.config.formats) {
-                            schema.addFormatters(_this.config.formats);
-                        }
-                    });
-                    if (this.config.validators) {
-                        player.hooks.validationController.tap(this.name, function(validationController) {
-                            validationController.hooks.createValidatorRegistry.tap(_this.name, function(validationRegistry) {
-                                var _this_config_validators;
-                                (_this_config_validators = _this.config.validators) === null || _this_config_validators === void 0 ? void 0 : _this_config_validators.forEach(function(param) {
-                                    var _param = _sliced_to_array(param, 2), name = _param[0], handler = _param[1];
-                                    validationRegistry.register(name, handler);
-                                });
-                            });
-                        });
-                    }
-                }
-            }
-        ]);
-        return TypesProviderPlugin;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+common-types-plugin@0.0.0/node_modules/@player-ui/common-types-plugin/dist/index.mjs
-    var __defProp3 = Object.defineProperty;
-    var __export3 = function(target, all) {
-        for(var name in all)__defProp3(target, name, {
-            get: all[name],
-            enumerable: true
-        });
-    };
-    var validators_exports = {};
-    __export3(validators_exports, {
-        collection: function() {
-            return collection;
-        },
-        email: function() {
-            return email;
-        },
-        expression: function() {
-            return expression;
-        },
-        integer: function() {
-            return integer;
-        },
-        length: function() {
-            return length;
-        },
-        max: function() {
-            return max;
-        },
-        min: function() {
-            return min;
-        },
-        oneOf: function() {
-            return oneOf;
-        },
-        phone: function() {
-            return phone;
-        },
-        readonly: function() {
-            return readonly;
-        },
-        regex: function() {
-            return regex;
-        },
-        required: function() {
-            return required;
-        },
-        string: function() {
-            return string;
-        },
-        zip: function() {
-            return zip;
-        }
-    });
-    var EMAIL_REGEX = // eslint-disable-next-line no-control-regex
-    /^((([a-z]|\d|[!#$%&'*+\-/=?^_`{|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#$%&'*+-/=?^_`{|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i;
-    var PHONE_REGEX = /^\+?[1]?[- ]?\(?\d{3}[)\- ]?\s?\d{3}[ -]?\d{4}$/;
-    var ZIP_REGEX = /^\d{5}(-\d{4})?$/;
-    var string = skipNullish(function(context, value) {
-        if (typeof value !== "string") {
-            var message = context.constants.getConstants("validation.string", "constants", "Value must be a string");
-            return {
-                message: message,
-                parameters: {
-                    type: typeof value === "undefined" ? "undefined" : _type_of(value)
-                }
-            };
-        }
-    });
-    var readonly = function(context) {
-        var message = context.constants.getConstants("validation.readonly", "constants", "Value cannot be modified");
-        return {
-            message: message
-        };
-    };
-    var collection = skipNullish(function(context, value) {
-        if (!Array.isArray(value)) {
-            var message = context.constants.getConstants("validation.collection", "constants", "Cannot set collection to non-array");
-            return {
-                message: message
-            };
-        }
-    });
-    var integer = skipNullish(function(context, value) {
-        if (value && (typeof value !== "number" || Math.floor(value) !== value || Number(value) > Number.MAX_SAFE_INTEGER || Number(value) < Number.MIN_SAFE_INTEGER)) {
-            var message = context.constants.getConstants("validation.integer", "constants", "Value must be an integer");
-            return {
-                message: message,
-                parameters: {
-                    type: typeof value === "undefined" ? "undefined" : _type_of(value),
-                    flooredValue: Math.floor(value)
-                }
-            };
-        }
-    });
-    var oneOf = skipNullish(function(context, value, options) {
-        var _options_options;
-        if ((options === null || options === void 0 ? void 0 : options.options) === void 0 || ((_options_options = options.options) === null || _options_options === void 0 ? void 0 : _options_options.includes(value))) {
-            return;
-        }
-        var message = context.constants.getConstants("validation.oneOf", "constants", "Invalid entry");
-        return {
-            message: message
-        };
-    });
-    var expression = function(context, value, options) {
-        if ((options === null || options === void 0 ? void 0 : options.exp) === void 0) {
-            context.logger.warn("No expression defined for validation");
-            return;
-        }
-        var result = context.evaluate(options.exp);
-        if (!result) {
-            var message = context.constants.getConstants("validation.expression", "constants", "Expression evaluation failed");
-            return {
-                message: message
-            };
-        }
-    };
-    var required = function(context, value, options) {
-        if ((options === null || options === void 0 ? void 0 : options.if) && !context.evaluate(options.if) || (options === null || options === void 0 ? void 0 : options.ifNot) && context.evaluate(options.ifNot)) {
-            return;
-        }
-        if (value === void 0 || value === null || value === "") {
-            var message = context.constants.getConstants("validation.required", "constants", "A value is required");
-            return {
-                message: message,
-                severity: "error"
-            };
-        }
-    };
-    var regex = skipNullish(function(context, value, options) {
-        if (value === void 0 || value === null || value === "" || typeof (options === null || options === void 0 ? void 0 : options.regex) !== "string") {
-            return;
-        }
-        var resolvedRegex = resolveDataRefs(options.regex, context);
-        var patternMatch = resolvedRegex.match(/^\/(.*)\/(\w)*$/);
-        var regexp = patternMatch ? new RegExp(patternMatch[1], patternMatch[2]) : new RegExp(resolvedRegex);
-        if (!regexp.test(value)) {
-            var message = context.constants.getConstants("validation.regex", "constants", "Invalid entry");
-            return {
-                message: message
-            };
-        }
-    });
-    var length = skipNullish(function(context, value, options) {
-        if ((typeof options === "undefined" ? "undefined" : _type_of(options)) !== "object") {
-            context.logger.warn("Missing comparison in length validation");
-            return;
-        }
-        var valLength;
-        var itemName = "items";
-        if (typeof value === "string") {
-            valLength = value.length;
-            itemName = "characters";
-        } else if ((typeof value === "undefined" ? "undefined" : _type_of(value)) === "object" && value !== null) {
-            valLength = Object.keys(value).length;
-        }
-        if (valLength === void 0) {
-            context.logger.warn("Unable to determine a length for value of type: ".concat(value));
-            return;
-        }
-        if ("exact" in options) {
-            if (valLength !== options.exact) {
-                return {
-                    message: "Must be exactly ".concat(options.exact, " ").concat(itemName, " long"),
-                    parameters: {
-                        validationLength: valLength
-                    }
-                };
-            }
-            return;
-        }
-        if (options.min !== void 0 && valLength < options.min) {
-            var message = context.constants.getConstants("validation.length.minimum", "constants", "At least ".concat(options.min, " ").concat(itemName, " needed"));
-            return {
-                message: message,
-                parameters: {
-                    validationLength: valLength
-                }
-            };
-        }
-        if (options.max !== void 0 && valLength > options.max) {
-            var message1 = context.constants.getConstants("validation.length.maximum", "constants", "Up to ".concat(options.max, " ").concat(itemName, " allowed"));
-            return {
-                message: message1,
-                parameters: {
-                    validationLength: valLength
-                }
-            };
-        }
-    });
-    var min = skipNullish(function(context, value, options) {
-        if (typeof value !== "number" || (options === null || options === void 0 ? void 0 : options.value) === void 0) {
-            return;
-        }
-        if (value < options.value) {
-            var message = context.constants.getConstants("validation.min", "constants", "Must be at least ".concat(options.value));
-            return {
-                message: message
-            };
-        }
-    });
-    var max = skipNullish(function(context, value, options) {
-        if (typeof value !== "number" || (options === null || options === void 0 ? void 0 : options.value) === void 0) {
-            return;
-        }
-        if (value > options.value) {
-            var message = context.constants.getConstants("validation.max", "constants", "Cannot exceed ".concat(options.value));
-            return {
-                message: message
-            };
-        }
-    });
-    var stringRegexValidator = function(test, messagePath, invalidMessage) {
-        return skipNullish(function(context, value) {
-            if (typeof value === "string" && value === "") {
-                return;
-            }
-            if (typeof value !== "string" || !test.test(value)) {
-                var message = context.constants.getConstants(messagePath, "constants", invalidMessage);
-                return {
-                    message: message
-                };
-            }
-        });
-    };
-    var email = stringRegexValidator(EMAIL_REGEX, "validation.email", "Improper email format");
-    var phone = stringRegexValidator(PHONE_REGEX, "validation.phone", "Invalid phone number");
-    var zip = stringRegexValidator(ZIP_REGEX, "validation.regex", "Invalid zip code");
-    var types_exports = {};
-    __export3(types_exports, {
-        BooleanType: function() {
-            return BooleanType;
-        },
-        CollectionType: function() {
-            return CollectionType;
-        },
-        DateType: function() {
-            return DateType;
-        },
-        IntegerNNType: function() {
-            return IntegerNNType;
-        },
-        IntegerPosType: function() {
-            return IntegerPosType;
-        },
-        IntegerType: function() {
-            return IntegerType;
-        },
-        PhoneType: function() {
-            return PhoneType;
-        },
-        StringType: function() {
-            return StringType;
-        }
-    });
-    var BooleanType = {
-        type: "BooleanType",
-        default: false,
-        validation: [
-            {
-                type: "oneOf",
-                message: "Value must be true or false",
-                options: [
-                    true,
-                    false
-                ]
-            }
-        ]
-    };
-    var IntegerType = {
-        type: "IntegerType",
-        validation: [
-            {
-                type: "integer"
-            }
-        ],
-        format: {
-            type: "integer"
-        }
-    };
-    var IntegerPosType = {
-        type: "IntegerPosType",
-        validation: [
-            {
-                type: "integer"
-            },
-            {
-                type: "min",
-                value: 1
-            }
-        ],
-        format: {
-            type: "integer"
-        }
-    };
-    var IntegerNNType = {
-        type: "IntegerNNType",
-        validation: [
-            {
-                type: "integer"
-            },
-            {
-                type: "min",
-                value: 0
-            }
-        ],
-        format: {
-            type: "integer"
-        }
-    };
-    var StringType = {
-        type: "StringType",
-        default: "",
-        validation: [
-            {
-                type: "string"
-            }
-        ],
-        format: {
-            type: "string"
-        }
-    };
-    var CollectionType = {
-        type: "CollectionType",
-        validation: [
-            {
-                type: "collection"
-            }
-        ]
-    };
-    var DateType = {
-        type: "DateType",
-        validation: [
-            {
-                type: "string"
-            }
-        ],
-        format: {
-            type: "date"
-        }
-    };
-    var PhoneType = {
-        type: "PhoneType",
-        validation: [
-            {
-                type: "phone"
-            }
-        ],
-        format: {
-            type: "phone"
-        }
-    };
-    var formats_exports = {};
-    __export3(formats_exports, {
-        commaNumber: function() {
-            return commaNumber;
-        },
-        currency: function() {
-            return currency;
-        },
-        date: function() {
-            return date;
-        },
-        integer: function() {
-            return integer2;
-        },
-        phone: function() {
-            return phone2;
-        }
-    });
-    var PLACEHOLDER = "#";
-    var formatAsEnum = function(value, acceptedValues, options) {
-        var autoCompletionsByOverlapCount = acceptedValues.reduce(function(validCompletions, validValue) {
-            var overlap = 0;
-            for(var charIndex = 0; charIndex < Math.min(validValue.length, value.length); charIndex++){
-                var validChar = (options === null || options === void 0 ? void 0 : options.ignoreCase) ? validValue[charIndex].toLowerCase() : validValue[charIndex];
-                var actualChar = (options === null || options === void 0 ? void 0 : options.ignoreCase) ? value[charIndex].toLowerCase() : value[charIndex];
-                if (validChar !== actualChar) {
-                    break;
-                }
-                overlap += 1;
-            }
-            if (overlap === 0) {
-                return validCompletions;
-            }
-            validCompletions.push({
-                count: overlap,
-                target: validValue
-            });
-            return validCompletions;
-        }, []).sort(function(e) {
-            return e.count;
-        });
-        if (autoCompletionsByOverlapCount.length === 0) {
-            return void 0;
-        }
-        if (autoCompletionsByOverlapCount.length === 1 && (options === null || options === void 0 ? void 0 : options.autocomplete)) {
-            return autoCompletionsByOverlapCount[0].target;
-        }
-        return autoCompletionsByOverlapCount[0].target.substr(0, autoCompletionsByOverlapCount[0].count);
-    };
-    var formatAsMasked = function(value, valueCharMaskMatch, mask) {
-        var valStr = String(value);
-        var withMask = mask;
-        if (valStr.trim() === "") {
-            return "";
-        }
-        valStr.replace(valueCharMaskMatch, function(match) {
-            withMask = withMask.replace(PLACEHOLDER, match);
-            return match;
-        });
-        return withMask.split(PLACEHOLDER)[0];
-    };
-    var createMaskedNumericFormatter = function(name, mask) {
-        return {
-            name: name,
-            format: function(value, options) {
-                if (typeof value !== "string") {
-                    return value;
-                }
-                if ((options === null || options === void 0 ? void 0 : options.exceptions) && options.exceptions.length > 0) {
-                    var formattedUsingExceptions = formatAsEnum(value, options.exceptions, {
-                        autocomplete: true,
-                        ignoreCase: true
-                    });
-                    if (formattedUsingExceptions !== void 0) {
-                        return formattedUsingExceptions;
-                    }
-                }
-                return formatAsMasked(value, /\d/g, mask);
-            },
-            deformat: function(value, options) {
-                if (typeof value !== "string") {
-                    return value;
-                }
-                if ((options === null || options === void 0 ? void 0 : options.exceptions) && options.exceptions.length > 0) {
-                    var usingExceptions = formatAsEnum(value, options.exceptions, {
-                        autocomplete: false,
-                        ignoreCase: false
-                    });
-                    if (usingExceptions !== void 0) {
-                        return usingExceptions;
-                    }
-                }
-                return formatAsMasked(value, /\d/g, mask.replace(/[^#]/g, ""));
-            }
-        };
-    };
-    var LENGTH_OF_MAX_INT = String(Number.MAX_SAFE_INTEGER).split("").length;
-    var integer2 = {
-        name: "integer",
-        /** Converts any integer to a string */ format: function(value) {
-            var _integer2_deformat;
-            if (value === "-") {
-                return value;
-            }
-            var _integer2_deformat1;
-            var formatted = (_integer2_deformat1 = (_integer2_deformat = integer2.deformat) === null || _integer2_deformat === void 0 ? void 0 : _integer2_deformat.call(integer2, value)) !== null && _integer2_deformat1 !== void 0 ? _integer2_deformat1 : value;
-            if (typeof formatted === "number") {
-                return String(formatted);
-            }
-            return "";
-        },
-        /** Converts any string or number to an integer */ deformat: function(value) {
-            if (typeof value === "number") {
-                return Math.floor(value) + 0;
-            }
-            if (typeof value !== "string") {
-                return;
-            }
-            var isNeg = value.replace(/[^0-9.-]/g, "").charAt(0) === "-";
-            var digits = value.replace(/[^0-9.]/g, "");
-            var decimalPlace = digits.indexOf(".");
-            if (decimalPlace > -1) {
-                digits = digits.substring(0, decimalPlace);
-            }
-            if (digits.length === 0) {
-                return;
-            }
-            digits = digits.substr(0, LENGTH_OF_MAX_INT);
-            var num = Number("".concat(isNeg ? "-" : "").concat(digits));
-            return Math.floor(num) + 0;
-        }
-    };
-    var commaNumber = {
-        name: "commaNumber",
-        /** Go from number to number w/ commas */ format: function(_value, options) {
-            if (_value === void 0 || _value === "") {
-                return _value;
-            }
-            if (typeof _value !== "string" && typeof _value !== "number") {
-                return "";
-            }
-            var value = String(_value);
-            var isNeg = value.replace(/[^0-9.-]/g, "").charAt(0) === "-";
-            var digitAndDecimal = value.replace(/[^0-9.]/g, "");
-            digitAndDecimal = digitAndDecimal.replace(/^(0*)((0.)?\d)/g, "$2");
-            var firstDecimal = digitAndDecimal.indexOf(".");
-            var digitsOnly = digitAndDecimal.replace(/[^0-9]/g, "");
-            var preDecDigits = digitsOnly;
-            var postDecDigits = "";
-            if (firstDecimal >= 0) {
-                preDecDigits = digitsOnly.substring(0, firstDecimal).substr(0, LENGTH_OF_MAX_INT);
-                postDecDigits = digitsOnly.substring(firstDecimal);
-            } else {
-                preDecDigits = preDecDigits.substr(0, LENGTH_OF_MAX_INT);
-            }
-            if ((options === null || options === void 0 ? void 0 : options.precision) !== void 0) {
-                postDecDigits = postDecDigits.substring(0, options.precision).padEnd(options.precision, "0");
-            }
-            preDecDigits = preDecDigits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            if (preDecDigits === "" && firstDecimal === 0) {
-                preDecDigits = "0";
-            }
-            var retVal = preDecDigits;
-            if (isNeg) {
-                retVal = "-".concat(retVal);
-            }
-            if ((firstDecimal >= 0 || (options === null || options === void 0 ? void 0 : options.precision) !== void 0) && postDecDigits !== "") {
-                retVal += ".".concat(postDecDigits);
-            }
-            return retVal;
-        },
-        /** Go from string with comma's to numbers */ deformat: function(value) {
-            if (typeof value !== "string") {
-                return value;
-            }
-            var strValue = value.replace(/,/g, "");
-            if (strValue === "") {
-                return void 0;
-            }
-            var number2 = Number(strValue);
-            return isNaN(number2) || number2 > Number.MAX_SAFE_INTEGER || number2 < Number.MIN_SAFE_INTEGER ? void 0 : number2;
-        }
-    };
-    var date = {
-        name: "date",
-        format: function(_value, options) {
-            var _options_mask;
-            var value = typeof _value === "number" ? String(_value) : _value;
-            if (_value === void 0) {
-                return void 0;
-            }
-            if (typeof value !== "string" || value === "") {
-                return "";
-            }
-            if (value.match(/^\d{4}[-]\d{1,2}[-]\d{1,2}$/)) {
-                var tempVal = value.split("-");
-                value = "".concat(tempVal[1], "/").concat(tempVal[2], "/").concat(tempVal[0]);
-            }
-            var _options_mask_toUpperCase;
-            var dateFormat = (_options_mask_toUpperCase = options === null || options === void 0 ? void 0 : (_options_mask = options.mask) === null || _options_mask === void 0 ? void 0 : _options_mask.toUpperCase()) !== null && _options_mask_toUpperCase !== void 0 ? _options_mask_toUpperCase : "MM/DD/YYYY";
-            var delimiter = dateFormat.replace(/[^/.-]/g, "").charAt(0);
-            var formatParts = dateFormat.split(delimiter);
-            var valueParts = value.split(delimiter);
-            var processedValueParts = [];
-            var lastMatchIsFull = true;
-            for(var index = 0; index < valueParts.length; index++){
-                var part = valueParts[index];
-                if (lastMatchIsFull && index < formatParts.length) {
-                    part = part.replace(/[^0-9]/g, "");
-                    var isLastExpectedField = formatParts.length - 1 === index;
-                    var hasDelimiterAfter = valueParts.length - 1 > index;
-                    var curFormat = formatParts[index];
-                    if (curFormat === "YYYY") {
-                        if (part.length > 4) {
-                            valueParts[index + 1] = [
-                                "*",
-                                part.substring(4),
-                                valueParts[index + 1]
-                            ].join("");
-                            part = part.substring(0, 4);
-                        }
-                        if (part.length === 4) {
-                            lastMatchIsFull = true;
-                            processedValueParts.push(part);
-                        }
-                        if (part.length === 3) {
-                            if (isLastExpectedField || !hasDelimiterAfter) {
-                                lastMatchIsFull = false;
-                                processedValueParts.push(part);
-                            } else {
-                                valueParts[index + 1] = "*".concat(part.substring(2)).concat(valueParts[index + 1]);
-                                part = part.substring(0, 2);
-                            }
-                        }
-                        if (part.length === 2) {
-                            var autocomplete = void 0;
-                            if (part.length === 2 && (hasDelimiterAfter || isLastExpectedField && part !== "19" && part !== "20")) {
-                                autocomplete = "20".concat(part);
-                                if (part > (/* @__PURE__ */ new Date().getFullYear() + 5).toString().substring(2)) {
-                                    autocomplete = "19".concat(part);
-                                }
-                            }
-                            if (autocomplete) {
-                                lastMatchIsFull = true;
-                                processedValueParts.push(autocomplete);
-                            } else {
-                                lastMatchIsFull = false;
-                                processedValueParts.push(part);
-                            }
-                        }
-                        if (part.length === 1 || part.length === 0) {
-                            lastMatchIsFull = false;
-                            processedValueParts.push(part);
-                        }
-                    } else if (curFormat === "YY") {
-                        if (part.length > 2) {
-                            valueParts[index + 1] = [
-                                "*",
-                                part.substring(2),
-                                valueParts[index + 1]
-                            ].join("");
-                            part = part.substring(0, 2);
-                        }
-                        if (part.length === 2) {
-                            lastMatchIsFull = true;
-                            processedValueParts.push(part);
-                        }
-                        if (part.length === 1 || part.length === 0) {
-                            lastMatchIsFull = false;
-                            processedValueParts.push(part);
-                        }
-                    } else {
-                        if (part.length > 2) {
-                            valueParts[index + 1] = [
-                                "*",
-                                part.substring(2),
-                                valueParts[index + 1]
-                            ].join("");
-                            part = part.substring(0, 2);
-                        }
-                        if (part.length === 2) {
-                            if (part === "00" && !hasDelimiterAfter) {
-                                lastMatchIsFull = false;
-                                processedValueParts.push("0");
-                            } else {
-                                lastMatchIsFull = true;
-                                processedValueParts.push(part);
-                            }
-                        }
-                        if (part.length === 1) {
-                            if (hasDelimiterAfter) {
-                                lastMatchIsFull = true;
-                                processedValueParts.push("0".concat(part));
-                            } else {
-                                lastMatchIsFull = false;
-                                processedValueParts.push(part);
-                            }
-                        }
-                        if (part.length === 0) {
-                            lastMatchIsFull = false;
-                            processedValueParts.push(part);
-                        }
-                    }
-                }
-            }
-            return processedValueParts.join(delimiter);
-        }
-    };
-    var currency = {
-        name: "currency",
-        format: function(_value, options) {
-            var value = typeof _value === "number" ? String(_value) : _value;
-            var _ref = options !== null && options !== void 0 ? options : {}, _ref_currencySymbol = _ref.currencySymbol, currencySymbol = _ref_currencySymbol === void 0 ? "" : _ref_currencySymbol, _ref_useParensForNeg = _ref.useParensForNeg, useParensForNeg = _ref_useParensForNeg === void 0 ? false : _ref_useParensForNeg, _ref_precision = _ref.precision, precision = _ref_precision === void 0 ? 2 : _ref_precision;
-            if (value === void 0 || value === "") {
-                return value;
-            }
-            if (typeof value !== "string") {
-                return value;
-            }
-            var sign = /^\s*-/.test(value) ? -1 : 1;
-            var dotIndex = value.indexOf(".");
-            var preDecimal;
-            var postDecimal;
-            if (dotIndex >= 0) {
-                preDecimal = value.substr(0, dotIndex).replace(/\D+/g, "");
-                postDecimal = value.substr(dotIndex + 1).replace(/\D+/g, "");
-            } else {
-                preDecimal = value.replace(/\D+/g, "");
-                postDecimal = "0";
-            }
-            var numericalValue = sign * Number("".concat(preDecimal, ".").concat(postDecimal));
-            var fixedString = numericalValue.toFixed(precision);
-            var prettyString = fixedString.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            if (prettyString.charAt(0) === "-") {
-                if (useParensForNeg) {
-                    return "(".concat(currencySymbol).concat(prettyString.substring(1), ")");
-                }
-                return "-".concat(currencySymbol).concat(prettyString.substring(1));
-            }
-            return currencySymbol + prettyString;
-        },
-        deformat: function(value, options) {
-            var _commaNumber_deformat;
-            if (typeof value === "number") {
-                return value;
-            }
-            if (typeof value !== "string") {
-                return void 0;
-            }
-            var deformatted = value;
-            if (options === null || options === void 0 ? void 0 : options.currencySymbol) {
-                deformatted = value.replace(options.currencySymbol, "");
-            }
-            return (_commaNumber_deformat = commaNumber.deformat) === null || _commaNumber_deformat === void 0 ? void 0 : _commaNumber_deformat.call(commaNumber, deformatted);
-        }
-    };
-    var basePhoneFormatter = createMaskedNumericFormatter("phone", "(###) ###-####");
-    var phone2 = _object_spread_props(_object_spread({}, basePhoneFormatter), {
-        deformat: function(value) {
-            var _basePhoneFormatter_deformat;
-            return (_basePhoneFormatter_deformat = basePhoneFormatter.deformat) === null || _basePhoneFormatter_deformat === void 0 ? void 0 : _basePhoneFormatter_deformat.call(basePhoneFormatter, value);
-        },
-        format: function(value) {
-            var _basePhoneFormatter_format;
-            var _basePhoneFormatter_format1;
-            return (_basePhoneFormatter_format1 = (_basePhoneFormatter_format = basePhoneFormatter.format) === null || _basePhoneFormatter_format === void 0 ? void 0 : _basePhoneFormatter_format.call(basePhoneFormatter, value === "(" ? "" : value)) !== null && _basePhoneFormatter_format1 !== void 0 ? _basePhoneFormatter_format1 : value;
-        }
-    });
-    var CommonTypesPlugin = /*#__PURE__*/ function() {
-        function CommonTypesPlugin() {
-            _class_call_check(this, CommonTypesPlugin);
-            this.name = "CommonTypes";
-        }
-        _create_class(CommonTypesPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    player.registerPlugin(new TypesProviderPlugin({
-                        types: Object.values(types_exports),
-                        formats: Object.values(formats_exports),
-                        validators: Object.entries(validators_exports)
-                    }));
-                }
-            }
-        ]);
-        return CommonTypesPlugin;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+common-expressions-plugin@0.0.0/node_modules/@player-ui/common-expressions-plugin/dist/index.mjs
-    var __defProp4 = Object.defineProperty;
-    var __export4 = function(target, all) {
-        for(var name in all)__defProp4(target, name, {
-            get: all[name],
-            enumerable: true
-        });
-    };
-    var expressions_exports = {};
-    __export4(expressions_exports, {
-        ceil: function() {
-            return ceil;
-        },
-        concat: function() {
-            return concat;
-        },
-        containsAny: function() {
-            return containsAny;
-        },
-        findProperty: function() {
-            return findProperty;
-        },
-        findPropertyIndex: function() {
-            return findPropertyIndex;
-        },
-        floor: function() {
-            return floor;
-        },
-        isEmpty: function() {
-            return isEmpty;
-        },
-        isNotEmpty: function() {
-            return isNotEmpty;
-        },
-        length: function() {
-            return length2;
-        },
-        lowerCase: function() {
-            return lowerCase;
-        },
-        number: function() {
-            return number;
-        },
-        replace: function() {
-            return replace;
-        },
-        round: function() {
-            return round;
-        },
-        sentenceCase: function() {
-            return sentenceCase;
-        },
-        size: function() {
-            return size;
-        },
-        split: function() {
-            return split;
-        },
-        substr: function() {
-            return substr;
-        },
-        sum: function() {
-            return sum;
-        },
-        titleCase: function() {
-            return titleCase;
-        },
-        trim: function() {
-            return trim;
-        },
-        upperCase: function() {
-            return upperCase;
-        }
-    });
-    var size = withoutContext(function(val) {
-        if (typeof val === "string") {
-            return val.length;
-        }
-        if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object" && val !== null) {
-            return Object.keys(val).length;
-        }
-        return 0;
-    });
-    var length2 = size;
-    var isEmpty = function(ctx, val) {
-        if (val === void 0 || val === null) {
-            return true;
-        }
-        if ((typeof val === "undefined" ? "undefined" : _type_of(val)) === "object" || typeof val === "string") {
-            return size(ctx, val) === 0;
-        }
-        return false;
-    };
-    var isNotEmpty = function(ctx, val) {
-        return !isEmpty(ctx, val);
-    };
-    var concat = withoutContext(function() {
-        for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
-            args[_key] = arguments[_key];
-        }
-        if (args.every(function(v) {
-            return Array.isArray(v);
-        })) {
-            var merged = [];
-            args.forEach(function(next) {
-                var _merged;
-                (_merged = merged).push.apply(_merged, _to_consumable_array(next));
-            });
-            return merged;
-        }
-        return args.reduce(function(merged, next) {
-            return merged + (next !== null && next !== void 0 ? next : "");
-        }, "");
-    });
-    var trim = withoutContext(ifString(function(str) {
-        return str.trim();
-    }));
-    var upperCase = withoutContext(ifString(function(str) {
-        return str.toUpperCase();
-    }));
-    var lowerCase = withoutContext(ifString(function(str) {
-        return str.toLowerCase();
-    }));
-    var replace = withoutContext(function(str, pattern) {
-        var replacement = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : "";
-        if (typeof str === "string" && typeof pattern === "string" && typeof replacement === "string") {
-            var replacementRegex = new RegExp(pattern, "g");
-            return str.replace(replacementRegex, replacement);
-        }
-        return str;
-    });
-    var titleCase = withoutContext(ifString(function(str) {
-        return str.split(" ").map(function(word) {
-            return word[0].toUpperCase() + word.slice(1);
-        }).join(" ");
-    }));
-    var sentenceCase = withoutContext(ifString(function(str) {
-        return str.replace(/\b[a-zA-Z]/, function(word) {
-            return word.toUpperCase();
-        });
-    }));
-    var split = withoutContext(function(str, separator, limit) {
-        if (separator === void 0 || separator === null) {
-            return str;
-        }
-        var separatorStr = String(separator);
-        if (separatorStr === "") {
-            var result2 = str.split("");
-            if (limit !== void 0 && limit !== null && limit > 0) {
-                return result2.slice(0, limit);
-            }
-            return result2;
-        }
-        var result = str.split(separatorStr);
-        if (limit !== void 0 && limit !== null && limit > 0) {
-            return result.slice(0, limit);
-        }
-        return result;
-    });
-    var substr = withoutContext(function(str, start, length22) {
-        var actualStartIndex = start < 0 ? str.length + start : start;
-        if (length22 !== void 0) {
-            return str.substring(actualStartIndex, actualStartIndex + length22);
-        }
-        return str.substring(actualStartIndex);
-    });
-    var number = withoutContext(toNum);
-    var round = withoutContext(function(num) {
-        var _toNum;
-        return Math.round((_toNum = toNum(num, true)) !== null && _toNum !== void 0 ? _toNum : 0);
-    });
-    var floor = withoutContext(function(num) {
-        var _toNum;
-        return Math.floor((_toNum = toNum(num, true)) !== null && _toNum !== void 0 ? _toNum : 0);
-    });
-    var ceil = withoutContext(function(num) {
-        var _toNum;
-        return Math.ceil((_toNum = toNum(num, true)) !== null && _toNum !== void 0 ? _toNum : 0);
-    });
-    var sum = withoutContext(function() {
-        for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
-            args[_key] = arguments[_key];
-        }
-        return args.reduce(function(s, next) {
-            var _toNum;
-            return s + ((_toNum = toNum(next)) !== null && _toNum !== void 0 ? _toNum : 0);
-        }, 0);
-    });
-    var findPropertyIndex = function(context, bindingOrModel, propToCheck, valueToCheck) {
-        if (bindingOrModel === void 0) {
-            return -1;
-        }
-        var searchArray = Array.isArray(bindingOrModel) ? bindingOrModel : context.model.get(bindingOrModel);
-        if (!Array.isArray(searchArray)) {
-            return -1;
-        }
-        return searchArray.findIndex(function(value) {
-            var propVal = (typeof value === "undefined" ? "undefined" : _type_of(value)) === "object" && propToCheck !== void 0 ? value[propToCheck] : value;
-            return valueToCheck === propVal;
-        });
-    };
-    var findProperty = function(context, bindingOrModel, propToCheck, valueToCheck, propToReturn, defaultValue) {
-        var searchArray = Array.isArray(bindingOrModel) ? bindingOrModel : context.model.get(bindingOrModel);
-        if (!Array.isArray(searchArray)) {
-            return defaultValue;
-        }
-        var foundValue = searchArray.find(function(value) {
-            var propVal = (typeof value === "undefined" ? "undefined" : _type_of(value)) === "object" && propToCheck !== void 0 ? value[propToCheck] : value;
-            return valueToCheck === propVal;
-        });
-        if (foundValue === void 0) {
-            return defaultValue;
-        }
-        if ((typeof foundValue === "undefined" ? "undefined" : _type_of(foundValue)) === "object" && propToReturn) {
-            var _foundValue_propToReturn;
-            return (_foundValue_propToReturn = foundValue[propToReturn]) !== null && _foundValue_propToReturn !== void 0 ? _foundValue_propToReturn : defaultValue;
-        }
-        return foundValue;
-    };
-    var containsAny = withoutContext(function(str, keywords) {
-        if (!(typeof str === "string") || !(typeof keywords === "string" || Array.isArray(keywords))) {
-            return false;
-        }
-        if (Array.isArray(keywords)) {
-            return keywords.some(function(keyword) {
-                return str.indexOf(keyword) > -1;
-            });
-        }
-        return str.indexOf(keywords) > -1;
-    });
-    var CommonExpressionsPlugin = /*#__PURE__*/ function() {
-        function CommonExpressionsPlugin() {
-            _class_call_check(this, CommonExpressionsPlugin);
-            this.name = "CommonExpressions";
-        }
-        _create_class(CommonExpressionsPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    player.registerPlugin(new ExpressionPlugin(new Map(Object.entries(expressions_exports))));
-                }
-            }
-        ]);
-        return CommonExpressionsPlugin;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+computed-properties-plugin@0.0.0/node_modules/@player-ui/computed-properties-plugin/dist/index.mjs
-    var ComputedPropertiesPlugin = /*#__PURE__*/ function() {
-        function ComputedPropertiesPlugin() {
-            _class_call_check(this, ComputedPropertiesPlugin);
-            this.name = "ComputedProperties";
-        }
-        _create_class(ComputedPropertiesPlugin, [
-            {
-                key: "apply",
-                value: function apply(player) {
-                    var _this = this;
-                    var schemaController;
-                    var expressionEvaluator;
-                    var getExpressionType = function(binding) {
-                        var dataType = schemaController === null || schemaController === void 0 ? void 0 : schemaController.getType(binding);
-                        if ((dataType === null || dataType === void 0 ? void 0 : dataType.type) === "Expression") {
-                            return dataType;
-                        }
-                    };
-                    var computedPropertyMiddleware = {
-                        name: this.name,
-                        get: function get(binding, options, next) {
-                            var expType = getExpressionType(binding);
-                            if (expType) {
-                                var exp = expType.exp;
-                                var result = exp && (expressionEvaluator === null || expressionEvaluator === void 0 ? void 0 : expressionEvaluator.evaluate(exp, options === null || options === void 0 ? void 0 : options.context));
-                                return result !== null && result !== void 0 ? result : expType.default;
-                            }
-                            return next === null || next === void 0 ? void 0 : next.get(binding, options);
-                        },
-                        set: function set(transaction, options, next) {
-                            var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                            try {
-                                for(var _iterator = transaction[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                                    var setOperation = _step.value;
-                                    if (getExpressionType(setOperation[0])) {
-                                        throw new Error("Invalid 'set' operation on computed property: ".concat(setOperation[0].asString()));
-                                    }
-                                }
-                            } catch (err) {
-                                _didIteratorError = true;
-                                _iteratorError = err;
-                            } finally{
-                                try {
-                                    if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                        _iterator.return();
-                                    }
-                                } finally{
-                                    if (_didIteratorError) {
-                                        throw _iteratorError;
-                                    }
-                                }
-                            }
-                            var _next_set;
-                            return (_next_set = next === null || next === void 0 ? void 0 : next.set(transaction, options)) !== null && _next_set !== void 0 ? _next_set : [];
-                        },
-                        delete: function _delete(binding, options, next) {
-                            if (getExpressionType(binding)) {
-                                throw new Error("Invalid 'delete' operation on computed property: ".concat(binding.asString()));
-                            }
-                            return next === null || next === void 0 ? void 0 : next.delete(binding, options);
-                        }
-                    };
-                    player.hooks.dataController.tap(this.name, function(dataController) {
-                        dataController.hooks.resolveDataStages.tap(_this.name, function(dataPipeline) {
-                            return _to_consumable_array(dataPipeline).concat([
-                                computedPropertyMiddleware
-                            ]);
-                        });
-                    });
-                    player.hooks.schema.tap(this.name, function(schema) {
-                        schemaController = schema;
-                    });
-                    player.hooks.expressionEvaluator.tap(this.name, function(evaluator) {
-                        expressionEvaluator = evaluator;
-                    });
-                }
-            }
-        ]);
-        return ComputedPropertiesPlugin;
-    }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugin.ts
-    var ReferenceAssetsPlugin = /*#__PURE__*/ function() {
-        function ReferenceAssetsPlugin() {
-            _class_call_check(this, ReferenceAssetsPlugin);
-            this.name = "reference-assets-plugin";
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/plugin.ts
+    var A2UIPlugin = /*#__PURE__*/ function() {
+        function A2UIPlugin() {
+            _class_call_check(this, A2UIPlugin);
+            this.name = "a2ui-plugin";
             this.metaPlugin = new MetaPlugin([
-                new CommonTypesPlugin(),
-                new CommonExpressionsPlugin(),
-                new ComputedPropertiesPlugin(),
                 new AsyncNodePlugin({
                     plugins: [
                         new AsyncNodePluginPlugin()
                     ]
                 }),
-                new ReferenceAssetsTransformPlugin(),
-                new ChatUiDemoPlugin(),
-                new ErrorRecoveryPlugin()
+                new A2UIContentPlugin(),
+                new A2UITransformPlugin(),
+                new A2UIExpressionsPlugin()
             ]);
         }
-        _create_class(ReferenceAssetsPlugin, [
+        _create_class(A2UIPlugin, [
             {
                 key: "apply",
                 value: function apply(player) {
@@ -10898,7 +10194,7 @@ var ReferenceAssetsPlugin = function() {
                 }
             }
         ]);
-        return ReferenceAssetsPlugin;
+        return A2UIPlugin;
     }();
     return __toCommonJS(src_exports);
 }(); /*! Bundled license information:
