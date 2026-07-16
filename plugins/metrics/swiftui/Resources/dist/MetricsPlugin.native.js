@@ -4677,6 +4677,12 @@ var MetricsPlugin = function() {
                     this.shadowModelPaths = removeBindingAndChildrenFromMap(this.shadowModelPaths, binding);
                     return next === null || next === void 0 ? void 0 : next.delete(binding, options);
                 }
+            },
+            {
+                /** Clears any invalid values staged in the shadow model */ key: "reset",
+                value: function reset() {
+                    this.shadowModelPaths.clear();
+                }
             }
         ]);
         return ValidationMiddleware;
@@ -5530,6 +5536,47 @@ var MetricsPlugin = function() {
                 /** Return the middleware for the data-model to stop propagation of invalid data */ key: "getDataMiddleware",
                 value: function getDataMiddleware() {
                     var _this = this;
+                    var validationMiddleware = new ValidationMiddleware(function(binding) {
+                        var _strongValidation_get;
+                        if (!_this.options) {
+                            return;
+                        }
+                        _this.updateValidationsForBinding(binding, "change", _this.options);
+                        var strongValidation = _this.getValidationForBinding(binding);
+                        if ((strongValidation === null || strongValidation === void 0 ? void 0 : (_strongValidation_get = strongValidation.get()) === null || _strongValidation_get === void 0 ? void 0 : _strongValidation_get.severity) === "error") {
+                            return strongValidation.get();
+                        }
+                        var newInvalidBindings = /* @__PURE__ */ new Set();
+                        _this.validations.forEach(function(weakValidation, strongBinding) {
+                            var _weakValidation_get;
+                            if (caresAboutDataChanges(/* @__PURE__ */ new Set([
+                                binding
+                            ]), weakValidation.weakBindings) && (weakValidation === null || weakValidation === void 0 ? void 0 : (_weakValidation_get = weakValidation.get()) === null || _weakValidation_get === void 0 ? void 0 : _weakValidation_get.severity) === "error") {
+                                weakValidation === null || weakValidation === void 0 ? void 0 : weakValidation.weakBindings.forEach(function(weakBinding) {
+                                    if (weakBinding === strongBinding) {
+                                        newInvalidBindings.add({
+                                            binding: weakBinding,
+                                            isStrong: true
+                                        });
+                                    } else {
+                                        newInvalidBindings.add({
+                                            binding: weakBinding,
+                                            isStrong: false
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                        if (newInvalidBindings.size > 0) {
+                            return newInvalidBindings;
+                        }
+                    }, {
+                        logger: new ProxyLogger(function() {
+                            var _this_options;
+                            return (_this_options = _this.options) === null || _this_options === void 0 ? void 0 : _this_options.logger;
+                        })
+                    });
+                    this.validationMiddleware = validationMiddleware;
                     return [
                         {
                             set: function(transaction, options, next) {
@@ -5544,46 +5591,7 @@ var MetricsPlugin = function() {
                                 return next === null || next === void 0 ? void 0 : next.delete(binding, options);
                             }
                         },
-                        new ValidationMiddleware(function(binding) {
-                            var _strongValidation_get;
-                            if (!_this.options) {
-                                return;
-                            }
-                            _this.updateValidationsForBinding(binding, "change", _this.options);
-                            var strongValidation = _this.getValidationForBinding(binding);
-                            if ((strongValidation === null || strongValidation === void 0 ? void 0 : (_strongValidation_get = strongValidation.get()) === null || _strongValidation_get === void 0 ? void 0 : _strongValidation_get.severity) === "error") {
-                                return strongValidation.get();
-                            }
-                            var newInvalidBindings = /* @__PURE__ */ new Set();
-                            _this.validations.forEach(function(weakValidation, strongBinding) {
-                                var _weakValidation_get;
-                                if (caresAboutDataChanges(/* @__PURE__ */ new Set([
-                                    binding
-                                ]), weakValidation.weakBindings) && (weakValidation === null || weakValidation === void 0 ? void 0 : (_weakValidation_get = weakValidation.get()) === null || _weakValidation_get === void 0 ? void 0 : _weakValidation_get.severity) === "error") {
-                                    weakValidation === null || weakValidation === void 0 ? void 0 : weakValidation.weakBindings.forEach(function(weakBinding) {
-                                        if (weakBinding === strongBinding) {
-                                            newInvalidBindings.add({
-                                                binding: weakBinding,
-                                                isStrong: true
-                                            });
-                                        } else {
-                                            newInvalidBindings.add({
-                                                binding: weakBinding,
-                                                isStrong: false
-                                            });
-                                        }
-                                    });
-                                }
-                            });
-                            if (newInvalidBindings.size > 0) {
-                                return newInvalidBindings;
-                            }
-                        }, {
-                            logger: new ProxyLogger(function() {
-                                var _this_options;
-                                return (_this_options = _this.options) === null || _this_options === void 0 ? void 0 : _this_options.logger;
-                            })
-                        })
+                        validationMiddleware
                     ];
                 }
             },
@@ -5619,15 +5627,17 @@ var MetricsPlugin = function() {
             {
                 key: "reset",
                 value: function reset() {
+                    var _this_validationMiddleware;
                     this.validations.clear();
                     this.tracker = void 0;
+                    (_this_validationMiddleware = this.validationMiddleware) === null || _this_validationMiddleware === void 0 ? void 0 : _this_validationMiddleware.reset();
                 }
             },
             {
                 key: "onView",
                 value: function onView(view) {
                     var _this = this;
-                    this.validations.clear();
+                    this.reset();
                     if (!this.options) {
                         return;
                     }
@@ -7924,8 +7934,8 @@ var MetricsPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "1.0.1" : "unknown";
-    var COMMIT = true ? "28e370930d5abb866dd3c76618e86c9f3cc754ac" : "unknown";
+    var PLAYER_VERSION = true ? "1.1.0-next.2" : "unknown";
+    var COMMIT = true ? "233ef9fa2145aa08b23ffbb50bb105689adf830f" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
