@@ -1,7 +1,9 @@
 import SwiftUI
 
+#if SWIFT_PACKAGE
 import PlayerUI
 import PlayerUISwiftUI
+#endif
 
 /**
  Reference Assets for the `SwiftUIPlayer`
@@ -35,6 +37,10 @@ public class ReferenceAssetsPlugin: JSBasePlugin, NativePlugin {
      - returns: A URL if it exists in the bundle
      */
     override open func getUrlForFile(fileName: String) -> URL? {
+        #if SWIFT_PACKAGE
         ResourceUtilities.urlForFile(name: fileName, ext: "js", bundle: Bundle.module)
+        #else
+        ResourceUtilities.urlForFile(name: fileName, ext: "js", bundle: Bundle(for: ReferenceAssetsPlugin.self), pathComponent: "PlayerUI_ReferenceAssets.bundle")
+        #endif
     }
 }

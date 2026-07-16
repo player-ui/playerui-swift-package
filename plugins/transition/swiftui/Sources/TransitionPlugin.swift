@@ -2,8 +2,10 @@ import Combine
 import SwiftUI
 import SwiftHooks
 
+#if SWIFT_PACKAGE
 import PlayerUI
 import PlayerUISwiftUI
+#endif
 
 /**
  A plugin to supply transition animations for initial flow load and between views in a flow

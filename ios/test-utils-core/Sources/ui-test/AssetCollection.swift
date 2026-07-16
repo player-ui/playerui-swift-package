@@ -9,7 +9,9 @@ import Foundation
 import SwiftUI
 import Combine
 
+#if SWIFT_PACKAGE
 import PlayerUI
+#endif
 
 /**
  A SwiftUI View to load flows for ease of UI testing

@@ -7,8 +7,10 @@
 
 import JavaScriptCore
 
+#if SWIFT_PACKAGE
 import PlayerUI
 import PlayerUILogger
+#endif
 
 /**
  Registry for SwiftUI based `SwiftUIAsset` implementations

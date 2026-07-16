@@ -7,8 +7,10 @@
 
 import Foundation
 
+#if SWIFT_PACKAGE
 import PlayerUI
 import PlayerUILogger
+#endif
 
 /**
  A Logger plugin that prints messages

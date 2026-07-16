@@ -1,10 +1,12 @@
 import SwiftUI
 import Combine
 
+#if SWIFT_PACKAGE
 import PlayerUI
 import PlayerUISwiftUI
 import PlayerUISwiftUIPendingTransactionPlugin
 import PlayerUIBeaconPlugin
+#endif
 
 /**
  Data Decoded by Player for `ActionAsset`

@@ -68,20 +68,20 @@ var MakeFlow = function() {
     var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
     var __getOwnPropNames = Object.getOwnPropertyNames;
     var __hasOwnProp = Object.prototype.hasOwnProperty;
-    var __export = function(target, all) {
+    var __export = function __export(target, all) {
         for(var name in all)__defProp(target, name, {
             get: all[name],
             enumerable: true
         });
     };
-    var __copyProps = function(to, from, except, desc) {
+    var __copyProps = function __copyProps(to, from, except, desc) {
         if (from && (typeof from === "undefined" ? "undefined" : _type_of(from)) === "object" || typeof from === "function") {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
             try {
                 var _loop = function() {
                     var key = _step.value;
                     if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
-                        get: function() {
+                        get: function get() {
                             return from[key];
                         },
                         enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
@@ -105,7 +105,7 @@ var MakeFlow = function() {
         }
         return to;
     };
-    var __toCommonJS = function(mod) {
+    var __toCommonJS = function __toCommonJS(mod) {
         return __copyProps(__defProp({}, "__esModule", {
             value: true
         }), mod);
@@ -113,13 +113,13 @@ var MakeFlow = function() {
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/make-flow/src/index.ts
     var src_exports = {};
     __export(src_exports, {
-        ObjType: function() {
+        ObjType: function ObjType1() {
             return ObjType;
         },
-        identify: function() {
+        identify: function identify1() {
             return identify;
         },
-        makeFlow: function() {
+        makeFlow: function makeFlow1() {
             return makeFlow;
         }
     });
@@ -143,9 +143,9 @@ var MakeFlow = function() {
         }
         return 3 /* UNKNOWN */ ;
     }
-    var createDefaultNav = function(flow, options) {
+    var createDefaultNav = function createDefaultNav(flow, options) {
         if ((flow.navigation === void 0 || flow.navigation === null) && Array.isArray(flow.views) && flow.views.length === 1) {
-            var _flow_views__id, _options_outcome;
+            var _flow_views__id, _ref;
             var navFlow = {
                 startState: "VIEW_0",
                 VIEW_0: {
@@ -158,7 +158,7 @@ var MakeFlow = function() {
                 },
                 END_done: {
                     state_type: "END",
-                    outcome: (_options_outcome = options === null || options === void 0 ? void 0 : options.outcome) !== null && _options_outcome !== void 0 ? _options_outcome : "doneWithFlow"
+                    outcome: (_ref = options === null || options === void 0 ? void 0 : options.outcome) !== null && _ref !== void 0 ? _ref : "doneWithFlow"
                 },
                 END_back: {
                     state_type: "END",
