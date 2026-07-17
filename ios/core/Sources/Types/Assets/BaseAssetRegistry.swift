@@ -7,7 +7,9 @@
 
 import Foundation
 import JavaScriptCore
+#if SWIFT_PACKAGE
 import PlayerUILogger
+#endif
 
 /**
  Represents the different errors that occur when decoding

@@ -8,7 +8,9 @@
 import Foundation
 import JavaScriptCore
 
+#if SWIFT_PACKAGE
 import PlayerUI
+#endif
 
 /**
  Represents a JS Function that was part of the asset in the JS runtime

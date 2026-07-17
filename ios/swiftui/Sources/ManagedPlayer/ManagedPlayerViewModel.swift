@@ -9,7 +9,9 @@ import Foundation
 import Combine
 import SwiftHooks
 
+#if SWIFT_PACKAGE
 import PlayerUI
+#endif
 
 /// A plugin used by the ManagedPlayer.
 ///
@@ -82,6 +84,8 @@ public class ManagedPlayerViewModel: ObservableObject, NativePlugin {
     /// The last completed state
     private var prevResult: CompletedState?
 
+    private var prevState: NextState?
+
     private var onComplete: (CompletedState) -> Void
 
     /// The `FlowManager` that is used for this instance
@@ -135,23 +139,25 @@ public class ManagedPlayerViewModel: ObservableObject, NativePlugin {
             self.flow = nil
 
             do {
-                let nextFlow = try await self.manager.next(result: state)
-                self.handleNextFlow(nextFlow)
+                let nextState = try await self.manager.next(state)
+                self.handleNextState(nextState)
             } catch {
                 self.loadingState = .failed(error)
             }
         }
     }
 
-    func handleNextFlow(_ nextFlow: String?) {
-        if let flow = nextFlow {
+    func handleNextState(_ state: NextState) {
+        prevState = state
+        switch state {
+        case .flow(let flow):
             if !flow.isEmpty {
                 self.flow = flow
                 loadingState = .loaded(flow)
             } else {
                 loadingState = .failed(ManagedPlayerError.emptyFlow)
             }
-        } else {
+        case .finished:
             guard let finalState = prevResult else { return }
             onComplete(finalState)
         }

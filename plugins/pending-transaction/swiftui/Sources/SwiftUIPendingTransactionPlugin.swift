@@ -8,8 +8,10 @@
 import Foundation
 import SwiftUI
 
+#if SWIFT_PACKAGE
 import PlayerUI
 import PlayerUISwiftUI
+#endif
 
 /**
  A plugin that allows TransactionContext objects to be registered into the decoder's userInfo that is used to decode the view updates.

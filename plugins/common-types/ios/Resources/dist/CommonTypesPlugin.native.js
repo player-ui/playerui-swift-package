@@ -404,7 +404,7 @@ function _ts_generator(thisArg, body) {
     }
 }
 var CommonTypesPlugin = function() {
-    var equalToOrIn = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/tapable-ts@0.2.4/node_modules/tapable-ts/dist/hooks.mjs
+    var equalToOrIn = // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/tapable-ts@0.2.4/node_modules/tapable-ts/dist/hooks.mjs
     function equalToOrIn(value, check) {
         if (Array.isArray(check)) {
             return check.includes(value);
@@ -421,7 +421,7 @@ var CommonTypesPlugin = function() {
         }
         return (_tap = tap).callback.apply(_tap, _to_consumable_array(args));
     };
-    var dlv_es_default = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/dlv@1.1.3/node_modules/dlv/dist/dlv.es.js
+    var dlv_es_default = // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/dlv@1.1.3/node_modules/dlv/dist/dlv.es.js
     function dlv_es_default(t2, e, l, n, r) {
         for(e = e.split ? e.split(".") : e, n = 0; n < e.length; n++)t2 = t2 ? t2[e[n]] : r;
         return t2 === r ? l : t2;
@@ -1586,9 +1586,9 @@ var CommonTypesPlugin = function() {
             value: true
         }), mod);
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/ts-nested-error@1.2.1/node_modules/ts-nested-error/build/nested-error.js
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/ts-nested-error@1.2.1/node_modules/ts-nested-error/build/nested-error.js
     var require_nested_error = __commonJS({
-        "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/ts-nested-error@1.2.1/node_modules/ts-nested-error/build/nested-error.js": function(exports) {
+        "../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/ts-nested-error@1.2.1/node_modules/ts-nested-error/build/nested-error.js": function(exports) {
             "use strict";
             Object.defineProperty(exports, "__esModule", {
                 value: true
@@ -1690,9 +1690,9 @@ var CommonTypesPlugin = function() {
             exports.toError = toError;
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/timm@1.7.1/node_modules/timm/lib/timm.js
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/timm@1.7.1/node_modules/timm/lib/timm.js
     var require_timm = __commonJS({
-        "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/timm@1.7.1/node_modules/timm/lib/timm.js": function(exports) {
+        "../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/timm@1.7.1/node_modules/timm/lib/timm.js": function(exports) {
             "use strict";
             Object.defineProperty(exports, "__esModule", {
                 value: true
@@ -1980,9 +1980,9 @@ var CommonTypesPlugin = function() {
             exports.default = _default;
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/p-defer@3.0.0/node_modules/p-defer/index.js
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/p-defer@3.0.0/node_modules/p-defer/index.js
     var require_p_defer = __commonJS({
-        "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/p-defer@3.0.0/node_modules/p-defer/index.js": function(exports, module) {
+        "../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/p-defer@3.0.0/node_modules/p-defer/index.js": function(exports, module) {
             "use strict";
             var pDefer = function pDefer() {
                 var deferred2 = {};
@@ -1995,9 +1995,9 @@ var CommonTypesPlugin = function() {
             module.exports = pDefer;
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/queue-microtask@1.2.3/node_modules/queue-microtask/index.js
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/queue-microtask@1.2.3/node_modules/queue-microtask/index.js
     var require_queue_microtask = __commonJS({
-        "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/queue-microtask@1.2.3/node_modules/queue-microtask/index.js": function(exports, module) {
+        "../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/queue-microtask@1.2.3/node_modules/queue-microtask/index.js": function(exports, module) {
             "use strict";
             var promise;
             module.exports = typeof queueMicrotask === "function" ? queueMicrotask.bind(typeof window !== "undefined" ? window : global) : function(cb) {
@@ -2009,9 +2009,9 @@ var CommonTypesPlugin = function() {
             };
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js
     var require_sorted_array = __commonJS({
-        "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js": function(exports, module) {
+        "../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js": function(exports, module) {
             "use strict";
             var SortedArray2 = function() {
                 var SortedArray3 = defclass({
@@ -2090,7 +2090,7 @@ var CommonTypesPlugin = function() {
             });
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/common-types/core/src/index.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/common-types/core/src/index.ts
     var src_exports = {};
     __export(src_exports, {
         CommonTypesPlugin: function CommonTypesPlugin1() {
@@ -2121,7 +2121,7 @@ var CommonTypesPlugin = function() {
             return validators_exports;
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+types-provider-plugin@0.0.0/node_modules/@player-ui/types-provider-plugin/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+types-provider-plugin@0.0.0/node_modules/@player-ui/types-provider-plugin/dist/index.mjs
     var TypesProviderPlugin = /*#__PURE__*/ function() {
         function TypesProviderPlugin(config) {
             _class_call_check(this, TypesProviderPlugin);
@@ -2157,7 +2157,7 @@ var CommonTypesPlugin = function() {
         ]);
         return TypesProviderPlugin;
     }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/common-types/core/src/validators/index.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/common-types/core/src/validators/index.ts
     var validators_exports = {};
     __export(validators_exports, {
         collection: function collection1() {
@@ -2488,16 +2488,16 @@ var CommonTypesPlugin = function() {
         ]);
         return SyncWaterfallHook;
     }(Hook);
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_ts_nested_error = __toESM(require_nested_error(), 1);
     var import_ts_nested_error2 = __toESM(require_nested_error(), 1);
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_timm = __toESM(require_timm(), 1);
     var import_ts_nested_error3 = __toESM(require_nested_error(), 1);
     var import_timm2 = __toESM(require_timm(), 1);
     var import_timm3 = __toESM(require_timm(), 1);
     var import_timm4 = __toESM(require_timm(), 1);
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/dequal@2.0.3/node_modules/dequal/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/dequal@2.0.3/node_modules/dequal/dist/index.mjs
     var has = Object.prototype.hasOwnProperty;
     function dequal(foo, bar) {
         var ctor, len, tmp;
@@ -2601,7 +2601,7 @@ var CommonTypesPlugin = function() {
         }
         return foo !== foo && bar !== bar;
     }
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_timm5 = __toESM(require_timm(), 1);
     var import_timm6 = __toESM(require_timm(), 1);
     var import_timm7 = __toESM(require_timm(), 1);
@@ -2611,7 +2611,7 @@ var CommonTypesPlugin = function() {
     var import_p_defer2 = __toESM(require_p_defer(), 1);
     var import_timm9 = __toESM(require_timm(), 1);
     var import_queue_microtask2 = __toESM(require_queue_microtask(), 1);
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
     var import_sorted_array = __toESM(require_sorted_array(), 1);
     function traverseObj(object) {
         var path = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [], pairs = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : /* @__PURE__ */ new Map();
@@ -2739,7 +2739,7 @@ var CommonTypesPlugin = function() {
         ]);
         return Registry;
     }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var __defProp2 = Object.defineProperty;
     var __export2 = function __export2(target, all) {
         for(var name in all)__defProp2(target, name, {
@@ -4658,6 +4658,12 @@ var CommonTypesPlugin = function() {
                 value: function _delete(binding, options, next) {
                     this.shadowModelPaths = removeBindingAndChildrenFromMap(this.shadowModelPaths, binding);
                     return next === null || next === void 0 ? void 0 : next.delete(binding, options);
+                }
+            },
+            {
+                /** Clears any invalid values staged in the shadow model */ key: "reset",
+                value: function reset() {
+                    this.shadowModelPaths.clear();
                 }
             }
         ]);
@@ -6580,6 +6586,47 @@ var CommonTypesPlugin = function() {
                 /** Return the middleware for the data-model to stop propagation of invalid data */ key: "getDataMiddleware",
                 value: function getDataMiddleware() {
                     var _this = this;
+                    var validationMiddleware = new ValidationMiddleware(function(binding) {
+                        var _strongValidation_get;
+                        if (!_this.options) {
+                            return;
+                        }
+                        _this.updateValidationsForBinding(binding, "change", _this.options);
+                        var strongValidation = _this.getValidationForBinding(binding);
+                        if ((strongValidation === null || strongValidation === void 0 ? void 0 : (_strongValidation_get = strongValidation.get()) === null || _strongValidation_get === void 0 ? void 0 : _strongValidation_get.severity) === "error") {
+                            return strongValidation.get();
+                        }
+                        var newInvalidBindings = /* @__PURE__ */ new Set();
+                        _this.validations.forEach(function(weakValidation, strongBinding) {
+                            var _weakValidation_get;
+                            if (caresAboutDataChanges(/* @__PURE__ */ new Set([
+                                binding
+                            ]), weakValidation.weakBindings) && (weakValidation === null || weakValidation === void 0 ? void 0 : (_weakValidation_get = weakValidation.get()) === null || _weakValidation_get === void 0 ? void 0 : _weakValidation_get.severity) === "error") {
+                                weakValidation === null || weakValidation === void 0 ? void 0 : weakValidation.weakBindings.forEach(function(weakBinding) {
+                                    if (weakBinding === strongBinding) {
+                                        newInvalidBindings.add({
+                                            binding: weakBinding,
+                                            isStrong: true
+                                        });
+                                    } else {
+                                        newInvalidBindings.add({
+                                            binding: weakBinding,
+                                            isStrong: false
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                        if (newInvalidBindings.size > 0) {
+                            return newInvalidBindings;
+                        }
+                    }, {
+                        logger: new ProxyLogger(function() {
+                            var _this_options;
+                            return (_this_options = _this.options) === null || _this_options === void 0 ? void 0 : _this_options.logger;
+                        })
+                    });
+                    this.validationMiddleware = validationMiddleware;
                     return [
                         {
                             set: function set(transaction, options, next) {
@@ -6594,46 +6641,7 @@ var CommonTypesPlugin = function() {
                                 return next === null || next === void 0 ? void 0 : next.delete(binding, options);
                             }
                         },
-                        new ValidationMiddleware(function(binding) {
-                            var _strongValidation_get;
-                            if (!_this.options) {
-                                return;
-                            }
-                            _this.updateValidationsForBinding(binding, "change", _this.options);
-                            var strongValidation = _this.getValidationForBinding(binding);
-                            if ((strongValidation === null || strongValidation === void 0 ? void 0 : (_strongValidation_get = strongValidation.get()) === null || _strongValidation_get === void 0 ? void 0 : _strongValidation_get.severity) === "error") {
-                                return strongValidation.get();
-                            }
-                            var newInvalidBindings = /* @__PURE__ */ new Set();
-                            _this.validations.forEach(function(weakValidation, strongBinding) {
-                                var _weakValidation_get;
-                                if (caresAboutDataChanges(/* @__PURE__ */ new Set([
-                                    binding
-                                ]), weakValidation.weakBindings) && (weakValidation === null || weakValidation === void 0 ? void 0 : (_weakValidation_get = weakValidation.get()) === null || _weakValidation_get === void 0 ? void 0 : _weakValidation_get.severity) === "error") {
-                                    weakValidation === null || weakValidation === void 0 ? void 0 : weakValidation.weakBindings.forEach(function(weakBinding) {
-                                        if (weakBinding === strongBinding) {
-                                            newInvalidBindings.add({
-                                                binding: weakBinding,
-                                                isStrong: true
-                                            });
-                                        } else {
-                                            newInvalidBindings.add({
-                                                binding: weakBinding,
-                                                isStrong: false
-                                            });
-                                        }
-                                    });
-                                }
-                            });
-                            if (newInvalidBindings.size > 0) {
-                                return newInvalidBindings;
-                            }
-                        }, {
-                            logger: new ProxyLogger(function() {
-                                var _this_options;
-                                return (_this_options = _this.options) === null || _this_options === void 0 ? void 0 : _this_options.logger;
-                            })
-                        })
+                        validationMiddleware
                     ];
                 }
             },
@@ -6669,15 +6677,17 @@ var CommonTypesPlugin = function() {
             {
                 key: "reset",
                 value: function reset() {
+                    var _this_validationMiddleware;
                     this.validations.clear();
                     this.tracker = void 0;
+                    (_this_validationMiddleware = this.validationMiddleware) === null || _this_validationMiddleware === void 0 ? void 0 : _this_validationMiddleware.reset();
                 }
             },
             {
                 key: "onView",
                 value: function onView(view) {
                     var _this = this;
-                    this.validations.clear();
+                    this.reset();
                     if (!this.options) {
                         return;
                     }
@@ -7508,8 +7518,8 @@ var CommonTypesPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "0.15.4" : "unknown";
-    var COMMIT = true ? "08f38fafc204532c28636bce43e15f2641fda79b" : "unknown";
+    var PLAYER_VERSION = typeof __VERSION__ !== "undefined" ? __VERSION__ : "unknown";
+    var COMMIT = typeof __GIT_COMMIT__ !== "undefined" ? __GIT_COMMIT__ : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
@@ -7921,7 +7931,7 @@ var CommonTypesPlugin = function() {
         version: PLAYER_VERSION,
         commit: COMMIT
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/common-types/core/src/validators/index.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/common-types/core/src/validators/index.ts
     var EMAIL_REGEX = // eslint-disable-next-line no-control-regex
     /^((([a-z]|\d|[!#$%&'*+\-/=?^_`{|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#$%&'*+-/=?^_`{|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i;
     var PHONE_REGEX = /^\+?[1]?[- ]?\(?\d{3}[)\- ]?\s?\d{3}[ -]?\d{4}$/;
@@ -8097,7 +8107,7 @@ var CommonTypesPlugin = function() {
     var email = stringRegexValidator(EMAIL_REGEX, "validation.email", "Improper email format");
     var phone = stringRegexValidator(PHONE_REGEX, "validation.phone", "Invalid phone number");
     var zip = stringRegexValidator(ZIP_REGEX, "validation.regex", "Invalid zip code");
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/common-types/core/src/data-types/types.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/common-types/core/src/data-types/types.ts
     var types_exports = {};
     __export(types_exports, {
         BooleanType: function BooleanType1() {
@@ -8222,7 +8232,7 @@ var CommonTypesPlugin = function() {
             type: "phone"
         }
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/common-types/core/src/formats/index.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/common-types/core/src/formats/index.ts
     var formats_exports = {};
     __export(formats_exports, {
         commaNumber: function commaNumber1() {
@@ -8241,7 +8251,7 @@ var CommonTypesPlugin = function() {
             return phone2;
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/common-types/core/src/formats/utils.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/common-types/core/src/formats/utils.ts
     var PLACEHOLDER = "#";
     var removeFormatCharactersFromMaskedString = function removeFormatCharactersFromMaskedString(value, mask) {
         var reserved = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : [
@@ -8347,7 +8357,7 @@ var CommonTypesPlugin = function() {
             }
         };
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/common-types/core/src/formats/index.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/common-types/core/src/formats/index.ts
     var LENGTH_OF_MAX_INT = String(Number.MAX_SAFE_INTEGER).split("").length;
     var integer2 = {
         name: "integer",
@@ -8620,7 +8630,7 @@ var CommonTypesPlugin = function() {
             return (_ref = (_basePhoneFormatter_format = basePhoneFormatter.format) === null || _basePhoneFormatter_format === void 0 ? void 0 : _basePhoneFormatter_format.call(basePhoneFormatter, value === "(" ? "" : value)) !== null && _ref !== void 0 ? _ref : value;
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/common-types/core/src/index.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/common-types/core/src/index.ts
     var CommonTypesPlugin = /*#__PURE__*/ function() {
         function CommonTypesPlugin() {
             _class_call_check(this, CommonTypesPlugin);

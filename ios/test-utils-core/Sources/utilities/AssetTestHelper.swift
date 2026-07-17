@@ -1,9 +1,11 @@
 import Foundation
 import JavaScriptCore
 
+#if SWIFT_PACKAGE
 import PlayerUI
 import PlayerUILogger
 import PlayerUISwiftUI
+#endif
 
 extension JSContext {
     func createAssetJsValue(string: String) -> JSValue {
@@ -21,9 +23,20 @@ extension JSContext {
     }
 
     var bundleUrl: URL? {
+        #if SWIFT_PACKAGE
         ResourceUtilities.urlForFile(name: "MakeFlow.native", ext: "js", bundle: Bundle.module)
+        #else
+        ResourceUtilities.urlForFile(
+            name: "MakeFlow.native",
+            ext: "js",
+            bundle: Bundle(for: MakeFlowResourceShim.self), 
+            pathComponent: "TestUtilities.bundle"
+        )
+        #endif
     }
 }
+
+class MakeFlowResourceShim {}
 
 open class AssetTestHelper<WrapperType: AssetContainer & Decodable, Registry> where Registry: BaseAssetRegistry<WrapperType> {
 

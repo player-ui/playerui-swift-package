@@ -8,7 +8,15 @@
 import Foundation
 import Combine
 
+#if SWIFT_PACKAGE
 import PlayerUI
+#endif
+
+/// A state object to return from a FlowManager to advance
+public enum NextState {
+    case flow(String)
+    case finished
+}
 
 /**
  A protocol declaring the required properties for a FlowManager
@@ -17,12 +25,12 @@ import PlayerUI
  */
 public protocol FlowManager {
     /**
-     A function called to fetch the next flow. If the flow is complete, return `nil`.
+     A function called to fetch the next flow
      `CompletedState` will be `nil` if it is asking for the first state
      - parameters:
-        - result: The `CompletedState` from the previous flow if there was one
+        - state: The `CompletedState` from the previous flow if there was one
     */
-    func next(result: CompletedState?) async throws -> String?
+    func next(_: CompletedState?) async throws -> NextState
 
     /**
      Called when the `ManagedPlayer` is being removed from the view tree

@@ -1,7 +1,9 @@
 import JavaScriptCore
 
 import PlayerUI
+#if SWIFT_PACKAGE
 import PlayerUILogger
+#endif
 
 open class HeadlessPlayerImpl: HeadlessPlayer {
     public var assetRegistry: BaseAssetRegistry<TestWrapper>
@@ -29,8 +31,6 @@ public class HeadlessHooks: CoreHooks {
 
     public var dataController: Hook<DataController>
 
-    public var errorController: Hook<ErrorController>
-
     public var state: Hook<BaseFlowState>
 
     public var onStart: Hook<FlowType>
@@ -39,7 +39,6 @@ public class HeadlessHooks: CoreHooks {
         flowController = Hook(baseValue: value, name: "flowController")
         viewController = Hook(baseValue: value, name: "viewController")
         dataController = Hook(baseValue: value, name: "dataController")
-        errorController = Hook(baseValue: value, name: "errorController")
         state = Hook(baseValue: value, name: "state")
         onStart = Hook<FlowType>(baseValue: value, name: "onStart")
     }
