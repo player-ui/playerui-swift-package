@@ -1600,6 +1600,38 @@ var A2UIPlugin = function() {
         });
         return registry;
     };
+    var checkRequired = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/expressions/validation.ts
+    function checkRequired(value) {
+        if (value === null || value === void 0) return false;
+        if (typeof value === "string") return value.length > 0;
+        if (Array.isArray(value)) return value.length > 0;
+        return true;
+    };
+    var checkRegex = function checkRegex(value, pattern) {
+        if (value === null || value === void 0 || !pattern) return false;
+        try {
+            return new RegExp(pattern).test(String(value));
+        } catch (e) {
+            return false;
+        }
+    };
+    var checkLength = function checkLength(value, min, max) {
+        if (value === null || value === void 0) return false;
+        var len = String(value).length;
+        var lo = typeof min === "number" ? min : -Infinity;
+        var hi = typeof max === "number" ? max : Infinity;
+        return len >= lo && len <= hi;
+    };
+    var checkNumeric = function checkNumeric(value, min, max) {
+        var n = Number(value);
+        if (Number.isNaN(n)) return false;
+        var lo = typeof min === "number" ? min : -Infinity;
+        var hi = typeof max === "number" ? max : Infinity;
+        return n >= lo && n <= hi;
+    };
+    var checkEmail = function checkEmail(value) {
+        return typeof value === "string" && EMAIL_RE.test(value);
+    };
     var pickNumberLocaleAndOptions = function pickNumberLocaleAndOptions(a, b) {
         if (typeof a === "string") return {
             locale: a,
@@ -1763,13 +1795,14 @@ var A2UIPlugin = function() {
         }
         var ref = {
             type: type,
-            severity: "error"
+            severity: "error",
+            trigger: "change"
         };
         if (check.message) ref.message = check.message;
         if (check.call === "regex" && ((_check_args = check.args) === null || _check_args === void 0 ? void 0 : _check_args.pattern)) {
             ref.regex = unwrapLiteral(check.args.pattern);
         }
-        if (check.call === "length") {
+        if (check.call === "length" || check.call === "numeric") {
             var _check_args1, _check_args2;
             if (((_check_args1 = check.args) === null || _check_args1 === void 0 ? void 0 : _check_args1.min) !== void 0) ref.min = unwrapLiteral(check.args.min);
             if (((_check_args2 = check.args) === null || _check_args2 === void 0 ? void 0 : _check_args2.max) !== void 0) ref.max = unwrapLiteral(check.args.max);
@@ -2552,6 +2585,9 @@ var A2UIPlugin = function() {
         A2UITransformPlugin: function() {
             return A2UITransformPlugin;
         },
+        A2UIValidationPlugin: function() {
+            return A2UIValidationPlugin;
+        },
         A2UI_EVENT_CONTEXT_NAMESPACE: function() {
             return A2UI_EVENT_CONTEXT_NAMESPACE;
         },
@@ -2579,6 +2615,9 @@ var A2UIPlugin = function() {
         email: function() {
             return email;
         },
+        emailValidator: function() {
+            return emailValidator;
+        },
         formatCurrency: function() {
             return formatCurrency;
         },
@@ -2603,11 +2642,17 @@ var A2UIPlugin = function() {
         length: function() {
             return length;
         },
+        lengthValidator: function() {
+            return lengthValidator;
+        },
         not: function() {
             return not;
         },
         numeric: function() {
             return numeric;
+        },
+        numericValidator: function() {
+            return numericValidator;
         },
         openUrl: function() {
             return openUrl;
@@ -2624,8 +2669,14 @@ var A2UIPlugin = function() {
         regex: function() {
             return regex;
         },
+        regexValidator: function() {
+            return regexValidator;
+        },
         required: function() {
             return required;
+        },
+        requiredValidator: function() {
+            return requiredValidator;
         },
         sliderTransform: function() {
             return sliderTransform;
@@ -8572,8 +8623,8 @@ var A2UIPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "1.0.1" : "unknown";
-    var COMMIT = true ? "89cc9313afbc3814bdb0eb4cd578bf07ef07ff92" : "unknown";
+    var PLAYER_VERSION = true ? "1.0.2--canary.909.39732" : "unknown";
+    var COMMIT = true ? "ae6584b45dccdc4de4b4c1c74249fec679460a47" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
@@ -9185,39 +9236,65 @@ var A2UIPlugin = function() {
             }
         });
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/expressions/validation.ts
     var required = function(_ctx, value) {
-        if (value === null || value === void 0) return false;
-        if (typeof value === "string") return value.length > 0;
-        if (Array.isArray(value)) return value.length > 0;
-        return true;
+        return checkRequired(value);
+    };
+    var requiredValidator = function(context, value) {
+        if (!checkRequired(value)) {
+            var message = context.constants.getConstants("validation.required", "constants", "A value is required");
+            return {
+                message: message
+            };
+        }
     };
     var regex = function(_ctx, value, pattern) {
-        if (value === null || value === void 0 || !pattern) return false;
-        try {
-            return new RegExp(pattern).test(String(value));
-        } catch (e) {
-            return false;
+        return checkRegex(value, pattern);
+    };
+    var regexValidator = function(context, value, options) {
+        if (value === null || value === void 0) return;
+        if (!checkRegex(value, options === null || options === void 0 ? void 0 : options.regex)) {
+            var message = context.constants.getConstants("validation.regex", "constants", "Invalid entry");
+            return {
+                message: message
+            };
         }
     };
     var length = function(_ctx, value, min, max) {
-        if (value === null || value === void 0) return false;
-        var len = String(value).length;
-        var lo = typeof min === "number" ? min : -Infinity;
-        var hi = typeof max === "number" ? max : Infinity;
-        return len >= lo && len <= hi;
+        return checkLength(value, min, max);
+    };
+    var lengthValidator = function(context, value, options) {
+        if (value === null || value === void 0) return;
+        if (!checkLength(value, options === null || options === void 0 ? void 0 : options.min, options === null || options === void 0 ? void 0 : options.max)) {
+            var message = context.constants.getConstants("validation.length", "constants", "Invalid length");
+            return {
+                message: message
+            };
+        }
     };
     var numeric = function(_ctx, value, min, max) {
-        var n = Number(value);
-        if (Number.isNaN(n)) return false;
-        var lo = typeof min === "number" ? min : -Infinity;
-        var hi = typeof max === "number" ? max : Infinity;
-        return n >= lo && n <= hi;
+        return checkNumeric(value, min, max);
+    };
+    var numericValidator = function(context, value, options) {
+        if (value === null || value === void 0) return;
+        if (!checkNumeric(value, options === null || options === void 0 ? void 0 : options.min, options === null || options === void 0 ? void 0 : options.max)) {
+            var message = context.constants.getConstants("validation.numeric", "constants", "Value must be a number");
+            return {
+                message: message
+            };
+        }
     };
     var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     var email = function(_ctx, value) {
-        if (typeof value !== "string") return false;
-        return EMAIL_RE.test(value);
+        return checkEmail(value);
+    };
+    var emailValidator = function(context, value) {
+        if (value === null || value === void 0 || value === "") return;
+        if (!checkEmail(value)) {
+            var message = context.constants.getConstants("validation.email", "constants", "Improper email format");
+            return {
+                message: message
+            };
+        }
     };
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/expressions/format.ts
     var formatString = function(_ctx) {
@@ -10201,6 +10278,67 @@ var A2UIPlugin = function() {
         ]);
         return A2UIExpressionsPlugin;
     }();
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+types-provider-plugin@0.0.0/node_modules/@player-ui/types-provider-plugin/dist/index.mjs
+    var TypesProviderPlugin = /*#__PURE__*/ function() {
+        function TypesProviderPlugin(config) {
+            _class_call_check(this, TypesProviderPlugin);
+            this.name = "TypesProviderPlugin";
+            this.config = config;
+        }
+        _create_class(TypesProviderPlugin, [
+            {
+                key: "apply",
+                value: function apply(player) {
+                    var _this = this;
+                    player.hooks.schema.tap(this.name, function(schema) {
+                        if (_this.config.types) {
+                            schema.addDataTypes(_this.config.types);
+                        }
+                        if (_this.config.formats) {
+                            schema.addFormatters(_this.config.formats);
+                        }
+                    });
+                    if (this.config.validators) {
+                        player.hooks.validationController.tap(this.name, function(validationController) {
+                            validationController.hooks.createValidatorRegistry.tap(_this.name, function(validationRegistry) {
+                                var _this_config_validators;
+                                (_this_config_validators = _this.config.validators) === null || _this_config_validators === void 0 ? void 0 : _this_config_validators.forEach(function(param) {
+                                    var _param = _sliced_to_array(param, 2), name = _param[0], handler = _param[1];
+                                    validationRegistry.register(name, handler);
+                                });
+                            });
+                        });
+                    }
+                }
+            }
+        ]);
+        return TypesProviderPlugin;
+    }();
+    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/plugins/a2ui-validation-plugin.ts
+    var validators = {
+        required: requiredValidator,
+        regex: regexValidator,
+        length: lengthValidator,
+        numeric: numericValidator,
+        email: emailValidator
+    };
+    var A2UIValidationPlugin = /*#__PURE__*/ function() {
+        function A2UIValidationPlugin() {
+            _class_call_check(this, A2UIValidationPlugin);
+            this.name = "a2ui-validation";
+        }
+        _create_class(A2UIValidationPlugin, [
+            {
+                key: "apply",
+                value: function apply(player) {
+                    player.registerPlugin(new TypesProviderPlugin({
+                        validators: Object.entries(validators)
+                    }));
+                }
+            }
+        ]);
+        return A2UIValidationPlugin;
+    }();
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/a2ui/core/src/plugin.ts
     var A2UIPlugin = /*#__PURE__*/ function() {
         function A2UIPlugin() {
@@ -10214,7 +10352,8 @@ var A2UIPlugin = function() {
                 }),
                 new A2UIContentPlugin(),
                 new A2UITransformPlugin(),
-                new A2UIExpressionsPlugin()
+                new A2UIExpressionsPlugin(),
+                new A2UIValidationPlugin()
             ]);
         }
         _create_class(A2UIPlugin, [
