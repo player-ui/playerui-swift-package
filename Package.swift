@@ -11,13 +11,9 @@ let ios_plugins: [SwiftPlugin] = [
     (name: "AsyncNodePlugin", path: "async-node", resources: true),
     (name: "BaseBeaconPlugin", path: "beacon", resources: true),
     (name: "CheckPathPlugin", path: "check-path", resources: true),
-    (name: "CommonExpressionsPlugin", path: "common-expressions", resources: true),
-    (name: "CommonTypesPlugin", path: "common-types", resources: true),
-    (name: "ComputedPropertiesPlugin", path: "computed-properties", resources: true),
     (name: "ExpressionPlugin", path: "expression", resources: true),
-    (name: "ExternalActionPlugin", path: "external-action", resources: true),
+    (name: "ExternalStatePlugin", path: "external-state", resources: true),
     (name: "PubSubPlugin", path: "pubsub", resources: true),
-    (name: "StageRevertDataPlugin", path: "stage-revert-data", resources: true),
     (name: "TypesProviderPlugin", path: "types-provider", resources: true),
     (name: "PrintLoggerPlugin", path: "console-logger", resources: false)
 ]
@@ -27,7 +23,7 @@ let swiftui_plugins: [SwiftUIPlugin] = [
     (name: "BeaconPlugin", path: "beacon", dependencies: ["BaseBeaconPlugin"], resources: false),
     (name: "MetricsPlugin", path: "metrics", dependencies: [], resources: true),
     (name: "SwiftUICheckPathPlugin", path: "check-path", dependencies: ["CheckPathPlugin"], resources: false),
-    (name: "ExternalActionViewModifierPlugin", path: "external-action", dependencies: ["ExternalActionPlugin"], resources: false),
+    (name: "ExternalStateViewModifierPlugin", path: "external-state", dependencies: ["ExternalStatePlugin"], resources: false),
     (name: "SwiftUIPendingTransactionPlugin", path: "pending-transaction", dependencies: [], resources: false),
     (name: "TransitionPlugin", path: "transition", dependencies: [], resources: false),
 ]
@@ -55,6 +51,8 @@ let package = Package(
         .playerPackage(name: "PlayerUI"),
         .playerPackage(name: "PlayerUISwiftUI"),
         .playerPackage(name: "PlayerUIReferenceAssets"),
+        .playerPackage(name: "PlayerUIA2UI"),
+        .playerPackage(name: "PlayerUIA2UIPreset"),
         .playerPackage(name: "PlayerUILogger"),
         .playerPackage(name: "PlayerUITestUtilities"),
         .playerPackage(name: "PlayerUITestUtilitiesCore"),
@@ -102,6 +100,27 @@ let package = Package(
             resources: [
                 .process("Resources")
             ]
+        ),
+        .target(
+            name: "PlayerUIA2UI",
+            dependencies: [
+                .product(name: "SwiftHooks", package: "swift-hooks"),
+                .target(name: "PlayerUI"),
+                .target(name: "PlayerUISwiftUI")
+            ],
+            path: "plugins/a2ui/swiftui",
+            resources: [
+                .process("Resources")
+            ]
+        ),
+        .target(
+            name: "PlayerUIA2UIPreset",
+            dependencies: [
+                .target(name: "PlayerUI"),
+                .target(name: "PlayerUISwiftUI"),
+                .target(name: "PlayerUIA2UI")
+            ],
+            path: "packages/a2ui/swiftui"
         ),
         .target(
             name: "PlayerUITestUtilitiesCore",
