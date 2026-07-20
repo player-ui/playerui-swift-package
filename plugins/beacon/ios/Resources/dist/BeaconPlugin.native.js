@@ -7922,8 +7922,8 @@ var BeaconPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "1.0.1" : "unknown";
-    var COMMIT = true ? "89cc9313afbc3814bdb0eb4cd578bf07ef07ff92" : "unknown";
+    var PLAYER_VERSION = true ? "1.1.0-next.4" : "unknown";
+    var COMMIT = true ? "c00a0bc3257d918e21b7244a770ae462017f0fae" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
