@@ -8073,7 +8073,7 @@ var AsyncNodePlugin = function() {
         status: "not-started"
     };
     var PLAYER_VERSION = true ? "1.0.1" : "unknown";
-    var COMMIT = true ? "89cc9313afbc3814bdb0eb4cd578bf07ef07ff92" : "unknown";
+    var COMMIT = true ? "e582bfcc66d8f7106b7bc8256664f0c74a209707" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
