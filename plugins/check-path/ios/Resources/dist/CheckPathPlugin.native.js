@@ -7875,8 +7875,8 @@ var CheckPathPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "1.0.1" : "unknown";
-    var COMMIT = true ? "e582bfcc66d8f7106b7bc8256664f0c74a209707" : "unknown";
+    var PLAYER_VERSION = true ? "1.0.2--canary.923.40403" : "unknown";
+    var COMMIT = true ? "ddf3dcec77177047a4d3a8d39664745967fb6efb" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
