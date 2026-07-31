@@ -7923,7 +7923,7 @@ var BeaconPlugin = function() {
         status: "not-started"
     };
     var PLAYER_VERSION = true ? "1.0.1" : "unknown";
-    var COMMIT = true ? "e582bfcc66d8f7106b7bc8256664f0c74a209707" : "unknown";
+    var COMMIT = true ? "9333166078849bcd0d080866d456d6f26b7c0a5c" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
