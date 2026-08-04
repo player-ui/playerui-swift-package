@@ -7850,8 +7850,8 @@ var ExternalStatePlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "1.0.1" : "unknown";
-    var COMMIT = true ? "9333166078849bcd0d080866d456d6f26b7c0a5c" : "unknown";
+    var PLAYER_VERSION = true ? "1.0.2--canary.923.40572" : "unknown";
+    var COMMIT = true ? "4752a318cbdf267ce8ed4169d32c801575bd88d5" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
