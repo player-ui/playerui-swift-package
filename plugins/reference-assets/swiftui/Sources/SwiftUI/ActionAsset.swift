@@ -1,11 +1,14 @@
+import SwiftUI
 import Combine
+
 import PlayerUI
-import PlayerUIBeaconPlugin
 import PlayerUISwiftUI
 import PlayerUISwiftUIPendingTransactionPlugin
-import SwiftUI
+import PlayerUIBeaconPlugin
 
-/// Data Decoded by Player for `ActionAsset`
+/**
+ Data Decoded by Player for `ActionAsset`
+ */
 struct ActionData: AssetData {
     /// The ID of the asset
     var id: String
@@ -20,15 +23,17 @@ struct ActionData: AssetData {
     var metaData: MetaData?
 }
 
-/// Wrapper class to tie `ActionData` to a SwiftUI `View`
+/**
+ Wrapper class to tie `ActionData` to a SwiftUI `View`
+ */
 final class ActionAsset: UncontrolledAsset<ActionData> {
     /// A type erased view object
-    override var view: AnyView {
-        AnyView(ActionAssetView(model: model))
-    }
+    public override var view: AnyView { AnyView(ActionAssetView(model: model)) }
 }
 
-/// View implementation for `ActionAsset`
+/**
+ View implementation for `ActionAsset`
+ */
 public struct ActionAssetView: View {
     /// The viewModel with decoded data, supplied by `ActionAsset`
     @ObservedObject var model: AssetViewModel<ActionData>
@@ -36,32 +41,24 @@ public struct ActionAssetView: View {
     /// The `BeaconContext` if the `SwiftUIBeaconPlugin` is used in this player instance
     @Environment(\.beaconContext) var beaconContext
 
-    /// For Testing Purposes
-    var didAppear: ((Self) -> Void)?
-
-    /// The `TransactionContext` if the `SwiftUIPendingTransactionPlugin` is used in this player
-    /// instance
+    /// The `TransactionContext` if the `SwiftUIPendingTransactionPlugin` is used in this player instance
     @Environment(\.transactionContext) private var transactionContext
 
+    // For Testing Purposes
+    internal var didAppear: ((Self) -> Void)?
+
+    @ViewBuilder
     public var body: some View {
         Button(
             action: {
-                beaconContext?.beacon(
-                    action: "clicked",
-                    element: "button",
-                    id: model.data.id,
-                    metaData: model.data.metaData
-                )
+                beaconContext?.beacon(action: "clicked", element: "button", id: model.data.id, metaData: model.data.metaData)
 
-                // commit the pendingTransactionContext input callbacks before running the wrapped
-                // function
+                // commit the pendingTransactionContext input callbacks before running the wrapped function
                 model.data.run?.commitCallbacksThenCall()
             },
             label: {
                 if let label = model.data.label?.asset {
-                    label.view
-                        .foregroundColor(.white)
-                        .padding()
+                    label.view.foregroundColor(.white).padding()
                         .frame(maxWidth: .infinity, maxHeight: 44)
                         .background(
                             Rectangle()
@@ -74,15 +71,14 @@ public struct ActionAssetView: View {
             }
         )
         .accessibility(identifier: model.data.id)
-        .onAppear { didAppear?(self) }
+        .onAppear { self.didAppear?(self) }
     }
 }
 
-public extension WrappedFunction {
+extension WrappedFunction {
     ///  commits the pendingTransactionContext callbacks before running the wrapped function
-    func commitCallbacksThenCall(_ args: Any...) {
-        let pendingTransactions =
-            userInfo?[.pendingTransactionContext] as? TransactionContext<PendingTransactionPhases>
+    public func commitCallbacksThenCall(_ args: Any...) {
+        let pendingTransactions = userInfo?[.pendingTransactionContext] as? TransactionContext<PendingTransactionPhases>
         pendingTransactions?.commit(.input)
 
         guard let jsValue = rawValue else { return }

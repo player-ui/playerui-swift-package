@@ -8,22 +8,25 @@
 import Foundation
 import UIKit
 
-/// Assets that are used internally for rendering ReferenceAssets
+/**
+ Assets that are used internally for rendering ReferenceAssets
+ */
 class InternalAssets {
-    /// An image used for the dismiss button
+
+    /**
+     An image used for the dismiss button
+     */
     static var dismissIcon: UIImage? {
-        InternalAssets.getSVGOfSize(name: "dismiss")
+        return InternalAssets.getSVGOfSize(name: "dismiss")
     }
 
-    static var bundleURL: URL? {
-        Bundle.module.resourceURL
-    }
-
-    /// Helper method to get and resize bundled SVGs
-    /// - parameters:
-    ///   - name: The name of the svg icon
-    ///   - size: The size to resize the SVG to if desired
-    /// - returns: A resized UIImage from the SVG
+    /**
+     Helper method to get and resize bundled SVGs
+     - parameters:
+        - name: The name of the svg icon
+        - size: The size to resize the SVG to if desired
+     - returns: A resized UIImage from the SVG
+     */
     static func getSVGOfSize(name: String, size: CGSize? = nil) -> UIImage? {
         guard
             let url = InternalAssets.bundleURL,
@@ -31,19 +34,21 @@ class InternalAssets {
 
         let image = UIImage(named: name, in: bundle, with: .none)
 
-        if let size {
+        if let size = size {
             return image?.resize(to: size).withRenderingMode(.alwaysTemplate)
         }
 
         return image?.withRenderingMode(.alwaysTemplate)
     }
+
+    static var bundleURL: URL? { Bundle.module.resourceURL }
 }
 
 extension UIImage {
     func resize(to newSize: CGSize) -> UIImage {
         let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: newSize)
         UIGraphicsBeginImageContext(newSize)
-        draw(in: rect)
+        self.draw(in: rect)
         guard let newImage = UIGraphicsGetImageFromCurrentImageContext() else { return self }
         UIGraphicsEndImageContext()
         return newImage

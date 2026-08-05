@@ -7,18 +7,16 @@
 
 import SwiftUI
 
-/// Adopters of ScrollToProxy must provide the ability to scroll a view with a specified identifier
-/// into the
+/// Adopters of ScrollToProxy must provide the ability to scroll a view with a specified identifier into the
 /// current viewport.
 ///
-/// A ScrollToProxy can be added to the environment and will be utilized by any contained input
-/// assets to
+/// A ScrollToProxy can be added to the environment and will be utilized by any contained input assets to
 /// ensure they are visible when focused.
 public protocol ScrollToProxy {
-    func scrollTo(_ item: some Hashable, anchor: UnitPoint?)
+    func scrollTo<Item>(_ item: Item, anchor: UnitPoint?) where Item: Hashable
 }
 
-/// ScrollViewProxy is only available on 14+
+// ScrollViewProxy is only available on 14+
 extension ScrollViewProxy: ScrollToProxy {}
 
 public extension View {
@@ -39,7 +37,7 @@ public extension View {
     /// }
     /// ```
     func scrollToProxy(_ scrollTo: ScrollToProxy) -> some View {
-        environment(\.scrollToProxy, scrollTo)
+        return environment(\.scrollToProxy, scrollTo)
     }
 }
 
@@ -50,8 +48,8 @@ public extension EnvironmentValues {
     }
 }
 
-public extension ScrollToProxy {
-    func scrollTo(_ item: some Hashable) {
+extension ScrollToProxy {
+    public func scrollTo<Item>(_ item: Item) where Item: Hashable {
         scrollTo(item, anchor: nil)
     }
 }
@@ -60,6 +58,6 @@ private struct ScrollToEnvironmentKey: EnvironmentKey {
     static let defaultValue: ScrollToProxy = VoidScrollToProxy()
 
     private struct VoidScrollToProxy: ScrollToProxy {
-        func scrollTo(_: some Hashable, anchor _: UnitPoint?) {}
+        func scrollTo<Item>(_ item: Item, anchor: UnitPoint?) where Item: Hashable {}
     }
 }

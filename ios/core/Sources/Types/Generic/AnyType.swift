@@ -7,12 +7,46 @@
 
 import Foundation
 
-// swiftlint:disable file_length
-
-/// A union type to match the JS core players any type
-///
-/// This type is `Sendable` and uses recursive cases for complex types.
+/**
+ A union type to match the JS core players any type
+ 
+ This type is `Sendable` and uses recursive cases for complex types.
+ */
 public enum AnyType: Hashable, Sendable {
+    // swiftlint:disable cyclomatic_complexity
+    public func hash(into hasher: inout Hasher) {
+        switch self {
+        case .string(let data):
+            hasher.combine(data)
+        case .bool(let data):
+            hasher.combine(data)
+        case .number(let data):
+            hasher.combine(data)
+        case .dictionary(let data):
+            hasher.combine(data)
+        case .numberDictionary(let data):
+            hasher.combine(data)
+        case .booleanDictionary(let data):
+            hasher.combine(data)
+        case .array(let data):
+            hasher.combine(data)
+        case .numberArray(let data):
+            hasher.combine(data)
+        case .booleanArray(let data):
+            hasher.combine(data)
+        case .anyDictionary(let data):
+            // Hash the dictionary by combining sorted keys and their values
+            for key in data.keys.sorted() {
+                hasher.combine(key)
+                hasher.combine(data[key])
+            }
+        case .anyArray(let data):
+            hasher.combine(data)
+        case .unknownData:
+            return
+        }
+    }
+
     /// The underlying data was a string
     case string(data: String)
 
@@ -40,171 +74,147 @@ public enum AnyType: Hashable, Sendable {
     /// The underlying data was an array of booleans
     case booleanArray(data: [Bool])
 
-    /// The underlying data was a dictionary of varied value types
-    ///
-    /// This case uses recursive `AnyType` values to maintain `Sendable` conformance.
-    ///
-    /// - Note: This requires the decoder to add `AnyTypeDecodingContext` to the decoder's userInfo
+    /**
+     The underlying data was a dictionary of varied value types
+     
+     This case uses recursive `AnyType` values to maintain `Sendable` conformance.
+
+     - Note: This requires the decoder to add `AnyTypeDecodingContext` to the decoder's userInfo
+     */
     case anyDictionary(data: [String: AnyType])
 
-    /// The underlying data was an array of varied value types
-    ///
-    /// This case uses recursive `AnyType` values to maintain `Sendable` conformance.
-    ///
-    /// - Note: This requires the decoder to add `AnyTypeDecodingContext` to the decoder's userInfo
+    /**
+     The underlying data was an array of varied value types
+     
+     This case uses recursive `AnyType` values to maintain `Sendable` conformance.
+
+     - Note: This requires the decoder to add `AnyTypeDecodingContext` to the decoder's userInfo
+     */
     case anyArray(data: [AnyType])
 
     /// The underlying data was not in a known format. For example, it was a "null".
     case unknownData
-
-    // swiftlint:disable:next cyclomatic_complexity
-    public func hash(into hasher: inout Hasher) {
-        switch self {
-        case let .string(data):
-            hasher.combine(data)
-        case let .bool(data):
-            hasher.combine(data)
-        case let .number(data):
-            hasher.combine(data)
-        case let .dictionary(data):
-            hasher.combine(data)
-        case let .numberDictionary(data):
-            hasher.combine(data)
-        case let .booleanDictionary(data):
-            hasher.combine(data)
-        case let .array(data):
-            hasher.combine(data)
-        case let .numberArray(data):
-            hasher.combine(data)
-        case let .booleanArray(data):
-            hasher.combine(data)
-        case let .anyDictionary(data):
-            // Hash the dictionary by combining sorted keys and their values
-            for key in data.keys.sorted() {
-                hasher.combine(key)
-                hasher.combine(data[key])
-            }
-        case let .anyArray(data):
-            hasher.combine(data)
-        case .unknownData:
-            return
-        }
-    }
 }
 
 // MARK: - Value Extraction
 
-public extension AnyType {
-    /// Cast to expected type automatically.
-    ///
-    /// This method provides a convenient way to extract the underlying value and cast it to a
-    /// specific type
-    /// without explicit pattern matching on each case.
-    ///
-    /// - Parameter type: The target type to cast to
-    /// - Returns: The value cast to the specified type, or `nil` if the cast fails
-    ///
-    /// - Example:
-    /// ```swift
-    /// let anyType = AnyType.string(data: "Hello")
-    /// let title: String? = anyType.as(String.self)  // "Hello"
-    ///
-    /// // Usage with subscripts
-    /// let dict = AnyType.anyDictionary(data: ["title": .string(data: "Hello")])
-    /// let title: String? = dict["title"]?.as(String.self)
-    /// ```
-    // swiftlint:disable:next cyclomatic_complexity
-    func `as`<T>(_: T.Type) -> T? {
+extension AnyType {
+    /**
+     Cast to expected type automatically.
+     
+     This method provides a convenient way to extract the underlying value and cast it to a specific type
+     without explicit pattern matching on each case.
+     
+     - Parameter type: The target type to cast to
+     - Returns: The value cast to the specified type, or `nil` if the cast fails
+     
+     - Example:
+     ```swift
+     let anyType = AnyType.string(data: "Hello")
+     let title: String? = anyType.as(String.self)  // "Hello"
+     
+     // Usage with subscripts
+     let dict = AnyType.anyDictionary(data: ["title": .string(data: "Hello")])
+     let title: String? = dict["title"]?.as(String.self)
+     ```
+     */
+    public func `as`<T>(_ type: T.Type) -> T? {
         switch self {
-        case let .string(data):
+        case .string(let data):
             return data as? T
-        case let .bool(data):
+        case .bool(let data):
             return data as? T
-        case let .number(data):
+        case .number(let data):
             return data as? T
-        case let .dictionary(data):
+        case .dictionary(let data):
             return data as? T
-        case let .numberDictionary(data):
+        case .numberDictionary(let data):
             return data as? T
-        case let .booleanDictionary(data):
+        case .booleanDictionary(let data):
             return data as? T
-        case let .array(data):
+        case .array(let data):
             return data as? T
-        case let .numberArray(data):
+        case .numberArray(let data):
             return data as? T
-        case let .booleanArray(data):
+        case .booleanArray(let data):
             return data as? T
-        case let .anyDictionary(data):
+        case .anyDictionary(let data):
             return data as? T
-        case let .anyArray(data):
+        case .anyArray(let data):
             return data as? T
         case .unknownData:
             return nil
         }
     }
-
-    /// Subscript access for dictionary-like `AnyType` values.
-    ///
-    /// Provides convenient access to values in `anyDictionary`, `dictionary`, `numberDictionary`,
-    /// and `booleanDictionary` cases.
-    ///
-    /// - Parameter key: The key to look up
-    /// - Returns: The value associated with the key, or `nil` if the key doesn't exist
-    ///          or if this is not a dictionary-like case
-    ///
-    /// - Example:
-    /// ```swift
-    /// let dict = AnyType.anyDictionary(data: ["title": .string(data: "Hello")])
-    /// let title: String? = dict["title"]?.as(String.self)
-    /// ```
-    subscript(key: String) -> AnyType? {
+    
+    /**
+     Subscript access for dictionary-like `AnyType` values.
+     
+     Provides convenient access to values in `anyDictionary`, `dictionary`, `numberDictionary`,
+     and `booleanDictionary` cases.
+     
+     - Parameter key: The key to look up
+     - Returns: The value associated with the key, or `nil` if the key doesn't exist
+               or if this is not a dictionary-like case
+     
+     - Example:
+     ```swift
+     let dict = AnyType.anyDictionary(data: ["title": .string(data: "Hello")])
+     let title: String? = dict["title"]?.as(String.self)
+     ```
+     */
+    public subscript(key: String) -> AnyType? {
         switch self {
-        case let .dictionary(data):
-            data[key].map { .string(data: $0) }
-        case let .numberDictionary(data):
-            data[key].map { .number(data: $0) }
-        case let .booleanDictionary(data):
-            data[key].map { .bool(data: $0) }
-        case let .anyDictionary(data):
-            data[key]
+        case .dictionary(let data):
+            return data[key].map { .string(data: $0) }
+        case .numberDictionary(let data):
+            return data[key].map { .number(data: $0) }
+        case .booleanDictionary(let data):
+            return data[key].map { .bool(data: $0) }
+        case .anyDictionary(let data):
+            return data[key]
         default:
-            nil
+            return nil
         }
     }
 }
 
 extension AnyType: Equatable {
-    // swiftlint:disable:next cyclomatic_complexity
+    // swiftlint:disable cyclomatic_complexity
     public static func == (lhs: AnyType, rhs: AnyType) -> Bool {
         switch (lhs, rhs) {
-        case let (.string(lhv), .string(rhv)): lhv == rhv
-        case let (.bool(lhv), .bool(rhv)): lhv == rhv
-        case let (.number(lhv), .number(rhv)): lhv == rhv
-        case let (.dictionary(lhv), .dictionary(rhv)): lhv == rhv
-        case let (.numberDictionary(lhv), .numberDictionary(rhv)): lhv == rhv
-        case let (.booleanDictionary(lhv), .booleanDictionary(rhv)): lhv == rhv
-        case let (.array(lhv), .array(rhv)): lhv == rhv
-        case let (.numberArray(lhv), .numberArray(rhv)): lhv == rhv
-        case let (.booleanArray(lhv), .booleanArray(rhv)): lhv == rhv
-        case let (.anyDictionary(lhv), .anyDictionary(rhv)): lhv == rhv
-        case let (.anyArray(lhv), .anyArray(rhv)): lhv == rhv
-        case (.unknownData, .unknownData): true
-        default: false
+        case (.string(let lhv), .string(let rhv)): return lhv == rhv
+        case (.bool(let lhv), .bool(let rhv)): return lhv == rhv
+        case (.number(let lhv), .number(let rhv)): return lhv == rhv
+        case (.dictionary(let lhv), .dictionary(let rhv)): return lhv == rhv
+        case (.numberDictionary(let lhv), .numberDictionary(let rhv)): return lhv == rhv
+        case (.booleanDictionary(let lhv), .booleanDictionary(let rhv)): return lhv == rhv
+        case (.array(let lhv), .array(let rhv)): return lhv == rhv
+        case (.numberArray(let lhv), .numberArray(let rhv)): return lhv == rhv
+        case (.booleanArray(let lhv), .booleanArray(let rhv)): return lhv == rhv
+        case (.anyDictionary(let lhv), .anyDictionary(let rhv)): return lhv == rhv
+        case (.anyArray(let lhv), .anyArray(let rhv)): return lhv == rhv
+        case (.unknownData, .unknownData): return true
+        default: return false
         }
     }
 }
 
-/// Make AnyType Decodable
+/**
+ Make AnyType Decodable
+ */
 extension AnyType: Decodable {
-    /// Construct AnyType by decoding
-    /// - parameters:
-    ///   - decoder: A decoder to decode from
+    /**
+     Construct AnyType by decoding
+     - parameters:
+        - decoder: A decoder to decode from
+     */
+    // swiftlint:disable cyclomatic_complexity
     public init(from decoder: Decoder) throws {
         if let dictionary = try? decoder.singleValueContainer().decode([String: String].self) {
             self = .dictionary(data: dictionary)
             return
-        } else if let dictionary = try? decoder.singleValueContainer()
-            .decode([String: Double].self) {
+        } else if let dictionary = try? decoder.singleValueContainer().decode([String: Double].self) {
             self = .numberDictionary(data: dictionary)
             return
         } else if let dictionary = try? decoder.singleValueContainer().decode([String: Bool].self) {
@@ -229,17 +239,15 @@ extension AnyType: Decodable {
             self = .number(data: number)
             return
         }
-
+        
         // anyArray, anyDictionary, or "null" (which becomes unknownData)
-        guard let context = decoder.userInfo[AnyTypeDecodingContext.key] as? AnyTypeDecodingContext
-        else {
+        guard let context = decoder.userInfo[AnyTypeDecodingContext.key] as? AnyTypeDecodingContext else {
             throw AnyTypeDecodingError.missingDecodingContext
         }
 
-        // Handle mixed-type collections using the context. We could handle every case with this,
-        // but it would be slower because of the JSON serialization. So we only use this for
-        // anyArray
-        // and anyDictionary
+        /* Handle mixed-type collections using the context. We could handle every case with this,
+         but it would be slower because of the JSON serialization. So we only use this for anyArray
+         and anyDictionary */
         self = try context.decode(path: decoder.codingPath)
     }
 }
@@ -248,53 +256,56 @@ extension AnyType: Decodable {
 struct CustomEncodable: CodingKey {
     var stringValue: String
 
-    var intValue: Int?
-
     init?(stringValue: String) {
         self.stringValue = stringValue
     }
 
-    /// Required by CodingKey protocol but not used since anyArray uses unkeyedContainer
-    init?(intValue _: Int) {
-        nil
+    var intValue: Int?
+
+    // Required by CodingKey protocol but not used since anyArray uses unkeyedContainer
+    init?(intValue: Int) {
+        return nil
     }
 }
 
-/// Make AnyType Encodable
+/**
+ Make AnyType Encodable
+ */
 extension AnyType: Encodable {
-    /// Encode to an encoder
-    /// - parameters:
-    ///   - encoder: The encoder to encode the value to
-    // swiftlint:disable:next cyclomatic_complexity
+    /**
+     Encode to an encoder
+     - parameters:
+        - encoder: The encoder to encode the value to
+     */
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
-        case let .string(string):
+        case .string(let string):
             try container.encode(string)
-        case let .bool(boolean):
+        case .bool(let boolean):
             try container.encode(boolean)
-        case let .number(number):
+        case .number(let number):
             try container.encode(number)
-        case let .array(stringArray):
+        case .array(let stringArray):
             try container.encode(stringArray)
-        case let .numberArray(numberArray):
+        case .numberArray(let numberArray):
             try container.encode(numberArray)
-        case let .booleanArray(booleanArray):
+        case .booleanArray(let booleanArray):
             try container.encode(booleanArray)
-        case let .dictionary(dictionary):
+        case .dictionary(let dictionary):
             try container.encode(dictionary)
-        case let .numberDictionary(dictionary):
+        case .numberDictionary(let dictionary):
             try container.encode(dictionary)
-        case let .booleanDictionary(dictionary):
+        case .booleanDictionary(let dictionary):
             try container.encode(dictionary)
-        case let .anyDictionary(data: dictionary):
+        case .anyDictionary(data: let dictionary):
             var keyed = encoder.container(keyedBy: CustomEncodable.self)
             for (key, value) in dictionary {
                 if let codingKey = CustomEncodable(stringValue: key) {
                     try keyed.encode(value, forKey: codingKey)
                 }
             }
-        case let .anyArray(data: array):
+        case .anyArray(data: let array):
             var indexed = encoder.unkeyedContainer()
             for value in array {
                 try indexed.encode(value)
@@ -305,14 +316,16 @@ extension AnyType: Encodable {
     }
 }
 
-/// Context for decoding mixed-type collections (anyDictionary and anyArray)
-///
-/// This context turns serializes the data into JSON data to enable decoding of heterogeneous
-/// collections that cannot be directly decoded through Swift's standard Codable system.
-///
-/// - Note: Required when decoding JSON containing mixed-type arrays or dictionaries
+/**
+ Context for decoding mixed-type collections (anyDictionary and anyArray)
+
+ This context turns serializes the data into JSON data to enable decoding of heterogeneous
+ collections that cannot be directly decoded through Swift's standard Codable system.
+
+ - Note: Required when decoding JSON containing mixed-type arrays or dictionaries
+ */
 public struct AnyTypeDecodingContext {
-    static let key: CodingUserInfoKey! = CodingUserInfoKey(rawValue: "AnyTypeDecodingContext")
+    static let key = CodingUserInfoKey(rawValue: "AnyTypeDecodingContext")!
 
     private var rawData: Data
 
@@ -349,7 +362,6 @@ public struct AnyTypeDecodingContext {
     }
 
     /// Decodes a raw JSON object to AnyType
-    // swiftlint:disable:next cyclomatic_complexity
     private static func decode(from value: Any) -> AnyType {
         // Handle primitives
         if let string = value as? String {
@@ -370,7 +382,7 @@ public struct AnyTypeDecodingContext {
                 return .booleanDictionary(data: boolDict)
             }
             // Mixed dictionary - recurse
-            var result = [String: AnyType]()
+            var result: [String: AnyType] = [:]
             for (key, val) in dict {
                 result[key] = decode(from: val)
             }
@@ -385,7 +397,7 @@ public struct AnyTypeDecodingContext {
                 return .booleanArray(data: boolArray)
             }
             // Mixed array - recurse
-            var result = [AnyType]()
+            var result: [AnyType] = []
             for val in array {
                 result.append(decode(from: val))
             }
@@ -401,9 +413,8 @@ public enum AnyTypeDecodingError: Error {
     public var localizedDescription: String {
         switch self {
         case .missingDecodingContext:
-            """
-            Attempted to decode data as an AnyType.anyArray, AnyType.anyDictionary, or \
-            AnyType.unknownData but `AnyTypeDecodingContext` is missing.
+            return """
+            Attempted to decode data as an AnyType.anyArray, AnyType.anyDictionary, or AnyType.unknownData but `AnyTypeDecodingContext` is missing.
             Create a context with `let context = AnyTypeDecodingContext(rawData: data)`.
             Add the context to the decoder's userInfo by calling `context.inject(to: decoder)`.
             """

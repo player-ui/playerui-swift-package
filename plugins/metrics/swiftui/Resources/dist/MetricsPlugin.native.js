@@ -4677,12 +4677,6 @@ var MetricsPlugin = function() {
                     this.shadowModelPaths = removeBindingAndChildrenFromMap(this.shadowModelPaths, binding);
                     return next === null || next === void 0 ? void 0 : next.delete(binding, options);
                 }
-            },
-            {
-                /** Clears any invalid values staged in the shadow model */ key: "reset",
-                value: function reset() {
-                    this.shadowModelPaths.clear();
-                }
             }
         ]);
         return ValidationMiddleware;
@@ -5536,47 +5530,6 @@ var MetricsPlugin = function() {
                 /** Return the middleware for the data-model to stop propagation of invalid data */ key: "getDataMiddleware",
                 value: function getDataMiddleware() {
                     var _this = this;
-                    var validationMiddleware = new ValidationMiddleware(function(binding) {
-                        var _strongValidation_get;
-                        if (!_this.options) {
-                            return;
-                        }
-                        _this.updateValidationsForBinding(binding, "change", _this.options);
-                        var strongValidation = _this.getValidationForBinding(binding);
-                        if ((strongValidation === null || strongValidation === void 0 ? void 0 : (_strongValidation_get = strongValidation.get()) === null || _strongValidation_get === void 0 ? void 0 : _strongValidation_get.severity) === "error") {
-                            return strongValidation.get();
-                        }
-                        var newInvalidBindings = /* @__PURE__ */ new Set();
-                        _this.validations.forEach(function(weakValidation, strongBinding) {
-                            var _weakValidation_get;
-                            if (caresAboutDataChanges(/* @__PURE__ */ new Set([
-                                binding
-                            ]), weakValidation.weakBindings) && (weakValidation === null || weakValidation === void 0 ? void 0 : (_weakValidation_get = weakValidation.get()) === null || _weakValidation_get === void 0 ? void 0 : _weakValidation_get.severity) === "error") {
-                                weakValidation === null || weakValidation === void 0 ? void 0 : weakValidation.weakBindings.forEach(function(weakBinding) {
-                                    if (weakBinding === strongBinding) {
-                                        newInvalidBindings.add({
-                                            binding: weakBinding,
-                                            isStrong: true
-                                        });
-                                    } else {
-                                        newInvalidBindings.add({
-                                            binding: weakBinding,
-                                            isStrong: false
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                        if (newInvalidBindings.size > 0) {
-                            return newInvalidBindings;
-                        }
-                    }, {
-                        logger: new ProxyLogger(function() {
-                            var _this_options;
-                            return (_this_options = _this.options) === null || _this_options === void 0 ? void 0 : _this_options.logger;
-                        })
-                    });
-                    this.validationMiddleware = validationMiddleware;
                     return [
                         {
                             set: function(transaction, options, next) {
@@ -5591,7 +5544,46 @@ var MetricsPlugin = function() {
                                 return next === null || next === void 0 ? void 0 : next.delete(binding, options);
                             }
                         },
-                        validationMiddleware
+                        new ValidationMiddleware(function(binding) {
+                            var _strongValidation_get;
+                            if (!_this.options) {
+                                return;
+                            }
+                            _this.updateValidationsForBinding(binding, "change", _this.options);
+                            var strongValidation = _this.getValidationForBinding(binding);
+                            if ((strongValidation === null || strongValidation === void 0 ? void 0 : (_strongValidation_get = strongValidation.get()) === null || _strongValidation_get === void 0 ? void 0 : _strongValidation_get.severity) === "error") {
+                                return strongValidation.get();
+                            }
+                            var newInvalidBindings = /* @__PURE__ */ new Set();
+                            _this.validations.forEach(function(weakValidation, strongBinding) {
+                                var _weakValidation_get;
+                                if (caresAboutDataChanges(/* @__PURE__ */ new Set([
+                                    binding
+                                ]), weakValidation.weakBindings) && (weakValidation === null || weakValidation === void 0 ? void 0 : (_weakValidation_get = weakValidation.get()) === null || _weakValidation_get === void 0 ? void 0 : _weakValidation_get.severity) === "error") {
+                                    weakValidation === null || weakValidation === void 0 ? void 0 : weakValidation.weakBindings.forEach(function(weakBinding) {
+                                        if (weakBinding === strongBinding) {
+                                            newInvalidBindings.add({
+                                                binding: weakBinding,
+                                                isStrong: true
+                                            });
+                                        } else {
+                                            newInvalidBindings.add({
+                                                binding: weakBinding,
+                                                isStrong: false
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                            if (newInvalidBindings.size > 0) {
+                                return newInvalidBindings;
+                            }
+                        }, {
+                            logger: new ProxyLogger(function() {
+                                var _this_options;
+                                return (_this_options = _this.options) === null || _this_options === void 0 ? void 0 : _this_options.logger;
+                            })
+                        })
                     ];
                 }
             },
@@ -5627,17 +5619,15 @@ var MetricsPlugin = function() {
             {
                 key: "reset",
                 value: function reset() {
-                    var _this_validationMiddleware;
                     this.validations.clear();
                     this.tracker = void 0;
-                    (_this_validationMiddleware = this.validationMiddleware) === null || _this_validationMiddleware === void 0 ? void 0 : _this_validationMiddleware.reset();
                 }
             },
             {
                 key: "onView",
                 value: function onView(view) {
                     var _this = this;
-                    this.reset();
+                    this.validations.clear();
                     if (!this.options) {
                         return;
                     }
@@ -7934,8 +7924,8 @@ var MetricsPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "1.0.1" : "unknown";
-    var COMMIT = true ? "9333166078849bcd0d080866d456d6f26b7c0a5c" : "unknown";
+    var PLAYER_VERSION = true ? "1.1.0--canary.891.40805" : "unknown";
+    var COMMIT = true ? "fb6138fda1210a9541f81caa109eb584eb47ce1b" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
@@ -7957,8 +7947,7 @@ var MetricsPlugin = function() {
                 state: new SyncHook(),
                 onStart: new SyncHook(),
                 onEnd: new SyncHook(),
-                resolveFlowContent: new SyncWaterfallHook(),
-                transformContent: new SyncBailHook()
+                resolveFlowContent: new SyncWaterfallHook()
             };
             if (config === null || config === void 0 ? void 0 : config.logger) {
                 this.logger.addHandler(config.logger);
@@ -7971,9 +7960,6 @@ var MetricsPlugin = function() {
             ]);
             (_this_config_plugins = this.config.plugins) === null || _this_config_plugins === void 0 ? void 0 : _this_config_plugins.forEach(function(plugin) {
                 plugin.apply(_this);
-            });
-            this.hooks.transformContent.tap("player", function(payload, meta) {
-                return meta.format === "player" ? payload : void 0;
             });
         }
         _create_class(_Player2, [
@@ -8281,22 +8267,14 @@ var MetricsPlugin = function() {
             },
             {
                 key: "start",
-                value: function start(payload, options) {
+                value: function start(payload) {
                     return _async_to_generator(function() {
-                        var _this, _options_format, meta, flow, _flow_id, ref, maybeUpdateState, _this_setupFlow, state, start, endProps, _tmp, error, errorState;
+                        var _this, _payload_id, ref, maybeUpdateState, _this_setupFlow, state, start, endProps, _tmp, error, errorState;
                         return _ts_generator(this, function(_state) {
                             switch(_state.label){
                                 case 0:
                                     _this = this;
-                                    meta = {
-                                        format: (_options_format = options === null || options === void 0 ? void 0 : options.format) !== null && _options_format !== void 0 ? _options_format : "player",
-                                        version: options === null || options === void 0 ? void 0 : options.version
-                                    };
-                                    flow = this.hooks.transformContent.call(payload, meta);
-                                    if (!flow) {
-                                        throw new Error('Player.start received content with format "'.concat(meta.format, '" that no plugin transformed into a Flow.'));
-                                    }
-                                    ref = Symbol((_flow_id = flow.id) !== null && _flow_id !== void 0 ? _flow_id : "payload");
+                                    ref = Symbol((_payload_id = payload === null || payload === void 0 ? void 0 : payload.id) !== null && _payload_id !== void 0 ? _payload_id : "payload");
                                     maybeUpdateState = function(newState) {
                                         if (_this.state.ref !== ref) {
                                             _this.logger.warn("Received update for a flow that's not the current one");
@@ -8317,7 +8295,7 @@ var MetricsPlugin = function() {
                                         ,
                                         4
                                     ]);
-                                    _this_setupFlow = this.setupFlow(flow), state = _this_setupFlow.state, start = _this_setupFlow.start;
+                                    _this_setupFlow = this.setupFlow(payload), state = _this_setupFlow.state, start = _this_setupFlow.start;
                                     this.setState(_object_spread({
                                         ref: ref
                                     }, state));
@@ -8352,7 +8330,7 @@ var MetricsPlugin = function() {
                                     errorState = {
                                         status: "error",
                                         ref: ref,
-                                        flow: flow,
+                                        flow: payload,
                                         error: error
                                     };
                                     maybeUpdateState(errorState);
