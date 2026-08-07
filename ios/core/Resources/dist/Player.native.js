@@ -8505,8 +8505,8 @@ var Player = function() {
         status: "not-started"
     };
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/player.ts
-    var PLAYER_VERSION = true ? "1.0.1" : "unknown";
-    var COMMIT = true ? "9333166078849bcd0d080866d456d6f26b7c0a5c" : "unknown";
+    var PLAYER_VERSION = true ? "1.0.2--canary.923.40951" : "unknown";
+    var COMMIT = true ? "ce8d66fe197ea12030ce65b345db5ee472f8ac19" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player(config) {
             var _this = this;
