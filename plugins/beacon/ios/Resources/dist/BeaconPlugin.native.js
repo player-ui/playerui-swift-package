@@ -2646,7 +2646,7 @@ var BeaconPlugin = function() {
                 value: function set(match, value) {
                     var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createObjectMatcher(match) : createBasicMatcher(match);
                     var existingIndex = this.store.findIndex(function(entry) {
-                        return entry.matcher(match) && matcher(entry.key);
+                        return entry.matcher.count === matcher.count && entry.matcher(match) && matcher(entry.key);
                     });
                     if (existingIndex !== -1) {
                         var _this_logger_debug, _this_logger;
@@ -7922,8 +7922,8 @@ var BeaconPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "1.0.1" : "unknown";
-    var COMMIT = true ? "9333166078849bcd0d080866d456d6f26b7c0a5c" : "unknown";
+    var PLAYER_VERSION = true ? "1.1.0" : "unknown";
+    var COMMIT = true ? "c938fcbdebeef8a3e04cd2b84014cfc82bf33591" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;

@@ -352,7 +352,7 @@ var Registry = function() {
                 value: function set(match, value) {
                     var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createObjectMatcher(match) : createBasicMatcher(match);
                     var existingIndex = this.store.findIndex(function(entry) {
-                        return entry.matcher(match) && matcher(entry.key);
+                        return entry.matcher.count === matcher.count && entry.matcher(match) && matcher(entry.key);
                     });
                     if (existingIndex !== -1) {
                         var _this_logger_debug, _this_logger;
