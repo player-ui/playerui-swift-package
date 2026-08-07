@@ -8506,7 +8506,7 @@ var Player = function() {
     };
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/player.ts
     var PLAYER_VERSION = true ? "1.1.0" : "unknown";
-    var COMMIT = true ? "c938fcbdebeef8a3e04cd2b84014cfc82bf33591" : "unknown";
+    var COMMIT = true ? "7aa01da000240c6bcdf4556efff92a621e3e6a99" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player(config) {
             var _this = this;
