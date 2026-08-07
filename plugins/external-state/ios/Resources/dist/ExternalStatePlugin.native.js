@@ -7851,7 +7851,7 @@ var ExternalStatePlugin = function() {
         status: "not-started"
     };
     var PLAYER_VERSION = true ? "1.1.0" : "unknown";
-    var COMMIT = true ? "7aa01da000240c6bcdf4556efff92a621e3e6a99" : "unknown";
+    var COMMIT = true ? "195bf61f3fdbd3d4919aac227e74708c132dd3a6" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
