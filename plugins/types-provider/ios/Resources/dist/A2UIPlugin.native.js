@@ -3333,7 +3333,7 @@ var A2UIPlugin = function() {
                 value: function set(match, value) {
                     var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createObjectMatcher(match) : createBasicMatcher(match);
                     var existingIndex = this.store.findIndex(function(entry) {
-                        return entry.matcher.count === matcher.count && entry.matcher(match) && matcher(entry.key);
+                        return entry.matcher(match) && matcher(entry.key);
                     });
                     if (existingIndex !== -1) {
                         var _this_logger_debug, _this_logger;
@@ -8623,8 +8623,8 @@ var A2UIPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "1.1.0" : "unknown";
-    var COMMIT = true ? "195bf61f3fdbd3d4919aac227e74708c132dd3a6" : "unknown";
+    var PLAYER_VERSION = true ? "1.1.1--canary.923.41233" : "unknown";
+    var COMMIT = true ? "a6dae1a68ad6dd13842505cdcf0d81943415d07e" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
@@ -9711,7 +9711,7 @@ var A2UIPlugin = function() {
                 key: "runAsyncNode",
                 value: function runAsyncNode(node, context, options) {
                     return _async_to_generator(function() {
-                        var _this, _this_basePlugin, deliveredViaCallback, result, e, _this_basePlugin_getPlayerInstance, _this_basePlugin1, cause, playerState, _options_logger, error;
+                        var _this, _this_basePlugin, result, e, _this_basePlugin_getPlayerInstance, _this_basePlugin1, cause, playerState, _options_logger, error;
                         return _ts_generator(this, function(_state) {
                             switch(_state.label){
                                 case 0:
@@ -9724,20 +9724,16 @@ var A2UIPlugin = function() {
                                         ,
                                         4
                                     ]);
-                                    deliveredViaCallback = false;
                                     return [
                                         4,
-                                        (_this_basePlugin = this.basePlugin) === null || _this_basePlugin === void 0 ? void 0 : _this_basePlugin.hooks.onAsyncNode.call(node, function(streamedResult) {
-                                            deliveredViaCallback = true;
-                                            _this.parseNodeAndUpdate(node, context, streamedResult, options.parseNode);
+                                        (_this_basePlugin = this.basePlugin) === null || _this_basePlugin === void 0 ? void 0 : _this_basePlugin.hooks.onAsyncNode.call(node, function(result2) {
+                                            _this.parseNodeAndUpdate(node, context, result2, options.parseNode);
                                         })
                                     ];
                                 case 2:
                                     result = _state.sent();
                                     context.inProgressNodes.delete(node.id);
-                                    if (!deliveredViaCallback && result != null) {
-                                        this.parseNodeAndUpdate(node, context, result, options.parseNode);
-                                    }
+                                    this.parseNodeAndUpdate(node, context, result, options.parseNode);
                                     return [
                                         3,
                                         4

@@ -2586,7 +2586,7 @@ var CheckPathPlugin = function() {
                 value: function set(match, value) {
                     var matcher = (typeof match === "undefined" ? "undefined" : _type_of(match)) === "object" ? createObjectMatcher(match) : createBasicMatcher(match);
                     var existingIndex = this.store.findIndex(function(entry) {
-                        return entry.matcher.count === matcher.count && entry.matcher(match) && matcher(entry.key);
+                        return entry.matcher(match) && matcher(entry.key);
                     });
                     if (existingIndex !== -1) {
                         var _this_logger_debug, _this_logger;
@@ -7875,8 +7875,8 @@ var CheckPathPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "1.1.0" : "unknown";
-    var COMMIT = true ? "195bf61f3fdbd3d4919aac227e74708c132dd3a6" : "unknown";
+    var PLAYER_VERSION = true ? "1.1.1--canary.923.41233" : "unknown";
+    var COMMIT = true ? "a6dae1a68ad6dd13842505cdcf0d81943415d07e" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
