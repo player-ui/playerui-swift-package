@@ -7,23 +7,25 @@
 
 import Foundation
 import JavaScriptCore
+import SwiftUI
+
+#if SWIFT_PACKAGE
 import PlayerUI
 import PlayerUISwiftUI
-import SwiftUI
+#endif
 
 /// A Plugin that provides request time data to `MetricsPlugin`
 public class RequestTimePlugin: NativePlugin {
     public var pluginName: String = "RequestTime"
-
     private let requestTimeWebPlugin: RequestTimeWebPlugin
 
     /// Construct a `RequestTimePlugin`
     /// - Parameter getRequestTime: A callback to retrieve the time the last request took
     public init(_ getRequestTime: @escaping () -> Int) {
-        requestTimeWebPlugin = RequestTimeWebPlugin(getRequestTime)
+        self.requestTimeWebPlugin = RequestTimeWebPlugin(getRequestTime)
     }
 
-    public func apply(player: some HeadlessPlayer) {
+    public func apply<P>(player: P) where P: HeadlessPlayer {
         requestTimeWebPlugin.context = player.jsPlayerReference?.context
         player.applyTo(MetricsPlugin.self) { [weak self] plugin in
             self?.requestTimeWebPlugin.pluginRef?.invokeMethod("apply", withArguments: [plugin])
@@ -33,34 +35,42 @@ public class RequestTimePlugin: NativePlugin {
 
 class RequestTimeWebPlugin: JSBasePlugin {
     private var getRequestTime: () -> Int = { 0 }
-
-    convenience init(_ getRequestTime: @escaping () -> Int) {
-        self.init(
-            fileName: "MetricsPlugin.native",
-            pluginName: "MetricsPlugin.RequestTimeWebPlugin"
-        )
+    public convenience init(_ getRequestTime: @escaping () -> Int) {
+        self.init(fileName: "MetricsPlugin.native", pluginName: "MetricsPlugin.RequestTimeWebPlugin")
         self.getRequestTime = getRequestTime
     }
 
-    override open func getUrlForFile(fileName: String) -> URL? {
-        ResourceUtilities.urlForFile(name: fileName, ext: "js", bundle: Bundle.module)
-    }
-
-    override func getArguments() -> [Any] {
+    public override func getArguments() -> [Any] {
         let handler: @convention(block) () -> Int = {
             self.getRequestTime()
         }
         return [JSValue(object: handler, in: context) as Any]
     }
-}
 
-/// Plugin for capturing metrics
+    override open func getUrlForFile(fileName: String) -> URL? {
+        #if SWIFT_PACKAGE
+        ResourceUtilities.urlForFile(name: fileName, ext: "js", bundle: Bundle.module)
+        #else
+        ResourceUtilities.urlForFile(
+            name: fileName,
+            ext: "js",
+            bundle: Bundle(for: MetricsPlugin.self),
+            pathComponent: "PlayerUI_MetricsPlugin.bundle"
+        )
+        #endif
+    }
+}
+/**
+ Plugin for capturing metrics
+ */
 public class MetricsPlugin: JSBasePlugin, NativePlugin, WithSymbol {
     public static let symbol = "MetricsPlugin.MetricsCorePluginSymbol"
-
-    public var hooks: MetricsHooks?
+    public typealias RenderEndHandler = (MetricsTiming?, NodeRenderMetrics?, PlayerFlowMetrics?) -> Void
+    private var trackRenderTime: Bool = true
 
     var onRenderEnd: RenderEndHandler?
+
+    public var hooks: MetricsHooks?
 
     var onRenderEndJSHandler: @convention(block) (JSValue?, JSValue?, JSValue?) -> Void {
         { [weak self] timing, nodeMetrics, flowMetrics in
@@ -73,58 +83,62 @@ public class MetricsPlugin: JSBasePlugin, NativePlugin, WithSymbol {
         }
     }
 
-    private var trackRenderTime: Bool = true
-
-    /// Constructs the MetricsPlugin
-    /// - parameters:
-    ///   - trackRenderTime: Whether or not to track render times
-    ///   - handler: A handler to receive events when rendering has finished
-    public convenience init(trackRenderTime: Bool = true, handler: RenderEndHandler? = nil) {
-        self.init(fileName: "MetricsPlugin.native", pluginName: "MetricsPlugin.MetricsCorePlugin")
-        self.trackRenderTime = trackRenderTime
-        onRenderEnd = handler
-    }
-
-    public func apply(player: some HeadlessPlayer) {
-        guard trackRenderTime, let player = player as? SwiftUIPlayer else { return }
-        let renderEnd = renderEnd
-        player.hooks?.view.tap(name: pluginName) { view -> AnyView in
-            AnyView(view.onAppear {
-                renderEnd()
-            })
-        }
-    }
-
-    /// Called when the UI has finished rendering
-    public func renderEnd() {
-        pluginRef?.invokeMethod("renderEnd", withArguments: [])
-    }
-
-    override open func getUrlForFile(fileName: String) -> URL? {
-        ResourceUtilities.urlForFile(name: fileName, ext: "js", bundle: Bundle.module)
-    }
-
     override public func setup(context: JSContext) {
         super.setup(context: context)
 
-        if let pluginRef {
-            hooks = MetricsHooks(
-                onRenderEnd: Hook3Decode(baseValue: pluginRef, name: "onRenderEnd"),
-                onFlowBegin: HookDecode(baseValue: pluginRef, name: "onFlowBegin"),
-                onFlowEnd: HookDecode(baseValue: pluginRef, name: "onFlowEnd")
-            )
+        if let pluginRef = pluginRef {
+            self.hooks = MetricsHooks(onRenderEnd: Hook3Decode(baseValue: pluginRef, name: "onRenderEnd"), onFlowBegin: HookDecode(baseValue: pluginRef, name: "onFlowBegin"), onFlowEnd: HookDecode(baseValue: pluginRef, name: "onFlowEnd"))
         }
     }
 
-    override public func getArguments() -> [Any] {
-        [[
+    public func apply<P>(player: P) where P: HeadlessPlayer {
+        guard trackRenderTime, let player = player as? SwiftUIPlayer else { return }
+        let renderEnd = self.renderEnd
+        player.hooks?.view.tap(name: pluginName, { (view) -> AnyView in
+            AnyView(view.onAppear {
+                renderEnd()
+            })
+        })
+    }
+
+    /**
+     Constructs the MetricsPlugin
+     - parameters:
+        - trackRenderTime: Whether or not to track render times
+        - handler: A handler to receive events when rendering has finished
+     */
+    public convenience init(trackRenderTime: Bool = true, handler: RenderEndHandler? = nil) {
+        self.init(fileName: "MetricsPlugin.native", pluginName: "MetricsPlugin.MetricsCorePlugin")
+        self.trackRenderTime = trackRenderTime
+        self.onRenderEnd = handler
+    }
+
+    public override func getArguments() -> [Any] {
+        return [[
             "trackRenderTime": trackRenderTime,
-            "onRenderEnd": JSValue(object: onRenderEndJSHandler, in: context) as Any,
+            "onRenderEnd": JSValue(object: onRenderEndJSHandler, in: context) as Any
         ]]
     }
 
-    public typealias RenderEndHandler = (MetricsTiming?, NodeRenderMetrics?, PlayerFlowMetrics?)
-        -> Void
+    override open func getUrlForFile(fileName: String) -> URL? {
+        #if SWIFT_PACKAGE
+        ResourceUtilities.urlForFile(name: fileName, ext: "js", bundle: Bundle.module)
+        #else
+        ResourceUtilities.urlForFile(
+            name: fileName,
+            ext: "js",
+            bundle: Bundle(for: MetricsPlugin.self),
+            pathComponent: "PlayerUI_MetricsPlugin.bundle"
+        )
+        #endif
+    }
+
+    /**
+     Called when the UI has finished rendering
+     */
+    public func renderEnd() {
+        pluginRef?.invokeMethod("renderEnd", withArguments: [])
+    }
 }
 
 public struct MetricsHooks {
@@ -132,7 +146,7 @@ public struct MetricsHooks {
     public let onRenderEnd: Hook3Decode<MetricsTiming, NodeRenderMetrics, PlayerFlowMetrics>
     /// Called when a flow starts
     public let onFlowBegin: HookDecode<PlayerFlowMetrics>
-    /// Called when a flow ends
+    /// Called when a flow ends 
     public let onFlowEnd: HookDecode<PlayerFlowMetrics>
 }
 

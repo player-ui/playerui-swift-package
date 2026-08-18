@@ -1,5 +1,8 @@
-import PlayerUI
 import SwiftUI
+
+#if SWIFT_PACKAGE
+import PlayerUI
+#endif
 
 /// A plugin to wrap player content in a scrollview
 /// and provide `EnvironmentValues` for
@@ -13,14 +16,14 @@ public class ScrollPlugin: NativePlugin {
     /// Wraps SwiftUIPlayer content in `ScrollView`
     /// - Parameter edgesIgnoringSafeArea: Edges to ignore for the safe area
     public init(edgesIgnoringSafeArea: Edge.Set = []) {
-        ignoredEdges = edgesIgnoringSafeArea
+        self.ignoredEdges = edgesIgnoringSafeArea
     }
 
-    public func apply(player: some HeadlessPlayer) {
+    public func apply<P>(player: P) where P: HeadlessPlayer {
         guard let player = player as? SwiftUIPlayer else { return }
-        let ignoredEdges = ignoredEdges
+        let ignoredEdges = self.ignoredEdges
         player.hooks?.view.tap(name: pluginName) { view in
-            AnyView(
+            return AnyView(
                 ScrollViewReader { proxy in
                     ScrollView {
                         view.scrollToProxy(proxy)
@@ -35,9 +38,7 @@ public class ScrollPlugin: NativePlugin {
 
 struct MeasureToEnvironment: ViewModifier {
     let path: WritableKeyPath<EnvironmentValues, CGSize>
-
     @State var size: CGSize = .zero
-
     func body(content: Content) -> some View {
         content
             .background(
@@ -45,6 +46,7 @@ struct MeasureToEnvironment: ViewModifier {
                     Color.clear
                         .onAppear { size = proxy.size }
                         .onChange(of: proxy.size, perform: { size = $0 })
+
                 }
             )
             .environment(path, size)
