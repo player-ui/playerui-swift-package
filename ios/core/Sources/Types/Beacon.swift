@@ -7,7 +7,9 @@
 
 import Foundation
 
-/// An object representing a beacon fired from an `Asset`
+/**
+ An object representing a beacon fired from an `Asset`
+ */
 public struct AssetBeacon: Codable, Equatable {
     /// The action that caused the beacon
     public var action: String
@@ -62,10 +64,10 @@ public struct BeaconableAsset: Codable, Equatable {
     ///   - id: The ID of the asset that fired the beacon
     ///   - type: The type of the asset that fired the beacon
     ///   - metaData: Beacon applicable metaData from the asset that fired the beacon
-    public init(
+    public init<MetaDataType: BeaconableMetaData>(
         id: String,
         type: String? = nil,
-        metaData: (some BeaconableMetaData)? = nil
+        metaData: MetaDataType? = nil
     ) {
         self.id = id
         self.type = type
@@ -82,13 +84,15 @@ public struct BeaconableAsset: Codable, Equatable {
     ) {
         self.id = id
         self.type = type
-        metaData = nil
+        self.metaData = nil
     }
 }
 
 extension MetaData: BeaconableMetaData {}
 
-/// All potential Beacon Element types
+/**
+ All potential Beacon Element types
+ */
 public enum BeaconElement: String, Codable {
     /// The Element was represented as a buttton
     case button
@@ -127,7 +131,9 @@ public enum BeaconElement: String, Codable {
     case view
 }
 
-/// All possible Beacon Actions
+/**
+ All possible Beacon Actions
+ */
 public enum BeaconAction: String, Codable {
     /// The action taken was a tap
     case clicked
