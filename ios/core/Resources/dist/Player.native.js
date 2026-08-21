@@ -8029,7 +8029,7 @@ var Player = function() {
     };
     // ../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/core/player/src/player.ts
     var PLAYER_VERSION = true ? "0.15.7" : "unknown";
-    var COMMIT = true ? "f9c758d7daa84aa56345189709e1a2f7e8a80967" : "unknown";
+    var COMMIT = true ? "a590e5eefa5dd353956b72305dd898d5097bb0a0" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player(config) {
             var _this = this;
