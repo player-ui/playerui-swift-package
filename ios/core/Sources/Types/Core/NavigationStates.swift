@@ -3,21 +3,15 @@ import JavaScriptCore
 
 /// The base representation of a state within a Flow
 open class NavigationBaseState: CreatedFromJSValue, JSValueProviding {
+    public typealias T = NavigationBaseState
+
     /// A property to determine the type of state this is
     public let stateType: NavigationFlowStateType
 
-    let rawValue: JSValue
+    internal let rawValue: JSValue
 
-    /// Backing JSValue for returning from waterfall hooks. Use when returning this state from a
-    /// waterfall hook (e.g. beforeTransition).
-    public var jsValue: JSValue {
-        rawValue
-    }
-
-    public init(_ value: JSValue) {
-        rawValue = value
-        stateType = NavigationFlowStateType(value.objectForKeyedSubscript("state_type").toString())
-    }
+    /// Backing JSValue for returning from waterfall hooks. Use when returning this state from a waterfall hook (e.g. beforeTransition).
+    public var jsValue: JSValue { rawValue }
 
     public static func createInstance(value: JSValue) -> NavigationBaseState {
         let base = NavigationBaseState(value)
@@ -32,7 +26,10 @@ open class NavigationBaseState: CreatedFromJSValue, JSValueProviding {
         }
     }
 
-    public typealias T = NavigationBaseState
+    public init(_ value: JSValue) {
+        rawValue = value
+        stateType = NavigationFlowStateType(value.objectForKeyedSubscript("state_type").toString())
+    }
 }
 
 /// A generic state that can transition to another state
@@ -47,9 +44,7 @@ open class NavigationFlowTransitionableState: NavigationBaseState {
 @dynamicMemberLookup
 public class NavigationFlowViewState: NavigationFlowTransitionableState {
     /// An id corresponding to a view from the 'views' array
-    public var ref: String {
-        rawValue.objectForKeyedSubscript("ref").toString()
-    }
+    public var ref: String { rawValue.objectForKeyedSubscript("ref").toString() }
 
     /// View meta-properties
     public var attributes: [String: Any]? {
@@ -61,10 +56,8 @@ public class NavigationFlowViewState: NavigationFlowTransitionableState {
     }
 }
 
-/// External Flow states represent states in the FSM that can't be resolved internally in the
-/// player.
-/// The flow will wait for the embedded application to manage moving to the next state via a
-/// transition
+/// External Flow states represent states in the FSM that can't be resolved internally in the player.
+/// The flow will wait for the embedded application to manage moving to the next state via a transition
 @dynamicMemberLookup
 public class NavigationFlowExternalState: NavigationFlowTransitionableState {
     /// A reference for this external state
@@ -80,13 +73,12 @@ public class NavigationFlowExternalState: NavigationFlowTransitionableState {
 /// An END state of the flow
 @dynamicMemberLookup
 public class NavigationFlowEndState: NavigationBaseState {
+
     /// A description of _how_ the flow ended.
-    public var outcome: String {
-        rawValue.objectForKeyedSubscript("outcome").toString()
-    }
+    public var outcome: String { rawValue.objectForKeyedSubscript("outcome").toString() }
 
     public convenience init?(from value: JSValue?) {
-        guard let value else { return nil }
+        guard let value = value else { return nil }
         self.init(value)
     }
 
@@ -96,16 +88,12 @@ public class NavigationFlowEndState: NavigationBaseState {
 }
 
 public extension NavigationFlowEndState {
-    var param: [String: Any]? {
-        rawValue.objectForKeyedSubscript("param").toObject() as? [String: Any]
-    }
+    var param: [String: Any]? { rawValue.objectForKeyedSubscript("param").toObject() as? [String: Any] }
 }
 
 public class NavigationFlowFlowState: NavigationFlowTransitionableState {
     /// A reference to a FLOW id state to run
-    public var ref: String {
-        rawValue.objectForKeyedSubscript("ref").toString()
-    }
+    public var ref: String { rawValue.objectForKeyedSubscript("ref").toString() }
 }
 
 /// Action states execute an expression to determine the next state to transition to
@@ -113,9 +101,9 @@ public class NavigationFlowActionState: NavigationFlowTransitionableState {
     /// An expression to execute. The return value determines the transition to take
     public var exp: Expression {
         if let multi = rawValue.objectForKeyedSubscript("exp").toObject() as? [String] {
-            .multi(exp: multi)
+            return .multi(exp: multi)
         } else {
-            .single(exp: rawValue.objectForKeyedSubscript("exp").toString())
+            return .single(exp: rawValue.objectForKeyedSubscript("exp").toString())
         }
     }
 
@@ -130,15 +118,13 @@ public class NavigationFlowAsyncActionState: NavigationFlowTransitionableState {
     /// An expression to execute. The return value determines the transition to take
     public var exp: Expression {
         if let multi = rawValue.objectForKeyedSubscript("exp").toObject() as? [String] {
-            .multi(exp: multi)
+            return .multi(exp: multi)
         } else {
-            .single(exp: rawValue.objectForKeyedSubscript("exp").toString())
+            return .single(exp: rawValue.objectForKeyedSubscript("exp").toString())
         }
     }
 
-    public var await: Bool {
-        rawValue.objectForKeyedSubscript("await").toBool()
-    }
+    public var await: Bool { rawValue.objectForKeyedSubscript("await").toBool() }
 
     public enum Expression {
         case single(exp: String)
