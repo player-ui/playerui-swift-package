@@ -404,7 +404,7 @@ function _ts_generator(thisArg, body) {
     }
 }
 var ReferenceAssetsPlugin = function() {
-    var dlv_es_default = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/dlv@1.1.3/node_modules/dlv/dist/dlv.es.js
+    var dlv_es_default = // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/dlv@1.1.3/node_modules/dlv/dist/dlv.es.js
     function dlv_es_default(t2, e, l, n, r) {
         for(e = e.split ? e.split(".") : e, n = 0; n < e.length; n++)t2 = t2 ? t2[e[n]] : r;
         return t2 === r ? l : t2;
@@ -447,7 +447,7 @@ var ReferenceAssetsPlugin = function() {
         matcher.count = 1;
         return matcher;
     };
-    var composeTransforms = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+asset-transform-plugin@0.0.0/node_modules/@player-ui/asset-transform-plugin/dist/index.mjs
+    var composeTransforms = // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+asset-transform-plugin@0.0.0/node_modules/@player-ui/asset-transform-plugin/dist/index.mjs
     function composeTransforms() {
         for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++){
             args[_key] = arguments[_key];
@@ -535,11 +535,11 @@ var ReferenceAssetsPlugin = function() {
         });
         return registry;
     };
-    var isBackAction = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/action/transform.ts
+    var isBackAction = // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/reference-assets/core/src/assets/action/transform.ts
     function isBackAction(action) {
         return action.value === "Prev";
     };
-    var equalToOrIn = // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/tapable-ts@0.2.4/node_modules/tapable-ts/dist/hooks.mjs
+    var equalToOrIn = // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/tapable-ts@0.2.4/node_modules/tapable-ts/dist/hooks.mjs
     function equalToOrIn(value, check) {
         if (Array.isArray(check)) {
             return check.includes(value);
@@ -1670,9 +1670,9 @@ var ReferenceAssetsPlugin = function() {
             value: true
         }), mod);
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js
     var require_sorted_array = __commonJS({
-        "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js": function(exports, module) {
+        "../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/sorted-array@2.0.4/node_modules/sorted-array/sorted-array.js": function(exports, module) {
             "use strict";
             var SortedArray2 = function() {
                 var SortedArray3 = defclass({
@@ -1751,9 +1751,9 @@ var ReferenceAssetsPlugin = function() {
             });
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/ts-nested-error@1.2.1/node_modules/ts-nested-error/build/nested-error.js
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/ts-nested-error@1.2.1/node_modules/ts-nested-error/build/nested-error.js
     var require_nested_error = __commonJS({
-        "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/ts-nested-error@1.2.1/node_modules/ts-nested-error/build/nested-error.js": function(exports) {
+        "../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/ts-nested-error@1.2.1/node_modules/ts-nested-error/build/nested-error.js": function(exports) {
             "use strict";
             Object.defineProperty(exports, "__esModule", {
                 value: true
@@ -1855,9 +1855,9 @@ var ReferenceAssetsPlugin = function() {
             exports.toError = toError;
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/timm@1.7.1/node_modules/timm/lib/timm.js
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/timm@1.7.1/node_modules/timm/lib/timm.js
     var require_timm = __commonJS({
-        "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/timm@1.7.1/node_modules/timm/lib/timm.js": function(exports) {
+        "../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/timm@1.7.1/node_modules/timm/lib/timm.js": function(exports) {
             "use strict";
             Object.defineProperty(exports, "__esModule", {
                 value: true
@@ -2145,9 +2145,9 @@ var ReferenceAssetsPlugin = function() {
             exports.default = _default;
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/p-defer@3.0.0/node_modules/p-defer/index.js
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/p-defer@3.0.0/node_modules/p-defer/index.js
     var require_p_defer = __commonJS({
-        "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/p-defer@3.0.0/node_modules/p-defer/index.js": function(exports, module) {
+        "../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/p-defer@3.0.0/node_modules/p-defer/index.js": function(exports, module) {
             "use strict";
             var pDefer = function pDefer() {
                 var deferred2 = {};
@@ -2160,9 +2160,9 @@ var ReferenceAssetsPlugin = function() {
             module.exports = pDefer;
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/queue-microtask@1.2.3/node_modules/queue-microtask/index.js
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/queue-microtask@1.2.3/node_modules/queue-microtask/index.js
     var require_queue_microtask = __commonJS({
-        "../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/queue-microtask@1.2.3/node_modules/queue-microtask/index.js": function(exports, module) {
+        "../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/queue-microtask@1.2.3/node_modules/queue-microtask/index.js": function(exports, module) {
             "use strict";
             var promise;
             module.exports = typeof queueMicrotask === "function" ? queueMicrotask.bind(typeof window !== "undefined" ? window : global) : function(cb) {
@@ -2174,7 +2174,7 @@ var ReferenceAssetsPlugin = function() {
             };
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/index.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/reference-assets/core/src/index.ts
     var src_exports = {};
     __export(src_exports, {
         ReferenceAssetsPlugin: function ReferenceAssetsPlugin1() {
@@ -2208,7 +2208,7 @@ var ReferenceAssetsPlugin = function() {
             return transform2;
         }
     });
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/input/transform.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/reference-assets/core/src/assets/input/transform.ts
     var inputTransform = function inputTransform(asset, options) {
         var _options_validation, _options_validation1;
         return _object_spread_props(_object_spread({}, asset), {
@@ -2241,9 +2241,9 @@ var ReferenceAssetsPlugin = function() {
             dataType: asset.binding === void 0 ? void 0 : (_options_validation1 = options.validation) === null || _options_validation1 === void 0 ? void 0 : _options_validation1.type(asset.binding)
         });
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
     var import_sorted_array = __toESM(require_sorted_array(), 1);
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+partial-match-registry@0.0.0/node_modules/@player-ui/partial-match-registry/dist/index.mjs
     function traverseObj(object) {
         var path = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [], pairs = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : /* @__PURE__ */ new Map();
         var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
@@ -2437,7 +2437,7 @@ var ReferenceAssetsPlugin = function() {
         });
     };
     var actionTransform = compose(transform, backIconTransform, composeBefore(expPropTransform));
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/info/transform.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/reference-assets/core/src/assets/info/transform.ts
     var infoTransform = function infoTransform(infoAsset) {
         var actions = infoAsset === null || infoAsset === void 0 ? void 0 : infoAsset.actions;
         var segmentedActions = actions === null || actions === void 0 ? void 0 : actions.reduce(function(segmentedActionsArray, action) {
@@ -2451,7 +2451,7 @@ var ReferenceAssetsPlugin = function() {
             segmentedActions: segmentedActions
         });
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/image/transform.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/reference-assets/core/src/assets/image/transform.ts
     var getImageAlt = function getImageAlt(props) {
         var metaData = props.metaData, placeholder = props.placeholder;
         if (metaData.accessibility) return metaData.accessibility;
@@ -2465,7 +2465,7 @@ var ReferenceAssetsPlugin = function() {
         });
         return newImage;
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/choice/transform.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/reference-assets/core/src/assets/choice/transform.ts
     var choiceTransform = function choiceTransform(asset, options) {
         var _options_validation, _options_validation1;
         var items = asset.items, binding = asset.binding, rest = _object_without_properties(asset, [
@@ -2878,7 +2878,7 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return AsyncSeriesBailHook;
     }(Hook);
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_ts_nested_error = __toESM(require_nested_error(), 1);
     var import_ts_nested_error2 = __toESM(require_nested_error(), 1);
     var import_timm = __toESM(require_timm(), 1);
@@ -2886,7 +2886,7 @@ var ReferenceAssetsPlugin = function() {
     var import_timm2 = __toESM(require_timm(), 1);
     var import_timm3 = __toESM(require_timm(), 1);
     var import_timm4 = __toESM(require_timm(), 1);
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/dequal@2.0.3/node_modules/dequal/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/dequal@2.0.3/node_modules/dequal/dist/index.mjs
     var has = Object.prototype.hasOwnProperty;
     function dequal(foo, bar) {
         var ctor, len, tmp;
@@ -2990,7 +2990,7 @@ var ReferenceAssetsPlugin = function() {
         }
         return foo !== foo && bar !== bar;
     }
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+player@0.0.0/node_modules/@player-ui/player/dist/index.mjs
     var import_timm5 = __toESM(require_timm(), 1);
     var import_timm6 = __toESM(require_timm(), 1);
     var import_timm7 = __toESM(require_timm(), 1);
@@ -7919,8 +7919,8 @@ var ReferenceAssetsPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "1.1.1--canary.936.42025" : "unknown";
-    var COMMIT = true ? "b11f2615cc19ecd72967e0855e35dc2089350ef1" : "unknown";
+    var PLAYER_VERSION = typeof __VERSION__ !== "undefined" ? __VERSION__ : "unknown";
+    var COMMIT = typeof __GIT_COMMIT__ !== "undefined" ? __GIT_COMMIT__ : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
@@ -8332,7 +8332,7 @@ var ReferenceAssetsPlugin = function() {
         version: PLAYER_VERSION,
         commit: COMMIT
     };
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+async-node-plugin@0.0.0/node_modules/@player-ui/async-node-plugin/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+async-node-plugin@0.0.0/node_modules/@player-ui/async-node-plugin/dist/index.mjs
     var import_queue_microtask3 = __toESM(require_queue_microtask(), 1);
     var getMatchValue = function getMatchValue(pathA, pathB) {
         if (pathA.length > pathB.length) {
@@ -8836,7 +8836,7 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return AsyncNodePluginPlugin;
     }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/assets/chat-message/transform.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/reference-assets/core/src/assets/chat-message/transform.ts
     var transform2 = createAsyncTransform({
         transformAssetType: "chat-message",
         wrapperAssetType: "collection",
@@ -8846,7 +8846,7 @@ var ReferenceAssetsPlugin = function() {
         }
     });
     var chatMessageTransform = compose(composeBefore(transform2));
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+meta-plugin@0.0.0/node_modules/@player-ui/meta-plugin/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+meta-plugin@0.0.0/node_modules/@player-ui/meta-plugin/dist/index.mjs
     var MetaPlugin = /*#__PURE__*/ function() {
         function MetaPlugin() {
             var plugins = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : [];
@@ -8866,7 +8866,7 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return MetaPlugin;
     }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+expression-plugin@0.0.0/node_modules/@player-ui/expression-plugin/dist/index.mjs
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/node_modules/.aspect_rules_js/@player-ui+expression-plugin@0.0.0/node_modules/@player-ui/expression-plugin/dist/index.mjs
     var ExpressionPlugin = /*#__PURE__*/ function() {
         function ExpressionPlugin(expressionMap) {
             _class_call_check(this, ExpressionPlugin);
@@ -8888,7 +8888,7 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return ExpressionPlugin;
     }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugins/chat-ui-demo-plugin.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/reference-assets/core/src/plugins/chat-ui-demo-plugin.ts
     var createContentFromMessage = function createContentFromMessage(message, id) {
         return {
             asset: {
@@ -8992,7 +8992,7 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return ChatUiDemoPlugin;
     }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugins/reference-assets-transform-plugin.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/reference-assets/core/src/plugins/reference-assets-transform-plugin.ts
     var ReferenceAssetsTransformPlugin = /*#__PURE__*/ function() {
         function ReferenceAssetsTransformPlugin() {
             _class_call_check(this, ReferenceAssetsTransformPlugin);
@@ -9045,7 +9045,7 @@ var ReferenceAssetsPlugin = function() {
         ]);
         return ReferenceAssetsTransformPlugin;
     }();
-    // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/reference-assets/core/src/plugin.ts
+    // ../../../../../../../../../../../execroot/_main/bazel-out/darwin_arm64-fastbuild/bin/plugins/reference-assets/core/src/plugin.ts
     var ReferenceAssetsPlugin = /*#__PURE__*/ function() {
         function ReferenceAssetsPlugin() {
             _class_call_check(this, ReferenceAssetsPlugin);
