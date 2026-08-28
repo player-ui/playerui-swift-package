@@ -7,22 +7,21 @@
 
 import Foundation
 import JavaScriptCore
-
-#if SWIFT_PACKAGE
 import PlayerUI
 import PlayerUILogger
-#endif
 
-/**
- A `HeadlessPlayer` implementation for testing purposes. It utilizes @player-ui/make-flow as a means of resolving assets IDs to types
- so the registry can decode assets without needing to forcefully map them
- */
-public class TestPlayer<WrapperType: AssetContainer, RegistryType: BaseAssetRegistry<WrapperType>>: HeadlessPlayer {
+/// A `HeadlessPlayer` implementation for testing purposes. It utilizes @player-ui/make-flow as a
+/// means of resolving assets IDs to types
+/// so the registry can decode assets without needing to forcefully map them
+public class TestPlayer<
+    WrapperType: AssetContainer,
+    RegistryType: BaseAssetRegistry<WrapperType>
+>: HeadlessPlayer {
     public var jsPlayerReference: JSValue?
 
     public var hooks: TestHooks?
 
-    public var logger = TapableLogger()
+    public var logger: TapableLogger = .init()
 
     public let assetRegistry: RegistryType
 
@@ -33,7 +32,9 @@ public class TestPlayer<WrapperType: AssetContainer, RegistryType: BaseAssetRegi
         jsPlayerReference = setupPlayer(context: context, plugins: allPlugins)
         guard let player = jsPlayerReference else { return }
         hooks = TestHooks(from: player)
-        for plugin in allPlugins { plugin.apply(player: self) }
+        for plugin in allPlugins {
+            plugin.apply(player: self)
+        }
         partialMatchPlugin.pluginRef?.invokeMethod("apply", withArguments: [player as Any])
         assetRegistry.partialMatchRegistry = partialMatchPlugin
     }
@@ -46,6 +47,8 @@ public class TestHooks: CoreHooks {
 
     public var dataController: Hook<DataController>
 
+    public var errorController: Hook<ErrorController>
+
     public var state: Hook<BaseFlowState>
 
     public var onStart: Hook<FlowType>
@@ -54,6 +57,7 @@ public class TestHooks: CoreHooks {
         flowController = Hook<FlowController>(baseValue: player, name: "flowController")
         viewController = Hook<ViewController>(baseValue: player, name: "viewController")
         dataController = Hook<DataController>(baseValue: player, name: "dataController")
+        errorController = Hook<ErrorController>(baseValue: player, name: "errorController")
         state = Hook<BaseFlowState>(baseValue: player, name: "state")
         onStart = Hook<FlowType>(baseValue: player, name: "onStart")
     }
