@@ -72,7 +72,6 @@ function _inherits(subClass, superClass) {
     if (superClass) _set_prototype_of(subClass, superClass);
 }
 function _instanceof(left, right) {
-    "@swc/helpers - instanceof";
     if (right != null && typeof Symbol !== "undefined" && right[Symbol.hasInstance]) {
         return !!right[Symbol.hasInstance](left);
     } else {
@@ -224,20 +223,20 @@ var ContextPlugin = function() {
     var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
     var __getOwnPropNames = Object.getOwnPropertyNames;
     var __hasOwnProp = Object.prototype.hasOwnProperty;
-    var __export = function __export(target, all) {
+    var __export = function(target, all) {
         for(var name in all)__defProp(target, name, {
             get: all[name],
             enumerable: true
         });
     };
-    var __copyProps = function __copyProps(to, from, except, desc) {
+    var __copyProps = function(to, from, except, desc) {
         if (from && (typeof from === "undefined" ? "undefined" : _type_of(from)) === "object" || typeof from === "function") {
             var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
             try {
                 var _loop = function() {
                     var key = _step.value;
                     if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
-                        get: function get() {
+                        get: function() {
                             return from[key];
                         },
                         enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
@@ -261,7 +260,7 @@ var ContextPlugin = function() {
         }
         return to;
     };
-    var __toCommonJS = function __toCommonJS(mod) {
+    var __toCommonJS = function(mod) {
         return __copyProps(__defProp({}, "__esModule", {
             value: true
         }), mod);
@@ -269,55 +268,55 @@ var ContextPlugin = function() {
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/context/core/src/index.ts
     var src_exports = {};
     __export(src_exports, {
-        ContextPlugin: function ContextPlugin1() {
+        ContextPlugin: function() {
             return ContextPlugin;
         },
-        ContextPluginSymbol: function ContextPluginSymbol1() {
+        ContextPluginSymbol: function() {
             return ContextPluginSymbol;
         },
-        StateContextPlugin: function StateContextPlugin1() {
+        StateContextPlugin: function() {
             return StateContextPlugin;
         },
-        dataContextKey: function dataContextKey1() {
+        dataContextKey: function() {
             return dataContextKey;
         },
-        defineContextKey: function defineContextKey1() {
+        defineContextKey: function() {
             return defineContextKey;
         },
-        flowIdContextKey: function flowIdContextKey1() {
+        flowIdContextKey: function() {
             return flowIdContextKey;
         },
-        flowStateContextKey: function flowStateContextKey1() {
+        flowStateContextKey: function() {
             return flowStateContextKey;
         },
-        getContextPlugin: function getContextPlugin1() {
+        getContextPlugin: function() {
             return getContextPlugin;
         },
-        nameOfContextKey: function nameOfContextKey1() {
+        nameOfContextKey: function() {
             return nameOfContextKey;
         },
-        playerStateContextKey: function playerStateContextKey1() {
+        playerStateContextKey: function() {
             return playerStateContextKey;
         },
-        playerStatusContextKey: function playerStatusContextKey1() {
+        playerStatusContextKey: function() {
             return playerStatusContextKey;
         },
-        resolveContextKeySymbol: function resolveContextKeySymbol1() {
+        resolveContextKeySymbol: function() {
             return resolveContextKeySymbol;
         },
-        setDataActionKey: function setDataActionKey1() {
+        setDataActionKey: function() {
             return setDataActionKey;
         },
-        transitionActionKey: function transitionActionKey1() {
+        transitionActionKey: function() {
             return transitionActionKey;
         },
-        validationContextKey: function validationContextKey1() {
+        validationContextKey: function() {
             return validationContextKey;
         },
-        viewContextKey: function viewContextKey1() {
+        viewContextKey: function() {
             return viewContextKey;
         },
-        viewIdContextKey: function viewIdContextKey1() {
+        viewIdContextKey: function() {
             return viewIdContextKey;
         }
     });
@@ -574,31 +573,31 @@ var ContextPlugin = function() {
     }(Hook);
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/context/core/src/key.ts
     var KEY_NAMESPACE = "player-ui.context.";
-    var defineContextKey = function defineContextKey(name, description) {
+    var defineContextKey = function(name, description) {
         return {
             symbol: Symbol.for("".concat(KEY_NAMESPACE).concat(name)),
             description: description
         };
     };
-    var resolveContextKeySymbol = function resolveContextKeySymbol(name) {
+    var resolveContextKeySymbol = function(name) {
         return Symbol.for("".concat(KEY_NAMESPACE).concat(name));
     };
-    var nameOfContextKey = function nameOfContextKey(key) {
+    var nameOfContextKey = function(key) {
         var k = Symbol.keyFor(key.symbol);
         if (!k || !k.startsWith(KEY_NAMESPACE)) return void 0;
         return k.slice(KEY_NAMESPACE.length);
     };
     // ../../../../../../../../../../../execroot/_main/bazel-out/k8-fastbuild/bin/plugins/context/core/src/store.ts
-    var deepFreezeEntry = function deepFreezeEntry(entry) {
+    var deepFreezeEntry = function(entry) {
         Object.freeze(entry);
         return entry;
     };
-    var tombstone = function tombstone(description) {
+    var tombstone = function(description) {
         return function() {
             throw new Error('[ContextPlugin] Action "'.concat(description, '" is no longer valid — its flow has ended'));
         };
     };
-    var tombstoneFunctions = function tombstoneFunctions1(value, description) {
+    var tombstoneFunctions = function(value, description) {
         if (typeof value === "function") {
             return tombstone(description);
         }
@@ -933,7 +932,7 @@ var ContextPlugin = function() {
                     if (!entry) return void 0;
                     if (entry.hasLiteral) return entry.literal;
                     if (!entry.transform) return void 0;
-                    var reader = function reader(otherKey) {
+                    var reader = function(otherKey) {
                         return _this.compute(otherKey.symbol);
                     };
                     return entry.transform.compute(reader);
@@ -1342,14 +1341,14 @@ var ContextPlugin = function() {
                     var _this = this;
                     var ctx = getContextPlugin(player);
                     var validationController;
-                    var publishValidation = function publishValidation() {
+                    var publishValidation = function() {
                         if (!validationController) return;
                         var byBinding = {};
                         var canTransition = true;
                         validationController.getBindings().forEach(function(binding) {
-                            var _ref;
                             var _validationController_getValidationForBinding;
-                            var all = (_ref = (_validationController_getValidationForBinding = validationController.getValidationForBinding(binding)) === null || _validationController_getValidationForBinding === void 0 ? void 0 : _validationController_getValidationForBinding.getAll()) !== null && _ref !== void 0 ? _ref : [];
+                            var _validationController_getValidationForBinding_getAll;
+                            var all = (_validationController_getValidationForBinding_getAll = (_validationController_getValidationForBinding = validationController.getValidationForBinding(binding)) === null || _validationController_getValidationForBinding === void 0 ? void 0 : _validationController_getValidationForBinding.getAll()) !== null && _validationController_getValidationForBinding_getAll !== void 0 ? _validationController_getValidationForBinding_getAll : [];
                             if (all.length === 0) return;
                             byBinding[binding.asString()] = all.map(function(v) {
                                 return {
@@ -1392,8 +1391,7 @@ var ContextPlugin = function() {
                             setDataActionKey,
                             transitionActionKey
                         ],
-                        compute: function compute(read) {
-                            var _read;
+                        compute: function(read) {
                             var flowId = read(flowIdContextKey);
                             var flowState = read(flowStateContextKey);
                             var transition = read(transitionActionKey);
@@ -1401,6 +1399,7 @@ var ContextPlugin = function() {
                             var viewResolved = read(viewContextKey);
                             var dataModel = read(dataContextKey);
                             var setData = read(setDataActionKey);
+                            var _read;
                             return {
                                 // Always present — seeded eagerly above and kept live by the
                                 // `player.hooks.state` tap below.
@@ -1431,12 +1430,12 @@ var ContextPlugin = function() {
                         ctx.set(playerStatusContextKey, state.status);
                     });
                     player.hooks.flowController.tap(this.name, function(flowController) {
-                        var transition = function transition(value) {
+                        var transition = function(value) {
                             return flowController.transition(value);
                         };
                         ctx.set(transitionActionKey, transition);
                         flowController.hooks.flow.tap(_this.name, function(flowInstance) {
-                            var recordState = function recordState() {
+                            var recordState = function() {
                                 var _flowInstance_currentState;
                                 var name = (_flowInstance_currentState = flowInstance.currentState) === null || _flowInstance_currentState === void 0 ? void 0 : _flowInstance_currentState.name;
                                 if (name) {
@@ -1468,7 +1467,7 @@ var ContextPlugin = function() {
                         });
                     });
                     player.hooks.dataController.tap(this.name, function(dataController) {
-                        var setData = function setData(binding, value) {
+                        var setData = function(binding, value) {
                             dataController.set([
                                 [
                                     binding,
@@ -1477,7 +1476,7 @@ var ContextPlugin = function() {
                             ]);
                         };
                         ctx.set(setDataActionKey, setData);
-                        var publish = function publish() {
+                        var publish = function() {
                             ctx.set(dataContextKey, dataController.serialize());
                             publishValidation();
                         };
