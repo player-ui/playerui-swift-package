@@ -8,10 +8,7 @@ import SwiftUI
 public class SwiftUICheckPathPlugin: BaseCheckPathPlugin, NativePlugin {
     /// Constructs the SwiftUICheckPathPlugin
     public convenience init() {
-        self.init(
-            fileName: BaseCheckPathPlugin.checkPathFileName,
-            pluginName: BaseCheckPathPlugin.checkPathPluginName
-        )
+        self.init(fileName: "CheckPathPlugin.native", pluginName: "CheckPathPlugin.CheckPathPlugin")
     }
 
     public func apply(player: some HeadlessPlayer) {
