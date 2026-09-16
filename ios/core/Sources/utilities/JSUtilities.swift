@@ -10,10 +10,6 @@ import JavaScriptCore
 
 /// Class to hold context-agnostic JS utility functions
 public class JSUtilities {
-    /// The `forKeyedSubscript` key used to inject/remove the native `setTimeout` polyfill on a
-    /// `JSContext`
-    public static let setTimeoutKey: NSString = "setTimeout"
-
     /// Polyfills functions needed for plugins with native versions
     /// - parameters:
     ///   - context: The context to polyfill
@@ -29,7 +25,7 @@ public class JSUtilities {
                 }
         }
         guard let val = JSValue(object: setTimeout, in: context) else { return }
-        context.setObject(val, forKeyedSubscript: setTimeoutKey)
+        context.setObject(val, forKeyedSubscript: "setTimeout" as NSString)
     }
 
     /// Creates a javascript promise in the given context, to execute native code

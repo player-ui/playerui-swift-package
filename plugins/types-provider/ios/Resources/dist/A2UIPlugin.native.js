@@ -8623,8 +8623,8 @@ var A2UIPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "1.2.0" : "unknown";
-    var COMMIT = true ? "d27e6cf75db1cde6b8f84bd84215bcddc7e8d5e6" : "unknown";
+    var PLAYER_VERSION = true ? "1.2.1--canary.951.42685" : "unknown";
+    var COMMIT = true ? "e843db8719c23a23b3c88fe4f1879ca00ce84b03" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
