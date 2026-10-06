@@ -8392,7 +8392,7 @@ var ReferenceAssetsPlugin = function() {
         status: "not-started"
     };
     var PLAYER_VERSION = true ? "1.2.0" : "unknown";
-    var COMMIT = true ? "d27e6cf75db1cde6b8f84bd84215bcddc7e8d5e6" : "unknown";
+    var COMMIT = true ? "3e449378b26a0e54513ca6e4499540535e19ec95" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
