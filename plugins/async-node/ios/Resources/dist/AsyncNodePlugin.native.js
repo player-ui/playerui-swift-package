@@ -8072,8 +8072,8 @@ var AsyncNodePlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "1.3.0" : "unknown";
-    var COMMIT = true ? "bc3c5ea5db8cd3d22c5388b1dcfa9da2c7c60577" : "unknown";
+    var PLAYER_VERSION = true ? "1.4.0--canary.961.43196" : "unknown";
+    var COMMIT = true ? "a3d6b1b09f92d4e9f87d71804481ee16141f9b7b" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
