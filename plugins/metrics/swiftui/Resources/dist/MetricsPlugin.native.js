@@ -5340,6 +5340,7 @@ var MetricsPlugin = function() {
                             });
                             tracked.clear();
                             sections.clear();
+                            resolvedNodeMap.clear();
                             currentBindingTree = /* @__PURE__ */ new Map();
                         }
                     });
@@ -6238,6 +6239,16 @@ var MetricsPlugin = function() {
                         this.model = model;
                     }
                     return this.model;
+                }
+            },
+            {
+                /**
+     * Rebuilds a built pipeline from `resolveDataStages`, keeping the model's data and hooks.
+     * Player calls this after its `dataController` hook; a stage tapped later needs another call.
+     */ key: "rebuildPipeline",
+                value: function rebuildPipeline() {
+                    var _this_model;
+                    (_this_model = this.model) === null || _this_model === void 0 ? void 0 : _this_model.setMiddleware(this.hooks.resolveDataStages.call(this.baseMiddleware));
                 }
             },
             {
@@ -7935,7 +7946,7 @@ var MetricsPlugin = function() {
         status: "not-started"
     };
     var PLAYER_VERSION = true ? "1.4.0" : "unknown";
-    var COMMIT = true ? "1c538f7b605dd6c76d5fcaea39c09927cd55391f" : "unknown";
+    var COMMIT = true ? "f4f41dc8729c192a26b96d8d470897b1412e62a2" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
@@ -8203,6 +8214,7 @@ var MetricsPlugin = function() {
                         });
                     });
                     this.hooks.dataController.call(dataController);
+                    dataController.rebuildPipeline();
                     validationController.setOptions({
                         parseBinding: parseBinding,
                         model: dataController,
