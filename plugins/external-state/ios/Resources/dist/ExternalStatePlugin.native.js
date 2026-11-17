@@ -7850,8 +7850,8 @@ var ExternalStatePlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "1.3.0" : "unknown";
-    var COMMIT = true ? "bc3c5ea5db8cd3d22c5388b1dcfa9da2c7c60577" : "unknown";
+    var PLAYER_VERSION = true ? "1.4.0" : "unknown";
+    var COMMIT = true ? "1c538f7b605dd6c76d5fcaea39c09927cd55391f" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
