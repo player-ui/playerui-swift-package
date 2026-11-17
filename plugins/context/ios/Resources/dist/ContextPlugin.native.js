@@ -9189,8 +9189,8 @@ var ContextPlugin = function() {
         ref: Symbol("not-started"),
         status: "not-started"
     };
-    var PLAYER_VERSION = true ? "1.4.0" : "unknown";
-    var COMMIT = true ? "f4f41dc8729c192a26b96d8d470897b1412e62a2" : "unknown";
+    var PLAYER_VERSION = true ? "1.5.0-next.0" : "unknown";
+    var COMMIT = true ? "290f0a751774608a31efa7383b0a5a35cde3f026" : "unknown";
     var _Player = /*#__PURE__*/ function() {
         function _Player2(config) {
             var _this = this;
